@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#121313" />
+    <meta name="theme-color" content="#191412" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ecd2c3" media="(prefers-color-scheme: light)" />
     <meta name="description" content="Sacred Heart — your health has a story to tell." />
     <title>Sacred Heart</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -12,24 +13,133 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="hero" aria-labelledby="headline">
-      <img class="hero-image" src="assets/canyon.png" alt="Desert canyon landscape" />
-      <div class="hero-fade" aria-hidden="true"></div>
+    <main>
+      <section class="hero" aria-labelledby="headline">
+        <img class="hero-image" src="assets/canyon.png" alt="Desert canyon landscape" />
+        <div class="hero-fade" aria-hidden="true"></div>
 
-      <div class="hero-content">
-        <h1 id="headline">
-          <span>Your <em>health</em></span>
-          <span>has a story</span>
-          <span><button class="headline-emoji" type="button" aria-label="Play with the heart emoji">❤️</button>to tell.</span>
-        </h1>
-        <a class="glass-button" href="https://testflight.apple.com/join/wrv4aFVQ">Join the beta</a>
-      </div>
+        <div class="hero-content">
+          <h1 id="headline">
+            <span>Your <em>health</em></span>
+            <span>has a story</span>
+            <span><button class="headline-emoji playful-emoji" type="button" aria-label="Play with the heart emoji">❤️</button>to tell.</span>
+          </h1>
+          <a class="glass-button" href="https://testflight.apple.com/join/wrv4aFVQ">Join the beta</a>
+        </div>
 
-      <footer class="hero-footer" aria-label="Sacred Heart credits">
-        <span class="footer-name">Sacred Heart</span>
-        <span>Made with <b aria-label="yellow heart">♥</b> in Germany</span>
-      </footer>
+        <section id="widgets" class="widget-marquee" aria-label="Sacred Heart widgets" data-reveal="marquee">
+          <div class="widget-row">
+            <div class="widget-track" aria-hidden="true">
+              <div class="widget-sequence">
+                <div class="widget widget--medium"></div><div class="widget widget--small"></div><div class="widget widget--medium"></div><div class="widget widget--small"></div>
+              </div>
+              <div class="widget-sequence">
+                <div class="widget widget--medium"></div><div class="widget widget--small"></div><div class="widget widget--medium"></div><div class="widget widget--small"></div>
+              </div>
+            </div>
+          </div>
+          <div class="widget-row widget-row--offset">
+            <div class="widget-track" aria-hidden="true">
+              <div class="widget-sequence">
+                <div class="widget widget--medium"></div><div class="widget widget--small"></div><div class="widget widget--medium"></div><div class="widget widget--small"></div>
+              </div>
+              <div class="widget-sequence">
+                <div class="widget widget--medium"></div><div class="widget widget--small"></div><div class="widget widget--medium"></div><div class="widget widget--small"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="site-section app-reveal" aria-labelledby="app-reveal-title">
+        <div class="section-copy">
+          <h2 id="app-reveal-title" class="animated-heading" data-reveal="heading">
+            <span>The whole picture. <button class="section-emoji playful-emoji" type="button" aria-label="Play with the anatomical heart emoji">🫀</button></span>
+            <span>One calm place.</span>
+          </h2>
+          <p data-reveal="copy">Vitals, nutrition and daily goals come together in one calm story, so you can understand the day without getting lost in dashboards.</p>
+        </div>
+
+        <div class="app-stage" data-reveal aria-label="Sacred Heart app screens">
+          <picture class="app-shot app-shot--side">
+            <img src="assets/app-nutrition-dark-en.png" alt="Nutrition overview in Sacred Heart" loading="lazy" />
+          </picture>
+          <picture class="app-shot app-shot--main">
+            <img src="assets/app-today-dark-en.png" alt="Daily goals in Sacred Heart" loading="lazy" />
+          </picture>
+          <picture class="app-shot app-shot--side">
+            <img src="assets/app-vitals-dark-en.png" alt="Daily vitals overview in Sacred Heart" loading="lazy" />
+          </picture>
+        </div>
+      </section>
+
+      <section class="moments" aria-label="What Sacred Heart does">
+        <article class="moment">
+          <div class="moment-copy">
+            <h3 class="animated-heading" data-reveal="heading">
+              <span>Know where <button class="section-emoji playful-emoji" type="button" aria-label="Play with the location emoji">📍</button></span>
+              <span>you stand.</span>
+            </h3>
+            <p data-reveal="copy">Sacred Heart turns a number into useful context: what it means, where you land, and what is worth paying attention to next.</p>
+          </div>
+          <div class="moment-visual" data-reveal>
+            <img src="assets/app-rhr-detail-dark-en.png" alt="Resting heart rate context and plain-language explanation" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="moment">
+          <div class="moment-copy">
+            <h3 class="animated-heading" data-reveal="heading">
+              <span>Meet today <button class="section-emoji playful-emoji" type="button" aria-label="Play with the weather emoji">🌤️</button></span>
+              <span>where it is.</span>
+            </h3>
+            <p data-reveal="copy">Your vitals, habits and goals become a calm daily read that meets you where you are—without turning your health into another dashboard.</p>
+          </div>
+          <div class="moment-visual" data-reveal>
+            <img src="assets/app-today-dark-en.png" alt="Sacred Heart daily goals" loading="lazy" />
+          </div>
+        </article>
+
+        <article class="moment">
+          <div class="moment-copy">
+            <h3 class="animated-heading" data-reveal="heading">
+              <span>Nutrition, <button class="section-emoji playful-emoji" type="button" aria-label="Play with the plate emoji">🍽️</button></span>
+              <span>made human.</span>
+            </h3>
+            <p data-reveal="copy">Energy, macros and nutrients sit beside the rest of your health, giving meals context without judgment, streaks or obsessive tracking.</p>
+          </div>
+          <div class="moment-visual" data-reveal>
+            <img src="assets/app-nutrition-dark-en.png" alt="Sacred Heart nutrition cards" loading="lazy" />
+          </div>
+        </article>
+      </section>
+
+      <section class="site-section privacy-section" aria-labelledby="privacy-title">
+        <div class="privacy-panel" data-reveal="panel">
+          <h2 id="privacy-title" class="animated-heading" data-reveal="heading">
+            <span>Your health data <button class="section-emoji playful-emoji" type="button" aria-label="Play with the lock emoji">🔐</button></span>
+            <span>stays yours.</span>
+          </h2>
+          <p data-reveal="copy">Sacred Heart reads only the Apple Health data you choose to share. There is no account, no backend, and nothing gets uploaded.</p>
+        </div>
+      </section>
+
+      <section id="beta" class="site-section beta-closing" aria-labelledby="beta-title">
+        <div>
+          <h2 id="beta-title" class="animated-heading" data-reveal="heading">
+            <span>See what your health <button class="section-emoji playful-emoji" type="button" aria-label="Play with the heart emoji">❤️</button></span>
+            <span>has been trying to tell you.</span>
+          </h2>
+          <p data-reveal="copy">Join the public TestFlight, explore Sacred Heart early, and help shape what comes next.</p>
+          <a class="glass-button" href="https://testflight.apple.com/join/wrv4aFVQ" data-reveal="button">Join the beta</a>
+        </div>
+      </section>
     </main>
+
+    <footer class="hero-footer" aria-label="Sacred Heart credits">
+      <span class="footer-name">Sacred Heart</span>
+      <span>Made with <button class="credits-heart" type="button" aria-label="Open credits">♥</button> in Germany</span>
+    </footer>
     <script src="script.js"></script>
   </body>
 </html>
