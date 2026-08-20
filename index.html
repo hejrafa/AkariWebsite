@@ -1,32 +1,43 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="forest" data-mode="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#191412" />
+    <meta name="theme-color" content="#151a0c" />
     <meta name="description" content="Akari." />
     <title>Akari</title>
-    <style>
-      * { box-sizing: border-box; }
-      html, body { min-width: 320px; min-height: 100%; margin: 0; }
-      body {
-        display: grid;
-        min-height: 100svh;
-        place-items: center;
-        color: #f4ddd1;
-        background: #191412;
-      }
-      h1 {
-        margin: 0;
-        font-family: "New York", ui-serif, Georgia, serif;
-        font-size: clamp(4rem, 12vw, 10rem);
-        font-weight: 600;
-        letter-spacing: -0.04em;
-        line-height: 1;
-      }
-    </style>
+    <link rel="icon" href="assets/akari-logo.svg?v=4" type="image/svg+xml" />
+    <script>
+      (() => {
+        const themes = ["meadow", "forest", "coast", "canyon"];
+        const modes = ["light", "dark"];
+        const params = new URLSearchParams(window.location.search);
+
+        try {
+          const savedTheme = localStorage.getItem("akari-theme");
+          const savedMode = localStorage.getItem("akari-mode");
+          const theme = params.get("theme") || savedTheme || "forest";
+          const mode = params.get("mode") || savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.dataset.theme = themes.includes(theme) ? theme : "forest";
+          document.documentElement.dataset.mode = modes.includes(mode) ? mode : "dark";
+        } catch (error) {
+          document.documentElement.dataset.theme = "forest";
+          document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+
+        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          document.documentElement.classList.add("credits-motion");
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="health/credits.css?v=20260820-03" />
+    <script src="health/credits.js?v=20260820-03" defer></script>
   </head>
   <body>
-    <h1>Akari</h1>
+    <main class="credits-shell">
+      <div class="credits-brand" aria-label="Akari">
+        <img src="assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" />
+      </div>
+    </main>
   </body>
 </html>

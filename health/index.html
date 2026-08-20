@@ -1,145 +1,130 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="forest" data-mode="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#191412" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#ecd2c3" media="(prefers-color-scheme: light)" />
-    <meta name="description" content="Akari — your health has a story to tell." />
-    <title>Akari</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <meta name="theme-color" content="#151a0c" />
+    <meta
+      name="description"
+      content="Akari turns your Apple Health data into a calm, readable daily story. Join the public TestFlight beta."
+    />
+    <meta property="og:title" content="Akari — Your health has a story to tell" />
+    <meta
+      property="og:description"
+      content="Understand your Apple Health data in one calm place. Join the Akari beta on TestFlight."
+    />
+    <meta property="og:type" content="website" />
+    <title>Akari — Your health has a story to tell</title>
+    <link rel="icon" href="../assets/akari-logo.svg?v=4" type="image/svg+xml" />
+    <script>
+      (() => {
+        const themes = ["meadow", "forest", "coast", "canyon"];
+        const modes = ["light", "dark"];
+        const params = new URLSearchParams(window.location.search);
+
+        try {
+          const savedTheme = localStorage.getItem("akari-theme");
+          const savedMode = localStorage.getItem("akari-mode");
+          const theme = params.get("theme") || savedTheme || "forest";
+          const mode = params.get("mode") || savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.dataset.theme = themes.includes(theme) ? theme : "forest";
+          document.documentElement.dataset.mode = modes.includes(mode) ? mode : "dark";
+        } catch (error) {
+          document.documentElement.dataset.theme = "forest";
+          document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="../styles.css?v=20260820-39" />
+    <script src="../script.js?v=20260820-19" defer></script>
   </head>
   <body>
-    <main>
-      <section class="hero" aria-labelledby="headline">
-        <img class="hero-image" src="assets/canyon.png" alt="Desert canyon landscape" />
-        <div class="hero-fade" aria-hidden="true"></div>
+    <a class="skip-link" href="#main">Skip to content</a>
 
-        <div class="hero-content">
-          <h1 id="headline">
-            <span>Your <em>health</em></span>
-            <span>has a story</span>
-            <span><button class="headline-emoji playful-emoji" type="button" aria-label="Play with the heart emoji">❤️</button>to tell.</span>
+    <header class="site-header" aria-label="Akari website header">
+      <div class="site-header__inner">
+        <span class="site-header__spacer" aria-hidden="true"></span>
+        <a class="brand" href="./" aria-label="Akari home">
+          <img src="../assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" />
+        </a>
+
+        <div class="appearance-controls" role="group" aria-label="Choose page appearance">
+          <div class="theme-controls" role="group" aria-label="Choose a color theme">
+            <button class="theme-dot" type="button" data-theme-target="meadow" aria-label="USA theme" aria-pressed="false"><img src="../assets/theme-usa.svg" alt="" width="32" height="32" /></button>
+            <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Japan theme" aria-pressed="true"><img src="../assets/theme-japan.svg" alt="" width="32" height="32" /></button>
+            <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Scotland theme" aria-pressed="false"><img src="../assets/theme-scotland.svg" alt="" width="32" height="32" /></button>
+            <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="Germany theme" aria-pressed="false"><img src="../assets/theme-germany.svg" alt="" width="32" height="32" /></button>
+          </div>
+          <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" aria-pressed="false"><img src="../assets/mode-light.png" alt="" width="32" height="32" /></button>
+          <button class="mode-button" type="button" data-mode-target="dark" aria-label="Use dark appearance" aria-pressed="true"><img src="../assets/mode-dark.png" alt="" width="32" height="32" /></button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero__content">
+          <h1 id="hero-title">
+            <span class="headline-line">
+              <span class="hero-y">Y</span>our health
+            </span>
+            <span class="headline-line">has a story</span>
+            <span class="headline-line"><span class="headline-heart playful-emoji" role="button" tabindex="0" aria-label="Play with the heart emoji" data-emoji="💛">💛</span> to tell.</span>
           </h1>
-          <a class="glass-button" href="https://testflight.apple.com/join/wrv4aFVQ">Join the beta</a>
+          <p class="trust-line">
+            <span>Free during beta · No account</span>
+            <span>Your health data stays on your iPhone</span>
+          </p>
+          <a class="cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Join the beta</a>
+        </div>
+      </section>
+
+      <section class="why" aria-labelledby="why-title">
+        <div class="why__intro">
+          <h2 id="why-title"><span class="why-emoji playful-emoji" role="button" tabindex="0" aria-label="Play with the sun emoji" data-emoji="☀️">☀️</span> Why?</h2>
+          <p>Akari turns your Apple Health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.</p>
         </div>
 
-        <section id="widgets" class="widget-marquee" aria-label="Akari widgets" data-reveal="marquee">
-          <div class="widget-row">
-            <div class="widget-track" aria-hidden="true">
-              <div class="widget-sequence">
-                <div class="widget widget--medium"></div><div class="widget widget--small"></div><div class="widget widget--medium"></div><div class="widget widget--small"></div>
-              </div>
-              <div class="widget-sequence">
-                <div class="widget widget--medium"></div><div class="widget widget--small"></div><div class="widget widget--medium"></div><div class="widget widget--small"></div>
-              </div>
+        <div class="feature-grid" role="list" aria-label="What Akari helps you do">
+          <article class="feature-card" role="listitem">
+            <div class="feature-card__ui day-ui shot-ui" aria-hidden="true">
+              <img class="feature-shot feature-shot--headline" src="../assets/app-today-device.png" alt="" />
             </div>
-          </div>
-          <div class="widget-row widget-row--offset">
-            <div class="widget-track" aria-hidden="true">
-              <div class="widget-sequence">
-                <div class="widget widget--medium"></div><div class="widget widget--small"></div><div class="widget widget--medium"></div><div class="widget widget--small"></div>
-              </div>
-              <div class="widget-sequence">
-                <div class="widget widget--medium"></div><div class="widget widget--small"></div><div class="widget widget--medium"></div><div class="widget widget--small"></div>
-              </div>
+            <h3>One readable day</h3>
+          </article>
+
+          <article class="feature-card" role="listitem">
+            <div class="feature-card__ui shot-ui" aria-hidden="true">
+              <img class="feature-shot feature-shot--steps" src="../assets/app-steps-device.png" alt="" />
             </div>
-          </div>
-        </section>
-      </section>
+            <h3>Numbers with context</h3>
+          </article>
 
-      <section class="site-section app-reveal" aria-labelledby="app-reveal-title">
-        <div class="section-copy">
-          <h2 id="app-reveal-title" class="animated-heading" data-reveal="heading">
-            <span>The whole picture. <button class="section-emoji playful-emoji" type="button" aria-label="Play with the anatomical heart emoji">🫀</button></span>
-            <span>One calm place.</span>
-          </h2>
-          <p data-reveal="copy">Vitals, nutrition and daily goals come together in one calm story, so you can understand the day without getting lost in dashboards.</p>
-        </div>
-
-        <div class="app-stage" data-reveal aria-label="Akari app screens">
-          <picture class="app-shot app-shot--side">
-            <img src="assets/app-nutrition-dark-en.png" alt="Nutrition overview in Akari" loading="lazy" />
-          </picture>
-          <picture class="app-shot app-shot--main">
-            <img src="assets/app-today-dark-en.png" alt="Daily goals in Akari" loading="lazy" />
-          </picture>
-          <picture class="app-shot app-shot--side">
-            <img src="assets/app-vitals-dark-en.png" alt="Daily vitals overview in Akari" loading="lazy" />
-          </picture>
+          <article class="feature-card" role="listitem">
+            <div class="feature-card__ui shot-ui" aria-hidden="true">
+              <img class="feature-shot feature-shot--water" src="../assets/app-water-device.png" alt="" />
+            </div>
+            <h3>Built around your life</h3>
+          </article>
         </div>
       </section>
 
-      <section class="moments" aria-label="What Akari does">
-        <article class="moment">
-          <div class="moment-copy">
-            <h3 class="animated-heading" data-reveal="heading">
-              <span>Know where <button class="section-emoji playful-emoji" type="button" aria-label="Play with the location emoji">📍</button></span>
-              <span>you stand.</span>
-            </h3>
-            <p data-reveal="copy">Akari turns a number into useful context: what it means, where you land, and what is worth paying attention to next.</p>
-          </div>
-          <div class="moment-visual" data-reveal>
-            <img src="assets/app-rhr-detail-dark-en.png" alt="Resting heart rate context and plain-language explanation" loading="lazy" />
-          </div>
-        </article>
-
-        <article class="moment">
-          <div class="moment-copy">
-            <h3 class="animated-heading" data-reveal="heading">
-              <span>Meet today <button class="section-emoji playful-emoji" type="button" aria-label="Play with the weather emoji">🌤️</button></span>
-              <span>where it is.</span>
-            </h3>
-            <p data-reveal="copy">Your vitals, habits and goals become a calm daily read that meets you where you are—without turning your health into another dashboard.</p>
-          </div>
-          <div class="moment-visual" data-reveal>
-            <img src="assets/app-today-dark-en.png" alt="Akari daily goals" loading="lazy" />
-          </div>
-        </article>
-
-        <article class="moment">
-          <div class="moment-copy">
-            <h3 class="animated-heading" data-reveal="heading">
-              <span>Nutrition, <button class="section-emoji playful-emoji" type="button" aria-label="Play with the plate emoji">🍽️</button></span>
-              <span>made human.</span>
-            </h3>
-            <p data-reveal="copy">Energy, macros and nutrients sit beside the rest of your health, giving meals context without judgment, streaks or obsessive tracking.</p>
-          </div>
-          <div class="moment-visual" data-reveal>
-            <img src="assets/app-nutrition-dark-en.png" alt="Akari nutrition cards" loading="lazy" />
-          </div>
-        </article>
-      </section>
-
-      <section class="site-section privacy-section" aria-labelledby="privacy-title">
-        <div class="privacy-panel" data-reveal="panel">
-          <h2 id="privacy-title" class="animated-heading" data-reveal="heading">
-            <span>Your health data <button class="section-emoji playful-emoji" type="button" aria-label="Play with the lock emoji">🔐</button></span>
-            <span>stays yours.</span>
+      <section class="beta" aria-labelledby="beta-title">
+        <div class="beta__content">
+          <h2 id="beta-title">
+            <span class="beta-line">Help shape</span>
+            <span class="beta-line">Akari before</span>
+            <span class="beta-line">launch. <span class="headline-heart playful-emoji" role="button" tabindex="0" aria-label="Play with the heart emoji" data-emoji="💛">💛</span></span>
           </h2>
-          <p data-reveal="copy">Akari reads only the Apple Health data you choose to share. There is no account, no backend, and nothing gets uploaded.</p>
-        </div>
-      </section>
-
-      <section id="beta" class="site-section beta-closing" aria-labelledby="beta-title">
-        <div>
-          <h2 id="beta-title" class="animated-heading" data-reveal="heading">
-            <span>See what your health <button class="section-emoji playful-emoji" type="button" aria-label="Play with the heart emoji">❤️</button></span>
-            <span>has been trying to tell you.</span>
-          </h2>
-          <p data-reveal="copy">Join the public TestFlight, explore Akari early, and help shape what comes next.</p>
-          <a class="glass-button" href="https://testflight.apple.com/join/wrv4aFVQ" data-reveal="button">Join the beta</a>
+          <p>Use Akari for a few days and tell us what felt useful, what was confusing and what you wish it could do. Your feedback will directly influence what we build next.</p>
+          <a class="cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Join the beta</a>
         </div>
       </section>
     </main>
 
     <footer class="hero-footer" aria-label="Akari credits">
       <span class="footer-name">Akari</span>
-      <span>Made with <button class="credits-heart" type="button" aria-label="Open credits">♥</button> in Germany</span>
+      <span>Made with <a class="credits-heart" href="credits.html" aria-label="Open credits">♥</a> in Germany</span>
     </footer>
-    <script src="script.js"></script>
   </body>
 </html>
