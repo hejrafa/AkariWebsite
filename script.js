@@ -170,12 +170,197 @@ document.querySelectorAll(".playful-emoji").forEach((emoji) => {
   });
 });
 
+function setupHeroPhone() {
+  const phone = document.querySelector("#hero-phone-model");
+  const hero = phone?.closest(".hero");
+  const phoneHost = phone?.closest(".hero-phone");
+  const floatLayer = phone?.closest(".hero-phone__float");
+  const fallbackScreen = floatLayer?.querySelector(".hero-phone__screen");
+  if (!phone || !hero || !phoneHost || !floatLayer) return;
+
+  const canFollowPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let targetX = 0;
+  let targetY = 0;
+  let currentX = 0;
+  let currentY = 0;
+  let pointerIsInHero = false;
+  let heroIsVisible = true;
+  let animationFrame;
+
+  function showPhoneFallback() {
+    const fallbackSource = fallbackScreen?.dataset.src;
+    if (fallbackScreen && fallbackSource && !fallbackScreen.getAttribute("src")) fallbackScreen.src = fallbackSource;
+    phone.closest(".hero-phone")?.classList.add("is-error");
+  }
+
+  const loadingFallback = window.setTimeout(() => {
+    if (!phone.classList.contains("is-loaded")) showPhoneFallback();
+  }, 2400);
+
+  function finishLoading() {
+    window.clearTimeout(loadingFallback);
+    phone.closest(".hero-phone")?.classList.remove("is-error");
+    phone.classList.add("is-loaded");
+  }
+
+  phone.addEventListener("load", finishLoading, { once: true });
+  phone.addEventListener("error", () => {
+    window.clearTimeout(loadingFallback);
+    showPhoneFallback();
+  }, { once: true });
+
+  function updatePointerTarget(event) {
+    if (!canFollowPointer.matches || reducedMotion.matches) return;
+    const bounds = hero.getBoundingClientRect();
+    targetX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width) * 2 - 1));
+    targetY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height) * 2 - 1));
+    pointerIsInHero = true;
+  }
+
+  function settlePhone() {
+    pointerIsInHero = false;
+    targetX = 0;
+    targetY = 0;
+  }
+
+  function animatePhone(time) {
+    if (!heroIsVisible || document.hidden) {
+      animationFrame = undefined;
+      return;
+    }
+
+    const idleX = pointerIsInHero ? 0 : Math.sin(time / 2400) * 0.08;
+    const idleY = pointerIsInHero ? 0 : Math.cos(time / 3100) * 0.055;
+    currentX += (targetX + idleX - currentX) * 0.065;
+    currentY += (targetY + idleY - currentY) * 0.065;
+
+    floatLayer.style.setProperty("--phone-drift-x", `${(currentX * 9).toFixed(2)}px`);
+    floatLayer.style.setProperty("--phone-drift-y", `${(currentY * 6).toFixed(2)}px`);
+    floatLayer.style.setProperty("--phone-rotate-x", `${(-currentY * 4.5).toFixed(2)}deg`);
+    floatLayer.style.setProperty("--phone-rotate-y", `${(currentX * 5.5).toFixed(2)}deg`);
+    animationFrame = requestAnimationFrame(animatePhone);
+  }
+
+  function startPhoneMotion() {
+    if (reducedMotion.matches || animationFrame || !heroIsVisible || document.hidden) return;
+    animationFrame = requestAnimationFrame(animatePhone);
+  }
+
+  hero.addEventListener("pointermove", updatePointerTarget, { passive: true });
+  hero.addEventListener("pointerleave", settlePhone);
+  document.addEventListener("visibilitychange", startPhoneMotion);
+
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    heroIsVisible = entries[0]?.isIntersecting ?? true;
+    if (heroIsVisible) startPhoneMotion();
+  }, { rootMargin: "12% 0px", threshold: 0 });
+
+  visibilityObserver.observe(hero);
+  startPhoneMotion();
+}
+
+setupHeroPhone();
+
+function setupBetaPhone() {
+  const phone = document.querySelector("#beta-phone-model");
+  const beta = phone?.closest(".beta");
+  const phoneHost = phone?.closest(".beta-phone");
+  const floatLayer = phone?.closest(".beta-phone__float");
+  const fallbackScreen = phoneHost?.querySelector(".beta-phone__screen");
+  if (!phone || !beta || !phoneHost || !floatLayer) return;
+
+  const canFollowPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let targetX = 0;
+  let targetY = 0;
+  let currentX = 0;
+  let currentY = 0;
+  let pointerIsInBeta = false;
+  let betaIsVisible = false;
+  let animationFrame;
+
+  function showFallback() {
+    const fallbackSource = fallbackScreen?.dataset.src;
+    if (fallbackScreen && fallbackSource && !fallbackScreen.getAttribute("src")) fallbackScreen.src = fallbackSource;
+    phoneHost.classList.add("is-error");
+  }
+
+  const loadingFallback = window.setTimeout(() => {
+    if (!phone.classList.contains("is-loaded")) showFallback();
+  }, 2800);
+
+  phone.addEventListener("load", () => {
+    window.clearTimeout(loadingFallback);
+    phoneHost.classList.remove("is-error");
+    phone.classList.add("is-loaded");
+  }, { once: true });
+
+  phone.addEventListener("error", () => {
+    window.clearTimeout(loadingFallback);
+    showFallback();
+  }, { once: true });
+
+  function updatePointerTarget(event) {
+    if (!canFollowPointer.matches || reducedMotion.matches) return;
+    const bounds = beta.getBoundingClientRect();
+    targetX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width) * 2 - 1));
+    targetY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height) * 2 - 1));
+    pointerIsInBeta = true;
+  }
+
+  function settlePhone() {
+    pointerIsInBeta = false;
+    targetX = 0;
+    targetY = 0;
+  }
+
+  function animatePhone(time) {
+    if (!betaIsVisible || document.hidden) {
+      animationFrame = undefined;
+      return;
+    }
+
+    const idleX = pointerIsInBeta ? 0 : Math.sin(time / 2400) * 0.08;
+    const idleY = pointerIsInBeta ? 0 : Math.cos(time / 3100) * 0.055;
+    currentX += (targetX + idleX - currentX) * 0.065;
+    currentY += (targetY + idleY - currentY) * 0.065;
+
+    floatLayer.style.setProperty("--phone-drift-x", `${(currentX * 9).toFixed(2)}px`);
+    floatLayer.style.setProperty("--phone-drift-y", `${(currentY * 6).toFixed(2)}px`);
+    floatLayer.style.setProperty("--phone-rotate-x", `${(-currentY * 4.5).toFixed(2)}deg`);
+    floatLayer.style.setProperty("--phone-rotate-y", `${(currentX * 5.5).toFixed(2)}deg`);
+    animationFrame = requestAnimationFrame(animatePhone);
+  }
+
+  function startPhoneMotion() {
+    if (reducedMotion.matches || animationFrame || !betaIsVisible || document.hidden) return;
+    animationFrame = requestAnimationFrame(animatePhone);
+  }
+
+  beta.addEventListener("pointermove", updatePointerTarget, { passive: true });
+  beta.addEventListener("pointerleave", settlePhone);
+  document.addEventListener("visibilitychange", startPhoneMotion);
+
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    betaIsVisible = entries[0]?.isIntersecting ?? false;
+    if (betaIsVisible) startPhoneMotion();
+  }, { rootMargin: "12% 0px", threshold: 0 });
+
+  visibilityObserver.observe(beta);
+}
+
+setupBetaPhone();
+
 function setupRevealMotion() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   const loadItems = [];
   const scrollItems = [];
+  const cardItems = [];
   const footerItems = [];
+  const phoneItems = [];
+  const betaPhoneItems = [];
 
   function prepare(elements, variant, delays, collection) {
     const nodes = typeof elements === "string" ? document.querySelectorAll(elements) : elements;
@@ -190,13 +375,15 @@ function setupRevealMotion() {
 
   prepare(document.querySelectorAll(".brand"), "drop", [40], loadItems);
   prepare(document.querySelectorAll(".theme-dot, .mode-button"), "pop", [110, 150, 190, 230, 285, 330], loadItems);
+  prepare(document.querySelectorAll(".hero-phone"), "phone", [30], phoneItems);
   prepare(document.querySelectorAll(".hero .headline-line"), "line", [100, 190, 280], loadItems);
   prepare(document.querySelectorAll(".hero .trust-line"), "up", [390], loadItems);
   prepare(document.querySelectorAll(".hero .cta"), "pop", [490], loadItems);
 
   prepare(document.querySelectorAll(".why__intro h2"), "left", [0], scrollItems);
   prepare(document.querySelectorAll(".why__intro p"), "right", [90], scrollItems);
-  prepare(document.querySelectorAll(".feature-card"), "card", [0, 110, 220], scrollItems);
+  prepare(document.querySelectorAll(".feature-card"), "card", [0, 70, 140], cardItems);
+  prepare(document.querySelectorAll(".beta-phone"), "phone-right", [0], betaPhoneItems);
   prepare(document.querySelectorAll(".beta .beta-line"), "line", [0, 90, 180], scrollItems);
   prepare(document.querySelectorAll(".beta__content p"), "up", [270], scrollItems);
   prepare(document.querySelectorAll(".beta .cta"), "pop", [360], scrollItems);
@@ -209,16 +396,35 @@ function setupRevealMotion() {
     element.classList.add("is-visible");
 
     const delay = Number.parseFloat(element.style.getPropertyValue("--reveal-delay")) || 0;
+    const cleanupDuration = [...element.classList].some((className) => className.startsWith("reveal--phone")) ? 1300 : 1100;
     window.setTimeout(() => {
       [...element.classList]
         .filter((className) => className === "reveal" || className === "is-visible" || className.startsWith("reveal--"))
         .forEach((className) => element.classList.remove(className));
       element.style.removeProperty("--reveal-delay");
-    }, delay + 1100);
+    }, delay + cleanupDuration);
   }
 
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => loadItems.forEach(reveal));
+    requestAnimationFrame(() => {
+      loadItems.forEach(reveal);
+      phoneItems.forEach((phoneItem) => {
+        const model = phoneItem.querySelector("model-viewer");
+        const revealPhone = () => {
+          reveal(phoneItem);
+          requestAnimationFrame(() => root.classList.remove("phone-motion-boot"));
+        };
+
+        if (model?.classList.contains("is-loaded") || phoneItem.classList.contains("is-error")) {
+          revealPhone();
+          return;
+        }
+
+        model?.addEventListener("load", revealPhone, { once: true });
+        model?.addEventListener("error", revealPhone, { once: true });
+        window.setTimeout(revealPhone, 2600);
+      });
+    });
   });
 
   const observer = new IntersectionObserver((entries) => {
@@ -233,6 +439,33 @@ function setupRevealMotion() {
   });
 
   scrollItems.forEach((element) => observer.observe(element));
+
+  const beta = document.querySelector(".beta");
+  if (beta && betaPhoneItems.length) {
+    const betaPhoneObserver = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      betaPhoneItems.forEach(reveal);
+      betaPhoneObserver.disconnect();
+    }, {
+      threshold: 0.08,
+      rootMargin: "12% 0px 12% 0px",
+    });
+
+    betaPhoneObserver.observe(beta);
+  }
+
+  const cardObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      reveal(entry.target);
+      cardObserver.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0.01,
+    rootMargin: "0px 0px 18% 0px",
+  });
+
+  cardItems.forEach((element) => cardObserver.observe(element));
 
   const footer = document.querySelector(".hero-footer");
   if (footer) {

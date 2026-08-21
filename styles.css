@@ -237,12 +237,27 @@ img {
   filter: brightness(1.12);
 }
 
-.theme-dot img,
-.mode-button img {
+.theme-dot img {
   width: 32px;
   height: 32px;
   max-width: none;
   clip-path: circle(12px at center);
+}
+
+.mode-button::before {
+  position: absolute;
+  inset: 4px;
+  background: #9d977a;
+  border-radius: 50%;
+  content: "";
+}
+
+.mode-button img {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  max-width: none;
 }
 
 .theme-dot[aria-pressed="true"]::after,
@@ -279,6 +294,223 @@ img {
   min-height: 755px;
   place-items: center;
   isolation: isolate;
+}
+
+.hero-phone {
+  --phone-base-rotate-y: 0deg;
+  --phone-base-rotate-z: -14deg;
+  --phone-base-position-x: 65px;
+  --phone-base-position-y: 30px;
+  position: absolute;
+  z-index: 3;
+  top: 46%;
+  left: clamp(-72px, -4vw, -24px);
+  width: clamp(310px, 35vw, 468px);
+  height: min(680px, 78vh);
+  pointer-events: none;
+  translate: var(--phone-base-position-x) var(--phone-base-position-y);
+  user-select: none;
+}
+
+.hero-phone__float {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: perspective(1100px) translate3d(var(--phone-drift-x, 0), calc(-50% + var(--phone-drift-y, 0px)), 0) rotateX(var(--phone-rotate-x, 0deg)) rotateY(calc(var(--phone-base-rotate-y) + var(--phone-rotate-y, 0deg))) rotateZ(var(--phone-base-rotate-z));
+  transform-origin: 50% 55%;
+  will-change: transform;
+}
+
+.hero-phone__float::after {
+  display: none;
+  position: absolute;
+  z-index: -1;
+  right: 8%;
+  bottom: 7%;
+  left: 8%;
+  height: 18%;
+  background: rgba(0, 0, 0, 0.24);
+  border-radius: 50%;
+  filter: blur(28px);
+  content: "";
+  opacity: 0.72;
+  transform: scaleY(0.32);
+}
+
+.hero-phone model-viewer {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background: transparent;
+  --poster-color: transparent;
+  --progress-bar-color: transparent;
+  --progress-bar-height: 0px;
+  pointer-events: none;
+  transition: opacity 700ms var(--ease);
+}
+
+.hero-phone model-viewer.is-loaded {
+  opacity: 1;
+}
+
+.hero-phone__screen {
+  position: absolute;
+  z-index: 2;
+  top: 7%;
+  left: 20%;
+  width: 65.5%;
+  height: 86.5%;
+  max-width: none;
+  object-fit: fill;
+  opacity: 0;
+  border-radius: 11% / 6%;
+  pointer-events: none;
+  transition: opacity 700ms var(--ease);
+}
+
+.hero-phone__loader {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(var(--ink-rgb), 0.18);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: phone-loader 850ms linear infinite;
+  transition: opacity 240ms var(--ease);
+  transform: translate(-50%, -50%);
+}
+
+.hero-phone:has(model-viewer.is-loaded) .hero-phone__loader {
+  opacity: 0;
+}
+
+.hero-phone.is-error model-viewer,
+.hero-phone.is-error .hero-phone__loader {
+  display: none;
+}
+
+.hero-phone.is-error .hero-phone__screen {
+  opacity: 1;
+}
+
+.hero-phone.is-error .hero-phone__float::before {
+  position: absolute;
+  z-index: 1;
+  top: 5.5%;
+  left: 18%;
+  width: 69.5%;
+  height: 90%;
+  background: #090909;
+  border: 7px solid #747474;
+  border-radius: 13% / 6.5%;
+  box-shadow: inset 0 0 0 2px #171717, 0 24px 44px rgba(0, 0, 0, 0.26);
+  content: "";
+}
+
+@keyframes phone-loader {
+  to { transform: translate(-50%, -50%) rotate(1turn); }
+}
+
+.beta-phone {
+  position: absolute;
+  z-index: 3;
+  top: calc(50% - 70px);
+  right: clamp(-60px, calc(-0.7vw - 42px), -48px);
+  width: clamp(310px, 33vw, 440px);
+  height: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.beta-phone__float {
+  position: relative;
+  width: 100%;
+  height: min(660px, 76vh);
+  transform: perspective(1100px) translate3d(var(--phone-drift-x, 0), calc(-50% + var(--phone-drift-y, 0px)), 0) rotateX(var(--phone-rotate-x, 0deg)) rotateY(var(--phone-rotate-y, 0deg)) rotateZ(14deg);
+  transform-origin: 50% 55%;
+  will-change: transform;
+}
+
+.beta-phone model-viewer {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  background: transparent;
+  --poster-color: transparent;
+  --progress-bar-color: transparent;
+  --progress-bar-height: 0px;
+  pointer-events: none;
+  transition: opacity 700ms var(--ease);
+}
+
+.beta-phone model-viewer.is-loaded {
+  opacity: 1;
+}
+
+.beta-phone__screen {
+  position: absolute;
+  z-index: 2;
+  top: 7%;
+  left: 20%;
+  width: 65.5%;
+  height: 86.5%;
+  max-width: none;
+  object-fit: fill;
+  opacity: 0;
+  border-radius: 11% / 6%;
+  pointer-events: none;
+  transition: opacity 700ms var(--ease);
+}
+
+.beta-phone__loader {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(var(--ink-rgb), 0.18);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: phone-loader 850ms linear infinite;
+  transition: opacity 240ms var(--ease);
+  transform: translate(-50%, -50%);
+}
+
+.beta-phone:has(model-viewer.is-loaded) .beta-phone__loader {
+  opacity: 0;
+}
+
+.beta-phone.is-error model-viewer,
+.beta-phone.is-error .beta-phone__loader {
+  display: none;
+}
+
+.beta-phone.is-error .beta-phone__screen {
+  opacity: 1;
+}
+
+.beta-phone.is-error .beta-phone__float::before {
+  position: absolute;
+  z-index: 1;
+  top: 5.5%;
+  left: 18%;
+  width: 69.5%;
+  height: 90%;
+  background: #090909;
+  border: 7px solid #181818;
+  border-radius: 13% / 6.5%;
+  box-shadow: inset 0 0 0 2px #050505, 0 24px 44px rgba(0, 0, 0, 0.26);
+  content: "";
 }
 
 .hero__content,
@@ -452,7 +684,9 @@ img {
   position: relative;
   display: grid;
   min-width: 0;
-  height: 375px;
+  height: auto;
+  max-height: 375px;
+  aspect-ratio: 1.04;
   margin: 0;
   overflow: hidden;
   color: var(--card-ink);
@@ -469,7 +703,8 @@ img {
 
 .feature-card__ui {
   position: absolute;
-  inset: 18px 18px 74px;
+  inset: 18px 18px auto;
+  aspect-ratio: 1088 / 834;
   overflow: hidden;
   padding: 20px;
   color: #f4ddd1;
@@ -491,39 +726,11 @@ img {
 }
 
 .feature-shot {
+  display: block;
   width: 100%;
   height: 100%;
   max-width: none;
-  object-fit: cover;
-}
-
-.feature-shot--headline {
-  position: absolute;
-  top: -138px;
-  left: 6%;
-  width: 88%;
-  height: auto;
   object-fit: contain;
-}
-.feature-shot--steps {
-  position: absolute;
-  top: -42.9%;
-  left: 50%;
-  width: auto;
-  height: 248.6%;
-  max-width: none;
-  object-fit: contain;
-  transform: translateX(-50%);
-}
-.feature-shot--water {
-  position: absolute;
-  top: -38.5%;
-  left: 50%;
-  width: auto;
-  height: 223.5%;
-  max-width: none;
-  object-fit: contain;
-  transform: translateX(-50%);
 }
 
 .day-ui {
@@ -886,11 +1093,55 @@ img {
     font-size: clamp(4.25rem, 9vw, 5.75rem);
   }
 
+  .hero-phone {
+    left: -30px;
+    width: clamp(280px, 34vw, 350px);
+    height: 560px;
+  }
+
+  .beta-phone {
+    right: -50px;
+    width: clamp(280px, 34vw, 350px);
+    height: 0;
+  }
+
+  .beta-phone__float {
+    height: 560px;
+  }
+
   .why__intro {
     grid-template-columns: minmax(220px, 30%) 1fr;
     gap: 24px;
   }
 
+}
+
+@media (min-width: 761px) and (max-width: 1099px) {
+  .why__intro {
+    margin-bottom: 56px;
+  }
+
+  .feature-grid {
+    grid-auto-columns: min(44vw, 340px);
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    gap: 18px;
+    margin: -56px -24px -72px;
+    padding: 56px 48px 98px 24px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-padding-left: 24px;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: none;
+  }
+
+  .feature-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .feature-card {
+    scroll-snap-align: start;
+  }
 }
 
 @media (max-width: 760px) {
@@ -932,6 +1183,39 @@ img {
     padding: 72px 0 96px;
   }
 
+  .hero {
+    padding-top: clamp(448px, 140vw, 570px);
+  }
+
+  .hero-phone {
+    --phone-base-rotate-y: 0deg;
+    --phone-base-rotate-z: -7deg;
+    --phone-base-position-x: -50%;
+    --phone-base-position-y: 0px;
+    top: clamp(230px, 72vw, 300px);
+    left: 50%;
+    width: min(96vw, 380px);
+    height: min(540px, 135vw);
+  }
+
+  .hero-phone__float {
+    transform: perspective(900px) translate3d(var(--phone-drift-x, 0), calc(-50% + var(--phone-drift-y, 0px)), 0) rotateX(var(--phone-rotate-x, 0deg)) rotateY(calc(var(--phone-base-rotate-y) + var(--phone-rotate-y, 0deg))) rotateZ(var(--phone-base-rotate-z));
+  }
+
+  .beta-phone {
+    top: clamp(225px, 70vw, 290px);
+    right: auto;
+    left: 50%;
+    width: min(92vw, 370px);
+    height: 0;
+    translate: -50% 0;
+  }
+
+  .beta-phone__float {
+    height: min(520px, 132vw);
+    transform: perspective(900px) translate3d(var(--phone-drift-x, 0), calc(-50% + var(--phone-drift-y, 0px)), 0) rotateX(var(--phone-rotate-x, 0deg)) rotateY(var(--phone-rotate-y, 0deg)) rotateZ(7deg);
+  }
+
   .hero h1,
   .beta h2 {
     font-size: clamp(3.25rem, 16vw, 5.2rem);
@@ -959,7 +1243,7 @@ img {
   .why__intro {
     grid-template-columns: 1fr;
     gap: 32px;
-    margin-bottom: 56px;
+    margin-bottom: 40px;
   }
 
   .why__intro h2 {
@@ -991,20 +1275,7 @@ img {
   }
 
   .feature-card {
-    height: 390px;
     scroll-snap-align: start;
-  }
-
-  .day-ui {
-    padding: 16px 14px;
-  }
-
-  .day-ui__story {
-    font-size: 2rem;
-  }
-
-  .feature-shot--headline {
-    top: -112px;
   }
 
   .feature-card h3 {
@@ -1012,7 +1283,7 @@ img {
   }
 
   .beta {
-    padding-top: 96px;
+    padding-top: clamp(455px, 138vw, 560px);
   }
 }
 
@@ -1043,6 +1314,12 @@ img {
   will-change: opacity, filter, transform;
 }
 
+.phone-motion-boot .hero-phone {
+  opacity: 0;
+  filter: none;
+  transform: translate3d(calc(-100% - 18vw), 0, 0) scale(0.94) rotate(-7deg);
+}
+
 .motion-ready .reveal.is-visible {
   opacity: 1;
   filter: blur(0);
@@ -1061,6 +1338,28 @@ img {
 .motion-ready .reveal--right {
   --reveal-x: 38px;
   --reveal-y: 0px;
+}
+
+.motion-ready .hero-phone.reveal--phone {
+  --reveal-x: calc(-100% - 18vw);
+  --reveal-y: 0px;
+  --reveal-scale: 0.94;
+  --reveal-rotate: -7deg;
+  filter: none;
+  transition:
+    opacity 320ms var(--ease) var(--reveal-delay),
+    transform 1150ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay);
+}
+
+.motion-ready .beta-phone.reveal--phone-right {
+  --reveal-x: calc(100% + 18vw);
+  --reveal-y: 0px;
+  --reveal-scale: 0.94;
+  --reveal-rotate: 7deg;
+  filter: none;
+  transition:
+    opacity 320ms var(--ease) var(--reveal-delay),
+    transform 1150ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay);
 }
 
 .motion-ready .reveal--pop {

@@ -15,12 +15,16 @@
     />
     <meta property="og:type" content="website" />
     <title>Akari — Your health has a story to tell</title>
-    <link rel="icon" href="../assets/akari-logo.svg?v=4" type="image/svg+xml" />
+    <link rel="icon" href="../assets/favicon.svg?v=1" type="image/svg+xml" />
     <script>
       (() => {
         const themes = ["meadow", "forest", "coast", "canyon"];
         const modes = ["light", "dark"];
         const params = new URLSearchParams(window.location.search);
+
+        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          document.documentElement.classList.add("phone-motion-boot");
+        }
 
         try {
           const savedTheme = localStorage.getItem("akari-theme");
@@ -35,8 +39,9 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="../styles.css?v=20260820-39" />
-    <script src="../script.js?v=20260820-19" defer></script>
+    <link rel="stylesheet" href="../styles.css?v=20260821-79" />
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js"></script>
+    <script src="../script.js?v=20260821-33" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -55,14 +60,43 @@
             <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Scotland theme" aria-pressed="false"><img src="../assets/theme-scotland.svg" alt="" width="32" height="32" /></button>
             <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="Germany theme" aria-pressed="false"><img src="../assets/theme-germany.svg" alt="" width="32" height="32" /></button>
           </div>
-          <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" aria-pressed="false"><img src="../assets/mode-light.png" alt="" width="32" height="32" /></button>
-          <button class="mode-button" type="button" data-mode-target="dark" aria-label="Use dark appearance" aria-pressed="true"><img src="../assets/mode-dark.png" alt="" width="32" height="32" /></button>
+          <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" aria-pressed="false">
+            <img src="../assets/mode-light.svg" alt="" width="24" height="24" />
+          </button>
+          <button class="mode-button" type="button" data-mode-target="dark" aria-label="Use dark appearance" aria-pressed="true">
+            <img src="../assets/mode-dark.svg" alt="" width="24" height="24" />
+          </button>
         </div>
       </div>
     </header>
 
     <main id="main">
       <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-phone" role="img" aria-label="Akari running on an iPhone 17 Pro">
+          <div class="hero-phone__float">
+            <model-viewer
+              id="hero-phone-model"
+              src="assets/models/iphone-17-pro-akari.glb?v=8"
+              alt="Akari running on an iPhone 17 Pro"
+              loading="eager"
+              camera-orbit="160deg 90deg 106%"
+              field-of-view="24deg"
+              min-field-of-view="24deg"
+              max-field-of-view="24deg"
+              interpolation-decay="110"
+              interaction-prompt="none"
+              shadow-intensity="0"
+              shadow-softness="0.85"
+              exposure="1.05"
+              tone-mapping="neutral"
+              touch-action="pan-y"
+              disable-pan
+              disable-zoom
+            ></model-viewer>
+            <img class="hero-phone__screen" data-src="../assets/phone-hero.png?v=3" alt="" aria-hidden="true" />
+            <span class="hero-phone__loader" aria-hidden="true"></span>
+          </div>
+        </div>
         <div class="hero__content">
           <h1 id="hero-title">
             <span class="headline-line">
@@ -88,21 +122,21 @@
         <div class="feature-grid" role="list" aria-label="What Akari helps you do">
           <article class="feature-card" role="listitem">
             <div class="feature-card__ui day-ui shot-ui" aria-hidden="true">
-              <img class="feature-shot feature-shot--headline" src="../assets/app-today-device.png" alt="" />
+              <img class="feature-shot" src="../assets/card-day.png?v=2" alt="" />
             </div>
             <h3>One readable day</h3>
           </article>
 
           <article class="feature-card" role="listitem">
             <div class="feature-card__ui shot-ui" aria-hidden="true">
-              <img class="feature-shot feature-shot--steps" src="../assets/app-steps-device.png" alt="" />
+              <img class="feature-shot" src="../assets/card-steps.png?v=2" alt="" />
             </div>
             <h3>Numbers with context</h3>
           </article>
 
           <article class="feature-card" role="listitem">
             <div class="feature-card__ui shot-ui" aria-hidden="true">
-              <img class="feature-shot feature-shot--water" src="../assets/app-water-device.png" alt="" />
+              <img class="feature-shot" src="../assets/card-water.png?v=2" alt="" />
             </div>
             <h3>Built around your life</h3>
           </article>
@@ -110,11 +144,36 @@
       </section>
 
       <section class="beta" aria-labelledby="beta-title">
+        <div class="beta-phone" aria-label="Akari's Steps view on an iPhone" role="img">
+          <div class="beta-phone__float">
+            <model-viewer
+              id="beta-phone-model"
+              src="assets/models/iphone-17-pro-akari-steps.glb?v=8"
+              alt="Akari's Steps view running on an iPhone 17 Pro"
+              loading="eager"
+              camera-orbit="-160deg 90deg 106%"
+              field-of-view="24deg"
+              min-field-of-view="24deg"
+              max-field-of-view="24deg"
+              interpolation-decay="110"
+              interaction-prompt="none"
+              shadow-intensity="0"
+              shadow-softness="0.85"
+              exposure="1.05"
+              tone-mapping="neutral"
+              touch-action="pan-y"
+              disable-pan
+              disable-zoom
+            ></model-viewer>
+            <img class="beta-phone__screen" data-src="../assets/phone-steps.png?v=3" alt="" aria-hidden="true" />
+            <span class="beta-phone__loader" aria-hidden="true"></span>
+          </div>
+        </div>
         <div class="beta__content">
           <h2 id="beta-title">
             <span class="beta-line">Help shape</span>
             <span class="beta-line">Akari before</span>
-            <span class="beta-line">launch. <span class="headline-heart playful-emoji" role="button" tabindex="0" aria-label="Play with the heart emoji" data-emoji="💛">💛</span></span>
+            <span class="beta-line">launch.</span>
           </h2>
           <p>Use Akari for a few days and tell us what felt useful, what was confusing and what you wish it could do. Your feedback will directly influence what we build next.</p>
           <a class="cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Join the beta</a>
