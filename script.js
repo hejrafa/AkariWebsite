@@ -373,16 +373,16 @@ function setupRevealMotion() {
     });
   }
 
-  prepare(document.querySelectorAll(".brand"), "drop", [40], loadItems);
-  prepare(document.querySelectorAll(".theme-dot, .mode-button"), "pop", [110, 150, 190, 230, 285, 330], loadItems);
-  prepare(document.querySelectorAll(".hero-phone"), "phone", [30], phoneItems);
-  prepare(document.querySelectorAll(".hero .headline-line"), "line", [100, 190, 280], loadItems);
-  prepare(document.querySelectorAll(".hero .trust-line"), "up", [390], loadItems);
-  prepare(document.querySelectorAll(".hero .cta"), "pop", [490], loadItems);
+  prepare(document.querySelectorAll(".brand"), "drop", [0], loadItems);
+  prepare(document.querySelectorAll(".theme-dot, .mode-button"), "pop", [70, 115, 160, 205, 265, 315], loadItems);
+  prepare(document.querySelectorAll(".hero-phone"), "phone", [90], phoneItems);
+  prepare(document.querySelectorAll(".hero .headline-line"), "line", [280, 410, 540], loadItems);
+  prepare(document.querySelectorAll(".hero .trust-line"), "up", [680], loadItems);
+  prepare(document.querySelectorAll(".hero .cta"), "pop", [800], loadItems);
 
   prepare(document.querySelectorAll(".why__intro h2"), "left", [0], scrollItems);
-  prepare(document.querySelectorAll(".why__intro p"), "right", [90], scrollItems);
-  prepare(document.querySelectorAll(".feature-card"), "card", [0, 70, 140], cardItems);
+  prepare(document.querySelectorAll(".why__intro p"), "right", [160], scrollItems);
+  prepare(document.querySelectorAll(".feature-card"), "card", [280, 400, 520], cardItems);
   prepare(document.querySelectorAll(".beta-phone"), "phone-right", [0], betaPhoneItems);
   prepare(document.querySelectorAll(".beta .beta-line"), "line", [0, 90, 180], scrollItems);
   prepare(document.querySelectorAll(".beta__content p"), "up", [270], scrollItems);
@@ -405,7 +405,10 @@ function setupRevealMotion() {
     }, delay + cleanupDuration);
   }
 
-  requestAnimationFrame(() => {
+  const loadSequenceStart = 180;
+
+  window.setTimeout(() => {
+    root.classList.remove("motion-boot");
     requestAnimationFrame(() => {
       loadItems.forEach(reveal);
       phoneItems.forEach((phoneItem) => {
@@ -425,7 +428,7 @@ function setupRevealMotion() {
         window.setTimeout(revealPhone, 2600);
       });
     });
-  });
+  }, loadSequenceStart);
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -437,8 +440,6 @@ function setupRevealMotion() {
     threshold: 0.14,
     rootMargin: "0px 0px -7% 0px",
   });
-
-  scrollItems.forEach((element) => observer.observe(element));
 
   const beta = document.querySelector(".beta");
   if (beta && betaPhoneItems.length) {
@@ -465,7 +466,11 @@ function setupRevealMotion() {
     rootMargin: "0px 0px 18% 0px",
   });
 
-  cardItems.forEach((element) => cardObserver.observe(element));
+  const scrollSequenceStart = loadSequenceStart + 1650;
+  window.setTimeout(() => {
+    scrollItems.forEach((element) => observer.observe(element));
+    cardItems.forEach((element) => cardObserver.observe(element));
+  }, scrollSequenceStart);
 
   const footer = document.querySelector(".hero-footer");
   if (footer) {

@@ -117,20 +117,35 @@
 }
 
 html {
+  width: 100%;
+  max-width: 100%;
   min-width: 320px;
+  overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
 }
 
 body {
+  width: 100%;
+  max-width: 100%;
   min-width: 320px;
   margin: 0;
   overflow-x: hidden;
+  overflow-x: clip;
   color: var(--ink);
   background: var(--page);
   font-family: var(--serif);
   font-optical-sizing: auto;
   letter-spacing: 0;
   text-rendering: optimizeLegibility;
+}
+
+main,
+.site-header,
+.hero-footer {
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 button,
@@ -1312,6 +1327,15 @@ img {
     filter 720ms var(--ease) var(--reveal-delay),
     transform 850ms var(--ease) var(--reveal-delay);
   will-change: opacity, filter, transform;
+}
+
+.motion-boot .brand,
+.motion-boot .theme-dot,
+.motion-boot .mode-button,
+.motion-boot .hero .headline-line,
+.motion-boot .hero .trust-line,
+.motion-boot .hero .cta {
+  opacity: 0;
 }
 
 .phone-motion-boot .hero-phone {
