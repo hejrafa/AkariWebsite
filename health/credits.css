@@ -66,6 +66,12 @@ body {
   background: var(--page);
 }
 
+a[href],
+button:not(:disabled),
+[role="button"] {
+  cursor: pointer;
+}
+
 .credits-shell {
   display: grid;
   min-height: 100svh;

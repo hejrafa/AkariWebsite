@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+>
+  <url>
+    <loc>https://joinakari.com/</loc>
+    <lastmod>2026-08-24</lastmod>
+    <image:image>
+      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_01.webp</image:loc>
+      <image:title>Akari explains an Apple Health pattern in clear language</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_02.webp</image:loc>
+      <image:title>Akari adds context to daily step data</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_03.webp</image:loc>
+      <image:title>Akari brings nutrition and health data together</image:title>
+    </image:image>
+  </url>
+</urlset>

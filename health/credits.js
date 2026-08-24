@@ -36,7 +36,7 @@ function updateAppearance() {
   }
 
   if (returnLink) {
-    returnLink.href = new URL(`health/?theme=${encodeURIComponent(theme)}&mode=${encodeURIComponent(mode)}`, siteRoot).href;
+    returnLink.href = new URL(`?theme=${encodeURIComponent(theme)}&mode=${encodeURIComponent(mode)}`, siteRoot).href;
   }
 }
 

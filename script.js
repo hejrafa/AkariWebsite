@@ -6,7 +6,16 @@ const brandLogo = document.querySelector(".brand img");
 const creditsLink = document.querySelector(".credits-heart");
 const siteRoot = new URL(".", document.currentScript?.src || window.location.href);
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
+const themedImages = document.querySelectorAll("img[data-media-kind][data-media-index]");
+const phoneModels = document.querySelectorAll("model-viewer[data-screen-index]");
 let followsSystemMode = false;
+
+const themeCountries = {
+  meadow: "germany",
+  forest: "japan",
+  coast: "scotland",
+  canyon: "usa",
+};
 
 const pageColors = {
   dark: {
@@ -32,6 +41,27 @@ function updateThemeColor() {
   if (creditsLink) {
     creditsLink.href = new URL(`health/credits.html?theme=${encodeURIComponent(root.dataset.theme)}&mode=${encodeURIComponent(root.dataset.mode)}`, siteRoot).href;
   }
+
+  const country = themeCountries[root.dataset.theme];
+  if (!country || !pageColors[root.dataset.mode]) return;
+
+  themedImages.forEach((image) => {
+    const mediaVersion = image.dataset.mediaKind === "image" && image.dataset.mediaIndex === "02" ? 2 : 1;
+    const source = new URL(
+      `assets/theme-media/${image.dataset.mediaKind}_${country}_${root.dataset.mode}_${image.dataset.mediaIndex}.webp?v=${mediaVersion}`,
+      siteRoot,
+    ).href;
+    image.dataset.src = source;
+    if (image.hasAttribute("src")) image.src = source;
+  });
+
+  phoneModels.forEach((model) => {
+    model.dataset.screenSrc = new URL(
+      `assets/theme-media/mockup_${country}_${root.dataset.mode}_${model.dataset.screenIndex}.webp?v=1`,
+      siteRoot,
+    ).href;
+    if (model.model) syncModelScreen(model);
+  });
 }
 
 function selectTheme(theme, persist = true) {
@@ -175,7 +205,6 @@ function setupHeroPhone() {
   const hero = phone?.closest(".hero");
   const phoneHost = phone?.closest(".hero-phone");
   const floatLayer = phone?.closest(".hero-phone__float");
-  const fallbackScreen = floatLayer?.querySelector(".hero-phone__screen");
   if (!phone || !hero || !phoneHost || !floatLayer) return;
 
   const canFollowPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -187,28 +216,6 @@ function setupHeroPhone() {
   let pointerIsInHero = false;
   let heroIsVisible = true;
   let animationFrame;
-
-  function showPhoneFallback() {
-    const fallbackSource = fallbackScreen?.dataset.src;
-    if (fallbackScreen && fallbackSource && !fallbackScreen.getAttribute("src")) fallbackScreen.src = fallbackSource;
-    phone.closest(".hero-phone")?.classList.add("is-error");
-  }
-
-  const loadingFallback = window.setTimeout(() => {
-    if (!phone.classList.contains("is-loaded")) showPhoneFallback();
-  }, 2400);
-
-  function finishLoading() {
-    window.clearTimeout(loadingFallback);
-    phone.closest(".hero-phone")?.classList.remove("is-error");
-    phone.classList.add("is-loaded");
-  }
-
-  phone.addEventListener("load", finishLoading, { once: true });
-  phone.addEventListener("error", () => {
-    window.clearTimeout(loadingFallback);
-    showPhoneFallback();
-  }, { once: true });
 
   function updatePointerTarget(event) {
     if (!canFollowPointer.matches || reducedMotion.matches) return;
@@ -267,7 +274,6 @@ function setupBetaPhone() {
   const beta = phone?.closest(".beta");
   const phoneHost = phone?.closest(".beta-phone");
   const floatLayer = phone?.closest(".beta-phone__float");
-  const fallbackScreen = phoneHost?.querySelector(".beta-phone__screen");
   if (!phone || !beta || !phoneHost || !floatLayer) return;
 
   const canFollowPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -279,27 +285,6 @@ function setupBetaPhone() {
   let pointerIsInBeta = false;
   let betaIsVisible = false;
   let animationFrame;
-
-  function showFallback() {
-    const fallbackSource = fallbackScreen?.dataset.src;
-    if (fallbackScreen && fallbackSource && !fallbackScreen.getAttribute("src")) fallbackScreen.src = fallbackSource;
-    phoneHost.classList.add("is-error");
-  }
-
-  const loadingFallback = window.setTimeout(() => {
-    if (!phone.classList.contains("is-loaded")) showFallback();
-  }, 2800);
-
-  phone.addEventListener("load", () => {
-    window.clearTimeout(loadingFallback);
-    phoneHost.classList.remove("is-error");
-    phone.classList.add("is-loaded");
-  }, { once: true });
-
-  phone.addEventListener("error", () => {
-    window.clearTimeout(loadingFallback);
-    showFallback();
-  }, { once: true });
 
   function updatePointerTarget(event) {
     if (!canFollowPointer.matches || reducedMotion.matches) return;
@@ -352,6 +337,97 @@ function setupBetaPhone() {
 
 setupBetaPhone();
 
+async function syncModelScreen(model) {
+  if (!model?.model || !model.dataset.screenSrc) return false;
+
+  const source = model.dataset.screenSrc;
+  try {
+    const texture = await model.createTexture(source, "image/webp");
+    if (source !== model.dataset.screenSrc) return syncModelScreen(model);
+
+    const screenMaterial = model.model.getMaterialByName("OLED");
+    const screenTexture = screenMaterial?.pbrMetallicRoughness?.baseColorTexture;
+    if (!screenTexture) throw new Error("The OLED screen material is unavailable.");
+    screenTexture.setTexture(texture);
+    return true;
+  } catch (error) {
+    console.warn("Akari phone screen could not be updated.", error);
+    return false;
+  }
+}
+
+function setupPhoneModels() {
+  const models = [...document.querySelectorAll("model-viewer[data-model-src]")];
+  if (!models.length) return;
+
+  let libraryPromise;
+
+  function loadLibrary() {
+    if (customElements.get("model-viewer")) return Promise.resolve();
+    if (libraryPromise) return libraryPromise;
+
+    libraryPromise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.type = "module";
+      script.src = "https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js";
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.append(script);
+    });
+
+    return libraryPromise;
+  }
+
+  models.forEach((model) => {
+    const phoneHost = model.closest(".hero-phone, .beta-phone");
+
+    model.addEventListener("load", async () => {
+      await syncModelScreen(model);
+      model.classList.add("is-loaded");
+      phoneHost?.classList.add("is-ready");
+      model.dispatchEvent(new Event("phone-ready"));
+    }, { once: true });
+
+    model.addEventListener("error", () => {
+      phoneHost?.classList.add("is-unavailable");
+    }, { once: true });
+  });
+
+  loadLibrary()
+    .then(() => {
+      models.forEach((model) => {
+        const activateModel = () => {
+          model.setAttribute("loading", "eager");
+          model.setAttribute("src", model.dataset.modelSrc);
+        };
+
+        if (model.getAttribute("loading") !== "lazy") {
+          activateModel();
+          return;
+        }
+
+        const region = model.closest(".beta");
+        if (!region) {
+          activateModel();
+          return;
+        }
+
+        const loadObserver = new IntersectionObserver((entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          activateModel();
+          loadObserver.disconnect();
+        }, { rootMargin: "85% 0px", threshold: 0 });
+
+        loadObserver.observe(region);
+      });
+    })
+    .catch(() => {
+      models.forEach((model) => model.closest(".hero-phone, .beta-phone")?.classList.add("is-unavailable"));
+    });
+}
+
+setupPhoneModels();
+
 function setupRevealMotion() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -387,7 +463,10 @@ function setupRevealMotion() {
   prepare(document.querySelectorAll(".beta .beta-line"), "line", [0, 90, 180], scrollItems);
   prepare(document.querySelectorAll(".beta__content p"), "up", [270], scrollItems);
   prepare(document.querySelectorAll(".beta .cta"), "pop", [360], scrollItems);
-  prepare(document.querySelectorAll(".hero-footer > *"), "up", [0, 80], footerItems);
+  prepare(document.querySelectorAll(".answers__intro h2"), "right", [0], scrollItems);
+  prepare(document.querySelectorAll(".answers__intro > p"), "left", [140], scrollItems);
+  prepare(document.querySelectorAll(".answers__item"), "up", [220, 300, 380, 460], scrollItems);
+  prepare(document.querySelectorAll(".hero-footer > *"), "up", [0, 80, 150], footerItems);
 
   root.classList.add("motion-ready");
 
@@ -418,14 +497,12 @@ function setupRevealMotion() {
           requestAnimationFrame(() => root.classList.remove("phone-motion-boot"));
         };
 
-        if (model?.classList.contains("is-loaded") || phoneItem.classList.contains("is-error")) {
+        if (model?.classList.contains("is-loaded")) {
           revealPhone();
           return;
         }
 
-        model?.addEventListener("load", revealPhone, { once: true });
-        model?.addEventListener("error", revealPhone, { once: true });
-        window.setTimeout(revealPhone, 2600);
+        model?.addEventListener("phone-ready", revealPhone, { once: true });
       });
     });
   }, loadSequenceStart);
@@ -443,9 +520,18 @@ function setupRevealMotion() {
 
   const beta = document.querySelector(".beta");
   if (beta && betaPhoneItems.length) {
+    let betaIsVisible = false;
+
+    const revealBetaPhone = () => {
+      const model = betaPhoneItems[0]?.querySelector("model-viewer");
+      if (!betaIsVisible || !model?.classList.contains("is-loaded")) return;
+      betaPhoneItems.forEach(reveal);
+    };
+
     const betaPhoneObserver = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
-      betaPhoneItems.forEach(reveal);
+      betaIsVisible = true;
+      revealBetaPhone();
       betaPhoneObserver.disconnect();
     }, {
       threshold: 0.08,
@@ -453,6 +539,7 @@ function setupRevealMotion() {
     });
 
     betaPhoneObserver.observe(beta);
+    betaPhoneItems[0]?.querySelector("model-viewer")?.addEventListener("phone-ready", revealBetaPhone, { once: true });
   }
 
   const cardObserver = new IntersectionObserver((entries) => {

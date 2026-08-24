@@ -1,17 +1,116 @@
 <!doctype html>
-<html lang="en" data-theme="forest" data-mode="dark">
+<html lang="en" dir="ltr" data-theme="forest" data-mode="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#151a0c" />
-    <meta name="description" content="Akari." />
-    <title>Akari</title>
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Akari is a private iPhone health app that turns Apple Health data—vitals, activity and nutrition—into calm daily insights. Join the free TestFlight beta."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="Akari" />
+    <meta name="application-name" content="Akari" />
+    <meta name="apple-mobile-web-app-title" content="Akari" />
+    <link rel="canonical" href="https://joinakari.com/" />
+
+    <meta property="og:title" content="Akari — Understand your Apple Health data" />
+    <meta
+      property="og:description"
+      content="A private iPhone health app for calm daily insights across your vitals, activity and nutrition. Free during beta."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://joinakari.com/" />
+    <meta property="og:site_name" content="Akari" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://joinakari.com/assets/og-akari.png" />
+    <meta property="og:image:width" content="1088" />
+    <meta property="og:image:height" content="834" />
+    <meta property="og:image:alt" content="Akari explaining a daily Apple Health pattern in clear language" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Akari — Understand your Apple Health data" />
+    <meta
+      name="twitter:description"
+      content="Calm, private daily insights across your Apple Health vitals, activity and nutrition."
+    />
+    <meta name="twitter:image" content="https://joinakari.com/assets/og-akari.png" />
+    <meta name="twitter:image:alt" content="Akari explaining a daily Apple Health pattern in clear language" />
+
+    <title>Akari — Understand Your Apple Health Data</title>
     <link rel="icon" href="assets/favicon.svg?v=1" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="health/assets/app-icon.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="preload" href="assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://joinakari.com/#website",
+            "url": "https://joinakari.com/",
+            "name": "Akari",
+            "description": "Akari helps people understand their Apple Health data through calm daily insights.",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://joinakari.com/#webpage",
+            "url": "https://joinakari.com/",
+            "name": "Akari — Understand Your Apple Health Data",
+            "description": "A private iPhone health app for calm daily insights across your vitals, activity and nutrition.",
+            "isPartOf": { "@id": "https://joinakari.com/#website" },
+            "mainEntity": { "@id": "https://joinakari.com/#app" },
+            "primaryImageOfPage": "https://joinakari.com/assets/og-akari.png",
+            "inLanguage": "en"
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://joinakari.com/#app",
+            "name": "Akari",
+            "url": "https://joinakari.com/",
+            "description": "Akari turns Apple Health data into a calm, readable daily story with simple explanations across supported vitals, activity and nutrition data.",
+            "applicationCategory": "HealthApplication",
+            "operatingSystem": "iOS",
+            "availableOnDevice": "iPhone",
+            "isAccessibleForFree": true,
+            "image": "https://joinakari.com/health/assets/app-icon.png",
+            "screenshot": [
+              "https://joinakari.com/assets/theme-media/image_japan_dark_01.webp",
+              "https://joinakari.com/assets/theme-media/image_japan_dark_02.webp",
+              "https://joinakari.com/assets/theme-media/image_japan_dark_03.webp"
+            ],
+            "featureList": [
+              "A calm daily view without scores or judgment",
+              "Simple explanations with relatable examples",
+              "Supported vitals, activity and nutrition in one app",
+              "No account required",
+              "Apple Health data stays on the user's iPhone"
+            ],
+            "downloadUrl": "https://testflight.apple.com/join/wrv4aFVQ",
+            "softwareRequirements": "Requires an iPhone with Apple Health and TestFlight during beta.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock",
+              "url": "https://testflight.apple.com/join/wrv4aFVQ"
+            }
+          }
+        ]
+      }
+    </script>
     <script>
       (() => {
         const themes = ["meadow", "forest", "coast", "canyon"];
         const modes = ["light", "dark"];
         const params = new URLSearchParams(window.location.search);
+
+        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          document.documentElement.classList.add("motion-boot", "phone-motion-boot");
+        }
 
         try {
           const savedTheme = localStorage.getItem("akari-theme");
@@ -24,20 +123,186 @@
           document.documentElement.dataset.theme = "forest";
           document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
-
-        if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          document.documentElement.classList.add("credits-motion");
-        }
       })();
     </script>
-    <link rel="stylesheet" href="health/credits.css?v=20260820-03" />
-    <script src="health/credits.js?v=20260820-03" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20260824-90" />
+    <script src="script.js?v=20260824-43" defer></script>
   </head>
   <body>
-    <main class="credits-shell">
-      <div class="credits-brand" aria-label="Akari">
-        <img src="assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" />
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" aria-label="Akari website header">
+      <div class="site-header__inner">
+        <span class="site-header__spacer" aria-hidden="true"></span>
+        <a class="brand" href="./" aria-label="Akari home">
+          <img src="assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" />
+        </a>
+
+        <div class="appearance-controls" role="group" aria-label="Choose page appearance">
+          <div class="theme-controls" role="group" aria-label="Choose a color theme">
+            <button class="theme-dot" type="button" data-theme-target="meadow" aria-label="Germany theme" aria-pressed="false"><img src="assets/theme-germany.svg?v=2" alt="" width="32" height="32" /></button>
+            <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Japan theme" aria-pressed="true"><img src="assets/theme-japan.svg" alt="" width="32" height="32" /></button>
+            <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Scotland theme" aria-pressed="false"><img src="assets/theme-scotland.svg" alt="" width="32" height="32" /></button>
+            <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="USA theme" aria-pressed="false"><img src="assets/theme-usa.svg?v=2" alt="" width="32" height="32" /></button>
+          </div>
+          <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" aria-pressed="false">
+            <img src="assets/mode-light.svg" alt="" width="24" height="24" />
+          </button>
+          <button class="mode-button" type="button" data-mode-target="dark" aria-label="Use dark appearance" aria-pressed="true">
+            <img src="assets/mode-dark.svg" alt="" width="24" height="24" />
+          </button>
+        </div>
       </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-phone" role="img" aria-label="Akari running on an iPhone 17 Pro">
+          <div class="hero-phone__float">
+            <model-viewer
+              id="hero-phone-model"
+              data-model-src="health/assets/models/iphone-17-pro-akari.glb?v=8"
+              data-screen-index="01"
+              alt="Akari running on an iPhone 17 Pro"
+              loading="eager"
+              camera-orbit="160deg 90deg 106%"
+              field-of-view="24deg"
+              min-field-of-view="24deg"
+              max-field-of-view="24deg"
+              interpolation-decay="110"
+              interaction-prompt="none"
+              shadow-intensity="0"
+              shadow-softness="0.85"
+              exposure="1.05"
+              tone-mapping="neutral"
+              touch-action="pan-y"
+              disable-pan
+              disable-zoom
+            ></model-viewer>
+          </div>
+        </div>
+        <div class="hero__content">
+          <h1 id="hero-title">
+            <span class="headline-line">
+              <span class="hero-y">Y</span>our health
+            </span>
+            <span class="headline-line">has a story</span>
+            <span class="headline-line"><span class="headline-heart playful-emoji" role="button" tabindex="0" aria-label="Play with the heart emoji" data-emoji="💛">💛</span> to tell.</span>
+          </h1>
+          <p class="trust-line">
+            <span>Free during beta · No account</span>
+            <span>Your health data stays on your iPhone</span>
+          </p>
+          <a class="cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Join the beta</a>
+        </div>
+      </section>
+
+      <section class="why" aria-labelledby="why-title">
+        <div class="why__intro">
+          <h2 id="why-title"><span class="why-emoji playful-emoji" role="button" tabindex="0" aria-label="Play with the sun emoji" data-emoji="☀️">☀️</span> Why?</h2>
+          <p>Akari turns your Apple Health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.</p>
+        </div>
+
+        <div class="feature-grid" role="list" aria-label="What Akari helps you do">
+          <article class="feature-card" role="listitem">
+            <div class="feature-card__ui day-ui shot-ui" aria-hidden="true">
+              <img class="feature-shot" data-media-kind="image" data-media-index="01" src="assets/theme-media/image_japan_dark_01.webp?v=1" alt="" width="1088" height="834" loading="lazy" decoding="async" />
+            </div>
+            <div class="feature-card__copy">
+              <h3>See today clearly</h3>
+              <p>Your day, explained calmly—without scores, judgment, or alarm.</p>
+            </div>
+          </article>
+
+          <article class="feature-card" role="listitem">
+            <div class="feature-card__ui shot-ui" aria-hidden="true">
+              <img class="feature-shot" data-media-kind="image" data-media-index="02" src="assets/theme-media/image_japan_dark_02.webp?v=2" alt="" width="1088" height="834" loading="lazy" decoding="async" />
+            </div>
+            <div class="feature-card__copy">
+              <h3>Understand your data</h3>
+              <p>Simple, science-based explanations with relatable everyday examples.</p>
+            </div>
+          </article>
+
+          <article class="feature-card" role="listitem">
+            <div class="feature-card__ui shot-ui" aria-hidden="true">
+              <img class="feature-shot" data-media-kind="image" data-media-index="03" src="assets/theme-media/image_japan_dark_03.webp?v=1" alt="" width="1088" height="834" loading="lazy" decoding="async" />
+            </div>
+            <div class="feature-card__copy">
+              <h3>See the whole picture</h3>
+              <p>Your vitals and nutrition, together in one clear view.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="beta" aria-labelledby="beta-title">
+        <div class="beta-phone" aria-label="Akari's Steps view on an iPhone" role="img">
+          <div class="beta-phone__float">
+            <model-viewer
+              id="beta-phone-model"
+              data-model-src="health/assets/models/iphone-17-pro-akari-steps.glb?v=8"
+              data-screen-index="02"
+              alt="Akari's Steps view running on an iPhone 17 Pro"
+              loading="lazy"
+              camera-orbit="-160deg 90deg 106%"
+              field-of-view="24deg"
+              min-field-of-view="24deg"
+              max-field-of-view="24deg"
+              interpolation-decay="110"
+              interaction-prompt="none"
+              shadow-intensity="0"
+              shadow-softness="0.85"
+              exposure="1.05"
+              tone-mapping="neutral"
+              touch-action="pan-y"
+              disable-pan
+              disable-zoom
+            ></model-viewer>
+          </div>
+        </div>
+        <div class="beta__content">
+          <h2 id="beta-title">
+            <span class="beta-line">Help shape</span>
+            <span class="beta-line">Akari before</span>
+            <span class="beta-line">launch.</span>
+          </h2>
+          <p>Use Akari for a few days and tell us what felt useful, what was confusing and what you wish it could do. Your feedback will directly influence what we build next.</p>
+          <a class="cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Join the beta</a>
+        </div>
+      </section>
+
+      <section class="answers" aria-labelledby="answers-title">
+        <div class="answers__intro">
+          <h2 id="answers-title">FAQ <span class="answers-emoji playful-emoji" role="button" tabindex="0" aria-label="Play with the speech bubble emoji" data-emoji="💬">💬</span></h2>
+          <p>Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.</p>
+        </div>
+
+        <dl class="answers__grid">
+          <div class="answers__item">
+            <dt>What is Akari?</dt>
+            <dd>Akari is an iPhone health app that turns Apple Health data into a calm, readable daily story.</dd>
+          </div>
+          <div class="answers__item">
+            <dt>What health data can I see?</dt>
+            <dd>Akari brings supported vitals, activity, nutrition and goals together so you can understand your day in context.</dd>
+          </div>
+          <div class="answers__item">
+            <dt>Does my health data leave my iPhone?</dt>
+            <dd>No. Akari works without an account, and your Apple Health data stays on your iPhone.</dd>
+          </div>
+          <div class="answers__item">
+            <dt>How can I try Akari?</dt>
+            <dd>Join the free public beta through <a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Apple TestFlight</a> and help shape the app before launch.</dd>
+          </div>
+        </dl>
+      </section>
     </main>
+
+    <footer class="hero-footer" aria-label="Akari credits">
+      <span class="footer-name">Akari</span>
+      <span class="footer-made">Made with <a class="credits-heart" href="health/credits.html" aria-label="Open credits">♥</a> in Germany</span>
+      <p class="footer-disclaimer">Akari helps explain your health data and patterns. It does not diagnose conditions or replace professional medical advice.</p>
+    </footer>
   </body>
 </html>

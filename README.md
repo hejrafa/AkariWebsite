@@ -1,6 +1,6 @@
-# Akari launch site
+# Akari website
 
-A lightweight static launch site for Akari. It is intentionally dependency-free, so it can be opened locally or deployed to any static host.
+A lightweight static website for Akari, deployed to [joinakari.com](https://joinakari.com/). It is intentionally dependency-free and can run locally or on any static host.
 
 ## Run locally
 
@@ -8,11 +8,14 @@ A lightweight static launch site for Akari. It is intentionally dependency-free,
 python3 -m http.server 8000
 ```
 
-Then open `http://localhost:8000` for the Akari placeholder or `http://localhost:8000/health/` for the health landing page in progress.
+Then open `http://localhost:8000/`.
 
-## Launch settings
+## Discovery files
 
-- Add the public TestFlight invitation URL in `script.js` as `TESTFLIGHT_URL`. All main access buttons will automatically become “Join the TestFlight beta” links.
-- Until the beta link is ready, the early-access form captures submissions when deployed on Netlify (it uses Netlify Forms and needs no extra code). For another host, wire the form to your preferred email provider.
+- `robots.txt` allows search and AI search crawlers and references the sitemap.
+- `sitemap.xml` lists the canonical public page and its primary images.
+- `llms.txt` and `llms-full.txt` provide concise machine-readable product information.
+- `manifest.webmanifest` describes the website for browsers and installed shortcuts.
+- The page includes Open Graph, X/Twitter, canonical, and `SoftwareApplication` JSON-LD metadata.
 
-The visual assets in `health/assets` are copied from the local Akari Health iOS project and remain product-reference material.
+The visual assets in `health/assets` are copied from the local Akari iOS project and remain product-reference material. The public TestFlight URL is referenced directly in `index.html`, `llms.txt`, and `llms-full.txt`.

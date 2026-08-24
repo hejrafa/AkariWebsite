@@ -1,0 +1,58 @@
+# Akari product information
+
+Last updated: 2026-08-24
+
+## Summary
+
+Akari is an iPhone health app that turns Apple Health data into a calm, readable daily story. It brings supported vitals, activity, nutrition and goals into one view and adds simple explanations with relatable everyday examples.
+
+Akari is designed to inform without judgment. It does not reduce a person's day to a score and does not use alarmist language to drive engagement.
+
+## Product benefits
+
+### See today clearly
+
+Akari explains the user's day calmly, without scores, judgment or alarm.
+
+### Understand your data
+
+Akari provides simple, science-based explanations with relatable everyday examples.
+
+### See the whole picture
+
+Akari brings supported vitals and nutrition together in one clear view so connections are easier to notice.
+
+## Privacy
+
+Akari requires no account. Apple Health data stays on the user's iPhone.
+
+## Availability
+
+Akari is free during its public beta. iPhone users can join through Apple TestFlight at https://testflight.apple.com/join/wrv4aFVQ.
+
+## Medical scope
+
+Akari helps explain personal health data and patterns. It does not diagnose conditions and does not replace professional medical advice.
+
+## Frequently asked questions
+
+### What is Akari?
+
+Akari is an iPhone health app that turns Apple Health data into a calm, readable daily story.
+
+### What health data can I see?
+
+Akari brings supported vitals, activity, nutrition and goals together so users can understand their day in context.
+
+### Does health data leave the iPhone?
+
+No. Akari works without an account, and Apple Health data stays on the user's iPhone.
+
+### How can I try Akari?
+
+Join the free public beta through Apple TestFlight and help shape the app before launch.
+
+## Canonical sources
+
+- Official website: https://joinakari.com/
+- Public beta: https://testflight.apple.com/join/wrv4aFVQ

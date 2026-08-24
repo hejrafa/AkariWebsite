@@ -1,0 +1,19 @@
+# Akari
+
+> Akari is a private iPhone health app that turns Apple Health data into a calm, readable daily story.
+
+Akari helps people understand supported vitals, activity, nutrition and goals in one place. It uses simple explanations and relatable examples without turning health into a score or using alarmist language.
+
+## Key facts
+
+- Platform: iPhone and iOS
+- Data source: Apple Health data the user chooses to share
+- Privacy: no account is required, and health data stays on the user's iPhone
+- Availability: free public beta through Apple TestFlight
+- Scope: Akari explains health data and patterns; it does not diagnose conditions or replace professional medical advice
+
+## Official links
+
+- [Akari website](https://joinakari.com/)
+- [Join the free TestFlight beta](https://testflight.apple.com/join/wrv4aFVQ)
+- [Full product information](https://joinakari.com/llms-full.txt)
