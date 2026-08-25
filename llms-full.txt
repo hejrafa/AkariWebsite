@@ -4,7 +4,7 @@ Last updated: 2026-08-24
 
 ## Summary
 
-Akari is an iPhone health app that turns Apple Health data into a calm, readable daily story. It brings supported vitals, activity, nutrition and goals into one view and adds simple explanations with relatable everyday examples.
+Akari is an iPhone health app that turns health data into a calm, readable daily story. It brings supported vitals, activity, nutrition and goals into one view and adds simple explanations with relatable everyday examples.
 
 Akari is designed to inform without judgment. It does not reduce a person's day to a score and does not use alarmist language to drive engagement.
 
@@ -24,7 +24,7 @@ Akari brings supported vitals and nutrition together in one clear view so connec
 
 ## Privacy
 
-Akari requires no account. Apple Health data stays on the user's iPhone.
+Akari requires no account. Health data stays on the user's iPhone.
 
 ## Availability
 
@@ -38,7 +38,7 @@ Akari helps explain personal health data and patterns. It does not diagnose cond
 
 ### What is Akari?
 
-Akari is an iPhone health app that turns Apple Health data into a calm, readable daily story.
+Akari is an iPhone health app that turns health data into a calm, readable daily story.
 
 ### What health data can I see?
 
@@ -46,7 +46,7 @@ Akari brings supported vitals, activity, nutrition and goals together so users c
 
 ### Does health data leave the iPhone?
 
-No. Akari works without an account, and Apple Health data stays on the user's iPhone.
+No. Akari works without an account, and health data stays on the user's iPhone.
 
 ### How can I try Akari?
 

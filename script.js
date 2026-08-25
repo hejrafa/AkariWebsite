@@ -47,7 +47,7 @@ const translations = {
     trustPrivacy: "Your health data stays on your iPhone",
     joinBeta: "Join the beta",
     whyTitle: " Why?",
-    whyBody: "Akari turns your Apple Health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
+    whyBody: "Akari turns your health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
     featuresLabel: "What Akari helps you do",
     featuresInstructions: "Swipe or use the left and right arrow keys to explore all cards.",
     featureTodayTitle: "See today clearly",
@@ -63,11 +63,11 @@ const translations = {
     faqTitle: "FAQ",
     faqIntro: "Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.",
     faqWhatQuestion: "What is Akari?",
-    faqWhatAnswer: "Akari is an iPhone health app that turns Apple Health data into a calm, readable daily story.",
+    faqWhatAnswer: "Akari is an iPhone health app that turns health data into a calm, readable daily story.",
     faqDataQuestion: "What health data can I see?",
     faqDataAnswer: "Akari brings supported vitals, activity, nutrition and goals together so you can understand your day in context.",
     faqPrivacyQuestion: "Does my health data leave my iPhone?",
-    faqPrivacyAnswer: "No. Akari works without an account, and your Apple Health data stays on your iPhone.",
+    faqPrivacyAnswer: "No. Akari works without an account, and your health data stays on your iPhone.",
     faqTryQuestion: "How can I try Akari?",
     faqTryPrefix: "Join the free public beta through ",
     faqTrySuffix: " and help shape the app before launch.",
@@ -105,7 +105,7 @@ const translations = {
     trustPrivacy: "Deine Gesundheitsdaten bleiben auf dem iPhone",
     joinBeta: "Beta testen",
     whyTitle: " Warum?",
-    whyBody: "Akari macht aus deinen Apple Health-Daten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
+    whyBody: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
     featuresLabel: "Was Akari für dich tut",
     featuresInstructions: "Wische oder nutze die linke und rechte Pfeiltaste, um alle Karten zu entdecken.",
     featureTodayTitle: "Dein Tag im Blick",
@@ -121,11 +121,11 @@ const translations = {
     faqTitle: "FAQ",
     faqIntro: "Akari ist in der Beta kostenlos und über Apples TestFlight fürs iPhone verfügbar. Das solltest du vor dem Start wissen.",
     faqWhatQuestion: "Was ist Akari?",
-    faqWhatAnswer: "Akari ist eine iPhone-App, die deine Apple Health-Daten ruhig und verständlich einordnet.",
+    faqWhatAnswer: "Akari ist eine iPhone-App, die deine Gesundheitsdaten ruhig und verständlich einordnet.",
     faqDataQuestion: "Welche Gesundheitsdaten kann ich sehen?",
     faqDataAnswer: "Akari zeigt Vitalwerte, Aktivität, Ernährung und Ziele gemeinsam—für mehr Kontext im Alltag.",
     faqPrivacyQuestion: "Bleiben meine Gesundheitsdaten auf dem iPhone?",
-    faqPrivacyAnswer: "Ja. Akari braucht kein Konto, und deine Apple Health-Daten bleiben auf deinem iPhone.",
+    faqPrivacyAnswer: "Ja. Akari braucht kein Konto, und deine Gesundheitsdaten bleiben auf deinem iPhone.",
     faqTryQuestion: "Wie teste ich Akari?",
     faqTryPrefix: "Teste Akari kostenlos über ",
     faqTrySuffix: " und gestalte die App vor dem Start mit.",
@@ -139,19 +139,19 @@ const translations = {
 
 const pageMetadata = {
   en: {
-    title: "Akari—Understand Your Apple Health Data",
-    description: "Akari is a private iPhone health app that turns Apple Health data—vitals, activity and nutrition—into calm daily insights. Join the free TestFlight beta.",
-    socialTitle: "Akari—Understand your Apple Health data",
-    socialDescription: "Akari turns your Apple Health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
-    twitterDescription: "Akari turns your Apple Health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
+    title: "Akari—Understand your health data",
+    description: "Akari is a private iPhone health app that turns health data—vitals, activity and nutrition—into calm daily insights. Join the free TestFlight beta.",
+    socialTitle: "Akari—Understand your health data",
+    socialDescription: "Akari turns your health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
+    twitterDescription: "Akari turns your health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
     imageAlt: "Akari showing vitals, nutrition and goals together in one daily view",
   },
   de: {
-    title: "Akari—Verstehe deine Apple Health-Daten",
-    description: "Akari ist eine private Gesundheits-App fürs iPhone. Sie macht aus Vitalwerten, Aktivität und Ernährung in Apple Health verständliche Einblicke für jeden Tag. Jetzt kostenlos testen.",
-    socialTitle: "Akari—Verstehe deine Apple Health-Daten",
-    socialDescription: "Akari macht aus deinen Apple Health-Daten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
-    twitterDescription: "Akari macht aus deinen Apple Health-Daten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
+    title: "Akari—Verstehe deine Gesundheitsdaten",
+    description: "Akari ist eine private Gesundheits-App fürs iPhone. Sie macht aus Vitalwerten, Aktivität und Ernährung verständliche Einblicke für jeden Tag. Jetzt kostenlos testen.",
+    socialTitle: "Akari—Verstehe deine Gesundheitsdaten",
+    socialDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
+    twitterDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
     imageAlt: "Akari zeigt Vitalwerte, Ernährung und Ziele gemeinsam in einer Tagesansicht",
   },
 };
@@ -168,8 +168,8 @@ function structuredDataFor(language) {
         url,
         name: "Akari",
         description: isGerman
-          ? "Akari hilft Menschen, ihre Apple Health-Daten mit ruhigen, verständlichen Einblicken für jeden Tag besser zu verstehen."
-          : "Akari helps people understand their Apple Health data through calm daily insights.",
+          ? "Akari hilft Menschen, ihre Gesundheitsdaten mit ruhigen, verständlichen Einblicken für jeden Tag besser zu verstehen."
+          : "Akari helps people understand their health data through calm daily insights.",
         inLanguage: language,
       },
       {
@@ -189,8 +189,8 @@ function structuredDataFor(language) {
         name: "Akari",
         url,
         description: isGerman
-          ? "Akari macht aus Apple Health-Daten eine ruhige, verständliche Geschichte des Tages—mit einfachen Erklärungen zu unterstützten Vitalwerten, Aktivität und Ernährung."
-          : "Akari turns Apple Health data into a calm, readable daily story with simple explanations across supported vitals, activity and nutrition data.",
+          ? "Akari macht aus Gesundheitsdaten eine ruhige, verständliche Geschichte des Tages—mit einfachen Erklärungen zu unterstützten Vitalwerten, Aktivität und Ernährung."
+          : "Akari turns health data into a calm, readable daily story with simple explanations across supported vitals, activity and nutrition data.",
         applicationCategory: "HealthApplication",
         operatingSystem: "iOS",
         availableOnDevice: "iPhone",
@@ -207,14 +207,14 @@ function structuredDataFor(language) {
               "Einfache Erklärungen mit anschaulichen Beispielen",
               "Unterstützte Vitalwerte, Aktivität und Ernährung in einer App",
               "Kein Konto erforderlich",
-              "Apple Health-Daten bleiben auf dem iPhone",
+              "Gesundheitsdaten bleiben auf dem iPhone",
             ]
           : [
               "A calm daily view without scores or judgment",
               "Simple explanations with relatable examples",
               "Supported vitals, activity and nutrition in one app",
               "No account required",
-              "Apple Health data stays on the user's iPhone",
+              "Health data stays on the user's iPhone",
             ],
         downloadUrl: "https://testflight.apple.com/join/wrv4aFVQ",
         softwareRequirements: isGerman

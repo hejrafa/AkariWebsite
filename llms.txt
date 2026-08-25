@@ -1,6 +1,6 @@
 # Akari
 
-> Akari is a private iPhone health app that turns Apple Health data into a calm, readable daily story.
+> Akari is a private iPhone health app that turns health data into a calm, readable daily story.
 
 Akari helps people understand supported vitals, activity, nutrition and goals in one place. It uses simple explanations and relatable examples without turning health into a score or using alarmist language.
 
