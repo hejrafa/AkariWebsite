@@ -2,10 +2,14 @@
 <urlset
   xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
 >
   <url>
     <loc>https://joinakari.com/</loc>
     <lastmod>2026-08-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
     <image:image>
       <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_01.webp</image:loc>
       <image:title>Akari explains an Apple Health pattern in clear language</image:title>
@@ -17,6 +21,25 @@
     <image:image>
       <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_03.webp</image:loc>
       <image:title>Akari brings nutrition and health data together</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://joinakari.com/?lang=de</loc>
+    <lastmod>2026-08-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
+    <image:image>
+      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_01.webp</image:loc>
+      <image:title>Akari erklärt ein Muster aus Apple Health in verständlicher Sprache</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_02.webp</image:loc>
+      <image:title>Akari ordnet tägliche Schrittdaten verständlich ein</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_03.webp</image:loc>
+      <image:title>Akari bringt Ernährung und Gesundheitsdaten zusammen</image:title>
     </image:image>
   </url>
 </urlset>

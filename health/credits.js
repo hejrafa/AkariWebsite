@@ -5,6 +5,19 @@ const returnLink = document.querySelector("a.credits-brand");
 const siteRoot = new URL("../", document.currentScript?.src || window.location.href);
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 
+const translations = {
+  en: {
+    title: "Credits—Akari",
+    description: "Credits for Akari.",
+    backLabel: "Back to Akari",
+  },
+  de: {
+    title: "Mitwirkende—Akari",
+    description: "Mitwirkende an Akari.",
+    backLabel: "Zurück zu Akari",
+  },
+};
+
 const pageColors = {
   dark: {
     meadow: "#1d1b07",
@@ -36,10 +49,26 @@ function updateAppearance() {
   }
 
   if (returnLink) {
-    returnLink.href = new URL(`?theme=${encodeURIComponent(theme)}&mode=${encodeURIComponent(mode)}`, siteRoot).href;
+    returnLink.href = new URL(`?theme=${encodeURIComponent(theme)}&mode=${encodeURIComponent(mode)}&lang=${encodeURIComponent(root.dataset.language || "en")}`, siteRoot).href;
   }
 }
 
+function updateLanguage() {
+  const language = translations[root.dataset.language] ? root.dataset.language : "en";
+  const copy = translations[language];
+  root.dataset.language = language;
+  root.lang = language;
+  document.title = copy.title;
+
+  const description = document.querySelector('meta[name="description"]');
+  if (description) description.content = copy.description;
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+    const value = copy[element.dataset.i18nAriaLabel];
+    if (value !== undefined) element.setAttribute("aria-label", value);
+  });
+}
+
+updateLanguage();
 updateAppearance();
 
 let followsSystemMode = false;

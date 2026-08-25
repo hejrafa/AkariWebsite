@@ -19,3 +19,7 @@ Then open `http://localhost:8000/`.
 - The page includes Open Graph, X/Twitter, canonical, and `SoftwareApplication` JSON-LD metadata.
 
 The visual assets in `health/assets` are copied from the local Akari iOS project and remain product-reference material. The public TestFlight URL is referenced directly in `index.html`, `llms.txt`, and `llms-full.txt`.
+
+## Localization
+
+The landing page supports English and German without a runtime dependency. An explicit `?lang=en` or `?lang=de` choice wins, followed by the saved preference and then the browser's primary language; all other languages fall back to English. The language switch updates the page copy, accessibility labels, social metadata, structured data, canonical URL, credits page, and web app manifest.

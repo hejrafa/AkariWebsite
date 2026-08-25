@@ -1,27 +1,40 @@
 <!doctype html>
-<html lang="en" data-theme="forest" data-mode="dark">
+<html lang="en" data-theme="forest" data-mode="dark" data-language="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#151a0c" />
     <meta name="description" content="Credits for Akari." />
     <meta name="robots" content="noindex, follow" />
-    <title>Credits — Akari</title>
+    <title>Credits—Akari</title>
     <link rel="icon" href="../assets/favicon.svg?v=1" type="image/svg+xml" />
     <script>
       (() => {
         const themes = ["meadow", "forest", "coast", "canyon"];
         const modes = ["light", "dark"];
+        const languages = ["en", "de"];
         const params = new URLSearchParams(window.location.search);
 
         try {
           const theme = params.get("theme") || localStorage.getItem("akari-theme") || "forest";
           const mode = params.get("mode") || localStorage.getItem("akari-mode") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          const requestedLanguage = params.get("lang");
+          const savedLanguage = localStorage.getItem("akari-language");
+          const systemLanguage = (navigator.languages?.[0] || navigator.language || "en").split("-")[0].toLowerCase();
+          const language = languages.includes(requestedLanguage)
+            ? requestedLanguage
+            : languages.includes(savedLanguage)
+              ? savedLanguage
+              : languages.includes(systemLanguage) ? systemLanguage : "en";
           document.documentElement.dataset.theme = themes.includes(theme) ? theme : "forest";
           document.documentElement.dataset.mode = modes.includes(mode) ? mode : "dark";
+          document.documentElement.dataset.language = language;
+          document.documentElement.lang = language;
         } catch (error) {
           document.documentElement.dataset.theme = "forest";
           document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          document.documentElement.dataset.language = navigator.language?.toLowerCase().startsWith("de") ? "de" : "en";
+          document.documentElement.lang = document.documentElement.dataset.language;
         }
 
         if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -29,12 +42,12 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="credits.css?v=20260824-04" />
-    <script src="credits.js?v=20260824-04" defer></script>
+    <link rel="stylesheet" href="credits.css?v=20260824-05" />
+    <script src="credits.js?v=20260824-07" defer></script>
   </head>
   <body>
     <main class="credits-shell">
-      <a class="credits-brand" href="../" aria-label="Back to Akari">
+      <a class="credits-brand" href="../" aria-label="Back to Akari" data-i18n-aria-label="backLabel">
         <img src="../assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" />
       </a>
     </main>

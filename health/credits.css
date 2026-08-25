@@ -3,6 +3,7 @@
   --page: #1d1b07;
   --ink: #f1eac6;
   --accent: #ebcc4b;
+  --focus-ring: var(--accent);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -29,6 +30,7 @@
   --page: #f1eac6;
   --ink: #1d1b07;
   --accent: #ebcc4b;
+  --focus-ring: var(--ink);
 }
 
 :root[data-mode="light"][data-theme="forest"] {
@@ -90,7 +92,7 @@ button:not(:disabled),
 }
 
 .credits-brand:focus-visible {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 6px;
 }
 
