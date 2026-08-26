@@ -144,7 +144,7 @@ const pageMetadata = {
     socialTitle: "Akari—Understand your health data",
     socialDescription: "Akari turns your health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
     twitterDescription: "Akari turns your health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
-    imageAlt: "Akari showing vitals, nutrition and goals together in one daily view",
+    imageAlt: "Akari logo on a bright green background",
   },
   de: {
     title: "Akari—Verstehe deine Gesundheitsdaten",
@@ -152,7 +152,7 @@ const pageMetadata = {
     socialTitle: "Akari—Verstehe deine Gesundheitsdaten",
     socialDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
     twitterDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
-    imageAlt: "Akari zeigt Vitalwerte, Ernährung und Ziele gemeinsam in einer Tagesansicht",
+    imageAlt: "Akari-Logo auf leuchtend grünem Hintergrund",
   },
 };
 
@@ -180,7 +180,7 @@ function structuredDataFor(language) {
         description: pageMetadata[language].socialDescription,
         isPartOf: { "@id": "https://joinakari.com/#website" },
         mainEntity: { "@id": "https://joinakari.com/#app" },
-        primaryImageOfPage: "https://joinakari.com/assets/og-akari.png?v=2",
+        primaryImageOfPage: "https://joinakari.com/assets/social.png?v=1",
         inLanguage: language,
       },
       {
