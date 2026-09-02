@@ -7,12 +7,12 @@ const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 
 const translations = {
   en: {
-    title: "Credits—Akari",
+    title: "Credits | Akari",
     description: "Credits for Akari.",
     backLabel: "Back to Akari",
   },
   de: {
-    title: "Mitwirkende—Akari",
+    title: "Mitwirkende | Akari",
     description: "Mitwirkende an Akari.",
     backLabel: "Zurück zu Akari",
   },

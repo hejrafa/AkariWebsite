@@ -47,11 +47,11 @@ const translations = {
     trustPrivacy: "Your health data stays on your iPhone",
     joinBeta: "Join the beta",
     whyTitle: " Why?",
-    whyBody: "Akari turns your health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
+    whyBody: "Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.",
     featuresLabel: "What Akari helps you do",
     featuresInstructions: "Swipe or use the left and right arrow keys to explore all cards.",
     featureTodayTitle: "See today clearly",
-    featureTodayBody: "Your day, explained calmly—without scores, judgment, or alarm.",
+    featureTodayBody: "Your day, explained calmly and without scores, judgment, or alarm.",
     featureUnderstandTitle: "Understand your data",
     featureUnderstandBody: "Simple, science-based explanations with relatable everyday examples.",
     featureWholeTitle: "See the whole picture",
@@ -105,15 +105,15 @@ const translations = {
     trustPrivacy: "Deine Gesundheitsdaten bleiben auf dem iPhone",
     joinBeta: "Beta testen",
     whyTitle: " Warum?",
-    whyBody: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
+    whyBody: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages und bringt Vitalwerte, Ernährung und Ziele an einem Ort zusammen.",
     featuresLabel: "Was Akari für dich tut",
     featuresInstructions: "Wische oder nutze die linke und rechte Pfeiltaste, um alle Karten zu entdecken.",
     featureTodayTitle: "Dein Tag im Blick",
-    featureTodayBody: "Ruhig und klar erklärt—ohne Punkte, Wertung oder Alarm.",
+    featureTodayBody: "Ruhig und klar erklärt, ohne Punkte, Wertung oder Alarm.",
     featureUnderstandTitle: "Daten verstehen",
     featureUnderstandBody: "Fundierte Erklärungen mit Beispielen aus dem Alltag.",
     featureWholeTitle: "Das Ganze im Blick",
-    featureWholeBody: "Vitalwerte und Ernährung—übersichtlich an einem Ort.",
+    featureWholeBody: "Vitalwerte und Ernährung übersichtlich an einem Ort.",
     betaLine1: "Gestalte",
     betaLine2: "Akari vorm",
     betaLine3: "Start mit.",
@@ -123,7 +123,7 @@ const translations = {
     faqWhatQuestion: "Was ist Akari?",
     faqWhatAnswer: "Akari ist eine iPhone-App, die deine Gesundheitsdaten ruhig und verständlich einordnet.",
     faqDataQuestion: "Welche Gesundheitsdaten kann ich sehen?",
-    faqDataAnswer: "Akari zeigt Vitalwerte, Aktivität, Ernährung und Ziele gemeinsam—für mehr Kontext im Alltag.",
+    faqDataAnswer: "Akari zeigt Vitalwerte, Aktivität, Ernährung und Ziele gemeinsam. So bekommst du mehr Kontext im Alltag.",
     faqPrivacyQuestion: "Bleiben meine Gesundheitsdaten auf dem iPhone?",
     faqPrivacyAnswer: "Ja. Akari braucht kein Konto, und deine Gesundheitsdaten bleiben auf deinem iPhone.",
     faqTryQuestion: "Wie teste ich Akari?",
@@ -139,19 +139,19 @@ const translations = {
 
 const pageMetadata = {
   en: {
-    title: "Akari—Understand your health data",
-    description: "Akari is a private iPhone health app that turns health data—vitals, activity and nutrition—into calm daily insights. Join the free TestFlight beta.",
-    socialTitle: "Akari—Understand your health data",
-    socialDescription: "Akari turns your health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
-    twitterDescription: "Akari turns your health data into a calm, readable daily story—bringing your vitals, nutrition and goals together in one place.",
+    title: "Akari: Understand your health data",
+    description: "Akari is a private iPhone health app that turns health data, including vitals, activity and nutrition, into calm daily insights. Join the free TestFlight beta.",
+    socialTitle: "Akari: Understand your health data",
+    socialDescription: "Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.",
+    twitterDescription: "Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.",
     imageAlt: "Akari logo in an orange-to-yellow gradient on a black background",
   },
   de: {
-    title: "Akari—Verstehe deine Gesundheitsdaten",
+    title: "Akari: Verstehe deine Gesundheitsdaten",
     description: "Akari ist eine private Gesundheits-App fürs iPhone. Sie macht aus Vitalwerten, Aktivität und Ernährung verständliche Einblicke für jeden Tag. Jetzt kostenlos testen.",
-    socialTitle: "Akari—Verstehe deine Gesundheitsdaten",
-    socialDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
-    twitterDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages—mit Vitalwerten, Ernährung und Zielen an einem Ort.",
+    socialTitle: "Akari: Verstehe deine Gesundheitsdaten",
+    socialDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages und bringt Vitalwerte, Ernährung und Ziele an einem Ort zusammen.",
+    twitterDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages und bringt Vitalwerte, Ernährung und Ziele an einem Ort zusammen.",
     imageAlt: "Akari-Logo mit orange-gelbem Verlauf auf schwarzem Hintergrund",
   },
 };
@@ -189,7 +189,7 @@ function structuredDataFor(language) {
         name: "Akari",
         url,
         description: isGerman
-          ? "Akari macht aus Gesundheitsdaten eine ruhige, verständliche Geschichte des Tages—mit einfachen Erklärungen zu unterstützten Vitalwerten, Aktivität und Ernährung."
+          ? "Akari macht Gesundheitsdaten zu einer ruhigen, verständlichen Geschichte des Tages. Dazu erklärt die App unterstützte Vitalwerte, Aktivität und Ernährung mit einfachen Worten."
           : "Akari turns health data into a calm, readable daily story with simple explanations across supported vitals, activity and nutrition data.",
         applicationCategory: "HealthApplication",
         operatingSystem: "iOS",
@@ -269,7 +269,7 @@ function updateLanguageUrl(language) {
   window.history.replaceState({}, "", url);
 }
 
-function selectLanguage(language, persist = true, updateUrl = true) {
+function selectLanguage(language, persist = true, updateUrl = true, updateAppearance = true) {
   if (!translations[language]) return;
   root.dataset.language = language;
   root.lang = language;
@@ -299,7 +299,7 @@ function selectLanguage(language, persist = true, updateUrl = true) {
   }
   if (updateUrl) updateLanguageUrl(language);
   updatePageMetadata(language);
-  updateThemeColor();
+  if (updateAppearance) updateThemeColor();
 }
 
 let activeLanguageTransition;
@@ -459,7 +459,7 @@ function updateThemeColor() {
       siteRoot,
     ).href;
     image.dataset.src = source;
-    if (image.hasAttribute("src")) image.src = source;
+    if (image.src !== source) image.src = source;
   });
 
   phoneModels.forEach((model) => {
@@ -471,8 +471,9 @@ function updateThemeColor() {
   });
 }
 
-function selectTheme(theme, persist = true) {
+function selectTheme(theme, persist = true, updateAppearance = true) {
   if (!pageColors.dark[theme]) return;
+  const themeChanged = root.dataset.theme !== theme;
   root.dataset.theme = theme;
   themeButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.themeTarget === theme));
@@ -480,11 +481,12 @@ function selectTheme(theme, persist = true) {
   if (persist) {
     try { localStorage.setItem("akari-theme", theme); } catch (error) {}
   }
-  updateThemeColor();
+  if (updateAppearance && themeChanged) updateThemeColor();
 }
 
-function selectMode(mode, persist = true) {
+function selectMode(mode, persist = true, updateAppearance = true) {
   if (!pageColors[mode]) return;
+  const modeChanged = root.dataset.mode !== mode;
   root.dataset.mode = mode;
   modeButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.modeTarget === mode));
@@ -493,7 +495,7 @@ function selectMode(mode, persist = true) {
     followsSystemMode = false;
     try { localStorage.setItem("akari-mode", mode); } catch (error) {}
   }
-  updateThemeColor();
+  if (updateAppearance && modeChanged) updateThemeColor();
 }
 
 themeButtons.forEach((button) => {
@@ -573,7 +575,7 @@ languageButtons.forEach((button) => {
   button.addEventListener("click", () => transitionLanguage(button.dataset.languageTarget));
 });
 
-selectLanguage(root.dataset.language || "en", false, false);
+selectLanguage(root.dataset.language || "en", false, false, false);
 
 try {
   const params = new URLSearchParams(window.location.search);
@@ -585,13 +587,15 @@ try {
   const savedMode = localStorage.getItem("akari-mode");
 
   followsSystemMode = !queryMode && !savedMode;
-  selectTheme(queryTheme || savedTheme || "forest", Boolean(queryTheme));
-  selectMode(queryMode || savedMode || (systemModePreference.matches ? "dark" : "light"), Boolean(queryMode));
+  selectTheme(queryTheme || savedTheme || "forest", Boolean(queryTheme), false);
+  selectMode(queryMode || savedMode || (systemModePreference.matches ? "dark" : "light"), Boolean(queryMode), false);
 } catch (error) {
   followsSystemMode = true;
-  selectTheme("forest", false);
-  selectMode(systemModePreference.matches ? "dark" : "light", false);
+  selectTheme("forest", false, false);
+  selectMode(systemModePreference.matches ? "dark" : "light", false, false);
 }
+
+updateThemeColor();
 
 systemModePreference.addEventListener?.("change", (event) => {
   if (followsSystemMode) selectMode(event.matches ? "dark" : "light", false);
@@ -612,11 +616,22 @@ function setupHeroPhone() {
   let currentY = 0;
   let pointerIsInHero = false;
   let heroIsVisible = true;
+  let pointerBounds;
   let animationFrame;
+  let lastDriftX;
+  let lastDriftY;
+  let lastRotateX;
+  let lastRotateY;
+
+  function cachePointerBounds() {
+    if (!canFollowPointer.matches || reducedMotion.matches) return;
+    pointerBounds = hero.getBoundingClientRect();
+  }
 
   function updatePointerTarget(event) {
     if (!canFollowPointer.matches || reducedMotion.matches) return;
-    const bounds = hero.getBoundingClientRect();
+    const bounds = pointerBounds || hero.getBoundingClientRect();
+    pointerBounds = bounds;
     targetX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width) * 2 - 1));
     targetY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height) * 2 - 1));
     pointerIsInHero = true;
@@ -626,6 +641,7 @@ function setupHeroPhone() {
     pointerIsInHero = false;
     targetX = 0;
     targetY = 0;
+    pointerBounds = undefined;
   }
 
   function animatePhone(time) {
@@ -639,25 +655,54 @@ function setupHeroPhone() {
     currentX += (targetX + idleX - currentX) * 0.065;
     currentY += (targetY + idleY - currentY) * 0.065;
 
-    floatLayer.style.setProperty("--phone-drift-x", `${(currentX * 9).toFixed(2)}px`);
-    floatLayer.style.setProperty("--phone-drift-y", `${(currentY * 6).toFixed(2)}px`);
-    floatLayer.style.setProperty("--phone-rotate-x", `${(-currentY * 4.5).toFixed(2)}deg`);
-    floatLayer.style.setProperty("--phone-rotate-y", `${(currentX * 5.5).toFixed(2)}deg`);
+    const driftX = `${(currentX * 9).toFixed(2)}px`;
+    const driftY = `${(currentY * 6).toFixed(2)}px`;
+    const rotateX = `${(-currentY * 4.5).toFixed(2)}deg`;
+    const rotateY = `${(currentX * 5.5).toFixed(2)}deg`;
+
+    if (driftX !== lastDriftX) {
+      floatLayer.style.setProperty("--phone-drift-x", driftX);
+      lastDriftX = driftX;
+    }
+    if (driftY !== lastDriftY) {
+      floatLayer.style.setProperty("--phone-drift-y", driftY);
+      lastDriftY = driftY;
+    }
+    if (rotateX !== lastRotateX) {
+      floatLayer.style.setProperty("--phone-rotate-x", rotateX);
+      lastRotateX = rotateX;
+    }
+    if (rotateY !== lastRotateY) {
+      floatLayer.style.setProperty("--phone-rotate-y", rotateY);
+      lastRotateY = rotateY;
+    }
     animationFrame = requestAnimationFrame(animatePhone);
   }
 
   function startPhoneMotion() {
-    if (reducedMotion.matches || animationFrame || !heroIsVisible || document.hidden) return;
+    if (reducedMotion.matches || animationFrame !== undefined || !heroIsVisible || document.hidden) return;
     animationFrame = requestAnimationFrame(animatePhone);
   }
 
+  function stopPhoneMotion() {
+    if (animationFrame === undefined) return;
+    cancelAnimationFrame(animationFrame);
+    animationFrame = undefined;
+  }
+
+  hero.addEventListener("pointerenter", cachePointerBounds, { passive: true });
   hero.addEventListener("pointermove", updatePointerTarget, { passive: true });
   hero.addEventListener("pointerleave", settlePhone);
-  document.addEventListener("visibilitychange", startPhoneMotion);
+  window.addEventListener("resize", () => { pointerBounds = undefined; }, { passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopPhoneMotion();
+    else startPhoneMotion();
+  });
 
   const visibilityObserver = new IntersectionObserver((entries) => {
     heroIsVisible = entries[0]?.isIntersecting ?? true;
     if (heroIsVisible) startPhoneMotion();
+    else stopPhoneMotion();
   }, { rootMargin: "12% 0px", threshold: 0 });
 
   visibilityObserver.observe(hero);
@@ -681,11 +726,22 @@ function setupBetaPhone() {
   let currentY = 0;
   let pointerIsInBeta = false;
   let betaIsVisible = false;
+  let pointerBounds;
   let animationFrame;
+  let lastDriftX;
+  let lastDriftY;
+  let lastRotateX;
+  let lastRotateY;
+
+  function cachePointerBounds() {
+    if (!canFollowPointer.matches || reducedMotion.matches) return;
+    pointerBounds = beta.getBoundingClientRect();
+  }
 
   function updatePointerTarget(event) {
     if (!canFollowPointer.matches || reducedMotion.matches) return;
-    const bounds = beta.getBoundingClientRect();
+    const bounds = pointerBounds || beta.getBoundingClientRect();
+    pointerBounds = bounds;
     targetX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width) * 2 - 1));
     targetY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height) * 2 - 1));
     pointerIsInBeta = true;
@@ -695,6 +751,7 @@ function setupBetaPhone() {
     pointerIsInBeta = false;
     targetX = 0;
     targetY = 0;
+    pointerBounds = undefined;
   }
 
   function animatePhone(time) {
@@ -708,25 +765,54 @@ function setupBetaPhone() {
     currentX += (targetX + idleX - currentX) * 0.065;
     currentY += (targetY + idleY - currentY) * 0.065;
 
-    floatLayer.style.setProperty("--phone-drift-x", `${(currentX * 9).toFixed(2)}px`);
-    floatLayer.style.setProperty("--phone-drift-y", `${(currentY * 6).toFixed(2)}px`);
-    floatLayer.style.setProperty("--phone-rotate-x", `${(-currentY * 4.5).toFixed(2)}deg`);
-    floatLayer.style.setProperty("--phone-rotate-y", `${(currentX * 5.5).toFixed(2)}deg`);
+    const driftX = `${(currentX * 9).toFixed(2)}px`;
+    const driftY = `${(currentY * 6).toFixed(2)}px`;
+    const rotateX = `${(-currentY * 4.5).toFixed(2)}deg`;
+    const rotateY = `${(currentX * 5.5).toFixed(2)}deg`;
+
+    if (driftX !== lastDriftX) {
+      floatLayer.style.setProperty("--phone-drift-x", driftX);
+      lastDriftX = driftX;
+    }
+    if (driftY !== lastDriftY) {
+      floatLayer.style.setProperty("--phone-drift-y", driftY);
+      lastDriftY = driftY;
+    }
+    if (rotateX !== lastRotateX) {
+      floatLayer.style.setProperty("--phone-rotate-x", rotateX);
+      lastRotateX = rotateX;
+    }
+    if (rotateY !== lastRotateY) {
+      floatLayer.style.setProperty("--phone-rotate-y", rotateY);
+      lastRotateY = rotateY;
+    }
     animationFrame = requestAnimationFrame(animatePhone);
   }
 
   function startPhoneMotion() {
-    if (reducedMotion.matches || animationFrame || !betaIsVisible || document.hidden) return;
+    if (reducedMotion.matches || animationFrame !== undefined || !betaIsVisible || document.hidden) return;
     animationFrame = requestAnimationFrame(animatePhone);
   }
 
+  function stopPhoneMotion() {
+    if (animationFrame === undefined) return;
+    cancelAnimationFrame(animationFrame);
+    animationFrame = undefined;
+  }
+
+  beta.addEventListener("pointerenter", cachePointerBounds, { passive: true });
   beta.addEventListener("pointermove", updatePointerTarget, { passive: true });
   beta.addEventListener("pointerleave", settlePhone);
-  document.addEventListener("visibilitychange", startPhoneMotion);
+  window.addEventListener("resize", () => { pointerBounds = undefined; }, { passive: true });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopPhoneMotion();
+    else startPhoneMotion();
+  });
 
   const visibilityObserver = new IntersectionObserver((entries) => {
     betaIsVisible = entries[0]?.isIntersecting ?? false;
     if (betaIsVisible) startPhoneMotion();
+    else stopPhoneMotion();
   }, { rootMargin: "12% 0px", threshold: 0 });
 
   visibilityObserver.observe(beta);
@@ -765,10 +851,20 @@ function setupPhoneModels() {
 
     libraryPromise = new Promise((resolve, reject) => {
       const script = document.createElement("script");
+      const timeout = window.setTimeout(() => {
+        script.remove();
+        reject(new Error("The 3D viewer took too long to load."));
+      }, 10000);
       script.type = "module";
       script.src = "https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js";
-      script.onload = resolve;
-      script.onerror = reject;
+      script.onload = () => {
+        window.clearTimeout(timeout);
+        resolve();
+      };
+      script.onerror = () => {
+        window.clearTimeout(timeout);
+        reject(new Error("The 3D viewer could not be loaded."));
+      };
       document.head.append(script);
     });
 
@@ -787,6 +883,7 @@ function setupPhoneModels() {
 
     model.addEventListener("error", () => {
       phoneHost?.classList.add("is-unavailable");
+      root.classList.remove("phone-motion-boot");
     }, { once: true });
   });
 
@@ -820,6 +917,7 @@ function setupPhoneModels() {
     })
     .catch(() => {
       models.forEach((model) => model.closest(".hero-phone, .beta-phone")?.classList.add("is-unavailable"));
+      root.classList.remove("phone-motion-boot");
     });
 }
 
@@ -867,6 +965,22 @@ function setupRevealMotion() {
   prepare(document.querySelectorAll(".answers__intro > p"), "left", [140], scrollItems);
   prepare(document.querySelectorAll(".answers__item"), "up", [220, 300, 380, 460], scrollItems);
   prepare(document.querySelectorAll(".hero-footer > *"), "up", [0, 80, 150], footerItems);
+
+  [...loadItems, ...phoneItems].forEach((element) => element.classList.add("reveal--armed"));
+
+  const motionPreparationObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("reveal--armed");
+      motionPreparationObserver.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0,
+    rootMargin: "45% 0px",
+  });
+
+  [...scrollItems, ...cardItems, ...betaPhoneItems, ...footerItems]
+    .forEach((element) => motionPreparationObserver.observe(element));
 
   root.classList.add("motion-ready");
 

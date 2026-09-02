@@ -127,7 +127,7 @@ def map_screen(source: Path, screenshot: Path, destination: Path) -> None:
 
     image_index = image_indices.pop()
     document["images"][image_index] = {
-        "name": f"Akari screen — {screenshot.stem}",
+        "name": f"Akari screen: {screenshot.stem}",
         "bufferView": image_view_index,
         "mimeType": "image/png",
     }

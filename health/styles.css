@@ -3308,7 +3308,7 @@ body.detail-modal-open { overflow: hidden; }
   .ecosystem-detail-content.is-changing { animation: none; }
 }
 
-/* Editorial reset — one idea at a time. */
+/* Editorial reset: one idea at a time. */
 body {
   letter-spacing: 0.006em;
 }

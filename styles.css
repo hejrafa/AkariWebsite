@@ -1626,6 +1626,9 @@ model-viewer[inert] {
     opacity 650ms var(--ease) var(--reveal-delay),
     filter 720ms var(--ease) var(--reveal-delay),
     transform 850ms var(--ease) var(--reveal-delay);
+}
+
+.motion-ready .reveal.reveal--armed {
   will-change: opacity, filter, transform;
 }
 
