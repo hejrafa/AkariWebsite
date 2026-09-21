@@ -1178,8 +1178,20 @@ model-viewer[inert] {
 
 .footer-name,
 .footer-made,
+.footer-legal,
 .footer-disclaimer {
   color: rgba(var(--ink-rgb), 0.62);
+}
+
+.footer-legal {
+  margin: 12px 0 0;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.75rem;
+}
+
+.footer-legal a {
+  color: inherit;
+  text-underline-offset: 0.18em;
 }
 
 .footer-disclaimer {
