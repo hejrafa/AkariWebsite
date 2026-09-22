@@ -68,10 +68,11 @@ a:hover { color: var(--accent); }
 h1 {
   max-width: 720px;
   margin: 0 auto;
-  font-size: clamp(3rem, 9vw, 6.4rem);
-  font-weight: 760;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
+  font-size: clamp(5rem, 7.78vw, 7rem);
+  font-weight: 900;
+  letter-spacing: -0.012em;
+  line-height: 0.928571;
+  text-wrap: balance;
 }
 
 .legal-headline-emoji {
@@ -120,16 +121,17 @@ h1 {
 
 .legal-intro {
   max-width: 660px;
-  margin: 28px auto 0;
+  margin: 40px auto 0;
   color: var(--muted);
-  font-size: clamp(1.1rem, 2.5vw, 1.35rem);
-  line-height: 1.5;
+  font-family: var(--serif);
+  font-size: clamp(1.05rem, 1.67vw, 1.5rem);
+  line-height: 1.34;
 }
 
 .legal-updated {
   margin: 18px auto 0;
   color: var(--muted);
-  font-family: system-ui, sans-serif;
+  font-family: var(--serif);
   font-size: 0.88rem;
 }
 
@@ -147,7 +149,7 @@ h1 {
 
 h2 { margin: 0 0 16px; font-size: clamp(1.55rem, 4vw, 2rem); line-height: 1.05; }
 
-p, li { color: var(--muted); font-family: system-ui, sans-serif; line-height: 1.65; }
+p, li { color: var(--muted); font-family: var(--serif); line-height: 1.65; }
 p { margin: 0 0 14px; }
 p:last-child { margin-bottom: 0; }
 ul { margin: 0; padding-left: 1.25rem; }
@@ -236,7 +238,17 @@ strong { color: var(--ink); }
   .legal-site-header { height: 74px; }
   .legal-brand { width: 76px; height: auto; }
   .legal-shell { width: min(100% - 28px, 780px); }
+  h1 { font-size: clamp(3.25rem, 16vw, 5.2rem); line-height: 0.94; }
+  .legal-intro { margin-top: 28px; font-size: 1.05rem; }
   .legal-section { border-radius: 22px; }
+}
+
+@media (min-width: 561px) and (max-width: 1050px) {
+  h1 { font-size: clamp(4.25rem, 9vw, 5.75rem); }
+}
+
+@media (max-width: 430px) {
+  h1 { font-size: clamp(3.05rem, 15vw, 4rem); }
 }
 
 @media (prefers-reduced-motion: reduce) {
