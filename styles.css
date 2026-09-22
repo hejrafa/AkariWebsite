@@ -1185,7 +1185,7 @@ model-viewer[inert] {
 
 .footer-legal {
   margin: 12px 0 0;
-  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--serif);
   font-size: 0.75rem;
 }
 

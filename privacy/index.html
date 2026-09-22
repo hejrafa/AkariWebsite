@@ -8,18 +8,22 @@
     <link rel="canonical" href="https://joinakari.com/privacy/" />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/legal.css" />
-    <title>Privacy Policy · Akari</title>
+    <script src="/legal.js" defer></script>
+    <title>Akari: Privacy Policy</title>
   </head>
   <body>
-    <main class="legal-shell">
-      <nav class="legal-nav" aria-label="Legal pages">
-        <a class="legal-brand" href="/"><img src="/health/assets/app-icon.png" alt="" />Akari</a>
-        <div class="legal-nav__links"><a href="/privacy/" aria-current="page">Privacy</a><a href="/terms/">Terms</a></div>
-      </nav>
+    <header class="legal-site-header">
+      <a class="legal-brand" href="/" aria-label="Akari home">
+        <picture>
+          <source media="(prefers-color-scheme: light)" srcset="/assets/logo/akari-logo-forest-light.svg" />
+          <img src="/assets/logo/akari-logo-forest-dark.svg" alt="Akari" width="89" height="50" />
+        </picture>
+      </a>
+    </header>
 
+    <main class="legal-shell">
       <header class="legal-header">
-        <p class="legal-kicker">Your data stays yours</p>
-        <h1>Privacy, without the fine-print fog.</h1>
+        <h1>Privacy, without the fine-print fog. <button class="legal-headline-emoji" type="button" aria-label="Play with the lock emoji">🔒</button></h1>
         <p class="legal-intro">Akari is built to help you understand your health without turning it into someone else’s business.</p>
         <p class="legal-updated">Effective September 21, 2026</p>
       </header>
@@ -73,7 +77,13 @@
         </section>
       </div>
 
-      <footer class="legal-footer"><span>Akari · Made in Germany</span><span><a href="/">Home</a> · <a href="/terms/">Terms</a></span></footer>
     </main>
+
+    <footer class="hero-footer" aria-label="Akari credits">
+      <span class="footer-name">Akari</span>
+      <span class="footer-made">Made with <a class="credits-heart" href="/health/credits.html" aria-label="Open credits">♥</a> in Germany</span>
+      <p class="footer-legal"><a href="/privacy/" aria-current="page">Privacy</a> · <a href="/terms/">Terms</a> · <a href="mailto:contact@hejrafa.com">Contact</a></p>
+      <p class="footer-disclaimer">Akari is not a substitute for professional medical advice. Always consult your physician first.</p>
+    </footer>
   </body>
 </html>
