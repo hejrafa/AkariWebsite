@@ -3,6 +3,9 @@ interface Env {
   ASSETS: Fetcher;
   ADMIN_HOST: string;
   API_HOST: string;
+  ADMIN_EMAIL: string;
+  ADMIN_PASSWORD_HASH: string;
+  SESSION_SECRET: string;
 }
 
 type FeedbackRating = "positive" | "negative";
@@ -92,9 +95,23 @@ export default {
       return createFeedback(request, env);
     }
 
+    if (url.pathname.startsWith("/auth/")) {
+      if (!isAdminHost && !isWorkersDev && !isLocal) return notFound();
+      if (request.method === "POST" && url.pathname === "/auth/login") {
+        return login(request, env, isLocal);
+      }
+      if (request.method === "POST" && url.pathname === "/auth/logout") {
+        return logout();
+      }
+      if (request.method === "GET" && url.pathname === "/auth/session") {
+        return json({ authenticated: await hasAdminSession(request, env, isLocal) });
+      }
+      return notFound();
+    }
+
     if (url.pathname.startsWith("/admin-api/")) {
       if (!isAdminHost && !isWorkersDev && !isLocal) return notFound();
-      if (!isLocal && !hasAccessIdentity(request)) return forbidden();
+      if (!(await hasAdminSession(request, env, isLocal))) return unauthorized();
       if (request.method === "GET" && url.pathname === "/admin-api/reports") {
         return listReports(url, env);
       }
@@ -112,7 +129,13 @@ export default {
       url.pathname.startsWith("/assets/")
     )) {
       if (!isAdminHost && !isWorkersDev && !isLocal) return notFound();
-      if (!isLocal && !hasAccessIdentity(request)) return forbidden();
+      if (url.pathname.startsWith("/assets/")) return env.ASSETS.fetch(request);
+      const authenticated = await hasAdminSession(request, env, isLocal);
+      if (url.pathname === "/login" || url.pathname === "/login.html") {
+        if (authenticated) return redirect("/");
+        return env.ASSETS.fetch(request);
+      }
+      if (!authenticated) return redirect("/login");
       return env.ASSETS.fetch(request);
     }
 
@@ -123,6 +146,113 @@ export default {
     return notFound();
   },
 };
+
+const sessionCookieName = "akari_admin_session";
+const sessionLifetimeSeconds = 8 * 60 * 60;
+
+async function login(request: Request, env: Env, isLocal: boolean): Promise<Response> {
+  let input: unknown;
+  try {
+    input = await request.json();
+  } catch {
+    return json({ error: "invalid_credentials" }, 401);
+  }
+  if (!isRecord(input) || typeof input.email !== "string" || typeof input.password !== "string") {
+    return json({ error: "invalid_credentials" }, 401);
+  }
+
+  const email = clean(input.email, 320).toLowerCase();
+  if (!isLocal) {
+    if (!env.ADMIN_EMAIL || !env.ADMIN_PASSWORD_HASH || !env.SESSION_SECRET) {
+      return json({ error: "authentication_not_configured" }, 503);
+    }
+    const suppliedHash = await sha256(input.password);
+    if (email !== env.ADMIN_EMAIL.toLowerCase() || !constantTimeEqual(suppliedHash, env.ADMIN_PASSWORD_HASH)) {
+      return json({ error: "invalid_credentials" }, 401);
+    }
+  }
+
+  const token = await createSessionToken(email || "local@akari", env.SESSION_SECRET || "local-preview");
+  return json(
+    { ok: true },
+    200,
+    { "set-cookie": `${sessionCookieName}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${sessionLifetimeSeconds}` },
+  );
+}
+
+function logout(): Response {
+  return json(
+    { ok: true },
+    200,
+    { "set-cookie": `${sessionCookieName}=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0` },
+  );
+}
+
+async function createSessionToken(email: string, secret: string): Promise<string> {
+  const payload = base64UrlEncode(JSON.stringify({
+    email,
+    expiresAt: Math.floor(Date.now() / 1000) + sessionLifetimeSeconds,
+  }));
+  return `${payload}.${await sign(payload, secret)}`;
+}
+
+async function hasAdminSession(request: Request, env: Env, isLocal: boolean): Promise<boolean> {
+  if (isLocal || request.headers.has("cf-access-authenticated-user-email")) return true;
+  if (!env.SESSION_SECRET) return false;
+  const token = readCookie(request, sessionCookieName);
+  if (!token) return false;
+  const [payload, signature, extra] = token.split(".");
+  if (!payload || !signature || extra) return false;
+  if (!constantTimeEqual(signature, await sign(payload, env.SESSION_SECRET))) return false;
+  try {
+    const session = JSON.parse(base64UrlDecode(payload)) as { email?: unknown; expiresAt?: unknown };
+    return typeof session.email === "string" &&
+      session.email.toLowerCase() === env.ADMIN_EMAIL.toLowerCase() &&
+      typeof session.expiresAt === "number" &&
+      session.expiresAt > Math.floor(Date.now() / 1000);
+  } catch {
+    return false;
+  }
+}
+
+async function sign(value: string, secret: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(value));
+  return base64UrlEncode(String.fromCharCode(...new Uint8Array(signature)));
+}
+
+function readCookie(request: Request, name: string): string | null {
+  for (const part of (request.headers.get("cookie") ?? "").split(";")) {
+    const [key, ...value] = part.trim().split("=");
+    if (key === name) return value.join("=");
+  }
+  return null;
+}
+
+function base64UrlEncode(value: string): string {
+  return btoa(value).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/u, "");
+}
+
+function base64UrlDecode(value: string): string {
+  const padded = value.replaceAll("-", "+").replaceAll("_", "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
+  return atob(padded);
+}
+
+function constantTimeEqual(left: string, right: string): boolean {
+  if (left.length !== right.length) return false;
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  }
+  return difference === 0;
+}
 
 async function createFeedback(request: Request, env: Env): Promise<Response> {
   const contentLength = Number(request.headers.get("content-length") ?? "0");
@@ -325,10 +455,6 @@ function parseArray(value: string): unknown[] {
   }
 }
 
-function hasAccessIdentity(request: Request): boolean {
-  return Boolean(request.headers.get("cf-access-authenticated-user-email"));
-}
-
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -352,12 +478,19 @@ async function sha256(value: string): Promise<string> {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-function json(value: unknown, status = 200): Response {
-  return new Response(JSON.stringify(value), { status, headers: jsonHeaders });
+function json(value: unknown, status = 200, headers: HeadersInit = {}): Response {
+  return new Response(JSON.stringify(value), {
+    status,
+    headers: { ...jsonHeaders, ...headers },
+  });
 }
 
-function forbidden(): Response {
-  return json({ error: "admin_access_required" }, 403);
+function redirect(path: string): Response {
+  return new Response(null, { status: 302, headers: { location: path, "cache-control": "no-store" } });
+}
+
+function unauthorized(): Response {
+  return json({ error: "admin_access_required" }, 401);
 }
 
 function notFound(): Response {

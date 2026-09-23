@@ -118,10 +118,10 @@ if (logoutLink) {
       event.preventDefault();
       logoutLink.setAttribute("aria-disabled", "true");
       try {
-        await fetch("/cdn-cgi/access/logout", {
+        await fetch("/auth/logout", {
+          method: "POST",
           credentials: "include",
           cache: "no-store",
-          redirect: "manual",
         });
       } finally {
         window.location.replace(window.AkariAppearance?.landingURL() || "https://joinakari.com/");

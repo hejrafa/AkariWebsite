@@ -1,4 +1,5 @@
 const form = document.querySelector("#local-login-form");
+const errorMessage = document.querySelector("#login-error");
 const root = document.documentElement;
 const languageButtons = [...document.querySelectorAll("[data-language-target]")];
 
@@ -11,7 +12,10 @@ const translations = {
     signInTitle: "Sign in",
     signInBody: "Use your Akari admin email to continue.",
     emailLabel: "Email address",
+    passwordLabel: "Password",
     continueButton: "Continue",
+    invalidCredentials: "That email or password is not right.",
+    signInFailed: "Sign in is unavailable right now. Please try again.",
     pageTitle: "Akari: Sign in",
   },
   de: {
@@ -22,7 +26,10 @@ const translations = {
     signInTitle: "Anmelden",
     signInBody: "Melde dich mit deiner Akari Admin-E-Mail-Adresse an.",
     emailLabel: "E-Mail-Adresse",
+    passwordLabel: "Passwort",
     continueButton: "Weiter",
+    invalidCredentials: "E-Mail-Adresse oder Passwort stimmen nicht.",
+    signInFailed: "Die Anmeldung ist gerade nicht verfügbar. Versuch es bitte erneut.",
     pageTitle: "Akari: Anmelden",
   },
 };
@@ -47,7 +54,31 @@ for (const button of languageButtons) {
 
 selectLanguage(root.dataset.language, false);
 
-form?.addEventListener("submit", (event) => {
+form?.addEventListener("submit", async (event) => {
   event.preventDefault();
-  window.location.replace("/#dashboard");
+  const button = form.querySelector("button[type='submit']");
+  const data = new FormData(form);
+  button.disabled = true;
+  errorMessage.hidden = true;
+  try {
+    const response = await fetch("/auth/login", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        email: data.get("email"),
+        password: data.get("password"),
+      }),
+    });
+    if (!response.ok) {
+      errorMessage.textContent = translations[root.dataset.language]?.invalidCredentials ?? translations.en.invalidCredentials;
+      errorMessage.hidden = false;
+      return;
+    }
+    window.location.replace("/#dashboard");
+  } catch {
+    errorMessage.textContent = translations[root.dataset.language]?.signInFailed ?? translations.en.signInFailed;
+    errorMessage.hidden = false;
+  } finally {
+    button.disabled = false;
+  }
 });

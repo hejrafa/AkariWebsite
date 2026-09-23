@@ -28,10 +28,13 @@
       <form class="login-form" id="local-login-form">
         <label for="admin-email" data-i18n="emailLabel">Email address</label>
         <input id="admin-email" name="email" type="email" autocomplete="email" inputmode="email" required autofocus>
+        <label for="admin-password" data-i18n="passwordLabel">Password</label>
+        <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+        <p class="login-error" id="login-error" role="alert" hidden></p>
         <button type="submit" data-i18n="continueButton">Continue</button>
       </form>
     </section>
   </main>
-  <script type="module" src="/assets/login.js?v=20260923-02"></script>
+  <script type="module" src="/assets/login.js?v=20260923-03"></script>
 </body>
 </html>

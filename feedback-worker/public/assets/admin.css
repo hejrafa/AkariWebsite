@@ -90,6 +90,13 @@ button { cursor: pointer; }
   font-size: 17px;
 }
 .login-form input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); }
+.login-error {
+  margin: 2px 0;
+  color: var(--danger);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+}
 .login-form button {
   min-height: 56px;
   border: 1px solid var(--accent);
@@ -100,6 +107,7 @@ button { cursor: pointer; }
   font-weight: 750;
 }
 .login-form button:hover { filter: brightness(1.04); }
+.login-form button:disabled { cursor: wait; opacity: 0.62; }
 
 .site-header {
   display: grid;
