@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en" data-language="en" data-theme="forest" data-mode="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#151a0c">
+  <title>Akari: Dashboard</title>
+  <link rel="icon" href="https://joinakari.com/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="https://joinakari.com/assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin>
+  <script src="/assets/appearance.js?v=20260923-01"></script>
+  <link rel="stylesheet" href="/assets/admin.css?v=20260923-21">
+</head>
+<body>
+  <header class="site-header">
+    <div class="language-switch" role="group" aria-label="Choose a language" data-i18n-aria-label="languageGroupLabel">
+      <button class="language-button" type="button" data-language-target="en" lang="en" aria-label="View in English" data-i18n-aria-label="languageEnglishLabel" aria-pressed="true">EN</button>
+      <button class="language-button" type="button" data-language-target="de" lang="de" aria-label="View in German" data-i18n-aria-label="languageGermanLabel" aria-pressed="false">DE</button>
+    </div>
+    <a class="brand" href="https://joinakari.com" data-akari-home aria-label="Akari home" data-i18n-aria-label="homeLabel">
+      <img src="https://joinakari.com/assets/logo/akari-logo-forest-dark.svg" data-akari-logo alt="Akari" width="89" height="50">
+    </a>
+    <nav class="admin-nav" aria-label="Admin pages" data-i18n-aria-label="adminPagesLabel">
+      <a class="admin-nav-item is-active" href="#dashboard" data-page-link="dashboard" aria-label="Dashboard" data-i18n-aria-label="dashboardNavLabel" aria-current="page">
+        <span class="admin-nav-ring" aria-hidden="true">
+          <span class="admin-nav-swatch">
+            <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/chart.bar.fill.png')"></span>
+          </span>
+        </span>
+      </a>
+      <a class="admin-nav-item" href="#feedback" data-page-link="feedback" aria-label="Food review" data-i18n-aria-label="foodReviewNavLabel">
+        <span class="admin-nav-ring" aria-hidden="true">
+          <span class="admin-nav-swatch">
+            <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/ladybug.fill.png')"></span>
+          </span>
+        </span>
+      </a>
+      <a class="admin-nav-item" href="/cdn-cgi/access/logout" data-logout aria-label="Log out" data-i18n-aria-label="logoutLabel">
+        <span class="admin-nav-ring" aria-hidden="true">
+          <span class="admin-nav-swatch">
+            <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/rectangle.portrait.and.arrow.right.fill.png')"></span>
+          </span>
+        </span>
+      </a>
+    </nav>
+  </header>
+  <main class="page-shell">
+    <section class="page-view" data-page="dashboard">
+      <header class="page-header">
+        <div class="page-heading">
+          <h1><span data-i18n="dashboardTitle">Dashboard</span> <button class="title-emoji playful-emoji" type="button" aria-label="Play with the dashboard emoji" data-i18n-aria-label="dashboardEmojiLabel">📊</button></h1>
+          <p class="lede" data-i18n="dashboardLede">A clearer view of how Akari is being used.</p>
+        </div>
+      </header>
+
+      <section class="analytics-empty" aria-labelledby="analytics-title">
+        <div class="analytics-preview" aria-hidden="true">
+          <span class="preview-orbit preview-orbit-one"></span>
+          <span class="preview-orbit preview-orbit-two"></span>
+          <svg class="preview-chart" viewBox="0 0 260 126">
+            <path class="preview-area" d="M8 111C37 92 50 99 73 79s40-12 61-38 39-20 55-2 33 2 63-25v97H8Z"/>
+            <path class="preview-line" d="M8 111C37 92 50 99 73 79s40-12 61-38 39-20 55-2 33 2 63-25"/>
+            <circle cx="252" cy="14" r="5"/>
+          </svg>
+        </div>
+        <div class="analytics-copy">
+          <span class="coming-soon" data-i18n="comingSoon">Coming soon</span>
+          <h2 id="analytics-title" data-i18n="analyticsTitle">Akari analytics</h2>
+          <p data-i18n="analyticsBody">Downloads, revenue, subscriptions, and the metrics that show how Akari is growing will appear here.</p>
+        </div>
+      </section>
+    </section>
+
+    <section class="page-view" data-page="feedback" hidden>
+      <header class="page-header">
+        <div class="page-heading">
+          <h1><span data-i18n="foodReviewTitle">Food review</span> <button class="title-emoji playful-emoji" type="button" aria-label="Play with the food review emoji" data-i18n-aria-label="foodReviewEmojiLabel">🥕</button></h1>
+          <p class="lede" data-i18n="foodReviewLede">Review what worked and what needs fixing.</p>
+        </div>
+      </header>
+
+      <section class="summary" aria-label="Feedback summary" data-i18n-aria-label="feedbackSummaryLabel">
+        <button class="summary-card is-active" type="button" data-filter="open" aria-pressed="true">
+          <span data-i18n="open">Open</span><strong id="open-count">–</strong>
+        </button>
+        <button class="summary-card" type="button" data-filter="positive" aria-pressed="false">
+          <span data-i18n="confirmed">Confirmed</span><strong id="positive-count">–</strong>
+        </button>
+        <button class="summary-card" type="button" data-filter="resolved" aria-pressed="false">
+          <span data-i18n="resolved">Resolved</span><strong id="resolved-count">–</strong>
+        </button>
+      </section>
+
+      <section id="reports" class="reports" aria-live="polite">
+        <p id="state" class="state" data-i18n="loadingFeedback">Loading feedback…</p>
+      </section>
+    </section>
+  </main>
+  <script type="module" src="/assets/admin.js?v=20260923-16"></script>
+</body>
+</html>

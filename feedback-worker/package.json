@@ -1,0 +1,16 @@
+{
+  "name": "akari-food-feedback",
+  "private": true,
+  "scripts": {
+    "check": "tsc --noEmit",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "migrate:local": "wrangler d1 migrations apply akari-food-feedback --local",
+    "migrate:remote": "wrangler d1 migrations apply akari-food-feedback --remote"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260923.1",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.136.2"
+  }
+}

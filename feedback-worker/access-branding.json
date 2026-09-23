@@ -1,0 +1,10 @@
+{
+  "name": "Akari",
+  "login_design": {
+    "background_color": "#151a0c",
+    "text_color": "#e6f4d1",
+    "logo_path": "https://joinakari.com/assets/logo/akari-logo-forest-dark.svg?v=2",
+    "header_text": "Sign in",
+    "footer_text": ""
+  }
+}

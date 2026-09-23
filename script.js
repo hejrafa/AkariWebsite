@@ -18,6 +18,16 @@ const themedImages = document.querySelectorAll("img[data-media-kind][data-media-
 const phoneModels = document.querySelectorAll("model-viewer[data-screen-index]");
 let followsSystemMode = false;
 
+function persistSitePreference(name, value) {
+  try { localStorage.setItem(name, value); } catch (error) {}
+  try {
+    const sharedDomain = window.location.hostname === "joinakari.com" || window.location.hostname.endsWith(".joinakari.com")
+      ? "; Domain=.joinakari.com; Secure"
+      : "";
+    document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=31536000; SameSite=Lax${sharedDomain}`;
+  } catch (error) {}
+}
+
 const translations = {
   en: {
     skipLink: "Skip to content",
@@ -45,6 +55,10 @@ const translations = {
     heroLine3: " to tell.",
     trustBeta: "Free during beta · No account",
     trustPrivacy: "Your health data stays on your iPhone",
+    eventBetaLine1: "Join our iOS TestFlight beta. Tell us what helps,",
+    eventBetaLine2: "what feels confusing and what’s missing.",
+    eventFooterLabel: "More information about Akari",
+    eventFooterPrefix: "For more information visit ",
     joinBeta: "Join the beta",
     whyTitle: " Why?",
     whyBody: "Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.",
@@ -74,7 +88,7 @@ const translations = {
     footerLabel: "Akari credits",
     madePrefix: "Made with ",
     madeSuffix: " in Germany",
-    creditsLabel: "Open credits",
+    adminLabel: "Open Akari admin",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
@@ -103,6 +117,10 @@ const translations = {
     heroLine3: "zu erzählen.",
     trustBeta: "Kostenlos während der Beta · Kein Konto notwendig",
     trustPrivacy: "Deine Gesundheitsdaten bleiben auf dem iPhone",
+    eventBetaLine1: "Mach bei unserer iOS-TestFlight-Beta mit. Sag uns, was hilft,",
+    eventBetaLine2: "was unklar ist und was dir fehlt.",
+    eventFooterLabel: "Weitere Informationen über Akari",
+    eventFooterPrefix: "Weitere Informationen unter ",
     joinBeta: "Beta testen",
     whyTitle: " Warum?",
     whyBody: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages und bringt Vitalwerte, Ernährung und Ziele an einem Ort zusammen.",
@@ -132,7 +150,7 @@ const translations = {
     footerLabel: "Akari-Info und rechtlicher Hinweis",
     madePrefix: "Mit ",
     madeSuffix: " in Deutschland entwickelt",
-    creditsLabel: "Mitwirkende anzeigen",
+    adminLabel: "Akari-Adminbereich öffnen",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
   },
 };
@@ -295,7 +313,7 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
   });
 
   if (persist) {
-    try { localStorage.setItem("akari-language", language); } catch (error) {}
+    persistSitePreference("akari-language", language);
   }
   if (updateUrl) updateLanguageUrl(language);
   updatePageMetadata(language);
@@ -446,7 +464,14 @@ function updateThemeColor() {
     brandLogo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-${root.dataset.mode}.svg?v=2`, siteRoot).href;
   }
   if (creditsLink) {
-    creditsLink.href = new URL(`health/credits.html?theme=${encodeURIComponent(root.dataset.theme)}&mode=${encodeURIComponent(root.dataset.mode)}&lang=${encodeURIComponent(root.dataset.language || "en")}`, siteRoot).href;
+    const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
+    const adminURL = new URL(localPreview
+      ? "http://127.0.0.1:8791/login"
+      : "https://admin.joinakari.com/");
+    adminURL.searchParams.set("theme", root.dataset.theme);
+    adminURL.searchParams.set("mode", root.dataset.mode);
+    adminURL.searchParams.set("lang", root.dataset.language);
+    creditsLink.href = adminURL.href;
   }
 
   const country = themeCountries[root.dataset.theme];
@@ -479,7 +504,7 @@ function selectTheme(theme, persist = true, updateAppearance = true) {
     button.setAttribute("aria-pressed", String(button.dataset.themeTarget === theme));
   });
   if (persist) {
-    try { localStorage.setItem("akari-theme", theme); } catch (error) {}
+    persistSitePreference("akari-theme", theme);
   }
   if (updateAppearance && themeChanged) updateThemeColor();
 }
@@ -493,7 +518,7 @@ function selectMode(mode, persist = true, updateAppearance = true) {
   });
   if (persist) {
     followsSystemMode = false;
-    try { localStorage.setItem("akari-mode", mode); } catch (error) {}
+    persistSitePreference("akari-mode", mode);
   }
   if (updateAppearance && modeChanged) updateThemeColor();
 }

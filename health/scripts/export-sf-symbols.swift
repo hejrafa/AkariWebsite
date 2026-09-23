@@ -1,6 +1,6 @@
 import AppKit
 
-let symbols = [
+let defaultSymbols = [
     "heart.fill", "waveform.path.ecg", "figure.walk", "moon.zzz.fill",
     "flame.fill", "stopwatch.fill", "lungs.fill", "drop.fill", "wind",
     "laurel.leading", "fork.knife", "leaf.fill", "cube.fill",
@@ -13,8 +13,12 @@ let symbols = [
     "takeoutbag.and.cup.and.straw.fill", "square.fill", "sun.max.fill"
 ]
 
+let arguments = Array(CommandLine.arguments.dropFirst())
+let requestedSymbols = Array(arguments.dropFirst())
+let symbols = requestedSymbols.isEmpty ? defaultSymbols : requestedSymbols
+
 let fileManager = FileManager.default
-let output = URL(fileURLWithPath: CommandLine.arguments.dropFirst().first ?? "health/assets/sf-symbols",
+let output = URL(fileURLWithPath: arguments.first ?? "health/assets/sf-symbols",
                  isDirectory: true)
 try fileManager.createDirectory(at: output, withIntermediateDirectories: true)
 

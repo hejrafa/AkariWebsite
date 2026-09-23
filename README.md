@@ -2,6 +2,8 @@
 
 A lightweight static website for Akari, deployed to [joinakari.com](https://joinakari.com/). It is intentionally dependency-free and can run locally or on any static host.
 
+The event-friendly beta page lives at `/try/`. It reuses the main hero and “Why?” intro, with a scannable TestFlight QR code in place of the primary CTA.
+
 ## Run locally
 
 ```sh

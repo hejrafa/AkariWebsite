@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-language="en" data-theme="forest" data-mode="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#151a0c">
+  <title>Akari: Sign in</title>
+  <link rel="icon" href="https://joinakari.com/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="https://joinakari.com/assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin>
+  <script src="/assets/appearance.js?v=20260923-01"></script>
+  <link rel="stylesheet" href="/assets/admin.css?v=20260923-21">
+</head>
+<body class="login-page">
+  <header class="login-header">
+    <div class="language-switch" role="group" aria-label="Choose a language" data-i18n-aria-label="languageGroupLabel">
+      <button class="language-button" type="button" data-language-target="en" lang="en" aria-label="View in English" data-i18n-aria-label="languageEnglishLabel" aria-pressed="true">EN</button>
+      <button class="language-button" type="button" data-language-target="de" lang="de" aria-label="View in German" data-i18n-aria-label="languageGermanLabel" aria-pressed="false">DE</button>
+    </div>
+    <a class="login-brand" href="https://joinakari.com/" data-akari-home aria-label="Akari home" data-i18n-aria-label="homeLabel">
+      <img src="https://joinakari.com/assets/logo/akari-logo-forest-dark.svg" data-akari-logo alt="Akari" width="89" height="50">
+    </a>
+  </header>
+  <main class="login-main">
+    <section class="login-card" aria-labelledby="login-title">
+      <h1 id="login-title" data-i18n="signInTitle">Sign in</h1>
+      <p data-i18n="signInBody">Use your Akari admin email to continue.</p>
+      <form class="login-form" id="local-login-form">
+        <label for="admin-email" data-i18n="emailLabel">Email address</label>
+        <input id="admin-email" name="email" type="email" autocomplete="email" inputmode="email" required autofocus>
+        <button type="submit" data-i18n="continueButton">Continue</button>
+      </form>
+    </section>
+  </main>
+  <script type="module" src="/assets/login.js?v=20260923-02"></script>
+</body>
+</html>
