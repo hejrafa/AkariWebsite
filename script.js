@@ -89,6 +89,9 @@ const translations = {
     madePrefix: "Made with ",
     madeSuffix: " in Germany",
     adminLabel: "Open Akari admin",
+    privacyLabel: "Privacy",
+    termsLabel: "Terms",
+    contactLabel: "Contact",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
@@ -151,6 +154,9 @@ const translations = {
     madePrefix: "Mit ",
     madeSuffix: " in Deutschland entwickelt",
     adminLabel: "Akari-Adminbereich öffnen",
+    privacyLabel: "Datenschutz",
+    termsLabel: "Nutzungsbedingungen",
+    contactLabel: "Kontakt",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
   },
 };
@@ -310,6 +316,12 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
   });
   languageButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.languageTarget === language));
+  });
+  document.querySelectorAll('.footer-legal a[href^="/privacy/"], .footer-legal a[href^="/terms/"]').forEach((link) => {
+    const url = new URL(link.getAttribute("href"), window.location.origin);
+    if (language === "de") url.searchParams.set("lang", "de");
+    else url.searchParams.delete("lang");
+    link.href = `${url.pathname}${url.search}`;
   });
 
   if (persist) {

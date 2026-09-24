@@ -9,19 +9,86 @@
 }
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
+  --page: #1d1b07;
+  --ink: #f1eac6;
+  --accent: #ebcc4b;
+  --page-rgb: 29, 27, 7;
+  --ink-rgb: 241, 234, 198;
+  --muted: rgba(var(--ink-rgb), 0.68);
+  --card: rgba(var(--ink-rgb), 0.08);
+  --border: rgba(var(--ink-rgb), 0.14);
+  --focus-ring: var(--accent);
+  --serif: "Akari New York", "New York", Georgia, serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme="forest"] {
   --page: #151a0c;
   --ink: #e6f4d1;
-  --muted: rgba(230, 244, 209, 0.68);
-  --card: rgba(230, 244, 209, 0.08);
-  --border: rgba(230, 244, 209, 0.14);
   --accent: #a9eb4b;
-  --serif: "Akari New York", "New York", Georgia, serif;
+  --page-rgb: 21, 26, 12;
+  --ink-rgb: 230, 244, 209;
+}
+
+:root[data-theme="coast"] {
+  --page: #0d1920;
+  --ink: #d7edf8;
+  --accent: #4baceb;
+  --page-rgb: 13, 25, 32;
+  --ink-rgb: 215, 237, 248;
+}
+
+:root[data-theme="canyon"] {
+  --page: #1a100c;
+  --ink: #f4ddd1;
+  --accent: #eb804b;
+  --page-rgb: 26, 16, 12;
+  --ink-rgb: 244, 221, 209;
+}
+
+:root[data-mode="light"] {
+  color-scheme: light;
+  --page: #f1eac6;
+  --ink: #1d1b07;
+  --accent: #ebcc4b;
+  --page-rgb: 241, 234, 198;
+  --ink-rgb: 29, 27, 7;
+  --card: rgba(255, 255, 255, 0.46);
+  --border: rgba(var(--ink-rgb), 0.12);
+  --focus-ring: var(--ink);
+}
+
+:root[data-mode="light"][data-theme="forest"] {
+  --page: #e6f4d1;
+  --ink: #151a0c;
+  --accent: #a9eb4b;
+  --page-rgb: 230, 244, 209;
+  --ink-rgb: 21, 26, 12;
+}
+
+:root[data-mode="light"][data-theme="coast"] {
+  --page: #d7edf8;
+  --ink: #0d1920;
+  --accent: #4baceb;
+  --page-rgb: 215, 237, 248;
+  --ink-rgb: 13, 25, 32;
+}
+
+:root[data-mode="light"][data-theme="canyon"] {
+  --page: #f4ddd1;
+  --ink: #1a100c;
+  --accent: #eb804b;
+  --page-rgb: 244, 221, 209;
+  --ink-rgb: 26, 16, 12;
 }
 
 * { box-sizing: border-box; }
 
-html { background: var(--page); }
+html {
+  background: var(--page);
+  transition: background-color 500ms var(--ease);
+}
 
 body {
   min-width: 320px;
@@ -31,27 +98,99 @@ body {
   font-family: var(--serif);
   font-optical-sizing: auto;
   text-rendering: optimizeLegibility;
+  transition: color 500ms var(--ease), background-color 500ms var(--ease);
 }
 
 a { color: inherit; text-underline-offset: 0.18em; }
 a:hover { color: var(--accent); }
 
 .legal-site-header {
-  display: grid;
   height: 98px;
-  place-items: center;
+}
+
+.legal-site-header__inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: min(1280px, calc(100% - 48px));
+  height: 100%;
+  margin: 0 auto;
 }
 
 .legal-brand {
   display: block;
+  grid-column: 2;
+  grid-row: 1;
   width: 89px;
   height: 50px;
+  justify-self: center;
 }
 
 .legal-brand img {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.language-switch {
+  position: relative;
+  display: flex;
+  grid-column: 3;
+  grid-row: 1;
+  align-items: center;
+  justify-self: end;
+  margin-right: 24px;
+  padding: 3px;
+  border: 1px solid rgba(var(--ink-rgb), 0.24);
+  border-radius: 999px;
+  isolation: isolate;
+  transition: border-color 500ms var(--ease);
+}
+
+.language-switch::before {
+  position: absolute;
+  z-index: 0;
+  top: 3px;
+  left: 3px;
+  width: 38px;
+  height: 28px;
+  background: var(--ink);
+  border-radius: 999px;
+  content: "";
+  transform: translateX(0);
+  transition: background 500ms var(--ease), transform 300ms cubic-bezier(0.22, 1.25, 0.36, 1);
+}
+
+:root[data-language="de"] .language-switch::before {
+  transform: translateX(38px);
+}
+
+.language-button {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 38px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  transition: color 180ms var(--ease), background 180ms var(--ease), transform 180ms var(--ease);
+}
+
+.language-button:hover { transform: scale(1.04); }
+
+.language-button[aria-pressed="true"] {
+  color: var(--page);
+  background: transparent;
 }
 
 .legal-shell {
@@ -141,10 +280,14 @@ h1 {
 }
 
 .legal-section {
+  min-width: 0;
   padding: clamp(24px, 5vw, 38px);
   border: 1px solid var(--border);
   border-radius: 28px;
   background: var(--card);
+  hyphens: auto;
+  overflow-wrap: break-word;
+  transition: background-color 500ms var(--ease), border-color 500ms var(--ease);
 }
 
 h2 { margin: 0 0 16px; font-size: clamp(1.55rem, 4vw, 2rem); line-height: 1.05; }
@@ -171,7 +314,7 @@ strong { color: var(--ink); }
 .footer-made,
 .footer-legal,
 .footer-disclaimer {
-  color: var(--muted);
+  color: rgba(var(--ink-rgb), 0.62);
 }
 
 .footer-legal {
@@ -179,6 +322,11 @@ strong { color: var(--ink); }
   font-family: var(--serif);
   font-size: 0.75rem;
   line-height: normal;
+}
+
+.footer-legal a {
+  color: inherit;
+  text-underline-offset: 0.18em;
 }
 
 .footer-disclaimer {
@@ -202,11 +350,18 @@ strong { color: var(--ink); }
   font-size: 1.06em;
   line-height: 1;
   text-decoration: none;
+  transition: color 500ms var(--ease), transform 180ms var(--ease);
 }
 
-.credits-heart:hover {
-  color: var(--accent);
+.credits-heart:hover { transform: scale(1.25); }
+
+.credits-heart:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 50%;
 }
+
+:root[data-mode="light"] .credits-heart { color: var(--ink); }
 
 @keyframes emoji-pop {
   0% {
@@ -223,22 +378,14 @@ strong { color: var(--ink); }
   }
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --page: #e6f4d1;
-    --ink: #151a0c;
-    --muted: rgba(21, 26, 12, 0.68);
-    --card: rgba(255, 255, 255, 0.46);
-    --border: rgba(21, 26, 12, 0.12);
-    --accent: #5f9d0b;
-  }
-}
-
 @media (max-width: 560px) {
   .legal-site-header { height: 74px; }
+  .legal-site-header__inner { width: min(100% - 32px, 1280px); }
   .legal-brand { width: 76px; height: auto; }
+  .language-switch { margin-right: 0; }
   .legal-shell { width: min(100% - 28px, 780px); }
   h1 { font-size: clamp(3.25rem, 16vw, 5.2rem); line-height: 0.94; }
+  :root[data-language="de"] h1 { font-size: clamp(3.05rem, 13.8vw, 3.55rem); }
   .legal-intro { margin-top: 28px; font-size: 1.05rem; }
   .legal-section { border-radius: 22px; }
 }

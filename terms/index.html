@@ -1,86 +1,116 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="forest" data-mode="dark" data-language="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#151a0c" />
     <meta name="color-scheme" content="light dark" />
     <meta name="description" content="Terms of use for the Akari iPhone health app." />
     <link rel="canonical" href="https://joinakari.com/terms/" />
+    <link rel="alternate" hreflang="en" href="https://joinakari.com/terms/" />
+    <link rel="alternate" hreflang="de" href="https://joinakari.com/terms/?lang=de" />
+    <link rel="alternate" hreflang="x-default" href="https://joinakari.com/terms/" />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/legal.css" />
-    <script src="/legal.js" defer></script>
+    <script>
+      (() => {
+        const themes = ["meadow", "forest", "coast", "canyon"];
+        const modes = ["light", "dark"];
+        const languages = ["en", "de"];
+        const params = new URLSearchParams(window.location.search);
+        try {
+          const savedTheme = localStorage.getItem("akari-theme");
+          const savedMode = localStorage.getItem("akari-mode");
+          const savedLanguage = localStorage.getItem("akari-language");
+          const systemLanguage = (navigator.languages?.[0] || navigator.language || "en").split("-")[0].toLowerCase();
+          const theme = params.get("theme") || savedTheme || "forest";
+          const mode = params.get("mode") || savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          const language = params.get("lang") || savedLanguage || (languages.includes(systemLanguage) ? systemLanguage : "en");
+          document.documentElement.dataset.theme = themes.includes(theme) ? theme : "forest";
+          document.documentElement.dataset.mode = modes.includes(mode) ? mode : "dark";
+          document.documentElement.dataset.language = languages.includes(language) ? language : "en";
+          document.documentElement.lang = document.documentElement.dataset.language;
+        } catch (error) {
+          document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="/legal.css?v=20260924-01" />
+    <script src="/legal.js?v=20260924-01" defer></script>
     <title>Akari: Terms of Use</title>
   </head>
-  <body>
-    <header class="legal-site-header">
-      <a class="legal-brand" href="/" aria-label="Akari home">
-        <picture>
-          <source media="(prefers-color-scheme: light)" srcset="/assets/logo/akari-logo-forest-light.svg" />
-          <img src="/assets/logo/akari-logo-forest-dark.svg" alt="Akari" width="89" height="50" />
-        </picture>
-      </a>
+  <body data-legal-page="terms">
+    <header class="legal-site-header" aria-label="Akari website header" data-i18n-aria-label="headerLabel">
+      <div class="legal-site-header__inner">
+        <a class="legal-brand" href="/" aria-label="Akari home" data-i18n-aria-label="homeLabel">
+          <img src="/assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" />
+        </a>
+        <div class="language-switch" role="group" aria-label="Choose a language" data-i18n-aria-label="languageGroupLabel">
+          <button class="language-button" type="button" data-language-target="en" lang="en" aria-label="View in English" data-i18n-aria-label="languageEnglishLabel" aria-pressed="true">EN</button>
+          <button class="language-button" type="button" data-language-target="de" lang="de" aria-label="View in German" data-i18n-aria-label="languageGermanLabel" aria-pressed="false">DE</button>
+        </div>
+      </div>
     </header>
 
     <main class="legal-shell">
       <header class="legal-header">
-        <h1>Terms you can actually read. <button class="legal-headline-emoji" type="button" aria-label="Play with the handshake emoji">🤝</button></h1>
-        <p class="legal-intro">These terms govern your use of the Akari app, beta builds, and website.</p>
-        <p class="legal-updated">Effective September 21, 2026</p>
+        <h1><span data-i18n="title">Terms you can actually read.</span> <button class="legal-headline-emoji" type="button" aria-label="Play with the handshake emoji" data-i18n-aria-label="emojiLabel">🤝</button></h1>
+        <p class="legal-intro" data-i18n="intro">These terms govern your use of the Akari app, beta builds, and website.</p>
+        <p class="legal-updated" data-i18n="updated">Effective September 21, 2026</p>
       </header>
 
       <div class="legal-content">
         <section class="legal-section">
-          <h2>Using Akari</h2>
-          <p>By using Akari, you agree to these terms and the <a href="/privacy/">Privacy Policy</a>. You may use Akari for personal, lawful purposes and in accordance with the rules of Apple, Google, and any connected service.</p>
-          <p>You remain responsible for your device, your connected accounts, and the accuracy of information you enter.</p>
+          <h2 data-i18n="usingTitle">Using Akari</h2>
+          <p data-i18n-html="usingBody">By using Akari, you agree to these terms and the <a href="/privacy/">Privacy Policy</a>. You may use Akari for personal, lawful purposes and in accordance with the rules of Apple, Google, and any connected service.</p>
+          <p data-i18n="responsibilityBody">You remain responsible for your device, your connected accounts, and the accuracy of information you enter.</p>
         </section>
 
         <section class="legal-section">
-          <h2>Health information is not medical advice</h2>
-          <p>Akari presents wellness information, summaries, estimates, and patterns for general informational purposes. It is not a medical device, diagnosis, treatment, or substitute for professional medical advice. Do not use Akari for emergencies or to make urgent medical decisions.</p>
-          <p>Health readings and estimates can be delayed, incomplete, or inaccurate. Contact a qualified healthcare professional with questions about your health, and contact local emergency services in an emergency.</p>
+          <h2 data-i18n="medicalTitle">Health information is not medical advice</h2>
+          <p data-i18n="medicalBody">Akari presents wellness information, summaries, estimates, and patterns for general informational purposes. It is not a medical device, diagnosis, treatment, or substitute for professional medical advice. Do not use Akari for emergencies or to make urgent medical decisions.</p>
+          <p data-i18n="readingsBody">Health readings and estimates can be delayed, incomplete, or inaccurate. Contact a qualified healthcare professional with questions about your health, and contact local emergency services in an emergency.</p>
         </section>
 
         <section class="legal-section">
-          <h2>Connected services</h2>
-          <p>Features that use Apple Health, Google Health, Fitbit, Pixel Watch, weather providers, or other third-party services depend on those services and the permissions you grant. Their own terms and privacy policies also apply. Akari is not responsible for outages, changes, or inaccuracies originating from a third-party service.</p>
+          <h2 data-i18n="servicesTitle">Connected services</h2>
+          <p data-i18n="servicesBody">Features that use Apple Health, Google Health, Fitbit, Pixel Watch, weather providers, or other third-party services depend on those services and the permissions you grant. Their own terms and privacy policies also apply. Akari is not responsible for outages, changes, or inaccuracies originating from a third-party service.</p>
         </section>
 
         <section class="legal-section">
-          <h2>Beta software and availability</h2>
-          <p>Pre-release versions may contain bugs, change without notice, or lose data. Features may be added, changed, suspended, or discontinued. Please keep independent copies of information that is important to you.</p>
+          <h2 data-i18n="betaTitle">Beta software and availability</h2>
+          <p data-i18n="betaBody">Pre-release versions may contain bugs, change without notice, or lose data. Features may be added, changed, suspended, or discontinued. Please keep independent copies of information that is important to you.</p>
         </section>
 
         <section class="legal-section">
-          <h2>Subscriptions and purchases</h2>
-          <p>If Akari offers a paid subscription or purchase, the price, billing period, trial, renewal, and cancellation terms shown in the app at checkout apply. Apple processes App Store payments, and you can manage or cancel them through your Apple Account settings.</p>
+          <h2 data-i18n="purchasesTitle">Subscriptions and purchases</h2>
+          <p data-i18n="purchasesBody">If Akari offers a paid subscription or purchase, the price, billing period, trial, renewal, and cancellation terms shown in the app at checkout apply. Apple processes App Store payments, and you can manage or cancel them through your Apple Account settings.</p>
         </section>
 
         <section class="legal-section">
-          <h2>Acceptable use and ownership</h2>
-          <p>Do not misuse Akari, interfere with its operation, attempt unauthorized access, or use it to violate another person’s rights. Akari’s software, design, writing, branding, and original content remain protected by applicable intellectual-property laws. These terms give you a personal, limited, non-transferable right to use the service.</p>
+          <h2 data-i18n="acceptableTitle">Acceptable use and ownership</h2>
+          <p data-i18n="acceptableBody">Do not misuse Akari, interfere with its operation, attempt unauthorized access, or use it to violate another person’s rights. Akari’s software, design, writing, branding, and original content remain protected by applicable intellectual-property laws. These terms give you a personal, limited, non-transferable right to use the service.</p>
         </section>
 
         <section class="legal-section">
-          <h2>Disclaimers and responsibility</h2>
-          <p>To the extent permitted by law, Akari is provided “as is” and without warranties of uninterrupted availability or error-free results. Nothing in these terms excludes rights or liabilities that cannot legally be excluded, including applicable consumer protections.</p>
-          <p>To the extent permitted by law, Akari is not liable for indirect or consequential losses resulting from use of the service or reliance on its informational output.</p>
+          <h2 data-i18n="disclaimersTitle">Disclaimers and responsibility</h2>
+          <p data-i18n="disclaimersBody">To the extent permitted by law, Akari is provided “as is” and without warranties of uninterrupted availability or error-free results. Nothing in these terms excludes rights or liabilities that cannot legally be excluded, including applicable consumer protections.</p>
+          <p data-i18n="liabilityBody">To the extent permitted by law, Akari is not liable for indirect or consequential losses resulting from use of the service or reliance on its informational output.</p>
         </section>
 
         <section class="legal-section">
-          <h2>Changes and contact</h2>
-          <p>We may update these terms as Akari evolves. The effective date above will change, and significant updates will be communicated in the app or on this site. If a provision is unenforceable, the remaining provisions continue to apply.</p>
-          <p>Questions can be sent to <a href="mailto:contact@hejrafa.com">contact@hejrafa.com</a>.</p>
+          <h2 data-i18n="changesTitle">Changes and contact</h2>
+          <p data-i18n="changesBody">We may update these terms as Akari evolves. The effective date above will change, and significant updates will be communicated in the app or on this site. If a provision is unenforceable, the remaining provisions continue to apply.</p>
+          <p data-i18n-html="questionsBody">Questions can be sent to <a href="mailto:contact@hejrafa.com">contact@hejrafa.com</a>.</p>
         </section>
       </div>
 
     </main>
 
-    <footer class="hero-footer" aria-label="Akari credits">
+    <footer class="hero-footer" aria-label="Akari credits" data-i18n-aria-label="footerLabel">
       <span class="footer-name">Akari</span>
-      <span class="footer-made">Made with <a class="credits-heart" href="https://admin.joinakari.com/" aria-label="Open Akari admin">♥</a> in Germany</span>
-      <p class="footer-legal"><a href="/privacy/">Privacy</a> · <a href="/terms/" aria-current="page">Terms</a> · <a href="mailto:contact@hejrafa.com">Contact</a></p>
-      <p class="footer-disclaimer">Akari is not a substitute for professional medical advice. Always consult your physician first.</p>
+      <span class="footer-made"><span data-i18n="madePrefix">Made with </span><a class="credits-heart" href="https://admin.joinakari.com/" aria-label="Open Akari admin" data-i18n-aria-label="adminLabel">♥</a><span data-i18n="madeSuffix"> in Germany</span></span>
+      <p class="footer-legal"><a href="/privacy/" data-i18n="privacyLabel">Privacy</a> · <a href="/terms/" aria-current="page" data-i18n="termsLabel">Terms</a> · <a href="mailto:contact@hejrafa.com" data-i18n="contactLabel">Contact</a></p>
+      <p class="footer-disclaimer" data-i18n="disclaimer">Akari is not a substitute for professional medical advice. Always consult your physician first.</p>
     </footer>
   </body>
 </html>
