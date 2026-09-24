@@ -61,6 +61,7 @@ interface FeedbackRow {
 
 const allowedReasons = new Set([
   "wrong_match",
+  "wrong_icon",
   "nutrition",
   "serving",
   "barcode_or_scan",

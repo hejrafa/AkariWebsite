@@ -502,6 +502,7 @@ h1 { margin: 0; font-size: clamp(4.25rem, 7.78vw, 7rem); font-weight: 700; lette
 }
 .issue-pill.positive { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .issue-wrong-match { --issue-color: #ff8979; }
+.issue-wrong-icon { --issue-color: #9aa5ff; }
 .issue-nutrition { --issue-color: #f5c451; }
 .issue-serving { --issue-color: #ff9f5a; }
 .issue-barcode-or-scan { --issue-color: #64b5f6; }

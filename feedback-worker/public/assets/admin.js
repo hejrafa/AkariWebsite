@@ -31,8 +31,8 @@ const translations = {
     foodItems: "Food items · {count}", noFoodResult: "No food result data was attached.", reportDetails: "Report details", received: "Received", market: "Market", locale: "Locale", app: "App", catalogue: "Catalogue",
     searchSentence: "Search sentence", noSearchPhrase: "No separate search phrase was recorded.", macros: "Macros · {basis}", micronutrients: "Micronutrients · {basis}", nutritionBasis: "Nutrition basis", barcode: "Barcode", estimated: "Estimated",
     emptyConfirmedTitle: "No confirmed results yet", emptyConfirmedBody: "Matches people approve will collect here.", emptyOpenTitle: "You’re all caught up", emptyOpenBody: "New food reports will appear here.", emptyResolvedTitle: "Nothing resolved yet", emptyResolvedBody: "Completed fixes will collect here.",
-    foodResult: "Food result", resultRight: "This result was right", wrongFoodMatch: "Wrong food match", nutritionWrong: "Nutrition looks wrong", servingWrong: "Serving or amount looks wrong", barcodeWrong: "Barcode or scan looks wrong", productMissing: "A product is missing", extraProduct: "Too many foods were added", tooSlow: "The result took too long", resultNeedsAttention: "This result needs attention",
-    match: "Match", nutrition: "Nutrition", portion: "Portion", scan: "Scan", missing: "Missing", extra: "Extra", slow: "Slow", other: "Other",
+    foodResult: "Food result", resultRight: "This result was right", wrongFoodMatch: "Wrong food match", wrongFoodIcon: "The food icon is wrong", nutritionWrong: "Nutrition looks wrong", servingWrong: "Serving or amount looks wrong", barcodeWrong: "Barcode or scan looks wrong", productMissing: "A product is missing", extraProduct: "Too many foods were added", tooSlow: "The result took too long", resultNeedsAttention: "This result needs attention",
+    match: "Match", icon: "Icon", nutrition: "Nutrition", portion: "Portion", scan: "Scan", missing: "Missing", extra: "Extra", slow: "Slow", other: "Other",
     unitServing: "serving", basisPer100g: "per 100 g", basisPerServing: "per serving",
     label_fixed: "Resolved", label_calories: "Calories", label_protein: "Protein", label_carbs: "Carbs", label_fat: "Fat", label_fiber: "Fiber", label_sugar: "Sugar", label_water: "Water", label_saturatedFat: "Saturated fat", label_monounsaturatedFat: "Monounsaturated fat", label_polyunsaturatedFat: "Polyunsaturated fat", label_calcium: "Calcium", label_iron: "Iron", label_magnesium: "Magnesium", label_potassium: "Potassium", label_sodium: "Sodium", label_zinc: "Zinc", label_vitaminA: "Vitamin A", label_vitaminB12: "Vitamin B12", label_vitaminC: "Vitamin C", label_vitaminD: "Vitamin D", label_folate: "Folate", label_iodine: "Iodine", label_selenium: "Selenium", label_cholesterol: "Cholesterol", label_caffeine: "Caffeine",
   },
@@ -51,8 +51,8 @@ const translations = {
     foodItems: "Lebensmittel · {count}", noFoodResult: "Es wurden keine Lebensmitteldaten angehängt.", reportDetails: "Details zur Rückmeldung", received: "Eingegangen", market: "Markt", locale: "Sprache", app: "App", catalogue: "Katalog",
     searchSentence: "Suchtext", noSearchPhrase: "Es wurde kein eigener Suchtext gespeichert.", macros: "Makronährstoffe · {basis}", micronutrients: "Mikronährstoffe · {basis}", nutritionBasis: "Bezugsmenge", barcode: "Barcode", estimated: "Geschätzt",
     emptyConfirmedTitle: "Noch keine bestätigten Ergebnisse", emptyConfirmedBody: "Bestätigte Treffer werden hier gesammelt.", emptyOpenTitle: "Alles erledigt", emptyOpenBody: "Neue Rückmeldungen erscheinen hier.", emptyResolvedTitle: "Noch nichts erledigt", emptyResolvedBody: "Abgeschlossene Korrekturen werden hier gesammelt.",
-    foodResult: "Lebensmittelergebnis", resultRight: "Dieses Ergebnis war richtig", wrongFoodMatch: "Falsches Lebensmittel", nutritionWrong: "Nährwerte sind falsch", servingWrong: "Portion oder Menge ist falsch", barcodeWrong: "Barcode oder Scan ist falsch", productMissing: "Ein Produkt fehlt", extraProduct: "Zu viele Einträge wurden hinzugefügt", tooSlow: "Das Ergebnis hat zu lange gedauert", resultNeedsAttention: "Dieses Ergebnis muss geprüft werden",
-    match: "Zuordnung", nutrition: "Nährwerte", portion: "Portion", scan: "Scan", missing: "Fehlend", extra: "Extras", slow: "Langsam", other: "Sonstiges",
+    foodResult: "Lebensmittelergebnis", resultRight: "Dieses Ergebnis war richtig", wrongFoodMatch: "Falsches Lebensmittel", wrongFoodIcon: "Das Symbol passt nicht", nutritionWrong: "Nährwerte sind falsch", servingWrong: "Portion oder Menge ist falsch", barcodeWrong: "Barcode oder Scan ist falsch", productMissing: "Ein Produkt fehlt", extraProduct: "Zu viele Einträge wurden hinzugefügt", tooSlow: "Das Ergebnis hat zu lange gedauert", resultNeedsAttention: "Dieses Ergebnis muss geprüft werden",
+    match: "Zuordnung", icon: "Symbol", nutrition: "Nährwerte", portion: "Portion", scan: "Scan", missing: "Fehlend", extra: "Extras", slow: "Langsam", other: "Sonstiges",
     unitServing: "Portion", basisPer100g: "pro 100 g", basisPerServing: "pro Portion",
     label_fixed: "Erledigt", label_calories: "Kalorien", label_protein: "Eiweiß", label_carbs: "Kohlenhydrate", label_fat: "Fett", label_fiber: "Ballaststoffe", label_sugar: "Zucker", label_water: "Wasser", label_saturatedFat: "Gesättigte Fettsäuren", label_monounsaturatedFat: "Einfach ungesättigte Fettsäuren", label_polyunsaturatedFat: "Mehrfach ungesättigte Fettsäuren", label_calcium: "Kalzium", label_iron: "Eisen", label_magnesium: "Magnesium", label_potassium: "Kalium", label_sodium: "Natrium", label_zinc: "Zink", label_vitaminA: "Vitamin A", label_vitaminB12: "Vitamin B12", label_vitaminC: "Vitamin C", label_vitaminD: "Vitamin D", label_folate: "Folat", label_iodine: "Jod", label_selenium: "Selen", label_cholesterol: "Cholesterin", label_caffeine: "Koffein",
   },
@@ -670,6 +670,7 @@ function feedbackTitle(report) {
 
 function feedbackReasonTitle(reason) {
   if (reason === "wrong_match") return t("wrongFoodMatch");
+  if (reason === "wrong_icon") return t("wrongFoodIcon");
   if (reason === "nutrition") return t("nutritionWrong");
   if (reason === "serving") return t("servingWrong");
   if (reason === "barcode_or_scan") return t("barcodeWrong");
@@ -681,6 +682,7 @@ function feedbackReasonTitle(reason) {
 
 function feedbackReasonShortTitle(reason) {
   if (reason === "wrong_match") return t("match");
+  if (reason === "wrong_icon") return t("icon");
   if (reason === "nutrition") return t("nutrition");
   if (reason === "serving") return t("portion");
   if (reason === "barcode_or_scan") return t("scan");
