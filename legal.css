@@ -135,11 +135,11 @@ a:hover { color: var(--accent); }
 .language-switch {
   position: relative;
   display: flex;
-  grid-column: 3;
+  grid-column: 1;
   grid-row: 1;
   align-items: center;
-  justify-self: end;
-  margin-right: 24px;
+  justify-self: start;
+  margin-left: 24px;
   padding: 3px;
   border: 1px solid rgba(var(--ink-rgb), 0.24);
   border-radius: 999px;
@@ -382,7 +382,7 @@ strong { color: var(--ink); }
   .legal-site-header { height: 74px; }
   .legal-site-header__inner { width: min(100% - 32px, 1280px); }
   .legal-brand { width: 76px; height: auto; }
-  .language-switch { margin-right: 0; }
+  .language-switch { margin-left: 0; }
   .legal-shell { width: min(100% - 28px, 780px); }
   h1 { font-size: clamp(3.25rem, 16vw, 5.2rem); line-height: 0.94; }
   :root[data-language="de"] h1 { font-size: clamp(3.05rem, 13.8vw, 3.55rem); }

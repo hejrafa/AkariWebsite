@@ -18,6 +18,7 @@
   --faint: color-mix(in srgb, var(--ink) 12%, transparent);
   --line: color-mix(in srgb, var(--ink) 18%, transparent);
   --danger: #ff8979;
+  --logout-accent: #eb804b;
   --control-radius: 14px;
   --serif: "Akari New York", "New York", Georgia, serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -247,6 +248,8 @@ button { cursor: pointer; }
   mask: var(--symbol) center / contain no-repeat;
 }
 .admin-nav-item:hover .admin-nav-swatch { background-color: color-mix(in srgb, var(--ink) 72%, var(--page)); }
+.admin-nav-item[data-logout] .admin-nav-swatch { background-color: var(--logout-accent); }
+.admin-nav-item[data-logout]:hover .admin-nav-swatch { background-color: color-mix(in srgb, var(--logout-accent) 88%, white); }
 .admin-nav-item.is-active { color: var(--ink); }
 .admin-nav-item.is-active .admin-nav-ring { border-color: currentColor; }
 
