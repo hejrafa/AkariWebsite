@@ -75,7 +75,6 @@ button { cursor: pointer; }
   text-align: center;
 }
 .login-card h1 { font-size: clamp(3.25rem, 9vw, 5rem); line-height: 0.94; }
-.login-card > p { margin: 20px auto 0; color: var(--muted); font-size: 18px; line-height: 1.45; }
 .login-form { display: grid; gap: 12px; margin-top: 34px; text-align: left; }
 .login-form label { font-size: 15px; font-weight: 750; }
 .login-form input {
