@@ -366,7 +366,7 @@ h1 { margin: 0; font-size: clamp(4.25rem, 7.78vw, 7rem); font-weight: 700; lette
 
 .summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
   margin: 80px 0 24px;
   padding: 6px;
@@ -432,7 +432,7 @@ h1 { margin: 0; font-size: clamp(4.25rem, 7.78vw, 7rem); font-weight: 700; lette
 .report-columns,
 .report-row {
   display: grid;
-  grid-template-columns: 180px minmax(230px, 1.05fr) minmax(230px, 1fr) minmax(180px, 0.72fr) 128px;
+  grid-template-columns: 210px minmax(230px, 1.05fr) minmax(230px, 1fr) minmax(180px, 0.72fr) 128px;
   align-items: stretch;
   gap: 0;
 }
@@ -496,14 +496,12 @@ h1 { margin: 0; font-size: clamp(4.25rem, 7.78vw, 7rem); font-weight: 700; lette
 }
 .row-pill {
   min-width: 0;
-  height: 38px;
+  min-height: 38px;
   align-items: center;
-  padding: 0 13px;
+  padding: 7px 13px;
   border-radius: 999px;
-  line-height: 1;
-  white-space: nowrap;
+  line-height: 1.2;
 }
-.issue-pill.positive { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
 .issue-wrong-match { --issue-color: #ff8979; }
 .issue-wrong-icon { --issue-color: #9aa5ff; }
 .issue-nutrition { --issue-color: #f5c451; }
@@ -513,7 +511,6 @@ h1 { margin: 0; font-size: clamp(4.25rem, 7.78vw, 7rem); font-weight: 700; lette
 .issue-extra-product { --issue-color: #ff7daf; }
 .issue-too-slow { --issue-color: #7dd3fc; }
 .issue-other { --issue-color: #64d2c8; }
-.issue-confirmed { --issue-color: var(--accent); }
 .report-row .issue-pill { max-width: 100%; width: fit-content; }
 .issue-text { overflow-wrap: anywhere; white-space: normal; }
 .input-cell h2 {

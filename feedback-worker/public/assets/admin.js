@@ -21,8 +21,8 @@ const translations = {
     homeLabel: "Akari home", adminPagesLabel: "Admin pages", dashboardNavLabel: "Dashboard", foodReviewNavLabel: "Food review", logoutLabel: "Log out",
     dashboardTitle: "Dashboard", dashboardLede: "A clearer view of how Akari is being used.", dashboardEmojiLabel: "Play with the dashboard emoji",
     comingSoon: "Coming soon", analyticsTitle: "Akari analytics", analyticsBody: "Downloads, revenue, subscriptions, and the metrics that show how Akari is growing will appear here.",
-    foodReviewTitle: "Food review", foodReviewLede: "Review what worked and what needs fixing.", foodReviewEmojiLabel: "Play with the food review emoji",
-    feedbackSummaryLabel: "Feedback summary", open: "Open", confirmed: "Confirmed", resolved: "Resolved", loadingFeedback: "Loading feedback…",
+    foodReviewTitle: "Food review", foodReviewLede: "Review food results that need fixing.", foodReviewEmojiLabel: "Play with the food review emoji",
+    feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
     pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Review",
     tableIssue: "Issue", tableInput: "What they entered", tableComment: "Comment", tableMatch: "Matched result", tableActions: "Actions",
     openDetails: "Open details for {title}", noComment: "No comment", noMatchData: "No match data",
@@ -30,9 +30,9 @@ const translations = {
     closeDetails: "Close food review details", foodDetails: "Food details", issueSectionTitle: "Issue", logInput: "Log input", typedInLog: "Typed in Log", originalLogMissing: "The original Log text was not captured for this report.", feedbackComment: "Feedback comment",
     foodItems: "Food items · {count}", noFoodResult: "No food result data was attached.", reportDetails: "Report details", received: "Received", market: "Market", locale: "Locale", app: "App", catalogue: "Catalogue",
     searchSentence: "Search sentence", noSearchPhrase: "No separate search phrase was recorded.", macros: "Macros · {basis}", micronutrients: "Micronutrients · {basis}", nutritionBasis: "Nutrition basis", barcode: "Barcode", estimated: "Estimated",
-    emptyConfirmedTitle: "No confirmed results yet", emptyConfirmedBody: "Matches people approve will collect here.", emptyOpenTitle: "You’re all caught up", emptyOpenBody: "New food reports will appear here.", emptyResolvedTitle: "Nothing resolved yet", emptyResolvedBody: "Completed fixes will collect here.",
-    foodResult: "Food result", resultRight: "This result was right", wrongFoodMatch: "Wrong food match", wrongFoodIcon: "The food icon is wrong", nutritionWrong: "Nutrition looks wrong", servingWrong: "Serving or amount looks wrong", barcodeWrong: "Barcode or scan looks wrong", productMissing: "A product is missing", extraProduct: "Too many foods were added", tooSlow: "The result took too long", resultNeedsAttention: "This result needs attention",
-    match: "Match", icon: "Icon", nutrition: "Nutrition", portion: "Portion", scan: "Scan", missing: "Missing", extra: "Extra", slow: "Slow", other: "Other",
+    emptyOpenTitle: "You’re all caught up", emptyOpenBody: "New food reports will appear here.", emptyResolvedTitle: "Nothing resolved yet", emptyResolvedBody: "Completed fixes will collect here.",
+    foodResult: "Food result", wrongFoodMatch: "Wrong food match", wrongFoodIcon: "The food icon is wrong", nutritionWrong: "Nutrition looks wrong", servingWrong: "Serving amount", barcodeWrong: "Barcode", productMissing: "Missing food", extraProduct: "Too many foods were added", tooSlow: "The result took too long", resultNeedsAttention: "This result needs attention",
+    anythingElse: "Anything else",
     unitServing: "serving", basisPer100g: "per 100 g", basisPerServing: "per serving",
     label_fixed: "Resolved", label_calories: "Calories", label_protein: "Protein", label_carbs: "Carbs", label_fat: "Fat", label_fiber: "Fiber", label_sugar: "Sugar", label_water: "Water", label_saturatedFat: "Saturated fat", label_monounsaturatedFat: "Monounsaturated fat", label_polyunsaturatedFat: "Polyunsaturated fat", label_calcium: "Calcium", label_iron: "Iron", label_magnesium: "Magnesium", label_potassium: "Potassium", label_sodium: "Sodium", label_zinc: "Zinc", label_vitaminA: "Vitamin A", label_vitaminB12: "Vitamin B12", label_vitaminC: "Vitamin C", label_vitaminD: "Vitamin D", label_folate: "Folate", label_iodine: "Iodine", label_selenium: "Selenium", label_cholesterol: "Cholesterol", label_caffeine: "Caffeine",
   },
@@ -41,8 +41,8 @@ const translations = {
     homeLabel: "Akari Startseite", adminPagesLabel: "Admin-Seiten", dashboardNavLabel: "Übersicht", foodReviewNavLabel: "Essensfeedback", logoutLabel: "Abmelden",
     dashboardTitle: "Übersicht", dashboardLede: "Ein klarer Blick darauf, wie Akari genutzt wird.", dashboardEmojiLabel: "Mit dem Übersichts-Emoji spielen",
     comingSoon: "Demnächst", analyticsTitle: "Akari Analysen", analyticsBody: "Downloads, Umsatz, Abonnements und weitere Kennzahlen zum Wachstum von Akari werden hier angezeigt.",
-    foodReviewTitle: "Essensfeedback", foodReviewLede: "Prüfe, was funktioniert hat und was korrigiert werden muss.", foodReviewEmojiLabel: "Mit dem Essensfeedback-Emoji spielen",
-    feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", confirmed: "Bestätigt", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
+    foodReviewTitle: "Essensfeedback", foodReviewLede: "Prüfe Lebensmittelergebnisse, die korrigiert werden müssen.", foodReviewEmojiLabel: "Mit dem Essensfeedback-Emoji spielen",
+    feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
     pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Essensfeedback",
     tableIssue: "Problem", tableInput: "Eingabe", tableComment: "Kommentar", tableMatch: "Gefundenes Ergebnis", tableActions: "Aktionen",
     openDetails: "Details öffnen: {title}", noComment: "Kein Kommentar", noMatchData: "Keine Ergebnisdaten",
@@ -50,9 +50,9 @@ const translations = {
     closeDetails: "Details der Essensrückmeldung schließen", foodDetails: "Lebensmitteldetails", issueSectionTitle: "Problem", logInput: "Eingabe im Log", typedInLog: "Im Log eingegeben", originalLogMissing: "Die ursprüngliche Eingabe wurde für diese Rückmeldung nicht gespeichert.", feedbackComment: "Kommentar zur Rückmeldung",
     foodItems: "Lebensmittel · {count}", noFoodResult: "Es wurden keine Lebensmitteldaten angehängt.", reportDetails: "Details zur Rückmeldung", received: "Eingegangen", market: "Markt", locale: "Sprache", app: "App", catalogue: "Katalog",
     searchSentence: "Suchtext", noSearchPhrase: "Es wurde kein eigener Suchtext gespeichert.", macros: "Makronährstoffe · {basis}", micronutrients: "Mikronährstoffe · {basis}", nutritionBasis: "Bezugsmenge", barcode: "Barcode", estimated: "Geschätzt",
-    emptyConfirmedTitle: "Noch keine bestätigten Ergebnisse", emptyConfirmedBody: "Bestätigte Treffer werden hier gesammelt.", emptyOpenTitle: "Alles erledigt", emptyOpenBody: "Neue Rückmeldungen erscheinen hier.", emptyResolvedTitle: "Noch nichts erledigt", emptyResolvedBody: "Abgeschlossene Korrekturen werden hier gesammelt.",
-    foodResult: "Lebensmittelergebnis", resultRight: "Dieses Ergebnis war richtig", wrongFoodMatch: "Falsches Lebensmittel", wrongFoodIcon: "Das Symbol passt nicht", nutritionWrong: "Nährwerte sind falsch", servingWrong: "Portion oder Menge ist falsch", barcodeWrong: "Barcode oder Scan ist falsch", productMissing: "Ein Produkt fehlt", extraProduct: "Zu viele Einträge wurden hinzugefügt", tooSlow: "Das Ergebnis hat zu lange gedauert", resultNeedsAttention: "Dieses Ergebnis muss geprüft werden",
-    match: "Zuordnung", icon: "Symbol", nutrition: "Nährwerte", portion: "Portion", scan: "Scan", missing: "Fehlend", extra: "Extras", slow: "Langsam", other: "Sonstiges",
+    emptyOpenTitle: "Alles erledigt", emptyOpenBody: "Neue Rückmeldungen erscheinen hier.", emptyResolvedTitle: "Noch nichts erledigt", emptyResolvedBody: "Abgeschlossene Korrekturen werden hier gesammelt.",
+    foodResult: "Lebensmittelergebnis", wrongFoodMatch: "Falsches Lebensmittel", wrongFoodIcon: "Das Symbol passt nicht", nutritionWrong: "Nährwerte stimmen nicht", servingWrong: "Portionsmenge", barcodeWrong: "Barcode", productMissing: "Lebensmittel fehlt", extraProduct: "Zu viele Einträge wurden hinzugefügt", tooSlow: "Das Ergebnis hat zu lange gedauert", resultNeedsAttention: "Dieses Ergebnis muss geprüft werden",
+    anythingElse: "Weitere Angaben",
     unitServing: "Portion", basisPer100g: "pro 100 g", basisPerServing: "pro Portion",
     label_fixed: "Erledigt", label_calories: "Kalorien", label_protein: "Eiweiß", label_carbs: "Kohlenhydrate", label_fat: "Fett", label_fiber: "Ballaststoffe", label_sugar: "Zucker", label_water: "Wasser", label_saturatedFat: "Gesättigte Fettsäuren", label_monounsaturatedFat: "Einfach ungesättigte Fettsäuren", label_polyunsaturatedFat: "Mehrfach ungesättigte Fettsäuren", label_calcium: "Kalzium", label_iron: "Eisen", label_magnesium: "Magnesium", label_potassium: "Kalium", label_sodium: "Natrium", label_zinc: "Zink", label_vitaminA: "Vitamin A", label_vitaminB12: "Vitamin B12", label_vitaminC: "Vitamin C", label_vitaminD: "Vitamin D", label_folate: "Folat", label_iodine: "Jod", label_selenium: "Selen", label_cholesterol: "Cholesterin", label_caffeine: "Koffein",
   },
@@ -232,16 +232,14 @@ async function load() {
 }
 
 function render(items) {
-  const unresolved = items.filter((item) => !["fixed", "dismissed"].includes(item.status));
-  const resolved = items.filter((item) => item.status === "fixed");
-  const open = unresolved.filter((item) => item.rating === "negative");
-  const confirmed = unresolved.filter((item) => item.rating === "positive");
-  const visible = activeFilter === "positive" ? confirmed
-      : activeFilter === "resolved" ? resolved
-        : open;
+  // Older apps can still send positive feedback. Keep it stored, while
+  // this dashboard focuses on problem reports in both views and counts.
+  const problems = items.filter((item) => item.rating === "negative");
+  const open = problems.filter((item) => !["fixed", "dismissed"].includes(item.status));
+  const resolved = problems.filter((item) => item.status === "fixed");
+  const visible = activeFilter === "resolved" ? resolved : open;
 
   document.querySelector("#open-count").textContent = open.length;
-  document.querySelector("#positive-count").textContent = confirmed.length;
   document.querySelector("#resolved-count").textContent = resolved.length;
   reports.replaceChildren();
   if (!visible.length) {
@@ -595,18 +593,13 @@ function appendDefinition(list, term, value) {
 
 function emptyState() {
   const empty = element("div", "empty-state");
-  const icon = element("span", "empty-icon", ["positive", "resolved"].includes(activeFilter) ? "✓" : "✦");
+  const icon = element("span", "empty-icon", activeFilter === "resolved" ? "✓" : "✦");
   icon.setAttribute("aria-hidden", "true");
   const copy = element("div", "empty-copy");
   if (activeFilter === "resolved") {
     copy.append(
       element("h2", "", t("emptyResolvedTitle")),
       element("p", "", t("emptyResolvedBody")),
-    );
-  } else if (activeFilter === "positive") {
-    copy.append(
-      element("h2", "", t("emptyConfirmedTitle")),
-      element("p", "", t("emptyConfirmedBody")),
     );
   } else {
     copy.append(
@@ -664,7 +657,6 @@ async function copyText(value) {
 }
 
 function feedbackTitle(report) {
-  if (report.rating === "positive") return t("resultRight");
   return feedbackReasons(report).map(feedbackReasonTitle).join(", ");
 }
 
@@ -677,42 +669,22 @@ function feedbackReasonTitle(reason) {
   if (reason === "missing_product") return t("productMissing");
   if (reason === "extra_product") return t("extraProduct");
   if (reason === "too_slow") return t("tooSlow");
+  if (reason === "other") return t("anythingElse");
   return t("resultNeedsAttention");
 }
 
-function feedbackReasonShortTitle(reason) {
-  if (reason === "wrong_match") return t("match");
-  if (reason === "wrong_icon") return t("icon");
-  if (reason === "nutrition") return t("nutrition");
-  if (reason === "serving") return t("portion");
-  if (reason === "barcode_or_scan") return t("scan");
-  if (reason === "missing_product") return t("missing");
-  if (reason === "extra_product") return t("extra");
-  if (reason === "too_slow") return t("slow");
-  return t("other");
-}
-
 function feedbackReasons(report) {
-  if (report.rating === "positive") return [];
   return [...new Set(report.reasons?.length ? report.reasons : ["other"])];
 }
 
-function issueToneClass(report, reason) {
-  if (report.rating === "positive") return "issue-confirmed";
+function issueToneClass(reason) {
   return `issue-${reason.replaceAll("_", "-")}`;
 }
 
 function appendIssuePills(container, report, compact = false) {
-  if (report.rating === "positive") {
-    const pill = element("span", `issue-pill ${compact ? "row-pill " : ""}positive issue-confirmed`);
-    pill.append(element("span", "issue-text", t("confirmed")));
-    container.append(pill);
-    return;
-  }
-
   for (const reason of feedbackReasons(report)) {
-    const pill = element("span", `issue-pill ${compact ? "row-pill " : ""}${issueToneClass(report, reason)}`);
-    pill.append(element("span", "issue-text", feedbackReasonShortTitle(reason)));
+    const pill = element("span", `issue-pill ${compact ? "row-pill " : ""}${issueToneClass(reason)}`);
+    pill.append(element("span", "issue-text", feedbackReasonTitle(reason)));
     container.append(pill);
   }
 }
@@ -870,6 +842,7 @@ function previewReports() {
     }),
     report("apple", 73, {
       rating: "positive",
+      status: "fixed",
       reasons: [],
       logText: "🍎",
       note: "Exactly right.",
