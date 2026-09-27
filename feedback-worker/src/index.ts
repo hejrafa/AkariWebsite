@@ -5,6 +5,7 @@ interface Env {
   API_HOST: string;
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD_HASH: string;
+  ADDITIONAL_ADMINS?: string;
   SESSION_SECRET: string;
 }
 
@@ -163,17 +164,19 @@ async function login(request: Request, env: Env, isLocal: boolean): Promise<Resp
   }
 
   const email = clean(input.email, 320).toLowerCase();
+  let credentialVersion: string | undefined;
   if (!isLocal) {
-    if (!env.ADMIN_EMAIL || !env.ADMIN_PASSWORD_HASH || !env.SESSION_SECRET) {
+    if (!env.SESSION_SECRET) {
       return json({ error: "authentication_not_configured" }, 503);
     }
-    const suppliedHash = await sha256(input.password);
-    if (email !== env.ADMIN_EMAIL.toLowerCase() || !constantTimeEqual(suppliedHash, env.ADMIN_PASSWORD_HASH)) {
+    const passwordHash = adminPasswordHash(email, env);
+    if (!passwordHash || input.password.length > 1_024 || !(await verifyPassword(input.password, passwordHash))) {
       return json({ error: "invalid_credentials" }, 401);
     }
+    credentialVersion = await sha256(passwordHash);
   }
 
-  const token = await createSessionToken(email || "local@akari", env.SESSION_SECRET || "local-preview");
+  const token = await createSessionToken(email || "local@akari", env.SESSION_SECRET || "local-preview", credentialVersion);
   return json(
     { ok: true },
     200,
@@ -189,16 +192,17 @@ function logout(): Response {
   );
 }
 
-async function createSessionToken(email: string, secret: string): Promise<string> {
+async function createSessionToken(email: string, secret: string, credentialVersion?: string): Promise<string> {
   const payload = base64UrlEncode(JSON.stringify({
     email,
+    credentialVersion,
     expiresAt: Math.floor(Date.now() / 1000) + sessionLifetimeSeconds,
   }));
   return `${payload}.${await sign(payload, secret)}`;
 }
 
 async function hasAdminSession(request: Request, env: Env, isLocal: boolean): Promise<boolean> {
-  if (isLocal || request.headers.has("cf-access-authenticated-user-email")) return true;
+  if (isLocal) return true;
   if (!env.SESSION_SECRET) return false;
   const token = readCookie(request, sessionCookieName);
   if (!token) return false;
@@ -206,14 +210,50 @@ async function hasAdminSession(request: Request, env: Env, isLocal: boolean): Pr
   if (!payload || !signature || extra) return false;
   if (!constantTimeEqual(signature, await sign(payload, env.SESSION_SECRET))) return false;
   try {
-    const session = JSON.parse(base64UrlDecode(payload)) as { email?: unknown; expiresAt?: unknown };
-    return typeof session.email === "string" &&
-      session.email.toLowerCase() === env.ADMIN_EMAIL.toLowerCase() &&
-      typeof session.expiresAt === "number" &&
-      session.expiresAt > Math.floor(Date.now() / 1000);
+    const session: unknown = JSON.parse(base64UrlDecode(payload));
+    if (!isRecord(session) || typeof session.email !== "string" ||
+        typeof session.expiresAt !== "number" ||
+        session.expiresAt <= Math.floor(Date.now() / 1000)) return false;
+    const email = session.email.toLowerCase();
+    const passwordHash = adminPasswordHash(email, env);
+    if (!passwordHash) return false;
+    // Preserve the owner's existing sessions during the multi-account rollout.
+    if (session.credentialVersion === undefined) return email === env.ADMIN_EMAIL?.toLowerCase();
+    return typeof session.credentialVersion === "string" &&
+      constantTimeEqual(session.credentialVersion, await sha256(passwordHash));
   } catch {
     return false;
   }
+}
+
+const additionalPasswordPattern = /^pbkdf2-sha256:100000:([a-f0-9]{32}):([a-f0-9]{64})$/u;
+
+function adminPasswordHash(email: string, env: Env): string | null {
+  if (email === env.ADMIN_EMAIL?.toLowerCase()) return env.ADMIN_PASSWORD_HASH || null;
+  if (!env.ADDITIONAL_ADMINS) return null;
+  try {
+    const accounts: unknown = JSON.parse(env.ADDITIONAL_ADMINS);
+    if (!Array.isArray(accounts)) return null;
+    for (const account of accounts) {
+      if (isRecord(account) && typeof account.email === "string" &&
+          account.email.toLowerCase() === email && typeof account.passwordHash === "string" &&
+          additionalPasswordPattern.test(account.passwordHash)) return account.passwordHash;
+    }
+  } catch {
+    // Invalid configuration must never grant access or affect the owner's login.
+  }
+  return null;
+}
+
+async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
+  const match = passwordHash.match(additionalPasswordPattern);
+  if (!match) return /^[a-f0-9]{64}$/u.test(passwordHash) && constantTimeEqual(await sha256(password), passwordHash);
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
+  const salt = Uint8Array.from(match[1].match(/../gu)!, (byte) => parseInt(byte, 16));
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: 100_000 }, key, 256);
+  const derived = [...new Uint8Array(bits)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return constantTimeEqual(derived, match[2]);
 }
 
 async function sign(value: string, secret: string): Promise<string> {
