@@ -46,7 +46,7 @@ pnpm migrate:local
 pnpm dev --ip 127.0.0.1
 ```
 
-Open http://127.0.0.1:8787 for the admin dashboard. Local development uses a local D1 database and bypasses login on localhost; keep the development server bound to your own machine. Production passwords and production feedback are not required for local development.
+Open http://127.0.0.1:8791 for the admin dashboard. The development server listens on port 8791 (set in `wrangler.jsonc`), which is where the simulator build of the app sends food feedback. Local development uses a local D1 database and bypasses login on localhost; keep the development server bound to your own machine. Production passwords and production feedback are not required for local development.
 
 ## Make and deploy changes
 
