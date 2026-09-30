@@ -247,6 +247,7 @@ function adminPasswordHash(email: string, env: Env): string | null {
 
 async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
   const match = passwordHash.match(additionalPasswordPattern);
+  // The unsalted SHA-256 fallback can go once ADMIN_PASSWORD_HASH is in PBKDF2 format (`pnpm admin:create --owner`).
   if (!match) return /^[a-f0-9]{64}$/u.test(passwordHash) && constantTimeEqual(await sha256(password), passwordHash);
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
