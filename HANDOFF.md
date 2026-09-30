@@ -111,4 +111,4 @@ Keep the updated list in the shared password manager. Share only the intended pe
 
 To rotate a password, run `pnpm admin:create colleague@example.com --rotate`, then upload the complete account list again. To revoke an additional account, remove its entry from the private JSON list and upload the remaining list (or `[]` if empty). Removing an account or rotating its password invalidates its existing sessions. Sessions expire after eight hours. There is no email invitation or self-service password-reset flow; changes are maintained through this process.
 
-The repository is public and its root is uploaded to GitHub Pages. Keep passwords, tokens, private account lists, and production feedback exports outside the repository. The account generator defaults to a private directory outside the checkout.
+The repository is public. GitHub Pages serves only the allowlisted public files staged in `.github/workflows/pages.yml`; add new public files or directories there. Keep passwords, tokens, private account lists, and production feedback exports outside the repository. The account generator defaults to a private directory outside the checkout.
