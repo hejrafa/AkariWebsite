@@ -389,16 +389,24 @@ async function updateReport(request: Request, env: Env, id: string): Promise<Res
   }
   if (!isRecord(input)) return json({ error: "invalid_update" }, 400);
   const status = input.status;
-  const adminNote = cleanOptional(typeof input.adminNote === "string" ? input.adminNote : undefined, 1_000);
   if (typeof status !== "string" || !allowedStatuses.has(status as FeedbackStatus)) {
     return json({ error: "invalid_status" }, 400);
   }
 
-  const result = await env.DB.prepare(`
-    UPDATE food_feedback
-    SET status = ?, admin_note = ?, updated_at = ?
-    WHERE id = ?
-  `).bind(status, adminNote, new Date().toISOString(), id).run();
+  // Only an explicit string replaces the note; a status-only update keeps it.
+  const updatedAt = new Date().toISOString();
+  const statement = typeof input.adminNote === "string"
+    ? env.DB.prepare(`
+        UPDATE food_feedback
+        SET status = ?, admin_note = ?, updated_at = ?
+        WHERE id = ?
+      `).bind(status, cleanOptional(input.adminNote, 1_000), updatedAt, id)
+    : env.DB.prepare(`
+        UPDATE food_feedback
+        SET status = ?, updated_at = ?
+        WHERE id = ?
+      `).bind(status, updatedAt, id);
+  const result = await statement.run();
   if (result.meta.changes === 0) return notFound();
   return json({ updated: true });
 }
