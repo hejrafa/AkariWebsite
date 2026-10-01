@@ -217,8 +217,6 @@ async function hasAdminSession(request: Request, env: Env, isLocal: boolean): Pr
     const email = session.email.toLowerCase();
     const passwordHash = adminPasswordHash(email, env);
     if (!passwordHash) return false;
-    // Preserve the owner's existing sessions during the multi-account rollout.
-    if (session.credentialVersion === undefined) return email === env.ADMIN_EMAIL?.toLowerCase();
     return typeof session.credentialVersion === "string" &&
       constantTimeEqual(session.credentialVersion, await sha256(passwordHash));
   } catch {
@@ -247,8 +245,7 @@ function adminPasswordHash(email: string, env: Env): string | null {
 
 async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
   const match = passwordHash.match(additionalPasswordPattern);
-  // The unsalted SHA-256 fallback can go once ADMIN_PASSWORD_HASH is in PBKDF2 format (`pnpm admin:create --owner`).
-  if (!match) return /^[a-f0-9]{64}$/u.test(passwordHash) && constantTimeEqual(await sha256(password), passwordHash);
+  if (!match) return false;
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
   const salt = Uint8Array.from(match[1].match(/../gu)!, (byte) => parseInt(byte, 16));

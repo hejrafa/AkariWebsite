@@ -8,12 +8,14 @@ const teammateEmail = "teammate@example.com";
 const ownerPassword = "owner-test-password";
 const teammatePassword = "teammate-test-password";
 const salt = Buffer.from("d1ccfbf2fbda45e997b3292fe439f120", "hex");
-const passwordHash = `pbkdf2-sha256:100000:${salt.toString("hex")}:${pbkdf2Sync(teammatePassword, salt, 100_000, 32, "sha256").toString("hex")}`;
+const pbkdf2Hash = (password) => `pbkdf2-sha256:100000:${salt.toString("hex")}:${pbkdf2Sync(password, salt, 100_000, 32, "sha256").toString("hex")}`;
+const passwordHash = pbkdf2Hash(teammatePassword);
+const sha256Hash = (password) => createHash("sha256").update(password).digest("hex");
 const env = {
   ADMIN_HOST: "admin.example.com",
   API_HOST: "api.example.com",
   ADMIN_EMAIL: ownerEmail,
-  ADMIN_PASSWORD_HASH: createHash("sha256").update(ownerPassword).digest("hex"),
+  ADMIN_PASSWORD_HASH: pbkdf2Hash(ownerPassword),
   SESSION_SECRET: "test-only-signing-secret",
   ADDITIONAL_ADMINS: JSON.stringify([{ email: teammateEmail, passwordHash }]),
   ASSETS: { fetch: async () => new Response("dashboard") },
@@ -59,6 +61,7 @@ test("wrong passwords, crossed credentials, unknown accounts, and oversized pass
     assert.equal(response.status, 401);
     assert.equal(response.headers.get("set-cookie"), null);
   }
+  assert.equal((await login(ownerEmail, ownerPassword, { ...env, ADMIN_PASSWORD_HASH: sha256Hash(ownerPassword) })).status, 401);
 });
 
 test("removing an account or rotating its password invalidates its sessions", async () => {
@@ -78,9 +81,9 @@ test("expired, tampered, or malformed sessions are denied", async () => {
   assert.equal(await authenticated(value, { ...env, SESSION_SECRET: "" }), false);
 });
 
-test("legacy owner sessions remain valid, but teammates require a credential version", async () => {
+test("sessions without a credential version are denied for everyone", async () => {
   const expiresAt = Math.floor(Date.now() / 1000) + 3600;
-  assert.equal(await authenticated(signedCookie({ email: ownerEmail, expiresAt })), true);
+  assert.equal(await authenticated(signedCookie({ email: ownerEmail, expiresAt })), false);
   assert.equal(await authenticated(signedCookie({ email: teammateEmail, expiresAt })), false);
 });
 
@@ -92,7 +95,7 @@ test("an identity header alone cannot access admin pages or reports", async () =
 });
 
 test("invalid additional account configuration fails closed while preserving owner login", async () => {
-  for (const value of ["not json", "null", "{}", "[null]", JSON.stringify([{ email: teammateEmail, passwordHash: env.ADMIN_PASSWORD_HASH }])]) {
+  for (const value of ["not json", "null", "{}", "[null]", JSON.stringify([{ email: teammateEmail, passwordHash: sha256Hash(teammatePassword) }])]) {
     const config = { ...env, ADDITIONAL_ADMINS: value };
     assert.equal((await login(ownerEmail, ownerPassword, config)).status, 200);
     assert.equal((await login(teammateEmail, teammatePassword, config)).status, 401);

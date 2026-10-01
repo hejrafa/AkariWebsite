@@ -89,7 +89,7 @@ If a database command reports that the account is unauthorized, check the signed
 
 ## Admin account management
 
-The original owner uses the existing `ADMIN_EMAIL` variable and `ADMIN_PASSWORD_HASH` secret. `SESSION_SECRET` signs login sessions. Additional accounts live in the encrypted `ADDITIONAL_ADMINS` Worker secret as a JSON list of email addresses and salted password hashes. Account changes need no database migration.
+The original owner uses the existing `ADMIN_EMAIL` variable and `ADMIN_PASSWORD_HASH` secret. `ADMIN_PASSWORD_HASH` must be in the PBKDF2 format produced by `pnpm admin:create --owner`; an older bare SHA-256 value no longer signs in. `SESSION_SECRET` signs login sessions. Additional accounts live in the encrypted `ADDITIONAL_ADMINS` Worker secret as a JSON list of email addresses and salted password hashes. Account changes need no database migration.
 
 Generate an additional login from `feedback-worker/`:
 
