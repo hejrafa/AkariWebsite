@@ -4,8 +4,6 @@ A lightweight static website for Akari, deployed to [joinakari.com](https://join
 
 The admin dashboard and food-feedback API are in `feedback-worker/`. See [the maintainer handoff](HANDOFF.md) for access, local development, admin accounts, and deployment instructions for both parts.
 
-The event-friendly beta page lives at `/try/`. It reuses the main hero and “Why?” intro, with a scannable TestFlight QR code in place of the primary CTA.
-
 ## Run locally
 
 ```sh

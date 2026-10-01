@@ -1,8 +1,12 @@
 const root = document.documentElement;
 const page = document.body.dataset.legalPage;
 const languageButtons = document.querySelectorAll("[data-language-target]");
-const brandLogo = document.querySelector(".legal-brand img");
-const creditsLink = document.querySelector(".credits-heart");
+const themeButtons = document.querySelectorAll("[data-theme-target]");
+const modeButtons = document.querySelectorAll("[data-mode-target]");
+const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
+const headerControlsPanel = document.querySelector(".header-controls");
+const brandLogos = document.querySelectorAll(".legal-brand img, .footer-logo img");
+const adminLink = document.querySelector(".footer-admin-link");
 const themeColor = document.querySelector('meta[name="theme-color"]');
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 const playfulEmojis = document.querySelectorAll(".legal-headline-emoji");
@@ -10,6 +14,17 @@ const playfulEmojis = document.querySelectorAll(".legal-headline-emoji");
 const commonTranslations = {
   en: {
     headerLabel: "Akari website header",
+    mobileMenuLabel: "Language and appearance settings",
+    mobileLanguageLabel: "Language",
+    mobileAppearanceLabel: "Appearance",
+    appearanceLabel: "Choose page appearance",
+    themeGroupLabel: "Choose a color theme",
+    themeGermanyLabel: "Germany theme",
+    themeJapanLabel: "Japan theme",
+    themeScotlandLabel: "Scotland theme",
+    themeUsaLabel: "USA theme",
+    lightModeLabel: "Use light appearance",
+    darkModeLabel: "Use dark appearance",
     homeLabel: "Akari home",
     languageGroupLabel: "Choose a language",
     languageEnglishLabel: "View in English",
@@ -17,14 +32,34 @@ const commonTranslations = {
     footerLabel: "Akari credits",
     madePrefix: "Made with ",
     madeSuffix: " in Germany",
-    adminLabel: "Open Akari admin",
-    privacyLabel: "Privacy",
-    termsLabel: "Terms",
-    contactLabel: "Contact",
+    heartLabel: "love",
+    adminLoginLabel: "Admin",
+    footerSitemapLabel: "Sitemap",
+    footerProductTitle: "Product",
+    footerJoinLabel: "Join the beta",
+    footerFeaturesLabel: "Features",
+    footerShapeLabel: "Help shape Akari",
+    footerSupportTitle: "Support",
+    footerFaqLabel: "FAQ",
+    footerLegalTitle: "Legal",
+    privacyLabel: "Privacy Policy",
+    termsLabel: "Terms of Service",
+    contactLabel: "Contact us",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
     headerLabel: "Kopfbereich der Akari-Website",
+    mobileMenuLabel: "Einstellungen für Sprache und Darstellung",
+    mobileLanguageLabel: "Sprache",
+    mobileAppearanceLabel: "Design",
+    appearanceLabel: "Erscheinungsbild der Seite wählen",
+    themeGroupLabel: "Farbthema wählen",
+    themeGermanyLabel: "Deutschland-Design",
+    themeJapanLabel: "Japan-Design",
+    themeScotlandLabel: "Schottland-Design",
+    themeUsaLabel: "USA-Design",
+    lightModeLabel: "Helles Erscheinungsbild verwenden",
+    darkModeLabel: "Dunkles Erscheinungsbild verwenden",
     homeLabel: "Akari-Startseite",
     languageGroupLabel: "Sprache wählen",
     languageEnglishLabel: "Seite auf Englisch anzeigen",
@@ -32,8 +67,17 @@ const commonTranslations = {
     footerLabel: "Akari-Info und rechtlicher Hinweis",
     madePrefix: "Mit ",
     madeSuffix: " in Deutschland entwickelt",
-    adminLabel: "Akari-Adminbereich öffnen",
-    privacyLabel: "Datenschutz",
+    heartLabel: "Liebe",
+    adminLoginLabel: "Admin",
+    footerSitemapLabel: "Seitenübersicht",
+    footerProductTitle: "Produkt",
+    footerJoinLabel: "Beta beitreten",
+    footerFeaturesLabel: "Funktionen",
+    footerShapeLabel: "Akari mitgestalten",
+    footerSupportTitle: "Hilfe",
+    footerFaqLabel: "FAQ",
+    footerLegalTitle: "Rechtliches",
+    privacyLabel: "Datenschutzerklärung",
     termsLabel: "Nutzungsbedingungen",
     contactLabel: "Kontakt",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
@@ -193,11 +237,11 @@ function updateLanguageUrl(language) {
 }
 
 function updateInternalLinks(language) {
-  document.querySelectorAll('.footer-legal a[href^="/"], .legal-brand, a[href^="/privacy/"], a[href^="/terms/"]').forEach((link) => {
+  document.querySelectorAll('.footer-sitemap a[href^="/"], .footer-logo, .legal-brand, a[href^="/privacy/"], a[href^="/terms/"]').forEach((link) => {
     const url = new URL(link.getAttribute("href"), window.location.origin);
     if (language === "de") url.searchParams.set("lang", "de");
     else url.searchParams.delete("lang");
-    link.href = `${url.pathname}${url.search}`;
+    link.href = `${url.pathname}${url.search}${url.hash}`;
   });
 }
 
@@ -208,14 +252,16 @@ function updateAppearance() {
   root.dataset.mode = mode;
 
   if (themeColor) themeColor.content = pageColors[mode][theme];
-  if (brandLogo) brandLogo.src = `/assets/logo/akari-logo-${theme}-${mode}.svg?v=2`;
-  if (creditsLink) {
+  themeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.themeTarget === theme)));
+  modeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.modeTarget === mode)));
+  brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-${mode}.svg?v=2`; });
+  if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
     const adminURL = new URL(localPreview ? "http://127.0.0.1:8791/login" : "https://admin.joinakari.com/");
     adminURL.searchParams.set("theme", theme);
     adminURL.searchParams.set("mode", mode);
     adminURL.searchParams.set("lang", root.dataset.language || "en");
-    creditsLink.href = adminURL.href;
+    adminLink.href = adminURL.href;
   }
 }
 
@@ -284,6 +330,59 @@ systemModePreference.addEventListener?.("change", (event) => {
   if (!followsSystemMode) return;
   root.dataset.mode = event.matches ? "dark" : "light";
   updateAppearance();
+});
+
+themeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    root.dataset.theme = button.dataset.themeTarget;
+    persistSitePreference("akari-theme", root.dataset.theme);
+    updateAppearance();
+  });
+});
+
+modeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    followsSystemMode = false;
+    root.dataset.mode = button.dataset.modeTarget;
+    persistSitePreference("akari-mode", root.dataset.mode);
+    updateAppearance();
+  });
+});
+
+const mobileHeaderQuery = window.matchMedia("(max-width: 760px)");
+
+function setMobileMenu(open, focusFirstControl = false) {
+  const shouldOpen = Boolean(open && mobileHeaderQuery.matches);
+  root.classList.toggle("mobile-menu-is-open", shouldOpen);
+  mobileMenuToggle?.setAttribute("aria-expanded", String(shouldOpen));
+
+  if (shouldOpen && focusFirstControl) {
+    requestAnimationFrame(() => {
+      const selectedLanguage = headerControlsPanel?.querySelector('.language-button[aria-pressed="true"]');
+      (selectedLanguage || headerControlsPanel?.querySelector("button"))?.focus();
+    });
+  }
+}
+
+mobileMenuToggle?.addEventListener("click", () => {
+  const shouldOpen = !root.classList.contains("mobile-menu-is-open");
+  setMobileMenu(shouldOpen, shouldOpen);
+});
+
+document.addEventListener("click", (event) => {
+  if (!root.classList.contains("mobile-menu-is-open")) return;
+  if (mobileMenuToggle?.contains(event.target) || headerControlsPanel?.contains(event.target)) return;
+  setMobileMenu(false);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !root.classList.contains("mobile-menu-is-open")) return;
+  setMobileMenu(false);
+  mobileMenuToggle?.focus();
+});
+
+mobileHeaderQuery.addEventListener?.("change", (event) => {
+  if (!event.matches) setMobileMenu(false);
 });
 
 window.addEventListener("storage", (event) => {

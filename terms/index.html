@@ -34,20 +34,52 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/legal.css?v=20260924-02" />
-    <script src="/legal.js?v=20260924-01" defer></script>
+    <link rel="stylesheet" href="/legal.css?v=20261001-04" />
+    <script src="/legal.js?v=20261001-04" defer></script>
     <title>Akari: Terms of Use</title>
   </head>
   <body data-legal-page="terms">
     <header class="legal-site-header" aria-label="Akari website header" data-i18n-aria-label="headerLabel">
       <div class="legal-site-header__inner">
+        <div class="header-controls" id="header-controls-panel">
+          <div class="header-control-section">
+            <span class="mobile-control-label" data-i18n="mobileLanguageLabel">Language</span>
+            <div class="language-switch" role="group" aria-label="Choose a language" data-i18n-aria-label="languageGroupLabel">
+              <button class="language-button" type="button" data-language-target="en" lang="en" aria-label="View in English" data-i18n-aria-label="languageEnglishLabel" aria-pressed="true">EN</button>
+              <button class="language-button" type="button" data-language-target="de" lang="de" aria-label="View in German" data-i18n-aria-label="languageGermanLabel" aria-pressed="false">DE</button>
+            </div>
+          </div>
+
+          <div class="header-control-section">
+            <span class="mobile-control-label" data-i18n="mobileAppearanceLabel">Appearance</span>
+            <div class="appearance-controls" role="group" aria-label="Choose page appearance" data-i18n-aria-label="appearanceLabel">
+              <div class="theme-controls" role="group" aria-label="Choose a color theme" data-i18n-aria-label="themeGroupLabel">
+                <button class="theme-dot" type="button" data-theme-target="meadow" aria-label="Germany theme" data-i18n-aria-label="themeGermanyLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Japan theme" data-i18n-aria-label="themeJapanLabel" aria-pressed="true"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Scotland theme" data-i18n-aria-label="themeScotlandLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="USA theme" data-i18n-aria-label="themeUsaLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+              </div>
+              <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" data-i18n-aria-label="lightModeLabel" aria-pressed="false">
+                <span class="mode-ring" aria-hidden="true"><span class="mode-swatch"><img src="/assets/mode-light.svg" alt="" width="24" height="24" /></span></span>
+              </button>
+              <button class="mode-button" type="button" data-mode-target="dark" aria-label="Use dark appearance" data-i18n-aria-label="darkModeLabel" aria-pressed="true">
+                <span class="mode-ring" aria-hidden="true"><span class="mode-swatch"><img src="/assets/mode-dark.svg" alt="" width="24" height="24" /></span></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <a class="legal-brand" href="/" aria-label="Akari home" data-i18n-aria-label="homeLabel">
           <img src="/assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" />
         </a>
-        <div class="language-switch" role="group" aria-label="Choose a language" data-i18n-aria-label="languageGroupLabel">
-          <button class="language-button" type="button" data-language-target="en" lang="en" aria-label="View in English" data-i18n-aria-label="languageEnglishLabel" aria-pressed="true">EN</button>
-          <button class="language-button" type="button" data-language-target="de" lang="de" aria-label="View in German" data-i18n-aria-label="languageGermanLabel" aria-pressed="false">DE</button>
-        </div>
+        <button class="mobile-menu-toggle" type="button" aria-controls="header-controls-panel" aria-expanded="false" aria-label="Language and appearance settings" data-i18n-aria-label="mobileMenuLabel">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+            <circle cx="9" cy="7" r="1.5" />
+            <circle cx="15" cy="12" r="1.5" />
+            <circle cx="11" cy="17" r="1.5" />
+          </svg>
+        </button>
       </div>
     </header>
 
@@ -106,10 +138,41 @@
 
     </main>
 
-    <footer class="hero-footer" aria-label="Akari credits" data-i18n-aria-label="footerLabel">
-      <span class="footer-name">Akari</span>
-      <span class="footer-made"><span data-i18n="madePrefix">Made with </span><a class="credits-heart" href="https://admin.joinakari.com/" aria-label="Open Akari admin" data-i18n-aria-label="adminLabel">♥</a><span data-i18n="madeSuffix"> in Germany</span></span>
-      <p class="footer-legal"><a href="/privacy/" data-i18n="privacyLabel">Privacy</a> · <a href="/terms/" aria-current="page" data-i18n="termsLabel">Terms</a> · <a href="mailto:contact@hejrafa.com" data-i18n="contactLabel">Contact</a></p>
+    <footer class="site-footer" aria-label="Akari credits" data-i18n-aria-label="footerLabel">
+      <div class="site-footer__inner">
+        <div class="footer-brand">
+          <a class="footer-logo" href="/" aria-label="Akari home" data-i18n-aria-label="homeLabel">
+            <img src="/assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" loading="lazy" />
+          </a>
+          <p class="footer-made"><span data-i18n="madePrefix">Made with </span><span class="credits-heart" role="img" aria-label="love" data-i18n-aria-label="heartLabel">♥</span><span data-i18n="madeSuffix"> in Germany</span></p>
+          <p class="footer-copyright">© 2026 Akari</p>
+        </div>
+        <nav class="footer-sitemap" aria-label="Sitemap" data-i18n-aria-label="footerSitemapLabel">
+          <div class="footer-column">
+            <h2 data-i18n="footerProductTitle">Product</h2>
+            <ul>
+              <li><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer" data-i18n="footerJoinLabel">Join the beta</a></li>
+              <li><a href="/#features" data-i18n="footerFeaturesLabel">Features</a></li>
+              <li><a href="/#beta" data-i18n="footerShapeLabel">Help shape Akari</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerSupportTitle">Support</h2>
+            <ul>
+              <li><a href="/#faq" data-i18n="footerFaqLabel">FAQ</a></li>
+              <li><a href="mailto:contact@hejrafa.com" data-i18n="contactLabel">Contact us</a></li>
+              <li><a class="footer-admin-link" href="https://admin.joinakari.com/" data-i18n="adminLoginLabel">Admin</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerLegalTitle">Legal</h2>
+            <ul>
+              <li><a href="/privacy/" data-i18n="privacyLabel">Privacy Policy</a></li>
+              <li><a href="/terms/" aria-current="page" data-i18n="termsLabel">Terms of Service</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
       <p class="footer-disclaimer" data-i18n="disclaimer">Akari is not a substitute for professional medical advice. Always consult your physician first.</p>
     </footer>
   </body>

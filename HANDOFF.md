@@ -6,7 +6,7 @@ Both applications are in [hejrafa/AkariWebsite](https://github.com/hejrafa/Akari
 
 | Service | Code | Production | Deployment |
 | --- | --- | --- | --- |
-| Public website, beta page, privacy and terms | Repository root, `try/`, `privacy/`, `terms/` | https://joinakari.com | GitHub Pages; every push to `main` |
+| Public website, privacy and terms | Repository root, `privacy/`, `terms/` | https://joinakari.com | GitHub Pages; every push to `main` |
 | Food-feedback dashboard | `feedback-worker/public/` | https://admin.joinakari.com | Cloudflare Worker; separate deployment |
 | Login and food-feedback API | `feedback-worker/src/index.ts` | https://api.joinakari.com | Same Worker as the admin dashboard |
 | Feedback database | `feedback-worker/migrations/` | Cloudflare D1, `akari-food-feedback` | Apply pending migrations separately |

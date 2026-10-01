@@ -146,7 +146,7 @@ body {
 
 main,
 .site-header,
-.hero-footer {
+.site-footer {
   max-width: 100%;
   overflow-x: hidden;
   overflow-x: clip;
@@ -637,16 +637,15 @@ model-viewer[inert] {
   font-weight: 800;
   line-height: 1;
   text-decoration: none;
-  transition: box-shadow 220ms var(--ease), filter 220ms var(--ease);
+  transition: background-color 220ms var(--ease);
 }
 
 .cta:hover {
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
-  filter: brightness(1.08);
+  background: color-mix(in srgb, var(--cta-bg) 90%, white);
 }
 
 .cta:active {
-  filter: brightness(0.94);
+  background: color-mix(in srgb, var(--cta-bg) 92%, black);
 }
 
 .why {
@@ -1146,10 +1145,6 @@ model-viewer[inert] {
   line-height: 1.2;
 }
 
-.footer-disclaimer {
-  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
 .answers dd {
   margin: 10px 0 0;
   font-family: var(--serif);
@@ -1165,64 +1160,129 @@ model-viewer[inert] {
   text-underline-offset: 0.18em;
 }
 
-.hero-footer {
-  display: grid;
-  gap: 4px;
-  padding: 0 24px 48px;
+.site-footer {
+  width: min(1280px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 64px 0 48px;
   color: var(--ink);
-  font-size: 12px;
-  font-weight: 500;
+  font-family: var(--serif);
   letter-spacing: 0;
+}
+
+.site-footer__inner {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.footer-logo {
+  display: block;
+  width: 72px;
+}
+
+.footer-logo img {
+  width: 100%;
+  height: auto;
+}
+
+.footer-logo:focus-visible,
+.footer-sitemap a:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.footer-made,
+.footer-copyright {
+  margin: 0;
+  color: rgba(var(--ink-rgb), 0.62);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.footer-made {
+  margin-top: 18px;
+}
+
+.footer-sitemap {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.footer-column h2 {
+  margin: 0 0 18px;
+  color: rgba(var(--ink-rgb), 0.56);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.footer-column ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-column li + li {
+  margin-top: 0;
+}
+
+.footer-column a {
+  color: var(--ink);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.footer-column a:hover,
+.footer-column a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+.site-footer .footer-disclaimer {
+  width: auto;
+  max-width: 640px;
+  margin: 56px auto 0;
+  color: rgba(var(--ink-rgb), 0.5);
+  font-family: var(--serif);
+  font-size: 0.8125rem;
+  font-weight: 450;
+  line-height: 1.45;
   text-align: center;
 }
 
-.footer-name,
-.footer-made,
-.footer-legal,
-.footer-disclaimer {
-  color: rgba(var(--ink-rgb), 0.62);
-}
+@media (max-width: 760px) {
+  .site-footer {
+    width: calc(100% - 40px);
+    padding: 48px 0 40px;
+  }
 
-.footer-legal {
-  margin: 12px 0 0;
-  font-family: var(--serif);
-  font-size: 0.75rem;
-}
+  .site-footer__inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
 
-.footer-legal a {
-  color: inherit;
-  text-underline-offset: 0.18em;
-}
+  .footer-sitemap {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px 24px;
+  }
 
-.footer-disclaimer {
-  width: min(540px, 100%);
-  margin: 12px auto 0;
-  font-size: 0.75rem;
-  font-weight: 450;
-  line-height: 1.45;
+  .site-footer .footer-disclaimer {
+    margin-top: 40px;
+  }
 }
 
 .credits-heart {
-  display: inline-grid;
-  width: 44px;
-  height: 44px;
-  margin: -16px -14px;
-  padding: 0;
-  place-items: center;
-  vertical-align: middle;
   color: var(--accent);
-  font-size: 1.06em;
-  line-height: 1;
-  text-decoration: none;
-  transition: color 500ms var(--ease), transform 180ms var(--ease);
-}
-
-.credits-heart:hover { transform: scale(1.25); }
-
-.credits-heart:focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: 3px;
-  border-radius: 50%;
+  transition: color 500ms var(--ease);
 }
 
 :root[data-mode="light"] .credits-heart {
