@@ -19,6 +19,7 @@
   --line: color-mix(in srgb, var(--ink) 18%, transparent);
   --danger: #ff8979;
   --logout-accent: #eb804b;
+  --on-accent: var(--page);
   --control-radius: 14px;
   --serif: "Akari New York", "New York", Georgia, serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -39,6 +40,7 @@
   --card: #fffdf1;
   --surface: color-mix(in srgb, var(--card) 90%, var(--ink));
   --surface-raised: color-mix(in srgb, var(--card) 82%, var(--ink));
+  --on-accent: var(--ink);
 }
 :root[data-mode="light"][data-theme="forest"] { --page: #e6f4d1; --ink: #151a0c; --accent: #a9eb4b; --card: #fbfff4; }
 :root[data-mode="light"][data-theme="coast"] { --page: #d7edf8; --ink: #0d1920; --accent: #4baceb; --card: #f6fcff; }
@@ -102,12 +104,25 @@ button { cursor: pointer; }
   border: 1px solid var(--accent);
   border-radius: var(--control-radius);
   background: var(--accent);
-  color: var(--page);
+  color: var(--on-accent);
   font-size: 18px;
   font-weight: 750;
 }
-.login-form button:hover { filter: brightness(1.04); }
+.login-form button { transition: background-color 220ms var(--ease); }
+.login-form button:hover { background: color-mix(in srgb, var(--accent) 90%, white); }
 .login-form button:disabled { cursor: wait; opacity: 0.62; }
+:root[data-mode="light"] .login-card {
+  border-color: color-mix(in srgb, var(--ink) 12%, transparent);
+  background: rgba(255, 255, 255, 0.46);
+  box-shadow: none;
+}
+.login-form input::placeholder { color: var(--muted); opacity: 1; }
+:root[data-mode="light"] .login-form input {
+  border-color: color-mix(in srgb, var(--ink) 14%, transparent);
+  background: rgba(255, 255, 255, 0.72);
+}
+:root[data-mode="light"] .login-form input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 10%, transparent); }
+:root[data-mode="light"] .login-form button { box-shadow: 0 10px 28px color-mix(in srgb, var(--ink) 10%, transparent); }
 
 .site-header {
   display: grid;
@@ -404,7 +419,7 @@ h1 { margin: 0; font-size: clamp(4.25rem, 7.78vw, 7rem); font-weight: 700; lette
   font-size: 16px;
   font-weight: 750;
 }
-.summary-card.is-active strong { background: var(--accent); color: var(--page); }
+.summary-card.is-active strong { background: var(--accent); color: var(--on-accent); }
 .summary-card:focus-visible, .resolve-button:focus-visible, .copy-button:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 38%, transparent);
   outline-offset: 3px;
@@ -581,7 +596,7 @@ h1 { margin: 0; font-size: clamp(4.25rem, 7.78vw, 7rem); font-weight: 700; lette
   white-space: nowrap;
   transition: opacity 180ms var(--ease), transform 180ms var(--ease), background 180ms var(--ease), color 180ms var(--ease), border-color 180ms var(--ease);
 }
-.resolve-button { border: 1px solid var(--accent); background: var(--accent); color: var(--page); }
+.resolve-button { border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); }
 .copy-button { border: 1px solid var(--line); background: var(--surface-raised); color: var(--ink); }
 .resolve-button:hover, .copy-button:hover { opacity: 0.9; }
 .resolve-button:active, .copy-button:active { transform: scale(0.98); }
