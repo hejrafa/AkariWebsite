@@ -219,7 +219,7 @@ function structuredDataFor(language) {
         operatingSystem: "iOS",
         availableOnDevice: "iPhone",
         isAccessibleForFree: true,
-        image: "https://joinakari.com/health/assets/app-icon.png",
+        image: "https://joinakari.com/assets/app-icon.png",
         screenshot: [
           "https://joinakari.com/assets/theme-media/image_japan_dark_01.webp",
           "https://joinakari.com/assets/theme-media/image_japan_dark_02.webp",

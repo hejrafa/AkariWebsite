@@ -22,7 +22,7 @@ Then open `http://localhost:8000/`.
 - `manifest.webmanifest` describes the website for browsers and installed shortcuts.
 - The page includes Open Graph, X/Twitter, canonical, and `SoftwareApplication` JSON-LD metadata.
 
-The visual assets in `health/assets` are copied from the local Akari iOS project and remain product-reference material. The public TestFlight URL is referenced directly in `index.html`, `llms.txt`, and `llms-full.txt`.
+The app icon and phone models in `assets/` come from the local Akari iOS project; `tools/` holds the scripts used to prepare them, including `map-iphone-17-screen.py`, which maps an app screenshot onto the phone model's screen. Only the public files are deployed; the allowlist is in `.github/workflows/pages.yml`. The public TestFlight URL is referenced directly in `index.html`, `llms.txt`, and `llms-full.txt`.
 
 ## Localization
 
