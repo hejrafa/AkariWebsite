@@ -5,8 +5,8 @@ const themeColor = document.querySelector('meta[name="theme-color"]');
 const themeButtons = document.querySelectorAll("[data-theme-target]");
 const modeButtons = document.querySelectorAll("[data-mode-target]");
 const languageButtons = document.querySelectorAll("[data-language-target]");
-const brandLogo = document.querySelector(".brand img");
-const creditsLink = document.querySelector(".credits-heart");
+const brandLogos = document.querySelectorAll(".brand img, .footer-logo img");
+const adminLink = document.querySelector(".footer-admin-link");
 const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
 const headerControlsPanel = document.querySelector(".header-controls");
 const headlineHeart = document.querySelector(".headline-heart");
@@ -55,10 +55,6 @@ const translations = {
     heroLine3: " to tell.",
     trustBeta: "Free during beta · No account",
     trustPrivacy: "Your health data stays on your iPhone",
-    eventBetaLine1: "Join our iOS TestFlight beta. Tell us what helps,",
-    eventBetaLine2: "what feels confusing and what’s missing.",
-    eventFooterLabel: "More information about Akari",
-    eventFooterPrefix: "For more information visit ",
     joinBeta: "Join the beta",
     whyTitle: " Why?",
     whyBody: "Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.",
@@ -88,10 +84,19 @@ const translations = {
     footerLabel: "Akari credits",
     madePrefix: "Made with ",
     madeSuffix: " in Germany",
-    adminLabel: "Open Akari admin",
-    privacyLabel: "Privacy",
-    termsLabel: "Terms",
-    contactLabel: "Contact",
+    heartLabel: "love",
+    adminLoginLabel: "Admin",
+    footerSitemapLabel: "Sitemap",
+    footerProductTitle: "Product",
+    footerJoinLabel: "Join the beta",
+    footerFeaturesLabel: "Features",
+    footerShapeLabel: "Help shape Akari",
+    footerSupportTitle: "Support",
+    footerFaqLabel: "FAQ",
+    footerLegalTitle: "Legal",
+    privacyLabel: "Privacy Policy",
+    termsLabel: "Terms of Service",
+    contactLabel: "Contact us",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
@@ -120,10 +125,6 @@ const translations = {
     heroLine3: "zu erzählen.",
     trustBeta: "Kostenlos während der Beta · Kein Konto notwendig",
     trustPrivacy: "Deine Gesundheitsdaten bleiben auf dem iPhone",
-    eventBetaLine1: "Mach bei unserer iOS-TestFlight-Beta mit. Sag uns, was hilft,",
-    eventBetaLine2: "was unklar ist und was dir fehlt.",
-    eventFooterLabel: "Weitere Informationen über Akari",
-    eventFooterPrefix: "Weitere Informationen unter ",
     joinBeta: "Beta testen",
     whyTitle: " Warum?",
     whyBody: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages und bringt Vitalwerte, Ernährung und Ziele an einem Ort zusammen.",
@@ -153,8 +154,17 @@ const translations = {
     footerLabel: "Akari-Info und rechtlicher Hinweis",
     madePrefix: "Mit ",
     madeSuffix: " in Deutschland entwickelt",
-    adminLabel: "Akari-Adminbereich öffnen",
-    privacyLabel: "Datenschutz",
+    heartLabel: "Liebe",
+    adminLoginLabel: "Admin",
+    footerSitemapLabel: "Seitenübersicht",
+    footerProductTitle: "Produkt",
+    footerJoinLabel: "Beta beitreten",
+    footerFeaturesLabel: "Funktionen",
+    footerShapeLabel: "Akari mitgestalten",
+    footerSupportTitle: "Hilfe",
+    footerFaqLabel: "FAQ",
+    footerLegalTitle: "Rechtliches",
+    privacyLabel: "Datenschutzerklärung",
     termsLabel: "Nutzungsbedingungen",
     contactLabel: "Kontakt",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
@@ -317,7 +327,7 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
   languageButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.languageTarget === language));
   });
-  document.querySelectorAll('.footer-legal a[href^="/privacy/"], .footer-legal a[href^="/terms/"]').forEach((link) => {
+  document.querySelectorAll('.footer-sitemap a[href^="/privacy/"], .footer-sitemap a[href^="/terms/"]').forEach((link) => {
     const url = new URL(link.getAttribute("href"), window.location.origin);
     if (language === "de") url.searchParams.set("lang", "de");
     else url.searchParams.delete("lang");
@@ -351,6 +361,7 @@ function languageTransitionItems() {
     ".answers__item dt",
     ".answers__item dd",
     ".footer-made",
+    ".footer-sitemap",
     ".footer-disclaimer",
   ].join(", "));
 
@@ -472,10 +483,10 @@ const pageColors = {
 function updateThemeColor() {
   const color = pageColors[root.dataset.mode]?.[root.dataset.theme];
   if (color && themeColor) themeColor.content = color;
-  if (brandLogo) {
-    brandLogo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-${root.dataset.mode}.svg?v=2`, siteRoot).href;
-  }
-  if (creditsLink) {
+  brandLogos.forEach((logo) => {
+    logo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-${root.dataset.mode}.svg?v=2`, siteRoot).href;
+  });
+  if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
     const adminURL = new URL(localPreview
       ? "http://127.0.0.1:8791/login"
@@ -483,7 +494,7 @@ function updateThemeColor() {
     adminURL.searchParams.set("theme", root.dataset.theme);
     adminURL.searchParams.set("mode", root.dataset.mode);
     adminURL.searchParams.set("lang", root.dataset.language);
-    creditsLink.href = adminURL.href;
+    adminLink.href = adminURL.href;
   }
 
   const country = themeCountries[root.dataset.theme];
@@ -1001,7 +1012,7 @@ function setupRevealMotion() {
   prepare(document.querySelectorAll(".answers__intro h2"), "right", [0], scrollItems);
   prepare(document.querySelectorAll(".answers__intro > p"), "left", [140], scrollItems);
   prepare(document.querySelectorAll(".answers__item"), "up", [220, 300, 380, 460], scrollItems);
-  prepare(document.querySelectorAll(".hero-footer > *"), "up", [0, 80, 150], footerItems);
+  prepare(document.querySelectorAll(".footer-brand, .footer-column, .site-footer .footer-disclaimer"), "up", [0, 80, 140, 200, 260], footerItems);
 
   [...loadItems, ...phoneItems].forEach((element) => element.classList.add("reveal--armed"));
 
@@ -1110,7 +1121,7 @@ function setupRevealMotion() {
     cardItems.forEach((element) => cardObserver.observe(element));
   }, scrollSequenceStart);
 
-  const footer = document.querySelector(".hero-footer");
+  const footer = document.querySelector(".site-footer");
   if (footer) {
     const footerObserver = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;

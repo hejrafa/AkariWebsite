@@ -147,8 +147,8 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260902-01" />
-    <script src="script.js?v=20260924-01" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20261001-04" />
+    <script src="script.js?v=20261001-03" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skipLink">Skip to content</a>
@@ -241,7 +241,7 @@
         </div>
       </section>
 
-      <section class="why" aria-labelledby="why-title">
+      <section class="why" id="features" aria-labelledby="why-title">
         <div class="why__intro">
           <h2 id="why-title"><span class="why-emoji" aria-hidden="true">☀️</span><span data-i18n="whyTitle"> Why?</span></h2>
           <p data-i18n="whyBody">Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.</p>
@@ -281,7 +281,7 @@
         </div>
       </section>
 
-      <section class="beta" aria-labelledby="beta-title">
+      <section class="beta" id="beta" aria-labelledby="beta-title">
         <div class="beta-phone" aria-hidden="true">
           <div class="beta-phone__float">
             <model-viewer
@@ -321,7 +321,7 @@
         </div>
       </section>
 
-      <section class="answers" aria-labelledby="answers-title">
+      <section class="answers" id="faq" aria-labelledby="answers-title">
         <div class="answers__intro">
           <h2 id="answers-title"><span data-i18n="faqTitle">FAQ</span> <span class="answers-emoji" aria-hidden="true">💬</span></h2>
           <p data-i18n="faqIntro">Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.</p>
@@ -348,10 +348,41 @@
       </section>
     </main>
 
-    <footer class="hero-footer" aria-label="Akari credits" data-i18n-aria-label="footerLabel">
-      <span class="footer-name">Akari</span>
-      <span class="footer-made"><span data-i18n="madePrefix">Made with </span><a class="credits-heart" href="https://admin.joinakari.com/" aria-label="Open Akari admin" data-i18n-aria-label="adminLabel">♥</a><span data-i18n="madeSuffix"> in Germany</span></span>
-      <p class="footer-legal"><a href="/privacy/" data-i18n="privacyLabel">Privacy</a> · <a href="/terms/" data-i18n="termsLabel">Terms</a> · <a href="mailto:contact@hejrafa.com" data-i18n="contactLabel">Contact</a></p>
+    <footer class="site-footer" aria-label="Akari credits" data-i18n-aria-label="footerLabel">
+      <div class="site-footer__inner">
+        <div class="footer-brand">
+          <a class="footer-logo" href="#top" aria-label="Akari home" data-i18n-aria-label="homeLabel">
+            <img src="assets/logo/akari-logo-forest-dark.svg?v=2" alt="Akari" width="89" height="50" loading="lazy" />
+          </a>
+          <p class="footer-made"><span data-i18n="madePrefix">Made with </span><span class="credits-heart" role="img" aria-label="love" data-i18n-aria-label="heartLabel">♥</span><span data-i18n="madeSuffix"> in Germany</span></p>
+          <p class="footer-copyright">© 2026 Akari</p>
+        </div>
+        <nav class="footer-sitemap" aria-label="Sitemap" data-i18n-aria-label="footerSitemapLabel">
+          <div class="footer-column">
+            <h2 data-i18n="footerProductTitle">Product</h2>
+            <ul>
+              <li><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer" data-i18n="footerJoinLabel">Join the beta</a></li>
+              <li><a href="#features" data-i18n="footerFeaturesLabel">Features</a></li>
+              <li><a href="#beta" data-i18n="footerShapeLabel">Help shape Akari</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerSupportTitle">Support</h2>
+            <ul>
+              <li><a href="#faq" data-i18n="footerFaqLabel">FAQ</a></li>
+              <li><a href="mailto:contact@hejrafa.com" data-i18n="contactLabel">Contact us</a></li>
+              <li><a class="footer-admin-link" href="https://admin.joinakari.com/" data-i18n="adminLoginLabel">Admin</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerLegalTitle">Legal</h2>
+            <ul>
+              <li><a href="/privacy/" data-i18n="privacyLabel">Privacy Policy</a></li>
+              <li><a href="/terms/" data-i18n="termsLabel">Terms of Service</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
       <p class="footer-disclaimer" data-i18n="disclaimer">Akari is not a substitute for professional medical advice. Always consult your physician first.</p>
     </footer>
   </body>

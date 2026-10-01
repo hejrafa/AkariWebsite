@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir site
           cp index.html script.js styles.css legal.css legal.js CNAME robots.txt sitemap.xml llms.txt llms-full.txt manifest.webmanifest manifest-de.webmanifest site/
-          cp -R assets try privacy terms site/
+          cp -R assets privacy terms site/
 
       - name: Upload static website
         uses: actions/upload-pages-artifact@v5

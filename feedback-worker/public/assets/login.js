@@ -42,6 +42,7 @@ function selectLanguage(language, persist = true) {
   }
   for (const node of document.querySelectorAll("[data-i18n]")) node.textContent = translations[selected][node.dataset.i18n];
   for (const node of document.querySelectorAll("[data-i18n-aria-label]")) node.setAttribute("aria-label", translations[selected][node.dataset.i18nAriaLabel]);
+  for (const node of document.querySelectorAll("[data-i18n-placeholder]")) node.setAttribute("placeholder", translations[selected][node.dataset.i18nPlaceholder]);
   for (const button of languageButtons) button.setAttribute("aria-pressed", String(button.dataset.languageTarget === selected));
   document.title = translations[selected].pageTitle;
 }
