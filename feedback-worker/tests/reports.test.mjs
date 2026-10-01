@@ -1,16 +1,17 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
+import { pbkdf2Sync } from "node:crypto";
 import test from "node:test";
 import worker from "../src/index.ts";
 
 const ownerEmail = "owner@example.com";
 const ownerPassword = "owner-test-password";
+const salt = Buffer.from("d1ccfbf2fbda45e997b3292fe439f120", "hex");
 const statements = [];
 const env = {
   ADMIN_HOST: "admin.example.com",
   API_HOST: "api.example.com",
   ADMIN_EMAIL: ownerEmail,
-  ADMIN_PASSWORD_HASH: createHash("sha256").update(ownerPassword).digest("hex"),
+  ADMIN_PASSWORD_HASH: `pbkdf2-sha256:100000:${salt.toString("hex")}:${pbkdf2Sync(ownerPassword, salt, 100_000, 32, "sha256").toString("hex")}`,
   SESSION_SECRET: "test-only-signing-secret",
   ASSETS: { fetch: async () => new Response("dashboard") },
   DB: {
