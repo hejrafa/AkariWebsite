@@ -23,7 +23,13 @@ let output = URL(fileURLWithPath: arguments.first ?? "health/assets/sf-symbols",
 try fileManager.createDirectory(at: output, withIntermediateDirectories: true)
 
 let canvas = NSSize(width: 128, height: 128)
-let configuration = NSImage.SymbolConfiguration(pointSize: 72, weight: .semibold)
+// SF_SYMBOL_WEIGHT=medium (or regular, bold, …) overrides the default weight.
+let weights: [String: NSFont.Weight] = [
+    "ultralight": .ultraLight, "thin": .thin, "light": .light, "regular": .regular,
+    "medium": .medium, "semibold": .semibold, "bold": .bold, "heavy": .heavy, "black": .black
+]
+let weight = weights[ProcessInfo.processInfo.environment["SF_SYMBOL_WEIGHT"] ?? ""] ?? .semibold
+let configuration = NSImage.SymbolConfiguration(pointSize: 72, weight: weight)
 
 for symbol in symbols {
     guard let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)?
