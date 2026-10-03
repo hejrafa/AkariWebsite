@@ -136,6 +136,8 @@ a:hover { color: var(--accent); }
 }
 
 .language-switch {
+  --language-w: 44px;
+  --language-h: 36px;
   position: relative;
   display: flex;
   grid-column: 1;
@@ -155,8 +157,8 @@ a:hover { color: var(--accent); }
   z-index: 0;
   top: 3px;
   left: 3px;
-  width: 38px;
-  height: 28px;
+  width: var(--language-w);
+  height: var(--language-h);
   background: var(--ink);
   border-radius: 999px;
   content: "";
@@ -165,15 +167,15 @@ a:hover { color: var(--accent); }
 }
 
 :root[data-language="de"] .language-switch::before {
-  transform: translateX(38px);
+  transform: translateX(var(--language-w));
 }
 
 .language-button {
   position: relative;
   z-index: 1;
   display: grid;
-  width: 38px;
-  height: 28px;
+  width: var(--language-w);
+  height: var(--language-h);
   margin: 0;
   padding: 0;
   place-items: center;
@@ -182,14 +184,16 @@ a:hover { color: var(--accent); }
   border: 0;
   border-radius: 999px;
   font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 750;
   letter-spacing: 0.04em;
   line-height: 1;
   transition: color 180ms var(--ease), background 180ms var(--ease), transform 180ms var(--ease);
 }
 
-.language-button:hover { transform: scale(1.04); }
+.language-button:hover {
+  transform: scale(1.04);
+}
 
 .language-button[aria-pressed="true"] {
   color: var(--page);
@@ -206,28 +210,69 @@ a:hover { color: var(--accent); }
   display: none;
 }
 
-.appearance-controls,
-.theme-controls {
-  display: flex;
-  align-items: center;
-}
-
 .appearance-controls {
+  display: flex;
   grid-column: 3;
   grid-row: 1;
+  align-items: center;
   justify-self: end;
-  gap: 0;
+  gap: 8px;
   margin-right: 24px;
 }
+
+/* Theme and light/dark pills match the language switch: a 44px pill whose
+   selection slides to the active item. The active index comes from the
+   root's data-theme / data-mode, so no measuring is needed. */
+.theme-controls,
+.mode-controls {
+  --control-size: 36px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border: 1px solid rgba(var(--ink-rgb), 0.24);
+  border-radius: 999px;
+  isolation: isolate;
+  transition: border-color 500ms var(--ease);
+}
+
+.theme-controls::before,
+.mode-controls::before {
+  position: absolute;
+  z-index: 0;
+  top: 3px;
+  left: 3px;
+  box-sizing: border-box;
+  width: var(--control-size);
+  height: var(--control-size);
+  border-radius: 999px;
+  content: "";
+  transform: translateX(calc(var(--control-index, 0) * var(--control-size)));
+  transition: background 500ms var(--ease), border-color 500ms var(--ease), transform 300ms cubic-bezier(0.22, 1.25, 0.36, 1);
+}
+
+.theme-controls::before {
+  border: 2px solid var(--ink);
+}
+
+.mode-controls::before {
+  background: var(--ink);
+}
+
+:root[data-theme="forest"] .theme-controls { --control-index: 1; }
+:root[data-theme="coast"] .theme-controls { --control-index: 2; }
+:root[data-theme="canyon"] .theme-controls { --control-index: 3; }
+:root[data-mode="dark"] .mode-controls { --control-index: 1; }
 
 .theme-dot,
 .mode-button {
   position: relative;
+  z-index: 1;
   display: grid;
   flex: 0 0 auto;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: var(--control-size);
+  height: var(--control-size);
   margin: 0;
   padding: 0;
   color: var(--ink);
@@ -235,6 +280,7 @@ a:hover { color: var(--accent); }
   border: 0;
   border-radius: 50%;
   cursor: pointer;
+  transition: color 180ms var(--ease), transform 180ms var(--ease);
 }
 
 .theme-dot[data-theme-target="meadow"] {
@@ -253,21 +299,16 @@ a:hover { color: var(--accent); }
   --theme-swatch: #eb804b;
 }
 
-.theme-ring,
-.mode-ring {
+.theme-ring {
   display: grid;
-  width: 32px;
-  height: 32px;
   place-items: center;
-  border: 2px solid transparent;
-  border-radius: 50%;
   pointer-events: none;
 }
 
 .theme-swatch {
   display: block;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   background: var(--theme-swatch);
   border-radius: 50%;
   pointer-events: none;
@@ -278,34 +319,30 @@ a:hover { color: var(--accent); }
   background-color: color-mix(in srgb, var(--theme-swatch) 88%, white);
 }
 
-.mode-swatch {
-  display: grid;
-  width: 24px;
-  height: 24px;
-  place-items: center;
-  background: #9d977a;
-  border-radius: 50%;
+.mode-button:hover {
+  transform: scale(1.04);
+}
+
+.mode-button[aria-pressed="true"] {
+  color: var(--page);
+}
+
+.mode-icon {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background: currentColor;
+  -webkit-mask: var(--mode-icon) center / contain no-repeat;
+  mask: var(--mode-icon) center / contain no-repeat;
   pointer-events: none;
-  transition: background-color 160ms var(--ease);
 }
 
-.mode-swatch img {
-  width: 24px;
-  height: 24px;
-  max-width: none;
-  pointer-events: none;
+.mode-button[data-mode-target="light"] .mode-icon {
+  --mode-icon: url("assets/mode-light.svg");
 }
 
-.mode-button:hover .mode-swatch {
-  background-color: color-mix(in srgb, #9d977a 88%, white);
-}
-
-.mode-button[aria-pressed="true"] .mode-ring {
-  border-color: currentColor;
-}
-
-.theme-dot[aria-pressed="true"] .theme-ring {
-  border-color: currentColor;
+.mode-button[data-mode-target="dark"] .mode-icon {
+  --mode-icon: url("assets/mode-dark.svg");
 }
 
 .theme-dot:focus-visible,
@@ -588,31 +625,17 @@ strong { color: var(--ink); }
     display: block;
     flex: 0 0 auto;
     font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: 0.72rem;
-    font-weight: 750;
-    letter-spacing: 0.04em;
+    font-size: 0.86rem;
+    font-weight: 600;
     line-height: 1;
     opacity: 0.66;
-    text-transform: uppercase;
   }
 
   .language-switch {
+    --language-w: 44px;
+    --language-h: 44px;
     justify-self: auto;
     margin-left: 0;
-  }
-
-  .language-switch::before {
-    width: 44px;
-    height: 44px;
-  }
-
-  :root[data-language="de"] .language-switch::before {
-    transform: translateX(44px);
-  }
-
-  .language-button {
-    width: 44px;
-    height: 44px;
   }
 
   .appearance-controls {
@@ -622,10 +645,9 @@ strong { color: var(--ink); }
     margin-right: 0;
   }
 
-  .theme-dot,
-  .mode-button {
-    width: 44px;
-    height: 44px;
+  .theme-controls,
+  .mode-controls {
+    --control-size: 44px;
   }
 
   .legal-brand {

@@ -9,7 +9,7 @@
   <link rel="icon" href="https://joinakari.com/assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="https://joinakari.com/assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin>
   <script src="/assets/appearance.js?v=20260923-01"></script>
-  <link rel="stylesheet" href="/assets/admin.css?v=20261001-04">
+  <link rel="stylesheet" href="/assets/admin.css?v=20261003-01">
 </head>
 <body>
   <header class="site-header">
@@ -21,26 +21,18 @@
       <img src="https://joinakari.com/assets/logo/akari-logo-forest-dark.svg" data-akari-logo alt="Akari" width="89" height="50">
     </a>
     <nav class="admin-nav" aria-label="Admin pages" data-i18n-aria-label="adminPagesLabel">
-      <a class="admin-nav-item is-active" href="#dashboard" data-page-link="dashboard" aria-label="Dashboard" data-i18n-aria-label="dashboardNavLabel" aria-current="page">
-        <span class="admin-nav-ring" aria-hidden="true">
-          <span class="admin-nav-swatch">
-            <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/chart.bar.fill.png')"></span>
-          </span>
-        </span>
-      </a>
-      <a class="admin-nav-item" href="#feedback" data-page-link="feedback" aria-label="Food review" data-i18n-aria-label="foodReviewNavLabel">
-        <span class="admin-nav-ring" aria-hidden="true">
-          <span class="admin-nav-swatch">
-            <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/ladybug.fill.png')"></span>
-          </span>
-        </span>
-      </a>
-      <a class="admin-nav-item" href="/auth/logout" data-logout aria-label="Log out" data-i18n-aria-label="logoutLabel">
-        <span class="admin-nav-ring" aria-hidden="true">
-          <span class="admin-nav-swatch">
-            <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/rectangle.portrait.and.arrow.right.fill.png')"></span>
-          </span>
-        </span>
+      <div class="admin-tabs">
+        <a class="admin-nav-item is-active" href="#dashboard" data-page-link="dashboard" aria-current="page">
+          <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/chart.line.uptrend.xyaxis.png')" aria-hidden="true"></span>
+          <span class="admin-nav-label" data-i18n="dashboardNavLabel">Dashboard</span>
+        </a>
+        <a class="admin-nav-item" href="#feedback" data-page-link="feedback">
+          <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/fork.knife.png')" aria-hidden="true"></span>
+          <span class="admin-nav-label" data-i18n="foodReviewNavLabel">Food inbox</span>
+        </a>
+      </div>
+      <a class="admin-logout" href="/auth/logout" data-logout aria-label="Log out" data-i18n-aria-label="logoutLabel">
+        <span class="admin-nav-icon" style="--symbol: url('/assets/sf-symbols/rectangle.portrait.and.arrow.right.png')" aria-hidden="true"></span>
       </a>
     </nav>
   </header>
@@ -74,8 +66,8 @@
     <section class="page-view" data-page="feedback" hidden>
       <header class="page-header">
         <div class="page-heading">
-          <h1><span data-i18n="foodReviewTitle">Food review</span> <button class="title-emoji playful-emoji" type="button" aria-label="Play with the food review emoji" data-i18n-aria-label="foodReviewEmojiLabel">🥕</button></h1>
-          <p class="lede" data-i18n="foodReviewLede">Review food results that need fixing.</p>
+          <h1><span data-i18n="foodReviewTitle">Food inbox</span> <button class="title-emoji playful-emoji" type="button" aria-label="Play with the food review emoji" data-i18n-aria-label="foodReviewEmojiLabel">🥕</button></h1>
+          <p class="lede" data-i18n="foodReviewLede">Wrong matches, odd portions and off nutrition, flagged by people using Akari. Fix each one, then check it off.</p>
         </div>
       </header>
 
@@ -93,6 +85,6 @@
       </section>
     </section>
   </main>
-  <script type="module" src="/assets/admin.js?v=20260927-01"></script>
+  <script type="module" src="/assets/admin.js?v=20261003-01"></script>
 </body>
 </html>

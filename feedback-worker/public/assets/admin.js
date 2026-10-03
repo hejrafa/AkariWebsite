@@ -6,6 +6,7 @@ const pageViews = [...document.querySelectorAll("[data-page]")];
 const playfulEmojis = [...document.querySelectorAll(".playful-emoji")];
 const logoutLink = document.querySelector("[data-logout]");
 const languageButtons = [...document.querySelectorAll("[data-language-target]")];
+const indicatorGroups = [...document.querySelectorAll(".admin-tabs, .summary")];
 const root = document.documentElement;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let activeFilter = "open";
@@ -18,13 +19,13 @@ let currentLanguage = root.dataset.language === "de" ? "de" : "en";
 const translations = {
   en: {
     languageGroupLabel: "Choose a language", languageEnglishLabel: "View in English", languageGermanLabel: "View in German",
-    homeLabel: "Akari home", adminPagesLabel: "Admin pages", dashboardNavLabel: "Dashboard", foodReviewNavLabel: "Food review", logoutLabel: "Log out",
+    homeLabel: "Akari home", adminPagesLabel: "Admin pages", dashboardNavLabel: "Dashboard", foodReviewNavLabel: "Food inbox", logoutLabel: "Log out",
     dashboardTitle: "Dashboard", dashboardLede: "A clearer view of how Akari is being used.", dashboardEmojiLabel: "Play with the dashboard emoji",
     comingSoon: "Coming soon", analyticsTitle: "Akari analytics", analyticsBody: "Downloads, revenue, subscriptions, and the metrics that show how Akari is growing will appear here.",
-    foodReviewTitle: "Food review", foodReviewLede: "Review food results that need fixing.", foodReviewEmojiLabel: "Play with the food review emoji",
+    foodReviewTitle: "Food inbox", foodReviewLede: "Wrong matches, odd portions and off nutrition, flagged by people using Akari. Fix each one, then check it off.", foodReviewEmojiLabel: "Play with the food inbox emoji",
     feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
-    pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Review",
-    tableIssue: "Issue", tableInput: "What they entered", tableComment: "Comment", tableMatch: "Matched result", tableActions: "Actions",
+    pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Inbox",
+    tableIssue: "Issue", tableInput: "Entered", tableComment: "Comment", tableMatch: "Matched",
     openDetails: "Open details for {title}", noComment: "No comment", noMatchData: "No match data",
     copyPrompt: "Copy prompt", copied: "Copied", tryAgain: "Try again", reopen: "Reopen", resolve: "Resolve", reopening: "Reopening", resolving: "Resolving", reopened: "Reopened", resolved: "Resolved",
     closeDetails: "Close food review details", foodDetails: "Food details", issueSectionTitle: "Issue", logInput: "Log input", typedInLog: "Typed in Log", originalLogMissing: "The original Log text was not captured for this report.", feedbackComment: "Feedback comment",
@@ -33,18 +34,19 @@ const translations = {
     emptyOpenTitle: "You’re all caught up", emptyOpenBody: "New food reports will appear here.", emptyResolvedTitle: "Nothing resolved yet", emptyResolvedBody: "Completed fixes will collect here.",
     foodResult: "Food result", wrongFoodMatch: "Wrong food match", wrongFoodIcon: "The food icon is wrong", nutritionWrong: "Nutrition looks wrong", servingWrong: "Serving amount", barcodeWrong: "Barcode", productMissing: "Missing food", extraProduct: "Too many foods were added", tooSlow: "The result took too long", resultNeedsAttention: "This result needs attention",
     anythingElse: "Anything else",
+    issue_wrong_match: "Mismatch", issue_wrong_icon: "Icon", issue_nutrition: "Nutrition", issue_serving: "Serving", issue_barcode_or_scan: "Barcode", issue_missing_product: "Missing", issue_extra_product: "Extra", issue_too_slow: "Slow", issue_other: "Other", issue_unknown: "Review",
     unitServing: "serving", basisPer100g: "per 100 g", basisPerServing: "per serving",
     label_fixed: "Resolved", label_calories: "Calories", label_protein: "Protein", label_carbs: "Carbs", label_fat: "Fat", label_fiber: "Fiber", label_sugar: "Sugar", label_water: "Water", label_saturatedFat: "Saturated fat", label_monounsaturatedFat: "Monounsaturated fat", label_polyunsaturatedFat: "Polyunsaturated fat", label_calcium: "Calcium", label_iron: "Iron", label_magnesium: "Magnesium", label_potassium: "Potassium", label_sodium: "Sodium", label_zinc: "Zinc", label_vitaminA: "Vitamin A", label_vitaminB12: "Vitamin B12", label_vitaminC: "Vitamin C", label_vitaminD: "Vitamin D", label_folate: "Folate", label_iodine: "Iodine", label_selenium: "Selenium", label_cholesterol: "Cholesterol", label_caffeine: "Caffeine",
   },
   de: {
     languageGroupLabel: "Sprache wählen", languageEnglishLabel: "Seite auf Englisch anzeigen", languageGermanLabel: "Seite auf Deutsch anzeigen",
-    homeLabel: "Akari Startseite", adminPagesLabel: "Admin-Seiten", dashboardNavLabel: "Übersicht", foodReviewNavLabel: "Essensfeedback", logoutLabel: "Abmelden",
+    homeLabel: "Akari Startseite", adminPagesLabel: "Admin-Seiten", dashboardNavLabel: "Übersicht", foodReviewNavLabel: "Meldungen", logoutLabel: "Abmelden",
     dashboardTitle: "Übersicht", dashboardLede: "Ein klarer Blick darauf, wie Akari genutzt wird.", dashboardEmojiLabel: "Mit dem Übersichts-Emoji spielen",
     comingSoon: "Demnächst", analyticsTitle: "Akari Analysen", analyticsBody: "Downloads, Umsatz, Abonnements und weitere Kennzahlen zum Wachstum von Akari werden hier angezeigt.",
-    foodReviewTitle: "Essensfeedback", foodReviewLede: "Prüfe Lebensmittelergebnisse, die korrigiert werden müssen.", foodReviewEmojiLabel: "Mit dem Essensfeedback-Emoji spielen",
+    foodReviewTitle: "Meldungen", foodReviewLede: "Falsche Treffer, seltsame Portionen und fehlerhafte Nährwerte, gemeldet von Akari-Nutzern. Korrigieren, dann abhaken.", foodReviewEmojiLabel: "Mit dem Meldungen-Emoji spielen",
     feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
-    pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Essensfeedback",
-    tableIssue: "Problem", tableInput: "Eingabe", tableComment: "Kommentar", tableMatch: "Gefundenes Ergebnis", tableActions: "Aktionen",
+    pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Meldungen",
+    tableIssue: "Problem", tableInput: "Eingabe", tableComment: "Kommentar", tableMatch: "Treffer",
     openDetails: "Details öffnen: {title}", noComment: "Kein Kommentar", noMatchData: "Keine Ergebnisdaten",
     copyPrompt: "Prompt kopieren", copied: "Kopiert", tryAgain: "Erneut versuchen", reopen: "Wieder öffnen", resolve: "Erledigen", reopening: "Wird geöffnet", resolving: "Wird erledigt", reopened: "Wieder geöffnet", resolved: "Erledigt",
     closeDetails: "Details der Essensrückmeldung schließen", foodDetails: "Lebensmitteldetails", issueSectionTitle: "Problem", logInput: "Eingabe im Log", typedInLog: "Im Log eingegeben", originalLogMissing: "Die ursprüngliche Eingabe wurde für diese Rückmeldung nicht gespeichert.", feedbackComment: "Kommentar zur Rückmeldung",
@@ -53,6 +55,7 @@ const translations = {
     emptyOpenTitle: "Alles erledigt", emptyOpenBody: "Neue Rückmeldungen erscheinen hier.", emptyResolvedTitle: "Noch nichts erledigt", emptyResolvedBody: "Abgeschlossene Korrekturen werden hier gesammelt.",
     foodResult: "Lebensmittelergebnis", wrongFoodMatch: "Falsches Lebensmittel", wrongFoodIcon: "Das Symbol passt nicht", nutritionWrong: "Nährwerte stimmen nicht", servingWrong: "Portionsmenge", barcodeWrong: "Barcode", productMissing: "Lebensmittel fehlt", extraProduct: "Zu viele Einträge wurden hinzugefügt", tooSlow: "Das Ergebnis hat zu lange gedauert", resultNeedsAttention: "Dieses Ergebnis muss geprüft werden",
     anythingElse: "Weitere Angaben",
+    issue_wrong_match: "Verwechslung", issue_wrong_icon: "Symbol", issue_nutrition: "Nährwerte", issue_serving: "Portion", issue_barcode_or_scan: "Barcode", issue_missing_product: "Fehlt", issue_extra_product: "Zuviel", issue_too_slow: "Langsam", issue_other: "Sonstiges", issue_unknown: "Prüfen",
     unitServing: "Portion", basisPer100g: "pro 100 g", basisPerServing: "pro Portion",
     label_fixed: "Erledigt", label_calories: "Kalorien", label_protein: "Eiweiß", label_carbs: "Kohlenhydrate", label_fat: "Fett", label_fiber: "Ballaststoffe", label_sugar: "Zucker", label_water: "Wasser", label_saturatedFat: "Gesättigte Fettsäuren", label_monounsaturatedFat: "Einfach ungesättigte Fettsäuren", label_polyunsaturatedFat: "Mehrfach ungesättigte Fettsäuren", label_calcium: "Kalzium", label_iron: "Eisen", label_magnesium: "Magnesium", label_potassium: "Kalium", label_sodium: "Natrium", label_zinc: "Zink", label_vitaminA: "Vitamin A", label_vitaminB12: "Vitamin B12", label_vitaminC: "Vitamin C", label_vitaminD: "Vitamin D", label_folate: "Folat", label_iodine: "Jod", label_selenium: "Selen", label_cholesterol: "Cholesterin", label_caffeine: "Koffein",
   },
@@ -101,6 +104,7 @@ function syncPage() {
   }
 
   document.title = page === "feedback" ? t("pageTitleFeedback") : t("pageTitleDashboard");
+  syncIndicators();
   if (page !== "feedback") closeReportPanel();
   if (page === "feedback" && !feedbackLoaded) {
     feedbackLoaded = true;
@@ -109,6 +113,21 @@ function syncPage() {
 }
 
 window.addEventListener("hashchange", syncPage);
+window.addEventListener("resize", syncIndicators);
+document.fonts?.ready.then(syncIndicators);
+
+// Slides each segmented control's pill under its active item, like the
+// language switch. Items differ in width, so the pill is measured.
+function syncIndicators() {
+  for (const group of indicatorGroups) {
+    const active = group.querySelector(".is-active");
+    if (!active || !group.offsetParent) continue;
+    group.style.setProperty("--indicator-x", `${active.offsetLeft}px`);
+    group.style.setProperty("--indicator-w", `${active.offsetWidth}px`);
+    // Only animate after the first placement, so the pill doesn't fly in on load.
+    requestAnimationFrame(() => group.classList.add("is-animated"));
+  }
+}
 
 if (logoutLink) {
   if (isLocalPreview()) {
@@ -209,6 +228,7 @@ for (const button of filterButtons) {
       candidate.classList.toggle("is-active", selected);
       candidate.setAttribute("aria-pressed", String(selected));
     }
+    syncIndicators();
     render(allReports);
   });
 }
@@ -231,16 +251,21 @@ async function load() {
   }
 }
 
-function render(items) {
+function problemGroups(items) {
   // Older apps can still send positive feedback. Keep it stored, while
   // this dashboard focuses on problem reports in both views and counts.
   const problems = items.filter((item) => item.rating === "negative");
-  const open = problems.filter((item) => !["fixed", "dismissed"].includes(item.status));
-  const resolved = problems.filter((item) => item.status === "fixed");
+  return {
+    open: problems.filter((item) => !["fixed", "dismissed"].includes(item.status)),
+    resolved: problems.filter((item) => item.status === "fixed"),
+  };
+}
+
+function render(items) {
+  const { open, resolved } = problemGroups(items);
   const visible = activeFilter === "resolved" ? resolved : open;
 
-  document.querySelector("#open-count").textContent = open.length;
-  document.querySelector("#resolved-count").textContent = resolved.length;
+  updateCounts(open.length, resolved.length);
   reports.replaceChildren();
   if (!visible.length) {
     reports.append(emptyState());
@@ -248,6 +273,11 @@ function render(items) {
   }
   reports.append(reportTableHeader());
   for (const item of visible) reports.append(reportCard(item));
+}
+
+function updateCounts(openCount, resolvedCount) {
+  document.querySelector("#open-count").textContent = openCount;
+  document.querySelector("#resolved-count").textContent = resolvedCount;
 }
 
 function reportCard(report) {
@@ -270,11 +300,9 @@ function reportCard(report) {
   appendIssuePills(issue, report, true);
 
   const title = element("div", "input-cell");
-  if (report.logText) {
-    title.append(element("h2", "log-text", report.logText));
-  } else {
-    title.append(element("h2", "log-text", resultNames(report)));
-  }
+  const heading = element("h2", "log-text");
+  heading.append(element("span", "strike", report.logText || resultNames(report)));
+  title.append(heading);
 
   const comment = element("div", "comment-cell");
   if (report.note) {
@@ -286,14 +314,14 @@ function reportCard(report) {
   const matches = matchCell(report);
   const actions = reportActions(report);
   actions.classList.add("action-cell");
-  row.append(issue, title, matches, comment, actions);
+  row.append(completeCell(report), issue, title, matches, comment, actions);
   card.append(row);
   return card;
 }
 
 function reportTableHeader() {
   const header = element("div", "report-columns");
-  for (const title of [t("tableIssue"), t("tableInput"), t("tableMatch"), t("tableComment"), t("tableActions")]) {
+  for (const title of ["", t("tableIssue"), t("tableInput"), t("tableMatch"), t("tableComment"), ""]) {
     header.append(element("span", "", title));
   }
   return header;
@@ -309,6 +337,63 @@ function matchCell(report) {
   const suffix = items.length > 1 ? ` +${items.length - 1}` : "";
   cell.append(element("span", "matched-result", `${items[0].name}${suffix}`));
   return cell;
+}
+
+const completeSVG = `<svg viewBox="0 0 28 28" aria-hidden="true">
+  <circle class="complete-fill" cx="14" cy="14" r="12.5"/>
+  <circle class="complete-ring" cx="14" cy="14" r="12"/>
+  <path class="complete-tick" pathLength="1" d="M8.6 14.4l3.6 3.6 7.2-8"/>
+</svg>`;
+
+function completeCell(report) {
+  const cell = element("div", "complete-cell");
+  const toggle = element("button", "complete-toggle");
+  toggle.type = "button";
+  toggle.classList.toggle("is-checked", report.status === "fixed");
+  toggle.setAttribute("aria-label", report.status === "fixed" ? t("reopen") : t("resolve"));
+  toggle.innerHTML = completeSVG;
+  toggle.addEventListener("click", async () => {
+    const row = toggle.closest(".report");
+    const nextStatus = report.status === "fixed" ? "new" : "fixed";
+    toggle.disabled = true;
+    toggle.classList.remove("is-error");
+    // Play the check-off right away; the row only leaves once the server agrees.
+    const [saved] = await Promise.all([saveStatus(report, nextStatus), playRowCompletion(row, nextStatus)]);
+    if (!saved) {
+      row.classList.remove("is-completing", "is-reopening");
+      toggle.classList.add("is-error");
+      toggle.setAttribute("aria-label", t("tryAgain"));
+      toggle.disabled = false;
+      return;
+    }
+    report.status = nextStatus;
+    collapseRow(row);
+  });
+  cell.append(toggle);
+  return cell;
+}
+
+function playRowCompletion(row, nextStatus) {
+  row.classList.add(nextStatus === "fixed" ? "is-completing" : "is-reopening");
+  return wait(reduceMotion.matches ? 0 : 820);
+}
+
+async function saveStatus(report, nextStatus) {
+  if (report.preview) return true;
+  try {
+    const response = await fetch(`/admin-api/reports/${encodeURIComponent(report.id)}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status: nextStatus }),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 function reportActions(report, presentation = "compact") {
@@ -331,38 +416,57 @@ function reportActions(report, presentation = "compact") {
     });
     buttons.append(copy);
   }
+  if (!isPanel) return buttons;
   const isResolved = report.status === "fixed";
-  const resolve = element("button", `resolve-button ${isResolved ? "reopen" : ""}`);
-  if (isPanel) resolve.classList.add("panel-cta");
+  const nextStatus = isResolved ? "new" : "fixed";
+  const resolve = element("button", `resolve-button panel-cta ${isResolved ? "reopen" : ""}`);
   resolve.type = "button";
-  setButtonState(
-    resolve,
-    isResolved ? t("reopen") : t("resolve"),
-    "idle",
-    isPanel ? null : (isResolved ? "arrow.uturn.backward.png" : "checkmark.png"),
-  );
+  // Resolve shows the row's check-off circle next to its label; Reopen stays text-only.
+  const setResolveLabel = (text) => {
+    const content = element("span", "button-state");
+    const icon = element("span", "complete-toggle");
+    icon.innerHTML = completeSVG;
+    content.append(icon, document.createTextNode(text));
+    resolve.setAttribute("aria-label", text);
+    resolve.replaceChildren(content);
+  };
+  if (isResolved) setButtonState(resolve, t("reopen"));
+  else setResolveLabel(t("resolve"));
   resolve.addEventListener("click", async () => {
     resolve.disabled = true;
-    if (report.preview) {
-      report.status = isResolved ? "new" : "fixed";
-      setButtonState(resolve, isResolved ? t("reopened") : t("resolved"), "success");
-      setTimeout(() => finishStatusChange(report.id, true), 560);
-      return;
+    let saved;
+    if (isResolved) {
+      // Only show the spinner when the request is noticeably slow, so a fast
+      // response goes straight to the checkmark without a spinner blink.
+      const showLoading = setTimeout(() => setButtonState(resolve, t("reopening"), "loading"), 220);
+      saved = await saveStatus(report, nextStatus);
+      clearTimeout(showLoading);
+      if (saved) {
+        setButtonState(resolve, t("reopened"), "success");
+        await wait(380);
+      }
+    } else {
+      // Check off right away, like the rows; the panel only closes once saved.
+      setResolveLabel(t("resolved"));
+      resolve.classList.add("is-completing");
+      [saved] = await Promise.all([saveStatus(report, nextStatus), wait(reduceMotion.matches ? 0 : 640)]);
     }
-    setButtonState(resolve, isResolved ? t("reopening") : t("resolving"), "loading");
-    try {
-      const response = await fetch(`/admin-api/reports/${encodeURIComponent(report.id)}`, {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ status: isResolved ? "new" : "fixed" }),
-      });
-      if (!response.ok) throw new Error(`Request failed (${response.status})`);
-      setButtonState(resolve, isResolved ? t("reopened") : t("resolved"), "success");
-      setTimeout(() => finishStatusChange(report.id, report.preview), 560);
-    } catch {
+    if (!saved) {
+      resolve.classList.remove("is-completing");
       resolve.disabled = false;
       setButtonState(resolve, t("tryAgain"), "error");
+      return;
     }
+    report.status = nextStatus;
+    closeReportPanel();
+    const row = [...document.querySelectorAll(".report")]
+      .find((candidate) => candidate.dataset.reportId === report.id);
+    if (!row) {
+      render(allReports);
+      return;
+    }
+    await playRowCompletion(row, nextStatus);
+    collapseRow(row);
   });
   buttons.append(resolve);
   return buttons;
@@ -379,7 +483,9 @@ function setButtonState(button, text, state = "idle", symbol = null) {
     spinner.setAttribute("aria-hidden", "true");
     content.append(spinner);
   } else if (state === "success") {
-    const check = element("span", "button-check", "✓");
+    // Same SF Symbol as the idle Resolve button, so the weight never jumps.
+    const check = element("span", "button-symbol button-check");
+    check.style.setProperty("--symbol", "url('/assets/sf-symbols/checkmark.png')");
     check.setAttribute("aria-hidden", "true");
     content.append(check);
   } else if (state === "error") {
@@ -396,27 +502,24 @@ function setButtonState(button, text, state = "idle", symbol = null) {
   button.replaceChildren(content);
 }
 
-function finishStatusChange(reportId, isPreview = false) {
-  if (activePanel) closeReportPanel();
-  const row = [...document.querySelectorAll(".report")]
-    .find((candidate) => candidate.dataset.reportId === reportId);
-  if (!row) {
-    if (isPreview) {
-      render(allReports);
-    } else {
-      load();
-    }
-    return;
-  }
+function collapseRow(row) {
+  // The server already confirmed the change and the report object was updated
+  // in place, so collapse just this row instead of re-fetching and rebuilding
+  // the whole list (which flashed the loading state).
+  const { open, resolved } = problemGroups(allReports);
+  updateCounts(open.length, resolved.length);
+  const neighbour = row.nextElementSibling?.matches(".report") ? row.nextElementSibling : row.previousElementSibling;
+  const hadFocus = row.contains(document.activeElement);
   row.style.maxHeight = `${row.getBoundingClientRect().height}px`;
   row.getBoundingClientRect();
   row.classList.add("is-leaving");
   requestAnimationFrame(() => { row.style.maxHeight = "0px"; });
   setTimeout(() => {
-    if (isPreview) {
+    row.remove();
+    if (!reports.querySelector(".report")) {
       render(allReports);
-    } else {
-      load();
+    } else if (hadFocus && neighbour?.matches(".report")) {
+      neighbour.focus({ preventScroll: true });
     }
   }, 460);
 }
@@ -432,7 +535,8 @@ function openReportPanel(report, trigger) {
   panel.setAttribute("aria-labelledby", "detail-panel-title");
 
   const header = element("header", "panel-header");
-  const close = element("button", "panel-close", "×");
+  const close = element("button", "panel-close");
+  close.innerHTML = `<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1.5 1.5l11 11M12.5 1.5l-11 11"/></svg>`;
   close.type = "button";
   close.setAttribute("aria-label", t("closeDetails"));
   close.addEventListener("click", closeReportPanel);
@@ -673,6 +777,11 @@ function feedbackReasonTitle(reason) {
   return t("resultNeedsAttention");
 }
 
+function issueLabel(reason) {
+  const key = `issue_${reason}`;
+  return key in translations.en ? t(key) : t("issue_unknown");
+}
+
 function feedbackReasons(report) {
   return [...new Set(report.reasons?.length ? report.reasons : ["other"])];
 }
@@ -684,7 +793,8 @@ function issueToneClass(reason) {
 function appendIssuePills(container, report, compact = false) {
   for (const reason of feedbackReasons(report)) {
     const pill = element("span", `issue-pill ${compact ? "row-pill " : ""}${issueToneClass(reason)}`);
-    pill.append(element("span", "issue-text", feedbackReasonTitle(reason)));
+    pill.title = feedbackReasonTitle(reason);
+    pill.append(element("span", "issue-text", issueLabel(reason)));
     container.append(pill);
   }
 }
