@@ -24,6 +24,7 @@ interface FoodFeedbackItem {
   nutritionBasis?: string | null;
   nutrients: Record<string, number>;
   estimatedNutrients: string[];
+  dish?: string | null;
 }
 
 interface FoodFeedbackPayload {
@@ -39,6 +40,7 @@ interface FoodFeedbackPayload {
   catalogVersion?: string;
   installationId: string;
   items: FoodFeedbackItem[];
+  unmatched?: string[];
 }
 
 interface FeedbackRow {
@@ -56,6 +58,7 @@ interface FeedbackRow {
   build_number: string | null;
   catalog_version: string | null;
   items_json: string;
+  unmatched_json: string | null;
   status: FeedbackStatus;
   admin_note: string | null;
 }
@@ -319,8 +322,8 @@ async function createFeedback(request: Request, env: Env): Promise<Response> {
     INSERT INTO food_feedback (
       id, created_at, updated_at, rating, reasons_json, note, log_text, flow,
       locale, market, app_version, build_number, catalog_version,
-      installation_hash, items_json, status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')
+      installation_hash, items_json, unmatched_json, status
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')
   `).bind(
     id,
     now,
@@ -337,6 +340,7 @@ async function createFeedback(request: Request, env: Env): Promise<Response> {
     cleanOptional(payload.catalogVersion, 80),
     installationHash,
     JSON.stringify(payload.items),
+    payload.unmatched?.length ? JSON.stringify(payload.unmatched) : null,
   ).run();
 
   return json({ id, received: true }, 201);
@@ -359,16 +363,16 @@ async function listReports(url: URL, env: Env): Promise<Response> {
     bindings.push(rating);
   }
   if (search) {
-    conditions.push("(items_json LIKE ? OR note LIKE ? OR reasons_json LIKE ?)");
+    conditions.push("(items_json LIKE ? OR unmatched_json LIKE ? OR note LIKE ? OR reasons_json LIKE ?)");
     const pattern = `%${search.replaceAll("%", "\\%").replaceAll("_", "\\_")}%`;
-    bindings.push(pattern, pattern, pattern);
+    bindings.push(pattern, pattern, pattern, pattern);
   }
 
   const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
   const result = await env.DB.prepare(`
     SELECT id, created_at, updated_at, rating, reasons_json, note, flow,
            log_text, locale, market, app_version, build_number, catalog_version,
-           items_json, status, admin_note
+           items_json, unmatched_json, status, admin_note
     FROM food_feedback
     ${where}
     ORDER BY created_at DESC
@@ -414,7 +418,17 @@ function validatePayload(input: unknown): FoodFeedbackPayload | null {
   if (input.rating !== "positive" && input.rating !== "negative") return null;
   if (typeof input.flow !== "string" || input.flow.length === 0 || input.flow.length > 40) return null;
   if (typeof input.installationId !== "string" || input.installationId.length < 16 || input.installationId.length > 100) return null;
-  if (!Array.isArray(input.items) || input.items.length === 0 || input.items.length > 20) return null;
+  // A report about a meal Akari matched nothing for has no items; the typed
+  // text, the rows it couldn't match or the note is then what there is to
+  // investigate.
+  if (!Array.isArray(input.items) || input.items.length > 60) return null;
+  if (input.unmatched !== undefined && (!Array.isArray(input.unmatched)
+      || input.unmatched.length > 20
+      || input.unmatched.some((row) => typeof row !== "string"))) {
+    return null;
+  }
+  if (input.items.length === 0 && !hasText(input.logText) && !hasText(input.note)
+      && !(input.unmatched as string[] | undefined)?.some(hasText)) return null;
   if (input.reasons !== undefined && (!Array.isArray(input.reasons)
       || input.reasons.length > 8
       || input.reasons.some((reason) => typeof reason !== "string" || !allowedReasons.has(reason)))) {
@@ -453,6 +467,7 @@ function validatePayload(input: unknown): FoodFeedbackPayload | null {
       nutritionBasis: cleanOptional(typeof value.nutritionBasis === "string" ? value.nutritionBasis : undefined, 40),
       nutrients,
       estimatedNutrients,
+      dish: cleanOptional(typeof value.dish === "string" ? value.dish : undefined, 120),
     });
   }
 
@@ -469,6 +484,9 @@ function validatePayload(input: unknown): FoodFeedbackPayload | null {
     catalogVersion: typeof input.catalogVersion === "string" ? input.catalogVersion : undefined,
     installationId: input.installationId,
     items,
+    unmatched: (input.unmatched as string[] | undefined)
+      ?.map((row) => clean(row, 200))
+      .filter((row) => row.length > 0),
   };
 }
 
@@ -488,6 +506,7 @@ function presentRow(row: FeedbackRow) {
     buildNumber: row.build_number,
     catalogVersion: row.catalog_version,
     items: parseArray(row.items_json),
+    unmatched: row.unmatched_json ? parseArray(row.unmatched_json) : [],
     status: row.status,
     adminNote: row.admin_note,
   };
@@ -500,6 +519,10 @@ function parseArray(value: string): unknown[] {
   } catch {
     return [];
   }
+}
+
+function hasText(value: unknown): boolean {
+  return typeof value === "string" && value.trim().length > 0;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

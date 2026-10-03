@@ -21,6 +21,7 @@ const env = {
           statements.push({ sql, values });
           return { meta: { changes: 1 } };
         },
+        first: async () => ({ count: 0 }),
       }),
     }),
   },
@@ -39,4 +40,21 @@ test("resolving a report without an admin note keeps the stored note", async () 
   assert.doesNotMatch(statements[0].sql, /admin_note/);
   assert.equal(statements[0].values[0], "fixed");
   assert.equal(statements[0].values.at(-1), "report-1");
+});
+
+test("a report for a meal with no matched food is stored only when it says what was typed", async () => {
+  const report = (values) => worker.fetch(new Request("https://api.example.com/v1/food-feedback", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ rating: "negative", reasons: ["missing_product"], flow: "meal_review", installationId: "installation-0000000001", items: [], ...values }),
+  }), env);
+
+  const accepted = await report({ logText: "Grandma’s plum dumplings", unmatched: ["Grandma’s plum dumplings"] });
+  assert.equal(accepted.status, 201);
+  const insert = statements.at(-1);
+  assert.match(insert.sql, /INSERT INTO food_feedback/);
+  assert.ok(insert.values.includes(JSON.stringify(["Grandma’s plum dumplings"])));
+
+  const empty = await report({});
+  assert.equal(empty.status, 400);
 });

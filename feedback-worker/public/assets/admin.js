@@ -26,10 +26,10 @@ const translations = {
     feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
     pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Inbox",
     tableIssue: "Issue", tableInput: "Entered", tableComment: "Comment", tableMatch: "Matched",
-    openDetails: "Open details for {title}", noComment: "No comment", noMatchData: "No match data",
+    openDetails: "Open details for {title}", noComment: "No comment", noMatchData: "No food matched",
     copyPrompt: "Copy prompt", copied: "Copied", tryAgain: "Try again", reopen: "Reopen", resolve: "Resolve", reopening: "Reopening", resolving: "Resolving", reopened: "Reopened", resolved: "Resolved",
     closeDetails: "Close food review details", foodDetails: "Food details", issueSectionTitle: "Issue", logInput: "Log input", typedInLog: "Typed in Log", originalLogMissing: "The original Log text was not captured for this report.", feedbackComment: "Feedback comment",
-    foodItems: "Food items · {count}", noFoodResult: "No food result data was attached.", reportDetails: "Report details", received: "Received", market: "Market", locale: "Locale", app: "App", catalogue: "Catalogue",
+    foodItems: "Food items · {count}", noFoodResult: "No food matched.", unmatchedItems: "Not matched · {count}", reportDetails: "Report details", received: "Received", market: "Market", locale: "Locale", app: "App", catalogue: "Catalogue",
     searchSentence: "Search sentence", noSearchPhrase: "No separate search phrase was recorded.", macros: "Macros · {basis}", micronutrients: "Micronutrients · {basis}", nutritionBasis: "Nutrition basis", barcode: "Barcode", estimated: "Estimated",
     emptyOpenTitle: "You’re all caught up", emptyOpenBody: "New food reports will appear here.", emptyResolvedTitle: "Nothing resolved yet", emptyResolvedBody: "Completed fixes will collect here.",
     foodResult: "Food result", wrongFoodMatch: "Wrong food match", wrongFoodIcon: "The food icon is wrong", nutritionWrong: "Nutrition looks wrong", servingWrong: "Serving amount", barcodeWrong: "Barcode", productMissing: "Missing food", extraProduct: "Too many foods were added", tooSlow: "The result took too long", resultNeedsAttention: "This result needs attention",
@@ -47,10 +47,10 @@ const translations = {
     feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
     pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Meldungen",
     tableIssue: "Problem", tableInput: "Eingabe", tableComment: "Kommentar", tableMatch: "Treffer",
-    openDetails: "Details öffnen: {title}", noComment: "Kein Kommentar", noMatchData: "Keine Ergebnisdaten",
+    openDetails: "Details öffnen: {title}", noComment: "Kein Kommentar", noMatchData: "Kein Lebensmittel gefunden",
     copyPrompt: "Prompt kopieren", copied: "Kopiert", tryAgain: "Erneut versuchen", reopen: "Wieder öffnen", resolve: "Erledigen", reopening: "Wird geöffnet", resolving: "Wird erledigt", reopened: "Wieder geöffnet", resolved: "Erledigt",
     closeDetails: "Details der Essensrückmeldung schließen", foodDetails: "Lebensmitteldetails", issueSectionTitle: "Problem", logInput: "Eingabe im Log", typedInLog: "Im Log eingegeben", originalLogMissing: "Die ursprüngliche Eingabe wurde für diese Rückmeldung nicht gespeichert.", feedbackComment: "Kommentar zur Rückmeldung",
-    foodItems: "Lebensmittel · {count}", noFoodResult: "Es wurden keine Lebensmitteldaten angehängt.", reportDetails: "Details zur Rückmeldung", received: "Eingegangen", market: "Markt", locale: "Sprache", app: "App", catalogue: "Katalog",
+    foodItems: "Lebensmittel · {count}", noFoodResult: "Kein Lebensmittel gefunden.", unmatchedItems: "Nicht gefunden · {count}", reportDetails: "Details zur Rückmeldung", received: "Eingegangen", market: "Markt", locale: "Sprache", app: "App", catalogue: "Katalog",
     searchSentence: "Suchtext", noSearchPhrase: "Es wurde kein eigener Suchtext gespeichert.", macros: "Makronährstoffe · {basis}", micronutrients: "Mikronährstoffe · {basis}", nutritionBasis: "Bezugsmenge", barcode: "Barcode", estimated: "Geschätzt",
     emptyOpenTitle: "Alles erledigt", emptyOpenBody: "Neue Rückmeldungen erscheinen hier.", emptyResolvedTitle: "Noch nichts erledigt", emptyResolvedBody: "Abgeschlossene Korrekturen werden hier gesammelt.",
     foodResult: "Lebensmittelergebnis", wrongFoodMatch: "Falsches Lebensmittel", wrongFoodIcon: "Das Symbol passt nicht", nutritionWrong: "Nährwerte stimmen nicht", servingWrong: "Portionsmenge", barcodeWrong: "Barcode", productMissing: "Lebensmittel fehlt", extraProduct: "Zu viele Einträge wurden hinzugefügt", tooSlow: "Das Ergebnis hat zu lange gedauert", resultNeedsAttention: "Dieses Ergebnis muss geprüft werden",
@@ -568,6 +568,15 @@ function openReportPanel(report, trigger) {
   inputSection.append(inputCard);
   content.append(inputSection);
 
+  const unmatched = report.unmatched ?? [];
+  if (unmatched.length) {
+    const unmatchedSection = panelSection(t("unmatchedItems", { count: unmatched.length }));
+    const unmatchedCard = element("div", "panel-card log-card");
+    for (const row of unmatched) unmatchedCard.append(element("blockquote", "", row));
+    unmatchedSection.append(unmatchedCard);
+    content.append(unmatchedSection);
+  }
+
   const foodsSection = panelSection(t("foodItems", { count: report.items?.length ?? 0 }));
   for (const [index, item] of (report.items ?? []).entries()) {
     foodsSection.append(panelFoodCard(item, index));
@@ -630,7 +639,7 @@ function panelFoodCard(item, index) {
   const number = element("span", "food-number", String(index + 1).padStart(2, "0"));
   const identity = element("div", "food-identity");
   identity.append(element("h3", "", item.name));
-  const subline = [item.brand, item.source].filter(Boolean).join(" · ");
+  const subline = [item.dish, item.brand, item.source].filter(Boolean).join(" · ");
   if (subline) identity.append(element("p", "", subline));
   const amount = item.amount && item.unit ? `${formatNumber(item.amount)} ${labelUnit(item.unit)}` : "";
   head.append(number, identity, element("strong", "food-amount", amount));
@@ -727,9 +736,11 @@ function fixPrompt(report) {
   ];
   if (report.logText) lines.push(`What the person typed in Log: ${report.logText}`);
   if (report.note) lines.push(`User comment: ${report.note}`);
+  for (const row of report.unmatched ?? []) lines.push(`Not matched: ${row}`);
   for (const [index, item] of (report.items ?? []).entries()) {
     const identity = [item.name, item.brand].filter(Boolean).join(" · ");
     lines.push(`Food ${index + 1}: ${identity}`);
+    if (item.dish) lines.push(`Part of the dish: ${item.dish}`);
     if (item.query) lines.push(`Matched from: ${item.query}`);
     if (item.amount && item.unit) lines.push(`Amount: ${formatNumber(item.amount)} ${labelUnit(item.unit)}`);
     if (item.barcode) lines.push(`Barcode: ${item.barcode}`);
@@ -915,6 +926,7 @@ function previewReports() {
       logText: "Grandma’s plum dumplings",
       note: "Nothing remotely similar appeared.",
       items: [],
+      unmatched: ["Grandma’s plum dumplings"],
     }),
     report("nutrition", 35, {
       rating: "negative",
