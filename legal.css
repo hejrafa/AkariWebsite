@@ -103,6 +103,8 @@ body {
 
 a { color: inherit; text-underline-offset: 0.18em; }
 a:hover { color: var(--accent); }
+/* Lime/yellow hover text is too faint on light pages; darken it toward the ink. */
+:root[data-mode="light"] a:hover { color: color-mix(in srgb, var(--accent) 45%, var(--ink)); }
 
 .legal-site-header {
   position: relative;
