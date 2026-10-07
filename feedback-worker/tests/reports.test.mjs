@@ -57,4 +57,11 @@ test("a report for a meal with no matched food is stored only when it says what 
 
   const empty = await report({});
   assert.equal(empty.status, 400);
+
+  // A scanned code no database knew is a report on its own.
+  const barcode = await report({ flow: "barcode", reasons: ["barcode_or_scan", "missing_product"], barcode: "4000000000016" });
+  assert.equal(barcode.status, 201);
+  assert.ok(statements.at(-1).values.includes("4000000000016"));
+  const letters = await report({ flow: "barcode", reasons: ["barcode_or_scan"], barcode: "not-a-code" });
+  assert.equal(letters.status, 400);
 });

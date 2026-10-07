@@ -29,7 +29,7 @@ const translations = {
     openDetails: "Open details for {title}", noComment: "No comment", noMatchData: "No food matched",
     copyPrompt: "Copy prompt", copied: "Copied", tryAgain: "Try again", reopen: "Reopen", resolve: "Resolve", reopening: "Reopening", resolving: "Resolving", reopened: "Reopened", resolved: "Resolved",
     closeDetails: "Close food review details", foodDetails: "Food details", issueSectionTitle: "Issue", logInput: "Log input", typedInLog: "Typed in Log", originalLogMissing: "The original Log text was not captured for this report.", feedbackComment: "Feedback comment",
-    foodItems: "Food items · {count}", noFoodResult: "No food matched.", unmatchedItems: "Not matched · {count}", reportDetails: "Report details", received: "Received", market: "Market", locale: "Locale", app: "App", catalogue: "Catalogue",
+    foodItems: "Food items · {count}", noFoodResult: "No food matched.", unmatchedItems: "Not matched · {count}", missingBarcode: "Barcode not found", reportDetails: "Report details", received: "Received", market: "Market", locale: "Locale", app: "App", catalogue: "Catalogue",
     searchSentence: "Search sentence", noSearchPhrase: "No separate search phrase was recorded.", macros: "Macros · {basis}", micronutrients: "Micronutrients · {basis}", nutritionBasis: "Nutrition basis", barcode: "Barcode", estimated: "Estimated",
     emptyOpenTitle: "You’re all caught up", emptyOpenBody: "New food reports will appear here.", emptyResolvedTitle: "Nothing resolved yet", emptyResolvedBody: "Completed fixes will collect here.",
     foodResult: "Food result", wrongFoodMatch: "Wrong food match", wrongFoodIcon: "The food icon is wrong", nutritionWrong: "Nutrition looks wrong", servingWrong: "Serving amount", barcodeWrong: "Barcode", productMissing: "Missing food", extraProduct: "Too many foods were added", tooSlow: "The result took too long", resultNeedsAttention: "This result needs attention",
@@ -50,7 +50,7 @@ const translations = {
     openDetails: "Details öffnen: {title}", noComment: "Kein Kommentar", noMatchData: "Kein Lebensmittel gefunden",
     copyPrompt: "Prompt kopieren", copied: "Kopiert", tryAgain: "Erneut versuchen", reopen: "Wieder öffnen", resolve: "Erledigen", reopening: "Wird geöffnet", resolving: "Wird erledigt", reopened: "Wieder geöffnet", resolved: "Erledigt",
     closeDetails: "Details der Essensrückmeldung schließen", foodDetails: "Lebensmitteldetails", issueSectionTitle: "Problem", logInput: "Eingabe im Log", typedInLog: "Im Log eingegeben", originalLogMissing: "Die ursprüngliche Eingabe wurde für diese Rückmeldung nicht gespeichert.", feedbackComment: "Kommentar zur Rückmeldung",
-    foodItems: "Lebensmittel · {count}", noFoodResult: "Kein Lebensmittel gefunden.", unmatchedItems: "Nicht gefunden · {count}", reportDetails: "Details zur Rückmeldung", received: "Eingegangen", market: "Markt", locale: "Sprache", app: "App", catalogue: "Katalog",
+    foodItems: "Lebensmittel · {count}", noFoodResult: "Kein Lebensmittel gefunden.", unmatchedItems: "Nicht gefunden · {count}", missingBarcode: "Barcode nicht gefunden", reportDetails: "Details zur Rückmeldung", received: "Eingegangen", market: "Markt", locale: "Sprache", app: "App", catalogue: "Katalog",
     searchSentence: "Suchtext", noSearchPhrase: "Es wurde kein eigener Suchtext gespeichert.", macros: "Makronährstoffe · {basis}", micronutrients: "Mikronährstoffe · {basis}", nutritionBasis: "Bezugsmenge", barcode: "Barcode", estimated: "Geschätzt",
     emptyOpenTitle: "Alles erledigt", emptyOpenBody: "Neue Rückmeldungen erscheinen hier.", emptyResolvedTitle: "Noch nichts erledigt", emptyResolvedBody: "Abgeschlossene Korrekturen werden hier gesammelt.",
     foodResult: "Lebensmittelergebnis", wrongFoodMatch: "Falsches Lebensmittel", wrongFoodIcon: "Das Symbol passt nicht", nutritionWrong: "Nährwerte stimmen nicht", servingWrong: "Portionsmenge", barcodeWrong: "Barcode", productMissing: "Lebensmittel fehlt", extraProduct: "Zu viele Einträge wurden hinzugefügt", tooSlow: "Das Ergebnis hat zu lange gedauert", resultNeedsAttention: "Dieses Ergebnis muss geprüft werden",
@@ -568,6 +568,14 @@ function openReportPanel(report, trigger) {
   inputSection.append(inputCard);
   content.append(inputSection);
 
+  if (report.barcode) {
+    const barcodeSection = panelSection(t("missingBarcode"));
+    const barcodeCard = element("div", "panel-card log-card");
+    barcodeCard.append(element("blockquote", "", report.barcode));
+    barcodeSection.append(barcodeCard);
+    content.append(barcodeSection);
+  }
+
   const unmatched = report.unmatched ?? [];
   if (unmatched.length) {
     const unmatchedSection = panelSection(t("unmatchedItems", { count: unmatched.length }));
@@ -737,6 +745,7 @@ function fixPrompt(report) {
   if (report.logText) lines.push(`What the person typed in Log: ${report.logText}`);
   if (report.note) lines.push(`User comment: ${report.note}`);
   for (const row of report.unmatched ?? []) lines.push(`Not matched: ${row}`);
+  if (report.barcode) lines.push(`Barcode not found in any database: ${report.barcode} (market ${report.market ?? "unknown"})`);
   for (const [index, item] of (report.items ?? []).entries()) {
     const identity = [item.name, item.brand].filter(Boolean).join(" · ");
     lines.push(`Food ${index + 1}: ${identity}`);

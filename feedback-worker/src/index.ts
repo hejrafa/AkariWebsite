@@ -41,6 +41,8 @@ interface FoodFeedbackPayload {
   installationId: string;
   items: FoodFeedbackItem[];
   unmatched?: string[];
+  /// A scanned code no database knew; such a report carries no items.
+  barcode?: string;
 }
 
 interface FeedbackRow {
@@ -59,6 +61,7 @@ interface FeedbackRow {
   catalog_version: string | null;
   items_json: string;
   unmatched_json: string | null;
+  barcode: string | null;
   status: FeedbackStatus;
   admin_note: string | null;
 }
@@ -322,8 +325,8 @@ async function createFeedback(request: Request, env: Env): Promise<Response> {
     INSERT INTO food_feedback (
       id, created_at, updated_at, rating, reasons_json, note, log_text, flow,
       locale, market, app_version, build_number, catalog_version,
-      installation_hash, items_json, unmatched_json, status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')
+      installation_hash, items_json, unmatched_json, barcode, status
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new')
   `).bind(
     id,
     now,
@@ -341,6 +344,7 @@ async function createFeedback(request: Request, env: Env): Promise<Response> {
     installationHash,
     JSON.stringify(payload.items),
     payload.unmatched?.length ? JSON.stringify(payload.unmatched) : null,
+    payload.barcode ?? null,
   ).run();
 
   return json({ id, received: true }, 201);
@@ -363,16 +367,16 @@ async function listReports(url: URL, env: Env): Promise<Response> {
     bindings.push(rating);
   }
   if (search) {
-    conditions.push("(items_json LIKE ? OR unmatched_json LIKE ? OR note LIKE ? OR reasons_json LIKE ?)");
+    conditions.push("(items_json LIKE ? OR unmatched_json LIKE ? OR note LIKE ? OR reasons_json LIKE ? OR barcode LIKE ?)");
     const pattern = `%${search.replaceAll("%", "\\%").replaceAll("_", "\\_")}%`;
-    bindings.push(pattern, pattern, pattern, pattern);
+    bindings.push(pattern, pattern, pattern, pattern, pattern);
   }
 
   const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
   const result = await env.DB.prepare(`
     SELECT id, created_at, updated_at, rating, reasons_json, note, flow,
            log_text, locale, market, app_version, build_number, catalog_version,
-           items_json, unmatched_json, status, admin_note
+           items_json, unmatched_json, barcode, status, admin_note
     FROM food_feedback
     ${where}
     ORDER BY created_at DESC
@@ -427,8 +431,12 @@ function validatePayload(input: unknown): FoodFeedbackPayload | null {
       || input.unmatched.some((row) => typeof row !== "string"))) {
     return null;
   }
+  // A barcode no database knew is reported on its own: digits only, as
+  // scanners read them.
+  if (input.barcode !== undefined && (typeof input.barcode !== "string" || !/^[0-9]{6,20}$/.test(input.barcode))) return null;
   if (input.items.length === 0 && !hasText(input.logText) && !hasText(input.note)
-      && !(input.unmatched as string[] | undefined)?.some(hasText)) return null;
+      && !(input.unmatched as string[] | undefined)?.some(hasText)
+      && typeof input.barcode !== "string") return null;
   if (input.reasons !== undefined && (!Array.isArray(input.reasons)
       || input.reasons.length > 8
       || input.reasons.some((reason) => typeof reason !== "string" || !allowedReasons.has(reason)))) {
@@ -487,6 +495,7 @@ function validatePayload(input: unknown): FoodFeedbackPayload | null {
     unmatched: (input.unmatched as string[] | undefined)
       ?.map((row) => clean(row, 200))
       .filter((row) => row.length > 0),
+    barcode: typeof input.barcode === "string" ? input.barcode : undefined,
   };
 }
 
@@ -507,6 +516,7 @@ function presentRow(row: FeedbackRow) {
     catalogVersion: row.catalog_version,
     items: parseArray(row.items_json),
     unmatched: row.unmatched_json ? parseArray(row.unmatched_json) : [],
+    barcode: row.barcode,
     status: row.status,
     adminNote: row.admin_note,
   };
