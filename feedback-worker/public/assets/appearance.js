@@ -50,11 +50,12 @@
   function syncPageChrome() {
     const appearance = selectedAppearance();
     for (const image of document.querySelectorAll("img[data-akari-logo]")) {
-      image.src = `https://joinakari.com/assets/logo/akari-logo-${appearance.theme}-${appearance.mode}.svg?v=2`;
+      // The logo sits on the deep band in both modes, so it is always the variant drawn for a dark ground.
+      image.src = `https://joinakari.com/assets/logo/akari-logo-${appearance.theme}-dark.svg?v=2`;
     }
     for (const link of document.querySelectorAll("[data-akari-home]")) link.href = landingURL();
     const themeColor = document.querySelector('meta[name="theme-color"]');
-    if (themeColor) themeColor.content = getComputedStyle(root).getPropertyValue("--page").trim();
+    if (themeColor) themeColor.content = getComputedStyle(root).getPropertyValue("--band").trim();
   }
 
   function apply() {

@@ -9,13 +9,45 @@ const brandLogos = document.querySelectorAll(".brand img, .footer-logo img");
 const adminLink = document.querySelector(".footer-admin-link");
 const mobileMenuToggle = document.querySelector(".mobile-menu-toggle");
 const headerControlsPanel = document.querySelector(".header-controls");
-const headlineHeart = document.querySelector(".headline-heart");
-const headlineLines = document.querySelectorAll(".hero .headline-line");
-const featureGrid = document.querySelector(".feature-grid");
+const goalOptions = document.querySelector(".goals__options");
+const goalBlurb = document.querySelector("#goal-blurb");
+const goalSticker = document.querySelector("#goal-sticker");
+const goalFocuses = document.querySelector("#goal-focuses");
+// What each goal brings together, after Goal.focuses in the app, and each item's sticker.
+const focusStickers = {
+  Outside: "goal-dailies",
+  Move: "goal-move",
+  Hydrate: "focus-hydrate",
+  Eat: "focus-eat",
+  Sleep: "goal-sleep",
+  Connect: "focus-connect",
+  Train: "focus-train",
+  Strength: "focus-strength",
+  Burn: "focus-burn",
+  WindDown: "focus-wind-down",
+  Protein: "focus-protein",
+  Fiber: "broccoli",
+  Priorities: "goal-for-you",
+};
+const goalFocusLists = {
+  ForYou: ["Priorities"],
+  Dailies: ["Outside", "Move", "Hydrate", "Eat", "Sleep", "Connect"],
+  Sleep: ["Sleep", "WindDown", "Outside"],
+  Move: ["Move", "Train", "Burn"],
+  Eat: ["Eat", "Protein", "Fiber"],
+  Lose: ["Eat", "Protein", "Fiber", "Move", "Strength"],
+};
+// Each goal's sticker follows the app's goal icon (Goal.swift).
+const goalStickers = {
+  ForYou: "goal-for-you",
+  Dailies: "goal-dailies",
+  Sleep: "goal-sleep",
+  Move: "goal-move",
+  Eat: "goal-eat",
+  Lose: "goal-lose",
+};
 const siteRoot = new URL(".", document.currentScript?.src || window.location.href);
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
-const themedImages = document.querySelectorAll("img[data-media-kind][data-media-index]");
-const phoneModels = document.querySelectorAll("model-viewer[data-screen-index]");
 let followsSystemMode = false;
 
 function persistSitePreference(name, value) {
@@ -47,30 +79,71 @@ const translations = {
     themeUsaLabel: "USA theme",
     lightModeLabel: "Use light appearance",
     darkModeLabel: "Use dark appearance",
-    heroPhoneLabel: "Akari running on an iPhone 17 Pro",
-    betaPhoneLabel: "Akari's Steps view on an iPhone",
-    betaPhoneAlt: "Akari's Steps view running on an iPhone 17 Pro",
-    heroLine1: "Your health",
-    heroLine2: "has a story",
-    heroLine3: " to tell.",
-    trustBeta: "Free during beta · No account",
-    trustPrivacy: "Your health data stays on your iPhone",
+    heroChip: "Sleep, movement, food",
+    heroTitle: "Your whole day in one place",
+    heroTitleA: "Your",
+    heroTitleB: "whole day",
+    heroTitleC: "in one place",
     joinBeta: "Join the beta",
-    whyTitle: " Why?",
-    whyBody: "Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.",
-    featuresLabel: "What Akari helps you do",
-    featuresInstructions: "Swipe or use the left and right arrow keys to explore all cards.",
-    featureTodayTitle: "See today clearly",
-    featureTodayBody: "Your day, explained calmly and without scores, judgment, or alarm.",
-    featureUnderstandTitle: "Understand your data",
-    featureUnderstandBody: "Simple, science-based explanations with relatable everyday examples.",
-    featureWholeTitle: "See the whole picture",
-    featureWholeBody: "Your vitals and nutrition, together in one clear view.",
-    betaLine1: "Help shape",
-    betaLine2: "Akari before",
-    betaLine3: "launch.",
-    betaBody: "Use Akari for a few days and tell us what felt useful, what was confusing and what you wish it could do. Your feedback will directly influence what we build next.",
+    vitalsChip: "Vitals",
+    vitalsTitle: "Your readiness, every morning",
+    vitalsBody: "Each morning Akari reads last night against your own usual nights. Yesterday’s food and strain count too.",
+    nutritionChip: "Nutrition",
+    nutritionTitle: "More than just calories",
+    nutritionBody: "Every nutrient gets a row of its own, with its own symbol. Where there is a limit, Akari marks it. You log food by writing or saying it.",
+    privacyChip: "No account, no server",
+    privacyTitle: "Your data stays on this iPhone",
+    privacyTitleA: "Your data stays on",
+    privacyTitleB: "this iPhone",
+    privacyBody: "Akari reads Apple Health on your iPhone and keeps what it works out right there.",
+    privacyLink: "Read the privacy policy",
+    goalsChip: "Your goal",
+    goalsTitle: "One goal is enough to start",
+    goalForYou: "For you",
+    goalDailies: "Dailies",
+    goalSleep: "Sleep better",
+    goalMove: "Move more",
+    goalEat: "Eat well",
+    goalLose: "Lose weight",
+    goalForYouBlurb: "Your highest-priority health areas, brought together in one goal and tracked through Apple Health.",
+    goalDailiesBlurb: "Six small things that make a day good. Nothing heroic, outside, moving, watered, fed, rested, and in touch with someone.",
+    goalSleepBlurb: "Build the night from the day around it: morning light, screens down in the evening, and a full night behind you.",
+    goalMoveBlurb: "Steps on your feet, time spent training, and the energy to show for it.",
+    goalEatBlurb: "Keep calories, protein, and fiber in view for balanced meals that keep you going.",
+    goalLoseBlurb: "Stay within your calorie budget while keeping protein, fiber, daily movement, and strength work in view.",
+    focusOutsideTitle: "Get outside",
+    focusOutsideBody: "Daylight and fresh air, even briefly",
+    focusMoveTitle: "Move",
+    focusMoveBody: "Steps on your feet",
+    focusHydrateTitle: "Hydrate",
+    focusHydrateBody: "Water through the day",
+    focusEatTitle: "Eat",
+    focusEatBody: "Enough on your plate",
+    focusSleepTitle: "Sleep",
+    focusSleepBody: "A full night behind you",
+    focusConnectTitle: "Connect",
+    focusConnectBody: "Reach someone you like",
+    focusTrainTitle: "Train",
+    focusTrainBody: "Time spent working",
+    focusStrengthTitle: "Strength",
+    focusStrengthBody: "Two strength days this week",
+    focusBurnTitle: "Burn",
+    focusBurnBody: "Active energy burned",
+    focusWindDownTitle: "Wind down",
+    focusWindDownBody: "Screens down before bed",
+    focusProteinTitle: "Protein",
+    focusProteinBody: "Enough protein through the day",
+    focusFiberTitle: "Fiber",
+    focusFiberBody: "Enough fiber through the day",
+    focusPrioritiesTitle: "Your priorities",
+    focusPrioritiesBody: "Picked from your Apple Health data",
+    goalsTracksLabel: "What this goal brings together",
+    foodChip: "Akari does the rest",
+    foodTitle: "Write or say what you ate",
+    launchTitle: "Akari is almost here.",
+    launchBody: "We’re getting ready for the App Store. Until then, the beta is open: try Akari now and tell us what you think.",
     faqTitle: "FAQ",
+    faqHeadline: "Good to know",
     faqIntro: "Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.",
     faqWhatQuestion: "What is Akari?",
     faqWhatAnswer: "Akari is an iPhone health app that turns health data into a calm, readable daily story.",
@@ -89,8 +162,11 @@ const translations = {
     footerSitemapLabel: "Sitemap",
     footerProductTitle: "Product",
     footerJoinLabel: "Join the beta",
-    footerFeaturesLabel: "Features",
-    footerShapeLabel: "Help shape Akari",
+    footerVitalsLabel: "Vitals",
+    footerNutritionLabel: "Nutrition",
+    footerGoalsLabel: "Goals",
+    footerFoodLabel: "Food logging",
+    footerDataLabel: "Your data",
     footerSupportTitle: "Support",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Legal",
@@ -117,30 +193,71 @@ const translations = {
     themeUsaLabel: "USA-Design",
     lightModeLabel: "Helles Erscheinungsbild verwenden",
     darkModeLabel: "Dunkles Erscheinungsbild verwenden",
-    heroPhoneLabel: "Akari auf einem iPhone 17 Pro",
-    betaPhoneLabel: "Akaris Schritte-Ansicht auf einem iPhone",
-    betaPhoneAlt: "Akaris Schritte-Ansicht auf einem iPhone 17 Pro",
-    heroLine1: "Dein Körper",
-    heroLine2: "hat viel",
-    heroLine3: "zu erzählen.",
-    trustBeta: "Kostenlos während der Beta · Kein Konto notwendig",
-    trustPrivacy: "Deine Gesundheitsdaten bleiben auf dem iPhone",
+    heroChip: "Schlaf, Bewegung, Essen",
+    heroTitle: "Dein ganzer Tag an einem Ort",
+    heroTitleA: "Dein",
+    heroTitleB: "ganzer Tag",
+    heroTitleC: "an einem Ort",
     joinBeta: "Beta testen",
-    whyTitle: " Warum?",
-    whyBody: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages und bringt Vitalwerte, Ernährung und Ziele an einem Ort zusammen.",
-    featuresLabel: "Was Akari für dich tut",
-    featuresInstructions: "Wische oder nutze die linke und rechte Pfeiltaste, um alle Karten zu entdecken.",
-    featureTodayTitle: "Dein Tag im Blick",
-    featureTodayBody: "Ruhig und klar erklärt, ohne Punkte, Wertung oder Alarm.",
-    featureUnderstandTitle: "Daten verstehen",
-    featureUnderstandBody: "Fundierte Erklärungen mit Beispielen aus dem Alltag.",
-    featureWholeTitle: "Das Ganze im Blick",
-    featureWholeBody: "Vitalwerte und Ernährung übersichtlich an einem Ort.",
-    betaLine1: "Gestalte",
-    betaLine2: "Akari vorm",
-    betaLine3: "Start mit.",
-    betaBody: "Teste Akari ein paar Tage und sag uns, was hilft, was unklar ist und was dir fehlt. Dein Feedback bestimmt, was wir als Nächstes bauen.",
+    vitalsChip: "Vitalwerte",
+    vitalsTitle: "Deine Tagesform, jeden Morgen",
+    vitalsBody: "Jeden Morgen vergleicht Akari die letzte Nacht mit deinen üblichen Nächten. Das Essen und die Belastung von gestern zählen mit.",
+    nutritionChip: "Ernährung",
+    nutritionTitle: "Mehr als nur Kalorien",
+    nutritionBody: "Jeder Nährstoff hat eine eigene Zeile mit eigenem Symbol. Wo es eine Grenze gibt, zeigt Akari sie an. Essen trägst du ein, indem du es schreibst oder sagst.",
+    privacyChip: "Kein Konto, kein Server",
+    privacyTitle: "Deine Daten bleiben bei dir",
+    privacyTitleA: "Deine Daten bleiben",
+    privacyTitleB: "bei dir",
+    privacyBody: "Akari liest Apple Health auf deinem iPhone und behält alles, was daraus entsteht, genau dort.",
+    privacyLink: "Datenschutzerklärung lesen",
+    goalsChip: "Dein Ziel",
+    goalsTitle: "Ein Ziel reicht für den Anfang",
+    goalForYou: "Für dich",
+    goalDailies: "Tagesaufgaben",
+    goalSleep: "Besser schlafen",
+    goalMove: "Mehr bewegen",
+    goalEat: "Gut essen",
+    goalLose: "Abnehmen",
+    goalForYouBlurb: "Deine wichtigsten Gesundheitsbereiche, gebündelt in einem Ziel und über Apple Health erfasst.",
+    goalDailiesBlurb: "Sechs kleine Dinge, die einen Tag gut machen. Nichts Heldenhaftes, draußen gewesen, bewegt, getrunken, gegessen, ausgeruht und in Kontakt.",
+    goalSleepBlurb: "Guter Schlaf beginnt am Tag: morgens Tageslicht, abends weniger Bildschirmzeit und genug Zeit zum Schlafen.",
+    goalMoveBlurb: "Schritte auf den Beinen, Zeit im Training und die Energie, die dabei herauskommt.",
+    goalEatBlurb: "Behalte Kalorien, Eiweiß und Ballaststoffe im Blick – für ausgewogene Mahlzeiten, die lange satt machen.",
+    goalLoseBlurb: "Bleib in deinem Kalorienbudget und behalte Eiweiß, Ballaststoffe, tägliche Bewegung und Krafttraining im Blick.",
+    focusOutsideTitle: "Rausgehen",
+    focusOutsideBody: "Tageslicht & frische Luft",
+    focusMoveTitle: "Bewegen",
+    focusMoveBody: "Schritte auf den Beinen",
+    focusHydrateTitle: "Wasser",
+    focusHydrateBody: "Wasser über den Tag",
+    focusEatTitle: "Essen",
+    focusEatBody: "Genug auf dem Teller",
+    focusSleepTitle: "Schlaf",
+    focusSleepBody: "Eine volle Nacht hinter dir",
+    focusConnectTitle: "Kontakt",
+    focusConnectBody: "Kurz bei jemandem melden",
+    focusTrainTitle: "Trainieren",
+    focusTrainBody: "Zeit im Training",
+    focusStrengthTitle: "Kraft",
+    focusStrengthBody: "Zwei Krafttrainingstage diese Woche",
+    focusBurnTitle: "Verbrennen",
+    focusBurnBody: "Verbrannte Aktivenergie",
+    focusWindDownTitle: "Bildschirmpause",
+    focusWindDownBody: "Vor dem Schlafen das Handy beiseitelegen",
+    focusProteinTitle: "Protein",
+    focusProteinBody: "Genug Eiweiß über den Tag",
+    focusFiberTitle: "Ballaststoffe",
+    focusFiberBody: "Genug Ballaststoffe über den Tag",
+    focusPrioritiesTitle: "Deine Prioritäten",
+    focusPrioritiesBody: "Aus deinen Apple-Health-Daten ausgewählt",
+    goalsTracksLabel: "Was dieses Ziel zusammenbringt",
+    foodChip: "Akari macht den Rest",
+    foodTitle: "Schreib oder sag, was du isst",
+    launchTitle: "Akari ist fast da.",
+    launchBody: "Wir bereiten den Start im App Store vor. Bis dahin ist die Beta offen: Teste Akari jetzt und sag uns, was du denkst.",
     faqTitle: "FAQ",
+    faqHeadline: "Gut zu wissen",
     faqIntro: "Akari ist in der Beta kostenlos und über Apples TestFlight fürs iPhone verfügbar. Das solltest du vor dem Start wissen.",
     faqWhatQuestion: "Was ist Akari?",
     faqWhatAnswer: "Akari ist eine iPhone-App, die deine Gesundheitsdaten ruhig und verständlich einordnet.",
@@ -159,8 +276,11 @@ const translations = {
     footerSitemapLabel: "Seitenübersicht",
     footerProductTitle: "Produkt",
     footerJoinLabel: "Beta beitreten",
-    footerFeaturesLabel: "Funktionen",
-    footerShapeLabel: "Akari mitgestalten",
+    footerVitalsLabel: "Vitalwerte",
+    footerNutritionLabel: "Ernährung",
+    footerGoalsLabel: "Ziele",
+    footerFoodLabel: "Essen erfassen",
+    footerDataLabel: "Deine Daten",
     footerSupportTitle: "Hilfe",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Rechtliches",
@@ -312,10 +432,6 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
     const value = translations[language][element.dataset.i18n];
     if (value !== undefined) element.textContent = value;
   });
-  if (headlineHeart && headlineLines.length >= 3) {
-    const heartLine = language === "de" ? headlineLines[1] : headlineLines[2];
-    heartLine.insertBefore(headlineHeart, heartLine.firstChild);
-  }
   document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
     const value = translations[language][element.dataset.i18nAriaLabel];
     if (value !== undefined) element.setAttribute("aria-label", value);
@@ -327,7 +443,7 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
   languageButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.languageTarget === language));
   });
-  document.querySelectorAll('.footer-sitemap a[href^="/privacy/"], .footer-sitemap a[href^="/terms/"]').forEach((link) => {
+  document.querySelectorAll('.footer-sitemap a[href^="/privacy/"], .footer-sitemap a[href^="/terms/"], .privacy__link').forEach((link) => {
     const url = new URL(link.getAttribute("href"), window.location.origin);
     if (language === "de") url.searchParams.set("lang", "de");
     else url.searchParams.delete("lang");
@@ -347,23 +463,23 @@ let queuedLanguage;
 
 function languageTransitionItems() {
   const contentGroups = document.querySelectorAll([
-    ".hero h1",
-    ".hero .trust-line",
-    ".hero .cta > [data-i18n]",
-    ".why__intro h2",
-    ".why__intro > p",
-    ".feature-card__copy",
-    ".beta h2",
-    ".beta__content > p",
-    ".beta .cta > [data-i18n]",
-    ".answers__intro h2",
-    ".answers__intro > p",
-    ".answers__item dt",
-    ".answers__item dd",
+    ".burst-hero h1",
+    ".pill-cta > [data-i18n]",
+    ".burst__bubble",
+    ".eyebrow",
+    "main h2:not(#hero-title)",
+    ".muted-copy",
+    ".privacy__body",
+    ".privacy__link > [data-i18n]",
+    ".goal-pill",
+    ".goals__blurb",
+    ".goals__focuses",
+    ".band-cta > [data-i18n]",
+    ".faq__item",
     ".footer-made",
     ".footer-sitemap",
     ".footer-disclaimer",
-  ].join(", "));
+].join(", "));
 
   return [...contentGroups].filter((element) => {
     const bounds = element.getBoundingClientRect();
@@ -484,7 +600,14 @@ function updateThemeColor() {
   const color = pageColors[root.dataset.mode]?.[root.dataset.theme];
   if (color && themeColor) themeColor.content = color;
   brandLogos.forEach((logo) => {
-    logo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-${root.dataset.mode}.svg?v=2`, siteRoot).href;
+    logo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-dark.svg?v=2`, siteRoot).href;
+  });
+  document.querySelectorAll("img[data-theme-icon]").forEach((icon) => {
+    icon.src = new URL(`assets/app-icons/${root.dataset.theme}.jpg`, siteRoot).href;
+  });
+  document.querySelectorAll("img[data-piece]").forEach((piece) => {
+    const source = new URL(`assets/welcome/${root.dataset.language}/${root.dataset.mode}/${piece.dataset.piece}@3x.png`, siteRoot).href;
+    if (piece.src !== source) piece.src = source;
   });
   if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
@@ -497,26 +620,6 @@ function updateThemeColor() {
     adminLink.href = adminURL.href;
   }
 
-  const country = themeCountries[root.dataset.theme];
-  if (!country || !pageColors[root.dataset.mode]) return;
-  const languageSuffix = root.dataset.language === "de" ? "_de" : "";
-
-  themedImages.forEach((image) => {
-    const source = new URL(
-      `assets/theme-media/${image.dataset.mediaKind}_${country}_${root.dataset.mode}_${image.dataset.mediaIndex}${languageSuffix}.webp?v=3`,
-      siteRoot,
-    ).href;
-    image.dataset.src = source;
-    if (image.src !== source) image.src = source;
-  });
-
-  phoneModels.forEach((model) => {
-    model.dataset.screenSrc = new URL(
-      `assets/theme-media/mockup_${country}_${root.dataset.mode}_${model.dataset.screenIndex}${languageSuffix}.webp?v=1`,
-      siteRoot,
-    ).href;
-    if (model.model) syncModelScreen(model);
-  });
 }
 
 function selectTheme(theme, persist = true, updateAppearance = true) {
@@ -594,30 +697,74 @@ skipLink?.addEventListener("click", () => {
   requestAnimationFrame(() => mainContent?.focus({ preventScroll: true }));
 });
 
-function updateFeatureGridKeyboardAccess() {
-  if (!featureGrid) return;
-  const isScrollable = featureGrid.scrollWidth > featureGrid.clientWidth + 1;
-  featureGrid.tabIndex = isScrollable ? 0 : -1;
+function selectGoal(pill, moveFocus = false) {
+  goalOptions.querySelectorAll(".goal-pill").forEach((option) => {
+    const isSelected = option === pill;
+    option.setAttribute("aria-checked", String(isSelected));
+    option.tabIndex = isSelected ? 0 : -1;
+  });
+  goalBlurb.dataset.i18n = `goal${pill.dataset.goal}Blurb`;
+  goalBlurb.textContent = translations[root.dataset.language]?.[goalBlurb.dataset.i18n] ?? goalBlurb.textContent;
+  goalSticker.src = new URL(`assets/stickers/${goalStickers[pill.dataset.goal]}.png`, siteRoot).href;
+  goalSticker.classList.remove("is-tossed");
+  void goalSticker.offsetWidth;
+  goalSticker.classList.add("is-tossed");
+  renderGoalFocuses(pill.dataset.goal);
+  if (moveFocus) pill.focus();
 }
 
-featureGrid?.addEventListener("keydown", (event) => {
-  if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-  const firstCard = featureGrid.querySelector(".feature-card");
-  if (!firstCard) return;
-
-  event.preventDefault();
-  const gap = Number.parseFloat(getComputedStyle(featureGrid).columnGap) || 0;
-  const direction = event.key === "ArrowRight" ? 1 : -1;
-  const nextLeft = featureGrid.scrollLeft + direction * (firstCard.getBoundingClientRect().width + gap);
-  featureGrid.scrollTo({
-    left: nextLeft,
-    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+function renderGoalFocuses(goal) {
+  const copy = translations[root.dataset.language];
+  const tiles = goalFocusLists[goal].map((focus, index) => {
+    const tile = document.createElement("li");
+    tile.className = "focus-tile is-new";
+    tile.style.setProperty("--tile-delay", `${index * 60}ms`);
+    const sticker = document.createElement("img");
+    sticker.src = new URL(`assets/stickers/${focusStickers[focus]}.png`, siteRoot).href;
+    sticker.alt = "";
+    sticker.width = 256;
+    sticker.height = 256;
+    const title = document.createElement("strong");
+    title.dataset.i18n = `focus${focus}Title`;
+    title.textContent = copy[title.dataset.i18n];
+    const body = document.createElement("span");
+    body.dataset.i18n = `focus${focus}Body`;
+    body.textContent = copy[body.dataset.i18n];
+    tile.append(sticker, title, body);
+    return tile;
   });
+  goalFocuses.dataset.count = String(tiles.length);
+  goalFocuses.replaceChildren(...tiles);
+}
+
+// Fetch the other goal stickers once the page is idle, so a switch never waits on the network.
+window.addEventListener("load", () => {
+  [...Object.values(goalStickers), ...Object.values(focusStickers)].forEach((name) => {
+    new Image().src = new URL(`assets/stickers/${name}.png`, siteRoot).href;
+  });
+}, { once: true });
+
+goalOptions?.addEventListener("click", (event) => {
+  const pill = event.target.closest(".goal-pill");
+  if (pill) selectGoal(pill);
 });
 
-window.addEventListener("resize", updateFeatureGridKeyboardAccess, { passive: true });
-document.fonts?.ready.then(updateFeatureGridKeyboardAccess);
-requestAnimationFrame(updateFeatureGridKeyboardAccess);
+goalOptions?.addEventListener("keydown", (event) => {
+  const pills = [...goalOptions.querySelectorAll(".goal-pill")];
+  const current = pills.indexOf(document.activeElement);
+  if (current === -1) return;
+
+  let next;
+  if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (current + 1) % pills.length;
+  else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (current - 1 + pills.length) % pills.length;
+  else if (event.key === "Home") next = 0;
+  else if (event.key === "End") next = pills.length - 1;
+  else if (event.key === " ") next = current;
+  else return;
+
+  event.preventDefault();
+  selectGoal(pills[next], true);
+});
 
 languageButtons.forEach((button) => {
   button.addEventListener("click", () => transitionLanguage(button.dataset.languageTarget));
@@ -649,328 +796,6 @@ systemModePreference.addEventListener?.("change", (event) => {
   if (followsSystemMode) selectMode(event.matches ? "dark" : "light", false);
 });
 
-function setupHeroPhone() {
-  const phone = document.querySelector("#hero-phone-model");
-  const hero = phone?.closest(".hero");
-  const phoneHost = phone?.closest(".hero-phone");
-  const floatLayer = phone?.closest(".hero-phone__float");
-  if (!phone || !hero || !phoneHost || !floatLayer) return;
-
-  const canFollowPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let targetX = 0;
-  let targetY = 0;
-  let currentX = 0;
-  let currentY = 0;
-  let pointerIsInHero = false;
-  let heroIsVisible = true;
-  let pointerBounds;
-  let animationFrame;
-  let lastDriftX;
-  let lastDriftY;
-  let lastRotateX;
-  let lastRotateY;
-
-  function cachePointerBounds() {
-    if (!canFollowPointer.matches || reducedMotion.matches) return;
-    pointerBounds = hero.getBoundingClientRect();
-  }
-
-  function updatePointerTarget(event) {
-    if (!canFollowPointer.matches || reducedMotion.matches) return;
-    const bounds = pointerBounds || hero.getBoundingClientRect();
-    pointerBounds = bounds;
-    targetX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width) * 2 - 1));
-    targetY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height) * 2 - 1));
-    pointerIsInHero = true;
-  }
-
-  function settlePhone() {
-    pointerIsInHero = false;
-    targetX = 0;
-    targetY = 0;
-    pointerBounds = undefined;
-  }
-
-  function animatePhone(time) {
-    if (!heroIsVisible || document.hidden) {
-      animationFrame = undefined;
-      return;
-    }
-
-    const idleX = pointerIsInHero ? 0 : Math.sin(time / 2400) * 0.08;
-    const idleY = pointerIsInHero ? 0 : Math.cos(time / 3100) * 0.055;
-    currentX += (targetX + idleX - currentX) * 0.065;
-    currentY += (targetY + idleY - currentY) * 0.065;
-
-    const driftX = `${(currentX * 9).toFixed(2)}px`;
-    const driftY = `${(currentY * 6).toFixed(2)}px`;
-    const rotateX = `${(-currentY * 4.5).toFixed(2)}deg`;
-    const rotateY = `${(currentX * 5.5).toFixed(2)}deg`;
-
-    if (driftX !== lastDriftX) {
-      floatLayer.style.setProperty("--phone-drift-x", driftX);
-      lastDriftX = driftX;
-    }
-    if (driftY !== lastDriftY) {
-      floatLayer.style.setProperty("--phone-drift-y", driftY);
-      lastDriftY = driftY;
-    }
-    if (rotateX !== lastRotateX) {
-      floatLayer.style.setProperty("--phone-rotate-x", rotateX);
-      lastRotateX = rotateX;
-    }
-    if (rotateY !== lastRotateY) {
-      floatLayer.style.setProperty("--phone-rotate-y", rotateY);
-      lastRotateY = rotateY;
-    }
-    animationFrame = requestAnimationFrame(animatePhone);
-  }
-
-  function startPhoneMotion() {
-    if (reducedMotion.matches || animationFrame !== undefined || !heroIsVisible || document.hidden) return;
-    animationFrame = requestAnimationFrame(animatePhone);
-  }
-
-  function stopPhoneMotion() {
-    if (animationFrame === undefined) return;
-    cancelAnimationFrame(animationFrame);
-    animationFrame = undefined;
-  }
-
-  hero.addEventListener("pointerenter", cachePointerBounds, { passive: true });
-  hero.addEventListener("pointermove", updatePointerTarget, { passive: true });
-  hero.addEventListener("pointerleave", settlePhone);
-  window.addEventListener("resize", () => { pointerBounds = undefined; }, { passive: true });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) stopPhoneMotion();
-    else startPhoneMotion();
-  });
-
-  const visibilityObserver = new IntersectionObserver((entries) => {
-    heroIsVisible = entries[0]?.isIntersecting ?? true;
-    if (heroIsVisible) startPhoneMotion();
-    else stopPhoneMotion();
-  }, { rootMargin: "12% 0px", threshold: 0 });
-
-  visibilityObserver.observe(hero);
-  startPhoneMotion();
-}
-
-setupHeroPhone();
-
-function setupBetaPhone() {
-  const phone = document.querySelector("#beta-phone-model");
-  const beta = phone?.closest(".beta");
-  const phoneHost = phone?.closest(".beta-phone");
-  const floatLayer = phone?.closest(".beta-phone__float");
-  if (!phone || !beta || !phoneHost || !floatLayer) return;
-
-  const canFollowPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let targetX = 0;
-  let targetY = 0;
-  let currentX = 0;
-  let currentY = 0;
-  let pointerIsInBeta = false;
-  let betaIsVisible = false;
-  let pointerBounds;
-  let animationFrame;
-  let lastDriftX;
-  let lastDriftY;
-  let lastRotateX;
-  let lastRotateY;
-
-  function cachePointerBounds() {
-    if (!canFollowPointer.matches || reducedMotion.matches) return;
-    pointerBounds = beta.getBoundingClientRect();
-  }
-
-  function updatePointerTarget(event) {
-    if (!canFollowPointer.matches || reducedMotion.matches) return;
-    const bounds = pointerBounds || beta.getBoundingClientRect();
-    pointerBounds = bounds;
-    targetX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width) * 2 - 1));
-    targetY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height) * 2 - 1));
-    pointerIsInBeta = true;
-  }
-
-  function settlePhone() {
-    pointerIsInBeta = false;
-    targetX = 0;
-    targetY = 0;
-    pointerBounds = undefined;
-  }
-
-  function animatePhone(time) {
-    if (!betaIsVisible || document.hidden) {
-      animationFrame = undefined;
-      return;
-    }
-
-    const idleX = pointerIsInBeta ? 0 : Math.sin(time / 2400) * 0.08;
-    const idleY = pointerIsInBeta ? 0 : Math.cos(time / 3100) * 0.055;
-    currentX += (targetX + idleX - currentX) * 0.065;
-    currentY += (targetY + idleY - currentY) * 0.065;
-
-    const driftX = `${(currentX * 9).toFixed(2)}px`;
-    const driftY = `${(currentY * 6).toFixed(2)}px`;
-    const rotateX = `${(-currentY * 4.5).toFixed(2)}deg`;
-    const rotateY = `${(currentX * 5.5).toFixed(2)}deg`;
-
-    if (driftX !== lastDriftX) {
-      floatLayer.style.setProperty("--phone-drift-x", driftX);
-      lastDriftX = driftX;
-    }
-    if (driftY !== lastDriftY) {
-      floatLayer.style.setProperty("--phone-drift-y", driftY);
-      lastDriftY = driftY;
-    }
-    if (rotateX !== lastRotateX) {
-      floatLayer.style.setProperty("--phone-rotate-x", rotateX);
-      lastRotateX = rotateX;
-    }
-    if (rotateY !== lastRotateY) {
-      floatLayer.style.setProperty("--phone-rotate-y", rotateY);
-      lastRotateY = rotateY;
-    }
-    animationFrame = requestAnimationFrame(animatePhone);
-  }
-
-  function startPhoneMotion() {
-    if (reducedMotion.matches || animationFrame !== undefined || !betaIsVisible || document.hidden) return;
-    animationFrame = requestAnimationFrame(animatePhone);
-  }
-
-  function stopPhoneMotion() {
-    if (animationFrame === undefined) return;
-    cancelAnimationFrame(animationFrame);
-    animationFrame = undefined;
-  }
-
-  beta.addEventListener("pointerenter", cachePointerBounds, { passive: true });
-  beta.addEventListener("pointermove", updatePointerTarget, { passive: true });
-  beta.addEventListener("pointerleave", settlePhone);
-  window.addEventListener("resize", () => { pointerBounds = undefined; }, { passive: true });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) stopPhoneMotion();
-    else startPhoneMotion();
-  });
-
-  const visibilityObserver = new IntersectionObserver((entries) => {
-    betaIsVisible = entries[0]?.isIntersecting ?? false;
-    if (betaIsVisible) startPhoneMotion();
-    else stopPhoneMotion();
-  }, { rootMargin: "12% 0px", threshold: 0 });
-
-  visibilityObserver.observe(beta);
-}
-
-setupBetaPhone();
-
-async function syncModelScreen(model) {
-  if (!model?.model || !model.dataset.screenSrc) return false;
-
-  const source = model.dataset.screenSrc;
-  try {
-    const texture = await model.createTexture(source, "image/webp");
-    if (source !== model.dataset.screenSrc) return syncModelScreen(model);
-
-    const screenMaterial = model.model.getMaterialByName("OLED");
-    const screenTexture = screenMaterial?.pbrMetallicRoughness?.baseColorTexture;
-    if (!screenTexture) throw new Error("The OLED screen material is unavailable.");
-    screenTexture.setTexture(texture);
-    return true;
-  } catch (error) {
-    console.warn("Akari phone screen could not be updated.", error);
-    return false;
-  }
-}
-
-function setupPhoneModels() {
-  const models = [...document.querySelectorAll("model-viewer[data-model-src]")];
-  if (!models.length) return;
-
-  let libraryPromise;
-
-  function loadLibrary() {
-    if (customElements.get("model-viewer")) return Promise.resolve();
-    if (libraryPromise) return libraryPromise;
-
-    libraryPromise = new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      const timeout = window.setTimeout(() => {
-        script.remove();
-        reject(new Error("The 3D viewer took too long to load."));
-      }, 10000);
-      script.type = "module";
-      script.src = "https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js";
-      script.onload = () => {
-        window.clearTimeout(timeout);
-        resolve();
-      };
-      script.onerror = () => {
-        window.clearTimeout(timeout);
-        reject(new Error("The 3D viewer could not be loaded."));
-      };
-      document.head.append(script);
-    });
-
-    return libraryPromise;
-  }
-
-  models.forEach((model) => {
-    const phoneHost = model.closest(".hero-phone, .beta-phone");
-
-    model.addEventListener("load", async () => {
-      await syncModelScreen(model);
-      model.classList.add("is-loaded");
-      phoneHost?.classList.add("is-ready");
-      model.dispatchEvent(new Event("phone-ready"));
-    }, { once: true });
-
-    model.addEventListener("error", () => {
-      phoneHost?.classList.add("is-unavailable");
-      root.classList.remove("phone-motion-boot");
-    }, { once: true });
-  });
-
-  loadLibrary()
-    .then(() => {
-      models.forEach((model) => {
-        const activateModel = () => {
-          model.setAttribute("loading", "eager");
-          model.setAttribute("src", model.dataset.modelSrc);
-        };
-
-        if (model.getAttribute("loading") !== "lazy") {
-          activateModel();
-          return;
-        }
-
-        const region = model.closest(".beta");
-        if (!region) {
-          activateModel();
-          return;
-        }
-
-        const loadObserver = new IntersectionObserver((entries) => {
-          if (!entries.some((entry) => entry.isIntersecting)) return;
-          activateModel();
-          loadObserver.disconnect();
-        }, { rootMargin: "85% 0px", threshold: 0 });
-
-        loadObserver.observe(region);
-      });
-    })
-    .catch(() => {
-      models.forEach((model) => model.closest(".hero-phone, .beta-phone")?.classList.add("is-unavailable"));
-      root.classList.remove("phone-motion-boot");
-    });
-}
-
-setupPhoneModels();
-
 function setupRevealMotion() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -978,8 +803,6 @@ function setupRevealMotion() {
   const scrollItems = [];
   const cardItems = [];
   const footerItems = [];
-  const phoneItems = [];
-  const betaPhoneItems = [];
 
   function prepare(elements, variant, delays, collection) {
     const nodes = typeof elements === "string" ? document.querySelectorAll(elements) : elements;
@@ -997,24 +820,21 @@ function setupRevealMotion() {
   prepare(document.querySelectorAll(".language-button"), "pop", [70, 115], loadItems);
   prepare(document.querySelectorAll(".mobile-menu-toggle"), "pop", [70], loadItems);
   prepare(document.querySelectorAll(".theme-dot, .mode-button"), "pop", [70, 115, 160, 205, 265, 315], loadItems);
-  prepare(document.querySelectorAll(".hero-phone"), "phone", [90], phoneItems);
-  prepare(document.querySelectorAll(".hero .headline-line"), "line", [280, 410, 540], loadItems);
-  prepare(document.querySelectorAll(".hero .trust-line"), "up", [680], loadItems);
-  prepare(document.querySelectorAll(".hero .cta"), "pop", [800], loadItems);
+  // The headline is the page's largest paint, so it is never held back for an entrance.
+  prepare(document.querySelectorAll(".pill-cta"), "pop", [620], loadItems);
 
-  prepare(document.querySelectorAll(".why__intro h2"), "left", [0], scrollItems);
-  prepare(document.querySelectorAll(".why__intro p"), "right", [160], scrollItems);
-  prepare(document.querySelectorAll(".feature-card"), "card", [280, 400, 520], cardItems);
-  prepare(document.querySelectorAll(".beta-phone"), "phone-right", [0], betaPhoneItems);
-  prepare(document.querySelectorAll(".beta .beta-line"), "line", [0, 90, 180], scrollItems);
-  prepare(document.querySelectorAll(".beta__content p"), "up", [270], scrollItems);
-  prepare(document.querySelectorAll(".beta .cta"), "pop", [360], scrollItems);
-  prepare(document.querySelectorAll(".answers__intro h2"), "right", [0], scrollItems);
-  prepare(document.querySelectorAll(".answers__intro > p"), "left", [140], scrollItems);
-  prepare(document.querySelectorAll(".answers__item"), "up", [220, 300, 380, 460], scrollItems);
+  prepare(document.querySelectorAll(".eyebrow"), "pop", 0, scrollItems);
+  prepare(document.querySelectorAll("main h2:not(#hero-title)"), "up", 0, scrollItems);
+  prepare(document.querySelectorAll(".muted-copy, .privacy__body"), "up", 0, scrollItems);
+  prepare(document.querySelectorAll(".goals__answer, .goals__focuses"), "card", 0, cardItems);
+  prepare(document.querySelectorAll(".privacy__stickers, .shape__stickers"), "pop", 0, scrollItems);
+  prepare(document.querySelectorAll(".privacy__link"), "up", 0, scrollItems);
+  prepare(document.querySelectorAll(".goals__options, .band-cta"), "up", 0, scrollItems);
+  prepare(document.querySelectorAll(".faq__item"), "up", 70, scrollItems);
+  prepare(document.querySelectorAll(".spotlight__panel, .deep-panel, .food__panel"), "card", 0, cardItems);
   prepare(document.querySelectorAll(".footer-brand, .footer-column, .site-footer .footer-disclaimer"), "up", [0, 80, 140, 200, 260], footerItems);
 
-  [...loadItems, ...phoneItems].forEach((element) => element.classList.add("reveal--armed"));
+  loadItems.forEach((element) => element.classList.add("reveal--armed"));
 
   const motionPreparationObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -1027,7 +847,7 @@ function setupRevealMotion() {
     rootMargin: "45% 0px",
   });
 
-  [...scrollItems, ...cardItems, ...betaPhoneItems, ...footerItems]
+  [...scrollItems, ...cardItems, ...footerItems]
     .forEach((element) => motionPreparationObserver.observe(element));
 
   root.classList.add("motion-ready");
@@ -1037,7 +857,7 @@ function setupRevealMotion() {
     element.classList.add("is-visible");
 
     const delay = Number.parseFloat(element.style.getPropertyValue("--reveal-delay")) || 0;
-    const cleanupDuration = [...element.classList].some((className) => className.startsWith("reveal--phone")) ? 1300 : 1100;
+    const cleanupDuration = 1100;
     window.setTimeout(() => {
       [...element.classList]
         .filter((className) => className === "reveal" || className === "is-visible" || className.startsWith("reveal--"))
@@ -1050,23 +870,7 @@ function setupRevealMotion() {
 
   window.setTimeout(() => {
     root.classList.remove("motion-boot");
-    requestAnimationFrame(() => {
-      loadItems.forEach(reveal);
-      phoneItems.forEach((phoneItem) => {
-        const model = phoneItem.querySelector("model-viewer");
-        const revealPhone = () => {
-          reveal(phoneItem);
-          requestAnimationFrame(() => root.classList.remove("phone-motion-boot"));
-        };
-
-        if (model?.classList.contains("is-loaded")) {
-          revealPhone();
-          return;
-        }
-
-        model?.addEventListener("phone-ready", revealPhone, { once: true });
-      });
-    });
+    requestAnimationFrame(() => loadItems.forEach(reveal));
   }, loadSequenceStart);
 
   const observer = new IntersectionObserver((entries) => {
@@ -1079,30 +883,6 @@ function setupRevealMotion() {
     threshold: 0.14,
     rootMargin: "0px 0px -7% 0px",
   });
-
-  const beta = document.querySelector(".beta");
-  if (beta && betaPhoneItems.length) {
-    let betaIsVisible = false;
-
-    const revealBetaPhone = () => {
-      const model = betaPhoneItems[0]?.querySelector("model-viewer");
-      if (!betaIsVisible || !model?.classList.contains("is-loaded")) return;
-      betaPhoneItems.forEach(reveal);
-    };
-
-    const betaPhoneObserver = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      betaIsVisible = true;
-      revealBetaPhone();
-      betaPhoneObserver.disconnect();
-    }, {
-      threshold: 0.08,
-      rootMargin: "12% 0px 12% 0px",
-    });
-
-    betaPhoneObserver.observe(beta);
-    betaPhoneItems[0]?.querySelector("model-viewer")?.addEventListener("phone-ready", revealBetaPhone, { once: true });
-  }
 
   const cardObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -1137,3 +917,40 @@ function setupRevealMotion() {
 }
 
 setupRevealMotion();
+
+// The hero's burst leans a little toward the pointer, each piece by its own depth (see .burst__piece).
+function setupBurst() {
+  const hero = document.querySelector(".burst-hero");
+  const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+  if (!hero || !finePointer.matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  let targetX = 0;
+  let targetY = 0;
+  let pointerX = 0;
+  let pointerY = 0;
+  let frame;
+
+  function ease() {
+    pointerX += (targetX - pointerX) * 0.08;
+    pointerY += (targetY - pointerY) * 0.08;
+    hero.style.setProperty("--px", pointerX.toFixed(3));
+    hero.style.setProperty("--py", pointerY.toFixed(3));
+    const settled = Math.abs(targetX - pointerX) < 0.001 && Math.abs(targetY - pointerY) < 0.001;
+    frame = settled ? undefined : requestAnimationFrame(ease);
+  }
+
+  function follow(x, y) {
+    targetX = x;
+    targetY = y;
+    if (frame === undefined) frame = requestAnimationFrame(ease);
+  }
+
+  hero.addEventListener("pointermove", (event) => {
+    const bounds = hero.getBoundingClientRect();
+    follow(((event.clientX - bounds.left) / bounds.width) * 2 - 1, ((event.clientY - bounds.top) / bounds.height) * 2 - 1);
+  }, { passive: true });
+
+  hero.addEventListener("pointerleave", () => follow(0, 0));
+}
+
+setupBurst();

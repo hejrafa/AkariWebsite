@@ -37,8 +37,11 @@ const commonTranslations = {
     footerSitemapLabel: "Sitemap",
     footerProductTitle: "Product",
     footerJoinLabel: "Join the beta",
-    footerFeaturesLabel: "Features",
-    footerShapeLabel: "Help shape Akari",
+    footerVitalsLabel: "Vitals",
+    footerNutritionLabel: "Nutrition",
+    footerGoalsLabel: "Goals",
+    footerFoodLabel: "Food logging",
+    footerDataLabel: "Your data",
     footerSupportTitle: "Support",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Legal",
@@ -72,8 +75,11 @@ const commonTranslations = {
     footerSitemapLabel: "Seitenübersicht",
     footerProductTitle: "Produkt",
     footerJoinLabel: "Beta beitreten",
-    footerFeaturesLabel: "Funktionen",
-    footerShapeLabel: "Akari mitgestalten",
+    footerVitalsLabel: "Vitalwerte",
+    footerNutritionLabel: "Ernährung",
+    footerGoalsLabel: "Ziele",
+    footerFoodLabel: "Essen erfassen",
+    footerDataLabel: "Deine Daten",
     footerSupportTitle: "Hilfe",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Rechtliches",
@@ -215,9 +221,13 @@ const pageMetadata = {
 };
 
 const pageColors = {
-  dark: { meadow: "#1d1b07", forest: "#151a0c", coast: "#0d1920", canyon: "#1a100c" },
-  light: { meadow: "#f1eac6", forest: "#e6f4d1", coast: "#d7edf8", canyon: "#f4ddd1" },
+  dark: { meadow: "#1a1812", forest: "#161a12", coast: "#12171a", canyon: "#1a1412" },
+  light: { meadow: "#f1eaca", forest: "#e1f1ca", coast: "#cae2f1", canyon: "#f1d7ca" },
 };
+
+// The header and footer sit on each theme's deep band in both schemes, so the browser chrome takes
+// the band colour and the logos use the variant drawn for a dark ground.
+const bandColors = { meadow: "#0a4252", forest: "#0c271c", coast: "#083756", canyon: "#482219" };
 
 function persistSitePreference(name, value) {
   try { localStorage.setItem(name, value); } catch (error) {}
@@ -251,10 +261,10 @@ function updateAppearance() {
   root.dataset.theme = theme;
   root.dataset.mode = mode;
 
-  if (themeColor) themeColor.content = pageColors[mode][theme];
+  if (themeColor) themeColor.content = bandColors[theme];
   themeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.themeTarget === theme)));
   modeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.modeTarget === mode)));
-  brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-${mode}.svg?v=2`; });
+  brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-dark.svg?v=2`; });
   if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
     const adminURL = new URL(localPreview ? "http://127.0.0.1:8791/login" : "https://admin.joinakari.com/");
