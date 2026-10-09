@@ -1,19 +1,23 @@
 # Akari
 
-> Akari is a private iPhone health app that turns health data into a calm, readable daily story.
+> Akari is a private iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day.
 
-Akari helps people understand supported vitals, activity, nutrition and goals in one place. It uses simple explanations and relatable examples without turning health into a score or using alarmist language.
+Akari reads Apple Health on the iPhone and keeps what it works out there. Each morning it shows your readiness, read against your own usual nights. Every nutrient gets its own row, and you log food by writing or saying what you ate. You pick one goal to start with, such as sleeping better or moving more.
 
 ## Key facts
 
-- Platform: iPhone and iOS
-- Data source: Apple Health data the user chooses to share
-- Privacy: no account is required, and health data stays on the user's iPhone
-- Availability: free public beta through Apple TestFlight
-- Scope: Akari explains health data and patterns; it does not diagnose conditions or replace professional medical advice
+- Platform: iPhone with iOS 26 or later
+- Data source: Apple Health, and optionally Google Health (read-only)
+- Languages: English and German
+- Privacy: no account is required, and health data stays on the user's iPhone; only a food report the user chooses to send reaches Akari's server
+- Pricing: most of Akari is free; food logging, readiness and Health Age need a subscription (€4.99 a month or €39.99 a year, 14 days free). This may still change before launch.
+- Availability: free public beta through Apple TestFlight, with everything free during the beta; the App Store version is coming soon
+- Scope: Akari explains the user's own data and patterns; it does not diagnose or treat anything or replace professional medical advice
 
 ## Official links
 
 - [Akari website](https://joinakari.com/)
 - [Join the free TestFlight beta](https://testflight.apple.com/join/wrv4aFVQ)
+- [Privacy policy](https://joinakari.com/privacy/)
+- [Terms of use](https://joinakari.com/terms/)
 - [Full product information](https://joinakari.com/llms-full.txt)

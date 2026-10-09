@@ -6,40 +6,76 @@
 >
   <url>
     <loc>https://joinakari.com/</loc>
-    <lastmod>2026-08-24</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/" />
     <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
     <image:image>
-      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_01.webp</image:loc>
-      <image:title>Akari explains a health pattern in clear language</image:title>
+      <image:loc>https://joinakari.com/assets/welcome/forest/en/light/tile-sleep@3x.webp</image:loc>
+      <image:title>Akari's sleep tile: last night's sleep at a glance</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_02.webp</image:loc>
-      <image:title>Akari adds context to daily step data</image:title>
+      <image:loc>https://joinakari.com/assets/welcome/forest/en/light/readiness-bar@3x.webp</image:loc>
+      <image:title>Akari's readiness bar for the morning</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_03.webp</image:loc>
-      <image:title>Akari brings nutrition and health data together</image:title>
+      <image:loc>https://joinakari.com/assets/welcome/forest/en/light/card-fiber@3x.webp</image:loc>
+      <image:title>Akari's fiber card: one nutrient in its own row</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://joinakari.com/assets/welcome/forest/en/light/meal-sentence@3x.webp</image:loc>
+      <image:title>A meal logged in Akari by writing or saying it</image:title>
     </image:image>
   </url>
   <url>
     <loc>https://joinakari.com/?lang=de</loc>
-    <lastmod>2026-08-24</lastmod>
+    <lastmod>2026-10-09</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/" />
     <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
     <image:image>
-      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_01.webp</image:loc>
-      <image:title>Akari erklärt ein Muster aus Gesundheitsdaten in verständlicher Sprache</image:title>
+      <image:loc>https://joinakari.com/assets/welcome/forest/de/light/tile-sleep@3x.webp</image:loc>
+      <image:title>Die Schlaf-Kachel in Akari: die letzte Nacht auf einen Blick</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_02.webp</image:loc>
-      <image:title>Akari ordnet tägliche Schrittdaten verständlich ein</image:title>
+      <image:loc>https://joinakari.com/assets/welcome/forest/de/light/readiness-bar@3x.webp</image:loc>
+      <image:title>Die Tagesform in Akari für den Morgen</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://joinakari.com/assets/theme-media/image_japan_dark_03.webp</image:loc>
-      <image:title>Akari bringt Ernährung und Gesundheitsdaten zusammen</image:title>
+      <image:loc>https://joinakari.com/assets/welcome/forest/de/light/card-fiber@3x.webp</image:loc>
+      <image:title>Die Ballaststoff-Karte in Akari: jeder Nährstoff in einer eigenen Zeile</image:title>
     </image:image>
+    <image:image>
+      <image:loc>https://joinakari.com/assets/welcome/forest/de/light/meal-sentence@3x.webp</image:loc>
+      <image:title>Eine Mahlzeit, in Akari geschrieben oder gesagt</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://joinakari.com/privacy/</loc>
+    <lastmod>2026-10-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/privacy/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/privacy/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/privacy/" />
+  </url>
+  <url>
+    <loc>https://joinakari.com/privacy/?lang=de</loc>
+    <lastmod>2026-10-09</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/privacy/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/privacy/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/privacy/" />
+  </url>
+  <url>
+    <loc>https://joinakari.com/terms/</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/terms/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/terms/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/terms/" />
+  </url>
+  <url>
+    <loc>https://joinakari.com/terms/?lang=de</loc>
+    <lastmod>2026-09-21</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/terms/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/terms/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/terms/" />
   </url>
 </urlset>

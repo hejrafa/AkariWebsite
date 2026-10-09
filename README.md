@@ -15,12 +15,12 @@ Then open `http://localhost:8000/`.
 ## Discovery files
 
 - `robots.txt` allows search and AI search crawlers and references the sitemap.
-- `sitemap.xml` lists the canonical public page and its primary images.
+- `sitemap.xml` lists the landing page and the privacy and terms pages in English and German, with the app's pieces from `assets/welcome` as the landing page's images.
 - `llms.txt` and `llms-full.txt` provide concise machine-readable product information.
 - `manifest.webmanifest` describes the website for browsers and installed shortcuts.
-- The page includes Open Graph, X/Twitter, canonical, and `SoftwareApplication` JSON-LD metadata.
+- The page includes Open Graph, X/Twitter, canonical, and `SoftwareApplication` and `FAQPage` JSON-LD metadata. `script.js` rebuilds them for the chosen language from the same strings the page shows, so update `pageMetadata` and the FAQ copy there and mirror the English version in `index.html`.
 
-The app icon and phone models in `assets/` come from the local Akari iOS project; `tools/` holds the scripts used to prepare them, including `map-iphone-17-screen.py`, which maps an app screenshot onto the phone model's screen. Only the public files are deployed; the allowlist is in `.github/workflows/pages.yml`. The public TestFlight URL is referenced directly in `index.html`, `llms.txt`, and `llms-full.txt`.
+The site's type and colours follow the app: New York, and the per-theme page, card, ink, accent and launch-screen colours from the iOS project's `AppTheme.swift`. Five themes are offered: Wasserkuppe (`meadow`), Shiratani (`forest`, the default), Loch Tay (`coast`), Green River Overlook (`canyon`) and Plain (`plain`). Plain has no painting, so its deep band is the app's dark card colour and its logo mark uses the app's yellow-to-orange launch gradient (`assets/logo/akari-logo-plain-*.svg`). The app exports everything the landing page shows into `assets/welcome/`: each piece per theme, language and light/dark rendering (`<theme>/<en|de>/<dark|light>/<piece>@2x.webp`, `@3x.webp` and a `@3x.png` source), the app icon per theme (`<theme>/app-icon-<light|dark>`, dark only for Plain), the Apple Health icon and the food stickers in `stickers/`. The page shows each piece at its 1x size, never edited, picks 2x or 3x by screen density, and swaps with the theme, language and light/dark switches. The other stickers in `assets/stickers/` (lock, the goal and focus stickers chosen to match the app's icons in `Goal.swift`) are Microsoft Fluent Emoji (MIT, licence alongside) from the revision the app pins (`1ffb34c`). The goal tiles' titles and lines are the app's own focus strings in both languages. Only the public files are deployed; the allowlist is in `.github/workflows/pages.yml`. The public TestFlight URL is referenced directly in `index.html`, `llms.txt`, and `llms-full.txt`.
 
 ## Localization
 

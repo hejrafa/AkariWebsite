@@ -8,85 +8,51 @@
   font-display: swap;
 }
 
+/* Colours come from the app's AppTheme.swift, as on the landing page (styles.css). Each
+   theme has a deep band and its cream ink, plus page, card, ink and accent per scheme. */
 :root {
   color-scheme: dark;
-  --page: #1d1b07;
-  --ink: #f1eac6;
-  --accent: #ebcc4b;
-  --page-rgb: 29, 27, 7;
-  --ink-rgb: 241, 234, 198;
-  --muted: rgba(var(--ink-rgb), 0.68);
-  --card: rgba(var(--ink-rgb), 0.08);
-  --border: rgba(var(--ink-rgb), 0.14);
+  --band: #0c271c;
+  --band-rgb: 12, 39, 28;
+  --band-ink: #f8ebbc;
+  --band-ink-rgb: 248, 235, 188;
+  --vivid: #a9eb4b;
+  --page: #161a12;
+  --page-rgb: 22, 26, 18;
+  --card: #262a21;
+  --ink: #e6f4d1;
+  --ink-rgb: 230, 244, 209;
+  --accent: #a9eb4b;
   --focus-ring: var(--accent);
   --serif: "Akari New York", "New York", Georgia, serif;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-:root[data-theme="forest"] {
-  --page: #151a0c;
-  --ink: #e6f4d1;
-  --accent: #a9eb4b;
-  --page-rgb: 21, 26, 12;
-  --ink-rgb: 230, 244, 209;
-}
+:root[data-theme="forest"] { --band: #0c271c; --band-rgb: 12, 39, 28; --band-ink: #f8ebbc; --band-ink-rgb: 248, 235, 188; --vivid: #a9eb4b; }
+:root[data-theme="meadow"] { --band: #0a4252; --band-rgb: 10, 66, 82; --band-ink: #fff1c9; --band-ink-rgb: 255, 241, 201; --vivid: #ebcc4b; }
+:root[data-theme="coast"] { --band: #083756; --band-rgb: 8, 55, 86; --band-ink: #e3e6ff; --band-ink-rgb: 227, 230, 255; --vivid: #4baceb; }
+:root[data-theme="canyon"] { --band: #482219; --band-rgb: 72, 34, 25; --band-ink: #ffecd4; --band-ink-rgb: 255, 236, 212; --vivid: #eb804b; }
+:root[data-theme="plain"] { --band: #141414; --band-rgb: 20, 20, 20; --band-ink: #ffffff; --band-ink-rgb: 255, 255, 255; --vivid: #ffd60a; }
 
-:root[data-theme="coast"] {
-  --page: #0d1920;
-  --ink: #d7edf8;
-  --accent: #4baceb;
-  --page-rgb: 13, 25, 32;
-  --ink-rgb: 215, 237, 248;
-}
+:root[data-mode="light"] { color-scheme: light; }
 
-:root[data-theme="canyon"] {
-  --page: #1a100c;
-  --ink: #f4ddd1;
-  --accent: #eb804b;
-  --page-rgb: 26, 16, 12;
-  --ink-rgb: 244, 221, 209;
-}
-
-:root[data-mode="light"] {
-  color-scheme: light;
-  --page: #f1eac6;
-  --ink: #1d1b07;
-  --accent: #ebcc4b;
-  --page-rgb: 241, 234, 198;
-  --ink-rgb: 29, 27, 7;
-  --card: rgba(255, 255, 255, 0.46);
-  --border: rgba(var(--ink-rgb), 0.12);
-  --focus-ring: var(--ink);
-}
-
-:root[data-mode="light"][data-theme="forest"] {
-  --page: #e6f4d1;
-  --ink: #151a0c;
-  --accent: #a9eb4b;
-  --page-rgb: 230, 244, 209;
-  --ink-rgb: 21, 26, 12;
-}
-
-:root[data-mode="light"][data-theme="coast"] {
-  --page: #d7edf8;
-  --ink: #0d1920;
-  --accent: #4baceb;
-  --page-rgb: 215, 237, 248;
-  --ink-rgb: 13, 25, 32;
-}
-
-:root[data-mode="light"][data-theme="canyon"] {
-  --page: #f4ddd1;
-  --ink: #1a100c;
-  --accent: #eb804b;
-  --page-rgb: 244, 221, 209;
-  --ink-rgb: 26, 16, 12;
-}
+html:root[data-mode="light"][data-theme="forest"] { --page: #e1f1ca; --page-rgb: 225, 241, 202; --card: #f6feec; --ink: #1e2611; --ink-rgb: 30, 38, 17; --accent: #7dbd22; }
+html:root[data-mode="light"][data-theme="meadow"] { --page: #f1eaca; --page-rgb: 241, 234, 202; --card: #fefaec; --ink: #262211; --ink-rgb: 38, 34, 17; --accent: #bd9f22; }
+html:root[data-mode="light"][data-theme="coast"] { --page: #cae2f1; --page-rgb: 202, 226, 241; --card: #ecf7fe; --ink: #111e26; --ink-rgb: 17, 30, 38; --accent: #2280bd; }
+html:root[data-mode="light"][data-theme="canyon"] { --page: #f1d7ca; --page-rgb: 241, 215, 202; --card: #fef2ec; --ink: #261811; --ink-rgb: 38, 24, 17; --accent: #bd5522; }
+html:root[data-mode="light"][data-theme="plain"] { --page: #f5f5f5; --page-rgb: 245, 245, 245; --card: #ffffff; --ink: #000000; --ink-rgb: 0, 0, 0; --accent: #ff6c01; }
+html:root[data-mode="dark"][data-theme="forest"] { --page: #161a12; --page-rgb: 22, 26, 18; --card: #262a21; --ink: #e6f4d1; --ink-rgb: 230, 244, 209; --accent: #a9eb4b; }
+html:root[data-mode="dark"][data-theme="meadow"] { --page: #1a1812; --page-rgb: 26, 24, 18; --card: #2a2821; --ink: #f4edd1; --ink-rgb: 244, 237, 209; --accent: #ebcc4b; }
+html:root[data-mode="dark"][data-theme="coast"] { --page: #12171a; --page-rgb: 18, 23, 26; --card: #21262a; --ink: #d1e6f4; --ink-rgb: 209, 230, 244; --accent: #4baceb; }
+html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 26, 20, 18; --card: #2a2421; --ink: #f4ddd1; --ink-rgb: 244, 221, 209; --accent: #eb804b; }
+html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0, 0, 0; --card: #141414; --ink: #ffffff; --ink-rgb: 255, 255, 255; --accent: #ffd60a; }
 
 * { box-sizing: border-box; }
 
+/* The page starts and ends on the deep band, so overscroll at either end shows the band too. */
 html {
-  background: var(--page);
+  background: var(--band);
   transition: background-color 500ms var(--ease);
 }
 
@@ -106,10 +72,19 @@ a:hover { color: var(--accent); }
 /* Lime/yellow hover text is too faint on light pages; darken it toward the ink. */
 :root[data-mode="light"] a:hover { color: color-mix(in srgb, var(--accent) 45%, var(--ink)); }
 
+/* The header sits on the deep band; its controls take the band's cream, as on the landing page. */
 .legal-site-header {
+  --page: var(--band);
+  --page-rgb: var(--band-rgb);
+  --ink: var(--band-ink);
+  --ink-rgb: var(--band-ink-rgb);
+  --focus-ring: var(--band-ink);
   position: relative;
   z-index: 30;
   height: 98px;
+  color: var(--band-ink);
+  background: var(--band);
+  transition: background-color 500ms var(--ease);
 }
 
 .legal-site-header__inner {
@@ -264,6 +239,7 @@ a:hover { color: var(--accent); }
 :root[data-theme="forest"] .theme-controls { --control-index: 1; }
 :root[data-theme="coast"] .theme-controls { --control-index: 2; }
 :root[data-theme="canyon"] .theme-controls { --control-index: 3; }
+:root[data-theme="plain"] .theme-controls { --control-index: 4; }
 :root[data-mode="dark"] .mode-controls { --control-index: 1; }
 
 .theme-dot,
@@ -301,6 +277,11 @@ a:hover { color: var(--accent); }
   --theme-swatch: #eb804b;
 }
 
+/* Plain has no painting; its swatch is the app's yellow-to-orange launch gradient. */
+.theme-dot[data-theme-target="plain"] {
+  --theme-swatch: linear-gradient(#ffd600, #ff6b00);
+}
+
 .theme-ring {
   display: grid;
   place-items: center;
@@ -319,6 +300,80 @@ a:hover { color: var(--accent); }
 
 .theme-dot:hover .theme-swatch {
   background-color: color-mix(in srgb, var(--theme-swatch) 88%, white);
+}
+
+/* With a mouse, the theme pill shows only the current theme and opens to the left into the full row on
+   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one. */
+@media (hover: hover) and (min-width: 761px) {
+  .theme-controls::before {
+    transition: border-color 500ms var(--ease), transform 300ms var(--ease);
+  }
+
+  .theme-dot {
+    transition: width 300ms var(--ease), visibility 0s, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-ring {
+    transition: opacity 220ms var(--ease) 80ms;
+  }
+
+  .theme-controls:not(:hover, :focus-within)::before {
+    transform: translateX(0);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) {
+    width: 0;
+    visibility: hidden;
+    transition: width 300ms var(--ease), visibility 0s 300ms, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) .theme-ring {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it. */
+  .theme-dot::after,
+  .mode-button::after {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 10px);
+    left: 50%;
+    padding: 7px 11px;
+    color: var(--page);
+    background: var(--ink);
+    border-radius: 999px;
+    content: attr(aria-label);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -4px);
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .theme-dot:hover::after,
+  .theme-dot:focus-visible::after,
+  .mode-button:hover::after,
+  .mode-button:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* The last button sits near the page edge, so its label lines up with its right side instead. */
+  .mode-button[data-mode-target="dark"]::after {
+    left: auto;
+    right: 0;
+    transform: translateY(-4px);
+  }
+
+  .mode-button[data-mode-target="dark"]:hover::after,
+  .mode-button[data-mode-target="dark"]:focus-visible::after {
+    transform: translateY(0);
+  }
 }
 
 .mode-button:hover {
@@ -356,25 +411,51 @@ a:hover { color: var(--accent); }
   outline-offset: 4px;
 }
 
-.legal-shell {
-  width: min(100% - 40px, 780px);
-  margin: 0 auto;
-  padding: clamp(56px, 10vw, 108px) 0 80px;
+/* Title: the band carries on under the header, with the page's name as a tilted pill, a big line,
+   and torn paper into the page. */
+.legal-hero {
+  position: relative;
+  padding: clamp(36px, 5vw, 72px) 20px calc(clamp(34px, 6vw, 90px) + clamp(40px, 5vw, 80px));
+  color: var(--band-ink);
+  background: var(--band);
+  text-align: center;
+  transition: background-color 500ms var(--ease);
 }
 
 .legal-header {
-  margin-bottom: 48px;
-  text-align: center;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.legal-eyebrow {
+  display: inline-flex;
+  margin: 0 0 26px;
+  padding: 9px 16px;
+  color: var(--band);
+  background: var(--vivid);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  font-weight: 700;
+  line-height: 1.1;
+  rotate: -3deg;
 }
 
 h1 {
-  max-width: 720px;
+  max-width: 10em;
   margin: 0 auto;
-  font-size: clamp(5rem, 7.78vw, 7rem);
+  font-size: clamp(3rem, 7.4vw, 7rem);
   font-weight: 900;
-  letter-spacing: -0.012em;
-  line-height: 0.928571;
+  letter-spacing: -0.015em;
+  line-height: 0.92;
   text-wrap: balance;
+  overflow-wrap: break-word;
+  hyphens: manual;
 }
 
 .legal-headline-emoji {
@@ -405,7 +486,7 @@ h1 {
 }
 
 .legal-headline-emoji:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 3px solid var(--band-ink);
   outline-offset: 0.13em;
   border-radius: 50%;
 }
@@ -422,56 +503,211 @@ h1 {
 }
 
 .legal-intro {
-  max-width: 660px;
-  margin: 40px auto 0;
-  color: var(--muted);
+  max-width: 28em;
+  margin: 30px auto 0;
+  color: var(--band-ink);
   font-family: var(--serif);
-  font-size: clamp(1.05rem, 1.67vw, 1.5rem);
-  line-height: 1.34;
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  line-height: 1.4;
+  opacity: 0.8;
 }
 
 .legal-updated {
-  margin: 18px auto 0;
-  color: var(--muted);
-  font-family: var(--serif);
-  font-size: 0.88rem;
+  margin: 28px auto 0;
+  padding: 10px 18px;
+  color: var(--band-ink);
+  border: 1.5px solid color-mix(in srgb, var(--band-ink) 40%, transparent);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
 }
 
+.torn-edge {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: clamp(34px, 6vw, 90px);
+  pointer-events: none;
+}
+
+.torn-edge--top {
+  top: -1px;
+  bottom: auto;
+  transform: scaleY(-1);
+}
+
+.torn-edge__fringe {
+  fill: var(--band-ink);
+  transition: fill 500ms var(--ease);
+}
+
+.torn-edge__paper {
+  fill: var(--page);
+  transition: fill 500ms var(--ease);
+}
+
+/* Body: one card per section on the page, read at a comfortable measure. --------------------- */
+
 .legal-content {
+  counter-reset: legal-section;
   display: grid;
-  gap: 14px;
+  gap: 12px;
+  width: min(100% - 40px, 740px);
+  margin: 0 auto;
+  padding: clamp(36px, 5vw, 64px) 0 0;
 }
 
 .legal-section {
+  counter-increment: legal-section;
   min-width: 0;
-  padding: clamp(24px, 5vw, 38px);
-  border: 1px solid var(--border);
-  border-radius: 28px;
+  padding: clamp(26px, 5vw, 48px);
   background: var(--card);
-  hyphens: auto;
+  border-radius: 24px;
   overflow-wrap: break-word;
-  transition: background-color 500ms var(--ease), border-color 500ms var(--ease);
+  transition: background-color 500ms var(--ease);
 }
 
-h2 { margin: 0 0 16px; font-size: clamp(1.55rem, 4vw, 2rem); line-height: 1.05; }
+/* English reads better unbroken; German compounds need hyphenation to fit narrow screens. */
+:root[data-language="de"] .legal-section { hyphens: auto; hyphenate-limit-chars: 10 4 4; }
 
-p, li { color: var(--muted); font-family: var(--serif); line-height: 1.65; }
-p { margin: 0 0 14px; }
-p:last-child { margin-bottom: 0; }
-ul { margin: 0; padding-left: 1.25rem; }
-li + li { margin-top: 8px; }
-strong { color: var(--ink); }
+/* Each section heading starts with its number in a round band chip, like the FAQ's "+". */
+.legal-section h2 {
+  --chip: 34px;
+  position: relative;
+  max-width: 65ch;
+  min-height: var(--chip);
+  margin: 0 0 20px;
+  padding-left: calc(var(--chip) + 14px);
+  font-size: clamp(1.55rem, 3.2vw, 2.1rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.legal-section h2::before {
+  position: absolute;
+  top: calc((1lh - var(--chip)) / 2 + 0.12em);
+  left: 0;
+  display: grid;
+  width: var(--chip);
+  height: var(--chip);
+  place-items: center;
+  color: var(--band-ink);
+  background: var(--band);
+  border-radius: 50%;
+  content: counter(legal-section);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  rotate: -6deg;
+  transition: background-color 500ms var(--ease), color 500ms var(--ease);
+}
+
+p, li { font-family: var(--serif); }
+
+.legal-section p,
+.legal-section li {
+  max-width: 34em;
+  color: rgba(var(--ink-rgb), 0.72);
+  font-size: clamp(1.05rem, 1.35vw, 1.2rem);
+  line-height: 1.65;
+}
+
+.legal-section p { margin: 0 0 1em; }
+.legal-section p:last-child { margin-bottom: 0; }
+.legal-section ul { margin: 0; padding-left: 1.25rem; }
+.legal-section li + li { margin-top: 10px; }
+.legal-section strong { color: var(--ink); font-weight: 700; }
+
+.legal-section a {
+  color: var(--ink);
+  font-weight: 650;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 0.1em;
+}
+
+.legal-section a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* One strong panel per page: the deep band with a faint glow of the theme's vivid colour. */
+.legal-section--panel {
+  --ink: var(--band-ink);
+  --ink-rgb: var(--band-ink-rgb);
+  --accent: var(--vivid);
+  color: var(--band-ink);
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--vivid) 22%, transparent), transparent 60%),
+    var(--band);
+  border-radius: clamp(26px, 3vw, 40px);
+}
+
+.legal-section--panel h2::before {
+  color: var(--band);
+  background: var(--vivid);
+}
+
+.legal-section--panel p,
+.legal-section--panel li {
+  color: rgba(var(--band-ink-rgb), 0.82);
+}
+
+.legal-section--panel ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.legal-section--panel li {
+  position: relative;
+  padding-left: 1.4em;
+}
+
+.legal-section--panel li::before {
+  position: absolute;
+  top: 0.62em;
+  left: 0.15em;
+  width: 0.5em;
+  height: 0.5em;
+  background: var(--vivid);
+  border-radius: 50%;
+  content: "";
+}
+
+.legal-section--panel a:hover,
+:root[data-mode="light"] .legal-section--panel a:hover {
+  color: var(--vivid);
+}
+
+/* Footer: the page ends on the deep band it started with, torn at the top. ------------------ */
 
 .site-footer {
-  width: min(1280px, calc(100% - 48px));
-  margin: 0 auto;
-  padding: 64px 0 48px;
-  color: var(--ink);
+  --ink: var(--band-ink);
+  --ink-rgb: var(--band-ink-rgb);
+  --focus-ring: var(--band-ink);
+  position: relative;
+  margin: clamp(56px, 8vw, 110px) 0 0;
+  padding: clamp(110px, 12vw, 170px) max(24px, calc((100% - 1180px) / 2)) 40px;
+  color: var(--band-ink);
+  background: var(--band);
   font-family: var(--serif);
   letter-spacing: 0;
+  transition: background-color 500ms var(--ease);
 }
 
 .site-footer__inner {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr);
   gap: 48px;
@@ -480,10 +716,11 @@ strong { color: var(--ink); }
 
 .footer-logo {
   display: block;
-  width: 72px;
+  width: 104px;
 }
 
 .footer-logo img {
+  display: block;
   width: 100%;
   height: auto;
 }
@@ -498,7 +735,7 @@ strong { color: var(--ink); }
 .footer-made,
 .footer-copyright {
   margin: 0;
-  color: rgba(var(--ink-rgb), 0.62);
+  color: rgba(var(--ink-rgb), 0.65);
   font-size: 0.8125rem;
   font-weight: 500;
   line-height: 1.5;
@@ -516,7 +753,7 @@ strong { color: var(--ink); }
 
 .footer-column h2 {
   margin: 0 0 18px;
-  color: rgba(var(--ink-rgb), 0.56);
+  color: rgba(var(--ink-rgb), 0.65);
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.2;
@@ -534,26 +771,30 @@ strong { color: var(--ink); }
   margin-top: 0;
 }
 
-.footer-column a {
-  color: var(--ink);
+.site-footer .footer-column a {
+  color: var(--band-ink);
   font-size: 1.0625rem;
   font-weight: 500;
   line-height: 1.3;
   text-decoration: none;
 }
 
-.footer-column a:hover,
-.footer-column a[aria-current="page"] {
+.site-footer .footer-column a:hover,
+.site-footer .footer-column a[aria-current="page"] {
+  color: var(--band-ink);
   text-decoration: underline;
-  text-decoration-thickness: 1px;
+  text-decoration-color: var(--vivid);
+  text-decoration-thickness: 2px;
   text-underline-offset: 0.22em;
 }
 
 .site-footer .footer-disclaimer {
+  position: relative;
+  z-index: 2;
   width: auto;
   max-width: 640px;
   margin: 56px auto 0;
-  color: rgba(var(--ink-rgb), 0.5);
+  color: rgba(var(--ink-rgb), 0.55);
   font-family: var(--serif);
   font-size: 0.8125rem;
   font-weight: 450;
@@ -640,10 +881,13 @@ strong { color: var(--ink); }
     margin-left: 0;
   }
 
+  /* Five themes and the light/dark pair do not fit one row of the menu; the pair wraps under them. */
   .appearance-controls {
+    flex-wrap: wrap;
+    gap: 10px;
     width: 100%;
     justify-self: auto;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-right: 0;
   }
 
@@ -695,19 +939,56 @@ strong { color: var(--ink); }
     fill: var(--page);
     stroke: currentColor;
     stroke-linecap: round;
-    stroke-width: 1.5;
+    stroke-width: 2;
     transition: transform 300ms var(--ease);
   }
 
-  .mobile-menu-is-open .mobile-menu-toggle svg {
-    transform: rotate(90deg);
+  .mobile-menu-toggle path {
+    transform-origin: 12px 12px;
+    transition: transform 300ms var(--ease), opacity 180ms var(--ease);
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(1) {
+    transform: rotate(45deg) translateY(5px);
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(3) {
+    transform: rotate(-45deg) translateY(-5px);
   }
 }
 
 @media (max-width: 760px) {
+  .legal-hero {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .legal-content {
+    width: calc(100% - 32px);
+  }
+
+  .legal-section {
+    padding: 26px 22px;
+    border-radius: 22px;
+  }
+
+  .legal-section h2 {
+    --chip: 30px;
+    padding-left: calc(var(--chip) + 12px);
+    font-size: 1.4rem;
+    line-height: 1.05;
+  }
+
+  .legal-section h2::before {
+    font-size: 0.85rem;
+  }
+
   .site-footer {
-    width: calc(100% - 40px);
-    padding: 48px 0 40px;
+    padding: 100px 20px 36px;
   }
 
   .site-footer__inner {
@@ -726,11 +1007,9 @@ strong { color: var(--ink); }
 }
 
 .credits-heart {
-  color: var(--accent);
+  color: var(--vivid);
   transition: color 500ms var(--ease);
 }
-
-:root[data-mode="light"] .credits-heart { color: var(--ink); }
 
 @keyframes emoji-pop {
   0% {
@@ -747,23 +1026,33 @@ strong { color: var(--ink); }
   }
 }
 
-@media (max-width: 560px) {
-  .legal-shell { width: min(100% - 28px, 780px); }
-  h1 { font-size: clamp(3.25rem, 16vw, 5.2rem); line-height: 0.94; }
-  :root[data-language="de"] h1 { font-size: clamp(3.05rem, 13.8vw, 3.55rem); }
-  .legal-intro { margin-top: 28px; font-size: 1.05rem; }
-  .legal-section { border-radius: 22px; }
+/* A one-time rise for the title on load. */
+@keyframes legal-rise {
+  from { opacity: 0; translate: 0 18px; }
+  to { opacity: 1; translate: 0 0; }
 }
 
-@media (min-width: 561px) and (max-width: 1050px) {
-  h1 { font-size: clamp(4.25rem, 9vw, 5.75rem); }
+@keyframes legal-pop {
+  from { opacity: 0; scale: 0.6; }
+  to { opacity: 1; scale: 1; }
 }
+
+.legal-eyebrow { animation: legal-pop 700ms cubic-bezier(0.2, 1.4, 0.4, 1) 120ms both; }
+.legal-header h1,
+.legal-intro,
+.legal-updated { animation: legal-rise 700ms var(--ease) both; }
+.legal-intro { animation-delay: 80ms; }
+.legal-updated { animation-delay: 140ms; }
 
 @media (max-width: 430px) {
-  h1 { font-size: clamp(3.05rem, 15vw, 4rem); }
+  h1 { font-size: clamp(2.6rem, 13.4vw, 3.4rem); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .legal-headline-emoji { transition: none; }
   .emoji-particle { display: none; }
+  .legal-eyebrow,
+  .legal-header h1,
+  .legal-intro,
+  .legal-updated { animation: none; }
 }

@@ -1,58 +1,101 @@
 # Akari product information
 
-Last updated: 2026-08-24
+Last updated: 2026-10-09
 
 ## Summary
 
-Akari is an iPhone health app that turns health data into a calm, readable daily story. It brings supported vitals, activity, nutrition and goals into one view and adds simple explanations with relatable everyday examples.
+Akari is an iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day. It reads Apple Health on the iPhone and keeps what it works out right there. Akari is available in English and German.
 
-Akari is designed to inform without judgment. It does not reduce a person's day to a score and does not use alarmist language to drive engagement.
+Akari is designed to inform without judgment. It explains in calm, plain language and does not use alarmist wording to drive engagement.
 
-## Product benefits
+## What Akari does
 
-### See today clearly
+### Readiness, every morning
 
-Akari explains the user's day calmly, without scores, judgment or alarm.
+Each morning Akari reads last night against the user's own usual nights. Yesterday's food and strain count too.
 
-### Understand your data
+### Nutrition: more than just calories
 
-Akari provides simple, science-based explanations with relatable everyday examples.
+Every nutrient gets a row of its own, with its own symbol. Where there is a limit, Akari marks it.
 
-### See the whole picture
+### Write or say what you ate
 
-Akari brings supported vitals and nutrition together in one clear view so connections are easier to notice.
+Users log food by typing or saying it the way they would tell someone, for example "Oats with banana and a flat white". Akari finds each food, its portion and what is in it. A barcode can be scanned as well.
+
+### One goal is enough to start
+
+Users pick one goal, and Akari brings together what that goal needs:
+
+- For you: the user's highest-priority health areas, picked from their Apple Health data
+- Dailies: six small things that make a day good: getting outside, moving, drinking water, eating enough, sleeping and reaching someone you like
+- Sleep better: morning light, screens down in the evening, and a full night's sleep
+- Move more: steps, time spent training, and active energy burned
+- Eat well: calories, protein and fiber in view for balanced meals
+- Lose weight: staying within a calorie budget while keeping protein, fiber, daily movement and two strength days a week in view
+
+### Health Age
+
+Akari also offers a Health Age, which is part of the subscription.
 
 ## Privacy
 
-Akari requires no account. Health data stays on the user's iPhone.
+- Akari needs no account.
+- Akari reads Apple Health on the iPhone and keeps the user's health data there. Users can optionally connect Google Health with read-only access to fill gaps.
+- The one thing that leaves the iPhone on purpose is a food report, and only when the user taps Send. A food report helps Akari correct a food it matched wrongly or could not find. It contains the rating and reasons, an optional comment, what was typed or said, the matched foods with amounts and nutrients, anything unmatched, a scanned barcode if there was one, and the app's language, region and version. It does not include a name, an account, Apple Health data or location.
+- Full details are in the privacy policy: https://joinakari.com/privacy/
+
+## Pricing
+
+Most of Akari is free: sleep, movement, vitals and goals.
+
+Food logging, readiness and Health Age come with a subscription:
+
+- Monthly: €4.99 a month
+- Yearly: €39.99 a year (about €3.33 a month, saving 33%)
+
+The subscription can be tried free for 14 days, with no commitment. What is free and what is in the subscription may still change before launch. During the beta, everything is free.
+
+## Requirements
+
+An iPhone with iOS 26 or later and Apple Health. Akari is available in English and German.
 
 ## Availability
 
-Akari is free during its public beta. iPhone users can join through Apple TestFlight at https://testflight.apple.com/join/wrv4aFVQ.
+Akari is in a free public beta through Apple TestFlight: https://testflight.apple.com/join/wrv4aFVQ. The team is preparing the App Store release, which is coming soon.
 
 ## Medical scope
 
-Akari helps explain personal health data and patterns. It does not diagnose conditions and does not replace professional medical advice.
+Akari explains a person's own health data and patterns. It does not diagnose or treat anything and is not a substitute for professional medical advice. People should talk to their doctor about health concerns.
 
 ## Frequently asked questions
 
 ### What is Akari?
 
-Akari is an iPhone health app that turns health data into a calm, readable daily story.
+Akari is an iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day.
 
-### What health data can I see?
+### What does Akari cost?
 
-Akari brings supported vitals, activity, nutrition and goals together so users can understand their day in context.
+Most of Akari is free. Food logging, readiness and Health Age need a subscription: €4.99 a month or €39.99 a year, with 14 days free to try and no commitment. During the beta everything is free.
 
-### Does health data leave the iPhone?
+### What do I need?
 
-No. Akari works without an account, and health data stays on the user's iPhone.
+An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German.
+
+### Is Akari medical advice?
+
+No. Akari explains your own data and patterns. It does not diagnose or treat anything, so talk to your doctor about health concerns.
+
+### Does my health data leave my iPhone?
+
+No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches Akari's server, so the team can fix the match.
 
 ### How can I try Akari?
 
-Join the free public beta through Apple TestFlight and help shape the app before launch.
+Join the free beta through Apple TestFlight. The App Store version is coming soon.
 
 ## Canonical sources
 
-- Official website: https://joinakari.com/
+- Official website: https://joinakari.com/ (German: https://joinakari.com/?lang=de)
 - Public beta: https://testflight.apple.com/join/wrv4aFVQ
+- Privacy policy: https://joinakari.com/privacy/
+- Terms of use: https://joinakari.com/terms/

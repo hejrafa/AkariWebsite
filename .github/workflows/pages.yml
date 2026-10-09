@@ -35,6 +35,8 @@ jobs:
           mkdir site
           cp index.html script.js styles.css legal.css legal.js CNAME robots.txt sitemap.xml llms.txt llms-full.txt manifest.webmanifest manifest-de.webmanifest site/
           cp -R assets privacy terms site/
+          # The app's export keeps a @3x PNG source next to each WebP; the page only loads the WebP.
+          find site/assets/welcome -name '*@3x.png' -delete
 
       - name: Upload static website
         uses: actions/upload-pages-artifact@v5

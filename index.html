@@ -3,23 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#151a0c" />
+    <meta name="theme-color" content="#0c271c" />
     <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Akari is a private iPhone health app that turns health data, including vitals, activity and nutrition, into calm daily insights. Join the free TestFlight beta."
+      content="Akari is a private iPhone app for sleep, movement and food: your readiness each morning, every nutrient in view, and food you log by saying it. Free beta."
     />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="author" content="Akari" />
     <meta name="application-name" content="Akari" />
     <meta name="apple-mobile-web-app-title" content="Akari" />
-    <link rel="preconnect" href="https://ajax.googleapis.com" crossorigin />
     <link rel="canonical" href="https://joinakari.com/" />
 
-    <meta property="og:title" content="Akari: Understand your health data" />
+    <meta property="og:title" content="Akari: Your whole day in one place" />
     <meta
       property="og:description"
-      content="Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place."
+      content="Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://joinakari.com/" />
@@ -33,10 +32,10 @@
     <meta property="og:image:alt" content="Akari logo in an orange-to-yellow gradient on a black background" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Akari: Understand your health data" />
+    <meta name="twitter:title" content="Akari: Your whole day in one place" />
     <meta
       name="twitter:description"
-      content="Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place."
+      content="Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day."
     />
     <meta name="twitter:image" content="https://joinakari.com/assets/social.png?v=2" />
     <meta name="twitter:image:alt" content="Akari logo in an orange-to-yellow gradient on a black background" />
@@ -46,7 +45,7 @@
     <link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
     <link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
     <link rel="icon" href="assets/favicon.svg?v=1" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon-180.png" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="preload" href="assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin />
     <script id="structured-data" type="application/ld+json">
@@ -58,7 +57,7 @@
             "@id": "https://joinakari.com/#website",
             "url": "https://joinakari.com/",
             "name": "Akari",
-            "description": "Akari helps people understand their health data through calm daily insights.",
+            "description": "Akari brings sleep, movement and food together on iPhone and explains them in plain words.",
             "inLanguage": "en"
           },
           {
@@ -66,9 +65,13 @@
             "@id": "https://joinakari.com/#webpage",
             "url": "https://joinakari.com/",
             "name": "Akari: Understand your health data",
-            "description": "A private iPhone health app for calm daily insights across your vitals, activity and nutrition.",
-            "isPartOf": { "@id": "https://joinakari.com/#website" },
-            "mainEntity": { "@id": "https://joinakari.com/#app" },
+            "description": "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
+            "isPartOf": {
+              "@id": "https://joinakari.com/#website"
+            },
+            "mainEntity": {
+              "@id": "https://joinakari.com/#app"
+            },
             "primaryImageOfPage": "https://joinakari.com/assets/social.png?v=2",
             "inLanguage": "en"
           },
@@ -77,48 +80,110 @@
             "@id": "https://joinakari.com/#app",
             "name": "Akari",
             "url": "https://joinakari.com/",
-            "description": "Akari turns health data into a calm, readable daily story with simple explanations across supported vitals, activity and nutrition data.",
+            "description": "Akari is an iPhone app that brings sleep, movement and food together in one place and explains in plain words what they mean for the day. It reads Apple Health on the iPhone and keeps health data there.",
             "applicationCategory": "HealthApplication",
-            "operatingSystem": "iOS",
+            "operatingSystem": "iOS 26 or later",
             "availableOnDevice": "iPhone",
+            "inLanguage": [
+              "en",
+              "de"
+            ],
             "isAccessibleForFree": true,
-            "image": "https://joinakari.com/assets/app-icon.png",
+            "image": "https://joinakari.com/assets/icon-512.png",
             "screenshot": [
-              "https://joinakari.com/assets/theme-media/image_japan_dark_01.webp",
-              "https://joinakari.com/assets/theme-media/image_japan_dark_02.webp",
-              "https://joinakari.com/assets/theme-media/image_japan_dark_03.webp"
+              "https://joinakari.com/assets/welcome/forest/en/light/tile-sleep@3x.webp",
+              "https://joinakari.com/assets/welcome/forest/en/light/readiness-bar@3x.webp",
+              "https://joinakari.com/assets/welcome/forest/en/light/card-fiber@3x.webp",
+              "https://joinakari.com/assets/welcome/forest/en/light/meal-sentence@3x.webp"
             ],
             "featureList": [
-              "A calm daily view without scores or judgment",
-              "Simple explanations with relatable examples",
-              "Supported vitals, activity and nutrition in one app",
-              "No account required",
-              "Health data stays on the user's iPhone"
+              "Readiness each morning, read against your own usual nights",
+              "Every nutrient in its own row, with limits marked",
+              "Log food by writing or saying what you ate",
+              "Goals for sleep, movement, eating well and weight",
+              "No account, and health data stays on the iPhone",
+              "In English and German"
             ],
             "downloadUrl": "https://testflight.apple.com/join/wrv4aFVQ",
-            "softwareRequirements": "Requires an iPhone with Apple Health and TestFlight during beta.",
+            "softwareRequirements": "An iPhone with iOS 26 or later and Apple Health. During the beta, through Apple TestFlight.",
             "offers": {
               "@type": "Offer",
+              "name": "Free beta",
               "price": "0",
-              "priceCurrency": "USD",
+              "priceCurrency": "EUR",
               "availability": "https://schema.org/InStock",
               "url": "https://testflight.apple.com/join/wrv4aFVQ"
             }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://joinakari.com/#faq",
+            "inLanguage": "en",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is Akari?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Akari is an iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What does Akari cost?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Most of Akari is free. Food logging, readiness and Health Age need a subscription: €4.99 a month or €39.99 a year, with 14 days free to try and no commitment. During the beta everything is free."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What do I need?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is Akari medical advice?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Akari explains your own data and patterns. It does not diagnose or treat anything, so talk to your doctor about health concerns."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does my health data leave my iPhone?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How can I try Akari?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Join the free beta through Apple TestFlight. The App Store version is coming soon."
+                }
+              }
+            ]
           }
         ]
       }
     </script>
     <script>
       (() => {
-        const themes = ["meadow", "forest", "coast", "canyon"];
+        const themes = ["meadow", "forest", "coast", "canyon", "plain"];
         const modes = ["light", "dark"];
         const languages = ["en", "de"];
         const params = new URLSearchParams(window.location.search);
 
         if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          document.documentElement.classList.add("motion-boot", "phone-motion-boot");
+          document.documentElement.classList.add("motion-boot");
           window.setTimeout(() => {
-            document.documentElement.classList.remove("motion-boot", "phone-motion-boot");
+            document.documentElement.classList.remove("motion-boot");
           }, 4000);
         }
 
@@ -147,11 +212,22 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20261003-01" />
-    <script src="script.js?v=20261001-03" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20261009-54" />
+    <script src="script.js?v=20261009-24" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skipLink">Skip to content</a>
+    <svg class="sr-only" width="0" height="0" aria-hidden="true" focusable="false">
+      <filter id="die-cut" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+        <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="grown" />
+        <feFlood style="flood-color: var(--band-ink)" />
+        <feComposite in2="grown" operator="in" result="edge" />
+        <feMerge>
+          <feMergeNode in="edge" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </svg>
 
     <header class="site-header" aria-label="Akari website header" data-i18n-aria-label="headerLabel">
       <div class="site-header__inner">
@@ -172,6 +248,7 @@
                 <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Japan theme" data-i18n-aria-label="themeJapanLabel" aria-pressed="true"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
                 <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Scotland theme" data-i18n-aria-label="themeScotlandLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
                 <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="USA theme" data-i18n-aria-label="themeUsaLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="plain" aria-label="Plain theme" data-i18n-aria-label="themePlainLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
               </div>
               <div class="mode-controls">
                 <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" data-i18n-aria-label="lightModeLabel" aria-pressed="false"><span class="mode-icon" aria-hidden="true"></span></button>
@@ -186,167 +263,244 @@
         </a>
         <button class="mobile-menu-toggle" type="button" aria-controls="header-controls-panel" aria-expanded="false" aria-label="Language and appearance settings" data-i18n-aria-label="mobileMenuLabel">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" />
-            <circle cx="9" cy="7" r="1.5" />
-            <circle cx="15" cy="12" r="1.5" />
-            <circle cx="11" cy="17" r="1.5" />
+            <path d="M4 7h16" />
+            <path d="M4 12h16" />
+            <path d="M4 17h16" />
           </svg>
         </button>
       </div>
     </header>
 
     <main id="main" tabindex="-1">
-      <section class="hero" id="top" aria-labelledby="hero-title">
-        <div class="hero-phone" aria-hidden="true">
-          <div class="hero-phone__float">
-            <model-viewer
-              id="hero-phone-model"
-              aria-hidden="true"
-              tabindex="-1"
-              inert
-              data-model-src="assets/models/iphone-17-pro-akari.glb?v=8"
-              data-screen-index="01"
-              alt="Akari running on an iPhone 17 Pro"
-              data-i18n-alt="heroPhoneLabel"
-              loading="eager"
-              camera-orbit="160deg 90deg 106%"
-              field-of-view="24deg"
-              min-field-of-view="24deg"
-              max-field-of-view="24deg"
-              interpolation-decay="110"
-              interaction-prompt="none"
-              shadow-intensity="0"
-              shadow-softness="0.85"
-              exposure="1.05"
-              tone-mapping="neutral"
-              touch-action="pan-y"
-              disable-pan
-              disable-zoom
-            ></model-viewer>
+      <section class="burst-hero" id="top" aria-labelledby="hero-title">
+        <h1 id="hero-title">
+          <span data-i18n="heroTitleA">Your</span>
+          <mark data-i18n="heroTitleB">whole day</mark>
+          <span data-i18n="heroTitleC">in one place</span>
+        </h1>
+        <a class="pill-cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer"><span data-i18n="joinBeta">Join the beta</span></a>
+
+        <div class="burst">
+          <p class="burst__bubble" data-i18n="heroChip">Sleep, movement, food</p>
+          <div class="burst__pieces" aria-hidden="true">
+            <img class="burst__piece burst__tile burst__piece--steps" data-piece="tile-steps" alt="" width="179" height="168" />
+            <img class="burst__piece burst__piece--icon" alt="" width="104" height="104" data-theme-icon />
+            <img class="burst__piece burst__tile burst__piece--sleep" data-piece="tile-sleep" alt="" width="179" height="168" fetchpriority="high" />
+            <img class="burst__piece burst__sticker burst__piece--avocado" src="assets/welcome/stickers/avocado.webp" alt="" width="256" height="256" />
+            <img class="burst__piece burst__sticker burst__piece--broccoli" src="assets/welcome/stickers/broccoli.webp" alt="" width="256" height="256" />
+            <img class="burst__piece burst__sticker burst__piece--coffee" src="assets/welcome/stickers/coffee.webp" alt="" width="256" height="256" />
           </div>
         </div>
-        <div class="hero__content">
-          <h1 id="hero-title">
-            <span class="headline-line" data-i18n="heroLine1">Your health</span>
-            <span class="headline-line"><span data-i18n="heroLine2">has a story</span></span>
-            <span class="headline-line"><span class="headline-heart" aria-hidden="true">💛</span><span data-i18n="heroLine3"> to tell.</span></span>
-          </h1>
-          <p class="trust-line">
-            <span data-i18n="trustBeta">Free during beta · No account</span>
-            <span data-i18n="trustPrivacy">Your health data stays on your iPhone</span>
-          </p>
-          <a class="cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer"><span data-i18n="joinBeta">Join the beta</span></a>
+
+        <svg class="torn-edge" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+          <path class="torn-edge__fringe" d="M0,90 L0,61.5 L13,65.9 L24,61.3 L37,57.7 L49,61.8 L65,56.0 L75,55.6 L90,61.2 L97,63.9 L114,60.0 L128,54.7 L134,58.2 L141,54.6 L150,52.7 L161,56.5 L177,56.8 L191,56.2 L205,55.3 L214,60.4 L232,58.3 L247,52.6 L255,52.1 L262,56.6 L273,57.1 L284,57.9 L300,47.8 L308,56.7 L320,57.0 L331,47.6 L344,54.3 L354,47.1 L364,55.5 L379,46.6 L388,46.2 L394,52.9 L403,50.3 L414,46.3 L429,45.2 L442,44.6 L453,45.3 L463,52.6 L478,45.4 L495,44.0 L506,50.1 L519,42.1 L537,42.7 L546,48.0 L556,43.0 L563,40.7 L576,41.8 L589,42.7 L601,48.2 L613,44.0 L629,39.6 L637,46.6 L653,39.6 L661,44.2 L678,38.2 L696,44.6 L709,39.6 L716,35.5 L734,37.0 L748,36.7 L764,39.6 L774,35.1 L788,33.6 L797,38.2 L813,38.3 L823,41.0 L831,31.8 L840,35.8 L847,32.9 L857,36.5 L865,34.2 L882,39.9 L896,36.5 L909,30.6 L915,29.2 L932,35.5 L949,28.2 L963,32.4 L978,30.3 L996,27.3 L1008,33.6 L1025,33.0 L1040,33.2 L1057,28.2 L1071,33.3 L1087,27.9 L1103,31.9 L1116,29.2 L1126,28.4 L1140,23.0 L1153,31.7 L1170,28.5 L1180,28.3 L1193,24.9 L1209,20.9 L1224,19.9 L1238,24.0 L1246,25.9 L1258,24.7 L1275,20.6 L1282,20.9 L1296,19.4 L1304,26.2 L1318,21.2 L1334,19.5 L1348,17.8 L1360,23.5 L1377,23.7 L1387,20.4 L1397,15.7 L1409,22.3 L1425,20.6 L1440,15.8 L1440,90 Z" />
+          <path class="torn-edge__paper" d="M0,90 L0,66.7 L11,67.1 L20,67.8 L33,67.9 L43,70.1 L61,66.8 L68,63.6 L84,63.2 L99,66.5 L109,67.7 L115,62.9 L126,61.8 L142,62.8 L150,61.2 L164,63.6 L177,64.7 L193,66.3 L207,60.6 L219,60.1 L225,61.9 L239,59.4 L249,60.3 L263,61.1 L276,62.3 L287,62.3 L304,56.8 L321,60.7 L329,58.6 L342,61.4 L353,58.7 L369,59.8 L387,56.9 L400,54.7 L415,58.5 L429,57.4 L437,58.4 L455,58.4 L468,56.7 L477,57.3 L494,52.9 L501,53.3 L513,55.2 L525,49.7 L541,49.4 L556,49.7 L566,53.7 L574,49.0 L586,52.6 L602,51.9 L620,50.0 L637,46.6 L646,49.5 L655,50.6 L669,48.7 L685,48.5 L695,46.9 L711,50.1 L720,49.5 L737,46.6 L750,44.0 L762,45.7 L776,42.0 L793,44.9 L804,46.5 L817,44.0 L831,40.6 L844,42.6 L861,45.7 L870,42.2 L878,41.7 L894,44.5 L905,40.1 L914,41.9 L931,38.0 L946,36.7 L954,37.9 L969,38.2 L979,39.9 L986,40.5 L994,38.7 L1003,36.2 L1015,37.5 L1026,37.1 L1038,34.9 L1046,37.9 L1060,36.8 L1076,36.9 L1093,33.7 L1107,37.3 L1124,33.4 L1134,37.3 L1143,37.6 L1159,31.0 L1168,34.9 L1177,30.2 L1193,32.0 L1209,29.4 L1220,33.0 L1226,29.5 L1240,34.0 L1258,27.9 L1270,32.0 L1282,31.1 L1290,26.6 L1297,26.1 L1310,29.1 L1323,26.1 L1331,26.3 L1347,31.3 L1364,24.5 L1371,30.3 L1382,28.6 L1392,26.2 L1405,25.6 L1418,22.3 L1432,27.6 L1440,24.7 L1440,90 Z" />
+        </svg>
+      </section>
+
+      <section class="spotlight" id="vitals" aria-labelledby="vitals-title">
+        <p class="eyebrow" data-i18n="vitalsChip">Vitals</p>
+        <h2 id="vitals-title" data-i18n="vitalsTitle">Your readiness, every morning</h2>
+        <p class="muted-copy spotlight__body" data-i18n="vitalsBody">Each morning Akari reads last night against your own usual nights. Yesterday’s food and strain count too.</p>
+        <div class="collage collage--vitals" aria-hidden="true">
+          <div class="readiness"><img class="readiness__bar" data-piece="readiness-bar" alt="" width="434" height="150" loading="lazy" decoding="async" /></div>
+          <div class="collage__row">
+            <img class="collage__tile collage__tile--left" data-piece="tile-hrv" alt="" width="179" height="168" loading="lazy" decoding="async" />
+            <img class="collage__tile collage__tile--right" data-piece="tile-rhr" alt="" width="179" height="168" loading="lazy" decoding="async" />
+          </div>
+          <img class="collage__sticker collage__sticker--moon" src="assets/stickers/goal-sleep.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="collage__sticker collage__sticker--fire" src="assets/stickers/focus-burn.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="collage__sticker collage__sticker--apple" src="assets/welcome/stickers/green-apple.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
         </div>
       </section>
 
-      <section class="why" id="features" aria-labelledby="why-title">
-        <div class="why__intro">
-          <h2 id="why-title"><span class="why-emoji" aria-hidden="true">☀️</span><span data-i18n="whyTitle"> Why?</span></h2>
-          <p data-i18n="whyBody">Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.</p>
+      <section class="split split--mirrored" id="nutrition" aria-labelledby="nutrition-title">
+        <div class="split__copy">
+          <p class="eyebrow" data-i18n="nutritionChip">Nutrition</p>
+          <h2 id="nutrition-title" data-i18n="nutritionTitle">More than just calories</h2>
+          <p class="muted-copy" data-i18n="nutritionBody">Every nutrient gets a row of its own, with its own symbol. Where there is a limit, Akari marks it. You log food by writing or saying it.</p>
         </div>
-
-        <p class="sr-only" id="features-instructions" data-i18n="featuresInstructions" hidden>Swipe or use the left and right arrow keys to explore all cards.</p>
-        <div class="feature-grid" role="list" tabindex="-1" aria-label="What Akari helps you do" data-i18n-aria-label="featuresLabel" aria-describedby="features-instructions">
-          <article class="feature-card" role="listitem">
-            <div class="feature-card__ui day-ui shot-ui" aria-hidden="true">
-              <img class="feature-shot" data-media-kind="image" data-media-index="01" alt="" width="1088" height="834" loading="lazy" decoding="async" />
-            </div>
-            <div class="feature-card__copy">
-              <h3 data-i18n="featureTodayTitle">See today clearly</h3>
-              <p data-i18n="featureTodayBody">Your day, explained calmly and without scores, judgment, or alarm.</p>
-            </div>
-          </article>
-
-          <article class="feature-card" role="listitem">
-            <div class="feature-card__ui shot-ui" aria-hidden="true">
-              <img class="feature-shot" data-media-kind="image" data-media-index="02" alt="" width="1088" height="834" loading="lazy" decoding="async" />
-            </div>
-            <div class="feature-card__copy">
-              <h3 data-i18n="featureUnderstandTitle">Understand your data</h3>
-              <p data-i18n="featureUnderstandBody">Simple, science-based explanations with relatable everyday examples.</p>
-            </div>
-          </article>
-
-          <article class="feature-card" role="listitem">
-            <div class="feature-card__ui shot-ui" aria-hidden="true">
-              <img class="feature-shot" data-media-kind="image" data-media-index="03" alt="" width="1088" height="834" loading="lazy" decoding="async" />
-            </div>
-            <div class="feature-card__copy">
-              <h3 data-i18n="featureWholeTitle">See the whole picture</h3>
-              <p data-i18n="featureWholeBody">Your vitals and nutrition, together in one clear view.</p>
-            </div>
-          </article>
+        <div class="collage collage--nutrition" aria-hidden="true">
+          <img class="collage__card" data-piece="card-fiber" alt="" width="370" height="176" loading="lazy" decoding="async" />
+          <div class="collage__row">
+            <img class="collage__tile collage__tile--left" data-piece="tile-magnesium" alt="" width="179" height="168" loading="lazy" decoding="async" />
+            <img class="collage__tile collage__tile--right" data-piece="tile-iron" alt="" width="179" height="168" loading="lazy" decoding="async" />
+          </div>
+          <img class="collage__sticker collage__sticker--fish" src="assets/welcome/stickers/fish.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="collage__sticker collage__sticker--orange" src="assets/welcome/stickers/orange.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="collage__sticker collage__sticker--salad" src="assets/welcome/stickers/salad.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
         </div>
       </section>
 
-      <section class="beta" id="beta" aria-labelledby="beta-title">
-        <div class="beta-phone" aria-hidden="true">
-          <div class="beta-phone__float">
-            <model-viewer
-              id="beta-phone-model"
-              aria-hidden="true"
-              tabindex="-1"
-              inert
-              data-model-src="assets/models/iphone-17-pro-akari-steps.glb?v=8"
-              data-screen-index="02"
-              alt="Akari's Steps view running on an iPhone 17 Pro"
-              data-i18n-alt="betaPhoneAlt"
-              loading="lazy"
-              camera-orbit="-160deg 90deg 106%"
-              field-of-view="24deg"
-              min-field-of-view="24deg"
-              max-field-of-view="24deg"
-              interpolation-decay="110"
-              interaction-prompt="none"
-              shadow-intensity="0"
-              shadow-softness="0.85"
-              exposure="1.05"
-              tone-mapping="neutral"
-              touch-action="pan-y"
-              disable-pan
-              disable-zoom
-            ></model-viewer>
+      <section class="privacy" id="your-data" aria-labelledby="privacy-title">
+        <svg class="torn-edge torn-edge--top" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+          <path class="torn-edge__fringe" d="M0,90 L0,61.5 L13,65.9 L24,61.3 L37,57.7 L49,61.8 L65,56.0 L75,55.6 L90,61.2 L97,63.9 L114,60.0 L128,54.7 L134,58.2 L141,54.6 L150,52.7 L161,56.5 L177,56.8 L191,56.2 L205,55.3 L214,60.4 L232,58.3 L247,52.6 L255,52.1 L262,56.6 L273,57.1 L284,57.9 L300,47.8 L308,56.7 L320,57.0 L331,47.6 L344,54.3 L354,47.1 L364,55.5 L379,46.6 L388,46.2 L394,52.9 L403,50.3 L414,46.3 L429,45.2 L442,44.6 L453,45.3 L463,52.6 L478,45.4 L495,44.0 L506,50.1 L519,42.1 L537,42.7 L546,48.0 L556,43.0 L563,40.7 L576,41.8 L589,42.7 L601,48.2 L613,44.0 L629,39.6 L637,46.6 L653,39.6 L661,44.2 L678,38.2 L696,44.6 L709,39.6 L716,35.5 L734,37.0 L748,36.7 L764,39.6 L774,35.1 L788,33.6 L797,38.2 L813,38.3 L823,41.0 L831,31.8 L840,35.8 L847,32.9 L857,36.5 L865,34.2 L882,39.9 L896,36.5 L909,30.6 L915,29.2 L932,35.5 L949,28.2 L963,32.4 L978,30.3 L996,27.3 L1008,33.6 L1025,33.0 L1040,33.2 L1057,28.2 L1071,33.3 L1087,27.9 L1103,31.9 L1116,29.2 L1126,28.4 L1140,23.0 L1153,31.7 L1170,28.5 L1180,28.3 L1193,24.9 L1209,20.9 L1224,19.9 L1238,24.0 L1246,25.9 L1258,24.7 L1275,20.6 L1282,20.9 L1296,19.4 L1304,26.2 L1318,21.2 L1334,19.5 L1348,17.8 L1360,23.5 L1377,23.7 L1387,20.4 L1397,15.7 L1409,22.3 L1425,20.6 L1440,15.8 L1440,90 Z" />
+          <path class="torn-edge__paper" d="M0,90 L0,66.7 L11,67.1 L20,67.8 L33,67.9 L43,70.1 L61,66.8 L68,63.6 L84,63.2 L99,66.5 L109,67.7 L115,62.9 L126,61.8 L142,62.8 L150,61.2 L164,63.6 L177,64.7 L193,66.3 L207,60.6 L219,60.1 L225,61.9 L239,59.4 L249,60.3 L263,61.1 L276,62.3 L287,62.3 L304,56.8 L321,60.7 L329,58.6 L342,61.4 L353,58.7 L369,59.8 L387,56.9 L400,54.7 L415,58.5 L429,57.4 L437,58.4 L455,58.4 L468,56.7 L477,57.3 L494,52.9 L501,53.3 L513,55.2 L525,49.7 L541,49.4 L556,49.7 L566,53.7 L574,49.0 L586,52.6 L602,51.9 L620,50.0 L637,46.6 L646,49.5 L655,50.6 L669,48.7 L685,48.5 L695,46.9 L711,50.1 L720,49.5 L737,46.6 L750,44.0 L762,45.7 L776,42.0 L793,44.9 L804,46.5 L817,44.0 L831,40.6 L844,42.6 L861,45.7 L870,42.2 L878,41.7 L894,44.5 L905,40.1 L914,41.9 L931,38.0 L946,36.7 L954,37.9 L969,38.2 L979,39.9 L986,40.5 L994,38.7 L1003,36.2 L1015,37.5 L1026,37.1 L1038,34.9 L1046,37.9 L1060,36.8 L1076,36.9 L1093,33.7 L1107,37.3 L1124,33.4 L1134,37.3 L1143,37.6 L1159,31.0 L1168,34.9 L1177,30.2 L1193,32.0 L1209,29.4 L1220,33.0 L1226,29.5 L1240,34.0 L1258,27.9 L1270,32.0 L1282,31.1 L1290,26.6 L1297,26.1 L1310,29.1 L1323,26.1 L1331,26.3 L1347,31.3 L1364,24.5 L1371,30.3 L1382,28.6 L1392,26.2 L1405,25.6 L1418,22.3 L1432,27.6 L1440,24.7 L1440,90 Z" />
+        </svg>
+        <div class="privacy__inner">
+          <div class="privacy__stickers" aria-hidden="true">
+            <img class="privacy__app privacy__app--health" src="assets/welcome/apple-health@2x.webp" srcset="assets/welcome/apple-health@2x.webp 2x, assets/welcome/apple-health@3x.webp 3x" alt="" width="104" height="104" loading="lazy" decoding="async" />
+            <img class="privacy__lock" src="assets/stickers/lock.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+            <img class="privacy__app privacy__app--akari" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-icon />
           </div>
+          <p class="privacy__chip" data-i18n="privacyChip">No account needed</p>
+          <h2 id="privacy-title"><span data-i18n="privacyTitleA">Your data stays on</span> <mark data-i18n="privacyTitleB">this iPhone</mark></h2>
+          <p class="privacy__body" data-i18n="privacyBody">Akari reads Apple Health on your iPhone and keeps what it works out right there.</p>
+          <a class="pill-cta privacy__link" href="/privacy/"><span data-i18n="privacyLink">Read the privacy policy</span></a>
         </div>
-        <div class="beta__content">
-          <h2 id="beta-title">
-            <span class="beta-line" data-i18n="betaLine1">Help shape</span>
-            <span class="beta-line" data-i18n="betaLine2">Akari before</span>
-            <span class="beta-line" data-i18n="betaLine3">launch.</span>
-          </h2>
-          <p data-i18n="betaBody">Use Akari for a few days and tell us what felt useful, what was confusing and what you wish it could do. Your feedback will directly influence what we build next.</p>
-          <a class="cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer"><span data-i18n="joinBeta">Join the beta</span></a>
+        <svg class="torn-edge" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+          <path class="torn-edge__fringe" d="M0,90 L0,61.5 L13,65.9 L24,61.3 L37,57.7 L49,61.8 L65,56.0 L75,55.6 L90,61.2 L97,63.9 L114,60.0 L128,54.7 L134,58.2 L141,54.6 L150,52.7 L161,56.5 L177,56.8 L191,56.2 L205,55.3 L214,60.4 L232,58.3 L247,52.6 L255,52.1 L262,56.6 L273,57.1 L284,57.9 L300,47.8 L308,56.7 L320,57.0 L331,47.6 L344,54.3 L354,47.1 L364,55.5 L379,46.6 L388,46.2 L394,52.9 L403,50.3 L414,46.3 L429,45.2 L442,44.6 L453,45.3 L463,52.6 L478,45.4 L495,44.0 L506,50.1 L519,42.1 L537,42.7 L546,48.0 L556,43.0 L563,40.7 L576,41.8 L589,42.7 L601,48.2 L613,44.0 L629,39.6 L637,46.6 L653,39.6 L661,44.2 L678,38.2 L696,44.6 L709,39.6 L716,35.5 L734,37.0 L748,36.7 L764,39.6 L774,35.1 L788,33.6 L797,38.2 L813,38.3 L823,41.0 L831,31.8 L840,35.8 L847,32.9 L857,36.5 L865,34.2 L882,39.9 L896,36.5 L909,30.6 L915,29.2 L932,35.5 L949,28.2 L963,32.4 L978,30.3 L996,27.3 L1008,33.6 L1025,33.0 L1040,33.2 L1057,28.2 L1071,33.3 L1087,27.9 L1103,31.9 L1116,29.2 L1126,28.4 L1140,23.0 L1153,31.7 L1170,28.5 L1180,28.3 L1193,24.9 L1209,20.9 L1224,19.9 L1238,24.0 L1246,25.9 L1258,24.7 L1275,20.6 L1282,20.9 L1296,19.4 L1304,26.2 L1318,21.2 L1334,19.5 L1348,17.8 L1360,23.5 L1377,23.7 L1387,20.4 L1397,15.7 L1409,22.3 L1425,20.6 L1440,15.8 L1440,90 Z" />
+          <path class="torn-edge__paper" d="M0,90 L0,66.7 L11,67.1 L20,67.8 L33,67.9 L43,70.1 L61,66.8 L68,63.6 L84,63.2 L99,66.5 L109,67.7 L115,62.9 L126,61.8 L142,62.8 L150,61.2 L164,63.6 L177,64.7 L193,66.3 L207,60.6 L219,60.1 L225,61.9 L239,59.4 L249,60.3 L263,61.1 L276,62.3 L287,62.3 L304,56.8 L321,60.7 L329,58.6 L342,61.4 L353,58.7 L369,59.8 L387,56.9 L400,54.7 L415,58.5 L429,57.4 L437,58.4 L455,58.4 L468,56.7 L477,57.3 L494,52.9 L501,53.3 L513,55.2 L525,49.7 L541,49.4 L556,49.7 L566,53.7 L574,49.0 L586,52.6 L602,51.9 L620,50.0 L637,46.6 L646,49.5 L655,50.6 L669,48.7 L685,48.5 L695,46.9 L711,50.1 L720,49.5 L737,46.6 L750,44.0 L762,45.7 L776,42.0 L793,44.9 L804,46.5 L817,44.0 L831,40.6 L844,42.6 L861,45.7 L870,42.2 L878,41.7 L894,44.5 L905,40.1 L914,41.9 L931,38.0 L946,36.7 L954,37.9 L969,38.2 L979,39.9 L986,40.5 L994,38.7 L1003,36.2 L1015,37.5 L1026,37.1 L1038,34.9 L1046,37.9 L1060,36.8 L1076,36.9 L1093,33.7 L1107,37.3 L1124,33.4 L1134,37.3 L1143,37.6 L1159,31.0 L1168,34.9 L1177,30.2 L1193,32.0 L1209,29.4 L1220,33.0 L1226,29.5 L1240,34.0 L1258,27.9 L1270,32.0 L1282,31.1 L1290,26.6 L1297,26.1 L1310,29.1 L1323,26.1 L1331,26.3 L1347,31.3 L1364,24.5 L1371,30.3 L1382,28.6 L1392,26.2 L1405,25.6 L1418,22.3 L1432,27.6 L1440,24.7 L1440,90 Z" />
+        </svg>
+      </section>
+
+      <section class="goals" id="goals" aria-labelledby="goals-title">
+        <p class="eyebrow" data-i18n="goalsChip">Your goal</p>
+        <h2 id="goals-title" data-i18n="goalsTitle">One goal is enough to start</h2>
+        <div class="goals__options" role="radiogroup" aria-labelledby="goals-title" aria-describedby="goal-blurb">
+          <button class="goal-pill" type="button" role="radio" aria-checked="false" tabindex="-1" data-goal="ForYou" data-i18n="goalForYou">For you</button>
+          <button class="goal-pill" type="button" role="radio" aria-checked="false" tabindex="-1" data-goal="Dailies" data-i18n="goalDailies">Dailies</button>
+          <button class="goal-pill" type="button" role="radio" aria-checked="true" tabindex="0" data-goal="Sleep" data-i18n="goalSleep">Sleep better</button>
+          <button class="goal-pill" type="button" role="radio" aria-checked="false" tabindex="-1" data-goal="Move" data-i18n="goalMove">Move more</button>
+          <button class="goal-pill" type="button" role="radio" aria-checked="false" tabindex="-1" data-goal="Eat" data-i18n="goalEat">Eat well</button>
+          <button class="goal-pill" type="button" role="radio" aria-checked="false" tabindex="-1" data-goal="Lose" data-i18n="goalLose">Lose weight</button>
+        </div>
+        <div class="goals__answer">
+          <img class="goals__sticker" id="goal-sticker" src="assets/stickers/goal-sleep.png" alt="" width="256" height="256" aria-hidden="true" />
+          <p class="goals__blurb" id="goal-blurb" aria-live="polite" data-i18n="goalSleepBlurb">Build the night from the day around it: morning light, screens down in the evening, and a full night behind you.</p>
+        </div>
+        <ul class="goals__focuses" id="goal-focuses" data-count="3" aria-label="What this goal brings together" data-i18n-aria-label="goalsTracksLabel">
+            <li class="focus-tile"><img src="assets/stickers/goal-sleep.png" alt="" width="256" height="256" loading="lazy" decoding="async" /><strong data-i18n="focusSleepTitle">Sleep</strong><span data-i18n="focusSleepBody">A full night behind you</span></li>
+            <li class="focus-tile"><img src="assets/stickers/focus-wind-down.png" alt="" width="256" height="256" loading="lazy" decoding="async" /><strong data-i18n="focusWindDownTitle">Wind down</strong><span data-i18n="focusWindDownBody">Screens down before bed</span></li>
+            <li class="focus-tile"><img src="assets/stickers/goal-dailies.png" alt="" width="256" height="256" loading="lazy" decoding="async" /><strong data-i18n="focusOutsideTitle">Get outside</strong><span data-i18n="focusOutsideBody">Daylight and fresh air, even briefly</span></li>
+        </ul>
+      </section>
+
+      <section class="split split--words-first food" id="food" aria-labelledby="food-title">
+        <div class="split__copy">
+          <p class="eyebrow" data-i18n="foodChip">Akari does the rest</p>
+          <h2 id="food-title" data-i18n="foodTitle">Write or say what you ate</h2>
+          <p class="muted-copy" data-i18n="foodBody">Type or say it the way you would tell someone. Akari finds each food, its portion and what is in it.</p>
+        </div>
+        <div class="food__panel" aria-hidden="true">
+          <img class="food__sticker food__sticker--strawberry" src="assets/welcome/stickers/strawberry.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="food__sticker food__sticker--croissant" src="assets/welcome/stickers/croissant.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="food__sentence" data-piece="meal-sentence" alt="" width="354" height="78" loading="lazy" decoding="async" />
+          <div class="food__rows">
+            <img class="food__row" data-piece="food-oats" data-enlarged alt="" width="129" height="59" loading="lazy" decoding="async" />
+            <img class="food__row" data-piece="food-banana" data-enlarged alt="" width="137" height="59" loading="lazy" decoding="async" />
+            <img class="food__row" data-piece="food-flat-white" data-enlarged alt="" width="156" height="59" loading="lazy" decoding="async" />
+          </div>
         </div>
       </section>
 
-      <section class="answers" id="faq" aria-labelledby="answers-title">
-        <div class="answers__intro">
-          <h2 id="answers-title"><span data-i18n="faqTitle">FAQ</span> <span class="answers-emoji" aria-hidden="true">💬</span></h2>
-          <p data-i18n="faqIntro">Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.</p>
+      <section class="pricing" id="pricing" aria-labelledby="pricing-title">
+        <p class="eyebrow" data-i18n="pricingChip">Pricing</p>
+        <h2 id="pricing-title" data-i18n="pricingTitle">Most of Akari is free</h2>
+        <p class="muted-copy" data-i18n="pricingBody">Sleep, movement, vitals and goals are free. Food logging, readiness and Health Age come with a subscription you can try free for 14 days, with no commitment.</p>
+        <div class="pricing__plans">
+          <article class="plan plan--free">
+            <h3 class="plan__name" data-i18n="planFree">Free</h3>
+            <p class="plan__price"><span data-i18n="planFreePrice">€0</span></p>
+            <p class="plan__includes" data-i18n="planFreeIncludes">Sleep, movement, vitals and goals</p>
+          </article>
+          <article class="plan">
+            <h3 class="plan__name" data-i18n="planMonthly">Monthly</h3>
+            <p class="plan__price"><span data-i18n="planMonthlyPrice">€4.99</span> <small data-i18n="planPerMonth">/ month</small></p>
+            <p class="plan__includes" data-i18n="planIncludes">Adds food logging, readiness and Health Age</p>
+            <p class="plan__note" data-i18n="planFlexible">Flexible</p>
+          </article>
+          <article class="plan plan--featured">
+            <img class="plan__sticker" src="assets/stickers/goal-dailies.png" alt="" width="256" height="256" loading="lazy" decoding="async" aria-hidden="true" />
+            <div class="plan__head">
+              <h3 class="plan__name" data-i18n="planYearly">Yearly</h3>
+              <span class="plan__save" data-i18n="planSave">Save 33%</span>
+            </div>
+            <p class="plan__price"><span data-i18n="planYearlyPrice">€39.99</span> <small data-i18n="planPerYear">/ year</small></p>
+            <p class="plan__includes" data-i18n="planIncludes">Adds food logging, readiness and Health Age</p>
+            <p class="plan__note" data-i18n="planYearlyMonthly">€3.33 a month</p>
+          </article>
         </div>
+        <p class="pricing__fine" data-i18n="pricingFine">What’s free and what’s in the subscription may still change before launch. During the beta everything is free.</p>
+      </section>
 
-        <dl class="answers__grid">
-          <div class="answers__item">
-            <dt data-i18n="faqWhatQuestion">What is Akari?</dt>
-            <dd data-i18n="faqWhatAnswer">Akari is an iPhone health app that turns health data into a calm, readable daily story.</dd>
-          </div>
-          <div class="answers__item">
-            <dt data-i18n="faqDataQuestion">What health data can I see?</dt>
-            <dd data-i18n="faqDataAnswer">Akari brings supported vitals, activity, nutrition and goals together so you can understand your day in context.</dd>
-          </div>
-          <div class="answers__item">
-            <dt data-i18n="faqPrivacyQuestion">Does my health data leave my iPhone?</dt>
-            <dd data-i18n="faqPrivacyAnswer">No. Akari works without an account, and your health data stays on your iPhone.</dd>
-          </div>
-          <div class="answers__item">
-            <dt data-i18n="faqTryQuestion">How can I try Akari?</dt>
-            <dd><span data-i18n="faqTryPrefix">Join the free public beta through </span><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Apple TestFlight</a><span data-i18n="faqTrySuffix"> and help shape the app before launch.</span></dd>
-          </div>
-        </dl>
+      <section class="shape" id="get-akari" aria-labelledby="launch-title">
+        <div class="shape__stickers" aria-hidden="true">
+          <img class="shape__icon" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-icon />
+          <img class="shape__banana" src="assets/welcome/stickers/banana.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+        </div>
+        <h2 id="launch-title" data-i18n="launchTitle">Akari is almost here.</h2>
+        <p class="muted-copy" data-i18n="launchBody">We’re getting ready for the App Store. Until then, the beta is open: try Akari now and tell us what you think.</p>
+        <a class="band-cta" href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer"><span data-i18n="joinBeta">Join the beta</span></a>
+      </section>
+
+      <section class="faq" id="faq" aria-labelledby="faq-title">
+        <div class="faq__intro">
+          <img class="faq__sticker" src="assets/stickers/focus-connect.png" alt="" width="256" height="256" loading="lazy" decoding="async" aria-hidden="true" />
+          <p class="eyebrow" data-i18n="faqTitle">FAQ</p>
+          <h2 id="faq-title" data-i18n="faqHeadline">Good to know</h2>
+          <p class="muted-copy" data-i18n="faqIntro">Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.</p>
+        </div>
+        <div class="faq__list">
+          <details class="faq__item">
+            <summary data-i18n="faqWhatQuestion">What is Akari?</summary>
+            <p data-i18n="faqWhatAnswer">Akari is an iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day.</p>
+          </details>
+          <details class="faq__item">
+            <summary data-i18n="faqPriceQuestion">What does Akari cost?</summary>
+            <p data-i18n="faqPriceAnswer">Most of Akari is free. Food logging, readiness and Health Age need a subscription: €4.99 a month or €39.99 a year, with 14 days free to try and no commitment. During the beta everything is free.</p>
+          </details>
+          <details class="faq__item">
+            <summary data-i18n="faqPrivacyQuestion">Does my health data leave my iPhone?</summary>
+            <p data-i18n="faqPrivacyAnswer">No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match.</p>
+          </details>
+          <details class="faq__item">
+            <summary data-i18n="faqNeedQuestion">What do I need?</summary>
+            <p data-i18n="faqNeedAnswer">An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German.</p>
+          </details>
+          <details class="faq__item">
+            <summary data-i18n="faqMedicalQuestion">Is Akari medical advice?</summary>
+            <p data-i18n="faqMedicalAnswer">No. Akari explains your own data and patterns. It does not diagnose or treat anything, so talk to your doctor about health concerns.</p>
+          </details>
+          <details class="faq__item">
+            <summary data-i18n="faqTryQuestion">How can I try Akari?</summary>
+            <p><span data-i18n="faqTryPrefix">Join the free beta through </span><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Apple TestFlight</a><span data-i18n="faqTrySuffix">. The App Store version is coming soon.</span></p>
+          </details>
+        </div>
       </section>
     </main>
+    <script>
+      // The app's pieces come per theme, language and light/dark rendering, as 2x and 3x WebP. Choose the
+      // right files before the browser starts loading, so nobody downloads a variant they will not see.
+      // script.js keeps them in step with the theme, mode and language switches (pieceSources there).
+      (() => {
+        const { theme, language, mode } = document.documentElement.dataset;
+        const sources = (base) => ({ src: `${base}@2x.webp`, srcset: `${base}@2x.webp 2x, ${base}@3x.webp 3x` });
+        const set = (image, base) => {
+          // A piece shown larger than its 1x box always takes the 3x file, so it stays sharp.
+          if ("enlarged" in image.dataset) {
+            image.src = `${base}@3x.webp`;
+            return;
+          }
+          const { src, srcset } = sources(base);
+          image.srcset = srcset;
+          image.src = src;
+        };
+        document.querySelectorAll("img[data-piece]").forEach((image) => {
+          set(image, `assets/welcome/${theme}/${language}/${mode}/${image.dataset.piece}`);
+        });
+        const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
+        document.querySelectorAll("img[data-theme-icon]").forEach((image) => {
+          set(image, `assets/welcome/${theme}/app-icon-${iconMode}`);
+        });
+      })();
+    </script>
 
     <footer class="site-footer" aria-label="Akari credits" data-i18n-aria-label="footerLabel">
+      <svg class="torn-edge torn-edge--top" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+          <path class="torn-edge__fringe" d="M0,90 L0,61.5 L13,65.9 L24,61.3 L37,57.7 L49,61.8 L65,56.0 L75,55.6 L90,61.2 L97,63.9 L114,60.0 L128,54.7 L134,58.2 L141,54.6 L150,52.7 L161,56.5 L177,56.8 L191,56.2 L205,55.3 L214,60.4 L232,58.3 L247,52.6 L255,52.1 L262,56.6 L273,57.1 L284,57.9 L300,47.8 L308,56.7 L320,57.0 L331,47.6 L344,54.3 L354,47.1 L364,55.5 L379,46.6 L388,46.2 L394,52.9 L403,50.3 L414,46.3 L429,45.2 L442,44.6 L453,45.3 L463,52.6 L478,45.4 L495,44.0 L506,50.1 L519,42.1 L537,42.7 L546,48.0 L556,43.0 L563,40.7 L576,41.8 L589,42.7 L601,48.2 L613,44.0 L629,39.6 L637,46.6 L653,39.6 L661,44.2 L678,38.2 L696,44.6 L709,39.6 L716,35.5 L734,37.0 L748,36.7 L764,39.6 L774,35.1 L788,33.6 L797,38.2 L813,38.3 L823,41.0 L831,31.8 L840,35.8 L847,32.9 L857,36.5 L865,34.2 L882,39.9 L896,36.5 L909,30.6 L915,29.2 L932,35.5 L949,28.2 L963,32.4 L978,30.3 L996,27.3 L1008,33.6 L1025,33.0 L1040,33.2 L1057,28.2 L1071,33.3 L1087,27.9 L1103,31.9 L1116,29.2 L1126,28.4 L1140,23.0 L1153,31.7 L1170,28.5 L1180,28.3 L1193,24.9 L1209,20.9 L1224,19.9 L1238,24.0 L1246,25.9 L1258,24.7 L1275,20.6 L1282,20.9 L1296,19.4 L1304,26.2 L1318,21.2 L1334,19.5 L1348,17.8 L1360,23.5 L1377,23.7 L1387,20.4 L1397,15.7 L1409,22.3 L1425,20.6 L1440,15.8 L1440,90 Z" />
+          <path class="torn-edge__paper" d="M0,90 L0,66.7 L11,67.1 L20,67.8 L33,67.9 L43,70.1 L61,66.8 L68,63.6 L84,63.2 L99,66.5 L109,67.7 L115,62.9 L126,61.8 L142,62.8 L150,61.2 L164,63.6 L177,64.7 L193,66.3 L207,60.6 L219,60.1 L225,61.9 L239,59.4 L249,60.3 L263,61.1 L276,62.3 L287,62.3 L304,56.8 L321,60.7 L329,58.6 L342,61.4 L353,58.7 L369,59.8 L387,56.9 L400,54.7 L415,58.5 L429,57.4 L437,58.4 L455,58.4 L468,56.7 L477,57.3 L494,52.9 L501,53.3 L513,55.2 L525,49.7 L541,49.4 L556,49.7 L566,53.7 L574,49.0 L586,52.6 L602,51.9 L620,50.0 L637,46.6 L646,49.5 L655,50.6 L669,48.7 L685,48.5 L695,46.9 L711,50.1 L720,49.5 L737,46.6 L750,44.0 L762,45.7 L776,42.0 L793,44.9 L804,46.5 L817,44.0 L831,40.6 L844,42.6 L861,45.7 L870,42.2 L878,41.7 L894,44.5 L905,40.1 L914,41.9 L931,38.0 L946,36.7 L954,37.9 L969,38.2 L979,39.9 L986,40.5 L994,38.7 L1003,36.2 L1015,37.5 L1026,37.1 L1038,34.9 L1046,37.9 L1060,36.8 L1076,36.9 L1093,33.7 L1107,37.3 L1124,33.4 L1134,37.3 L1143,37.6 L1159,31.0 L1168,34.9 L1177,30.2 L1193,32.0 L1209,29.4 L1220,33.0 L1226,29.5 L1240,34.0 L1258,27.9 L1270,32.0 L1282,31.1 L1290,26.6 L1297,26.1 L1310,29.1 L1323,26.1 L1331,26.3 L1347,31.3 L1364,24.5 L1371,30.3 L1382,28.6 L1392,26.2 L1405,25.6 L1418,22.3 L1432,27.6 L1440,24.7 L1440,90 Z" />
+        </svg>
       <div class="site-footer__inner">
         <div class="footer-brand">
           <a class="footer-logo" href="#top" aria-label="Akari home" data-i18n-aria-label="homeLabel">
@@ -359,14 +513,18 @@
           <div class="footer-column">
             <h2 data-i18n="footerProductTitle">Product</h2>
             <ul>
-              <li><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer" data-i18n="footerJoinLabel">Join the beta</a></li>
-              <li><a href="#features" data-i18n="footerFeaturesLabel">Features</a></li>
-              <li><a href="#beta" data-i18n="footerShapeLabel">Help shape Akari</a></li>
+              <li><a href="#vitals" data-i18n="footerVitalsLabel">Vitals</a></li>
+              <li><a href="#nutrition" data-i18n="footerNutritionLabel">Nutrition</a></li>
+              <li><a href="#goals" data-i18n="footerGoalsLabel">Goals</a></li>
+              <li><a href="#food" data-i18n="footerFoodLabel">Food logging</a></li>
+              <li><a href="#your-data" data-i18n="footerDataLabel">Your data</a></li>
+              <li><a href="#pricing" data-i18n="footerPricingLabel">Pricing</a></li>
             </ul>
           </div>
           <div class="footer-column">
             <h2 data-i18n="footerSupportTitle">Support</h2>
             <ul>
+              <li><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer" data-i18n="footerJoinLabel">Join the beta</a></li>
               <li><a href="#faq" data-i18n="footerFaqLabel">FAQ</a></li>
               <li><a href="mailto:contact@hejrafa.com" data-i18n="contactLabel">Contact us</a></li>
               <li><a class="footer-admin-link" href="https://admin.joinakari.com/" data-i18n="adminLoginLabel">Admin</a></li>

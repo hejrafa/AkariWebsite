@@ -44,77 +44,6 @@
   transition: --page 500ms var(--ease), --ink 500ms var(--ease), --accent 500ms var(--ease);
 }
 
-:root[data-theme="forest"] {
-  --page: #151a0c;
-  --ink: #e6f4d1;
-  --accent: #a9eb4b;
-  --card: #e6f4d1;
-  --card-ink: #151a0c;
-  --page-rgb: 21, 26, 12;
-  --ink-rgb: 230, 244, 209;
-}
-
-:root[data-theme="coast"] {
-  --page: #0d1920;
-  --ink: #d7edf8;
-  --accent: #4baceb;
-  --card: #d7edf8;
-  --card-ink: #0d1920;
-  --page-rgb: 13, 25, 32;
-  --ink-rgb: 215, 237, 248;
-}
-
-:root[data-theme="canyon"] {
-  --page: #1a100c;
-  --ink: #f4ddd1;
-  --accent: #eb804b;
-  --card: #f4ddd1;
-  --card-ink: #1a100c;
-  --page-rgb: 26, 16, 12;
-  --ink-rgb: 244, 221, 209;
-}
-
-:root[data-mode="light"] {
-  color-scheme: light;
-  --page: #f1eac6;
-  --ink: #1d1b07;
-  --accent: #ebcc4b;
-  --card: #fffdf1;
-  --card-ink: #1d1b07;
-  --focus-ring: var(--ink);
-  --page-rgb: 241, 234, 198;
-  --ink-rgb: 29, 27, 7;
-}
-
-:root[data-mode="light"][data-theme="forest"] {
-  --page: #e6f4d1;
-  --ink: #151a0c;
-  --accent: #a9eb4b;
-  --card: #fbfff4;
-  --card-ink: #151a0c;
-  --page-rgb: 230, 244, 209;
-  --ink-rgb: 21, 26, 12;
-}
-
-:root[data-mode="light"][data-theme="coast"] {
-  --page: #d7edf8;
-  --ink: #0d1920;
-  --accent: #4baceb;
-  --card: #f6fcff;
-  --card-ink: #0d1920;
-  --page-rgb: 215, 237, 248;
-  --ink-rgb: 13, 25, 32;
-}
-
-:root[data-mode="light"][data-theme="canyon"] {
-  --page: #f4ddd1;
-  --ink: #1a100c;
-  --accent: #eb804b;
-  --card: #fff8f4;
-  --card-ink: #1a100c;
-  --page-rgb: 244, 221, 209;
-  --ink-rgb: 26, 16, 12;
-}
 
 * {
   box-sizing: border-box;
@@ -368,6 +297,7 @@ main:focus {
 :root[data-theme="forest"] .theme-controls { --control-index: 1; }
 :root[data-theme="coast"] .theme-controls { --control-index: 2; }
 :root[data-theme="canyon"] .theme-controls { --control-index: 3; }
+:root[data-theme="plain"] .theme-controls { --control-index: 4; }
 :root[data-mode="dark"] .mode-controls { --control-index: 1; }
 
 .theme-dot,
@@ -405,6 +335,11 @@ main:focus {
   --theme-swatch: #eb804b;
 }
 
+/* Plain has no painting; its swatch is the app's yellow-to-orange launch gradient. */
+.theme-dot[data-theme-target="plain"] {
+  --theme-swatch: linear-gradient(#ffd600, #ff6b00);
+}
+
 .theme-ring {
   display: grid;
   place-items: center;
@@ -423,6 +358,80 @@ main:focus {
 
 .theme-dot:hover .theme-swatch {
   background-color: color-mix(in srgb, var(--theme-swatch) 88%, white);
+}
+
+/* With a mouse, the theme pill shows only the current theme and opens to the left into the full row on
+   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one. */
+@media (hover: hover) and (min-width: 761px) {
+  .theme-controls::before {
+    transition: border-color 500ms var(--ease), transform 300ms var(--ease);
+  }
+
+  .theme-dot {
+    transition: width 300ms var(--ease), visibility 0s, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-ring {
+    transition: opacity 220ms var(--ease) 80ms;
+  }
+
+  .theme-controls:not(:hover, :focus-within)::before {
+    transform: translateX(0);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) {
+    width: 0;
+    visibility: hidden;
+    transition: width 300ms var(--ease), visibility 0s 300ms, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) .theme-ring {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it. */
+  .theme-dot::after,
+  .mode-button::after {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 10px);
+    left: 50%;
+    padding: 7px 11px;
+    color: var(--page);
+    background: var(--ink);
+    border-radius: 999px;
+    content: attr(aria-label);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -4px);
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .theme-dot:hover::after,
+  .theme-dot:focus-visible::after,
+  .mode-button:hover::after,
+  .mode-button:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* The last button sits near the page edge, so its label lines up with its right side instead. */
+  .mode-button[data-mode-target="dark"]::after {
+    left: auto;
+    right: 0;
+    transform: translateY(-4px);
+  }
+
+  .mode-button[data-mode-target="dark"]:hover::after,
+  .mode-button[data-mode-target="dark"]:focus-visible::after {
+    transform: translateY(0);
+  }
 }
 
 .mode-button:hover {
@@ -455,746 +464,11 @@ main:focus {
 .mode-button:focus-visible,
 .language-button:focus-visible,
 .mobile-menu-toggle:focus-visible,
-.cta:focus-visible,
 .brand:focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 4px;
 }
 
-model-viewer[inert] {
-  pointer-events: none;
-}
-
-.hero,
-.beta,
-.why,
-.answers {
-  position: relative;
-  width: min(1280px, calc(100% - 48px));
-  margin: 0 auto;
-}
-
-.hero,
-.beta {
-  display: grid;
-  min-height: 755px;
-  place-items: center;
-  isolation: isolate;
-}
-
-.hero-phone {
-  --phone-base-rotate-y: 0deg;
-  --phone-base-rotate-z: -14deg;
-  --phone-base-position-x: 65px;
-  --phone-base-position-y: 30px;
-  position: absolute;
-  z-index: 3;
-  top: 46%;
-  left: clamp(-72px, -4vw, -24px);
-  width: clamp(310px, 35vw, 468px);
-  height: min(680px, 78vh);
-  pointer-events: none;
-  translate: var(--phone-base-position-x) var(--phone-base-position-y);
-  user-select: none;
-  transition: translate 420ms var(--ease);
-}
-
-@media (min-width: 761px) {
-  :root[data-language="de"] .hero-phone {
-    --phone-base-position-x: 20px;
-  }
-}
-
-.hero-phone__float {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform: perspective(1100px) translate3d(var(--phone-drift-x, 0), calc(-50% + var(--phone-drift-y, 0px)), 0) rotateX(var(--phone-rotate-x, 0deg)) rotateY(calc(var(--phone-base-rotate-y) + var(--phone-rotate-y, 0deg))) rotateZ(var(--phone-base-rotate-z));
-  transform-origin: 50% 55%;
-  will-change: transform;
-}
-
-.hero-phone__float::after {
-  display: none;
-  position: absolute;
-  z-index: -1;
-  right: 8%;
-  bottom: 7%;
-  left: 8%;
-  height: 18%;
-  background: rgba(0, 0, 0, 0.24);
-  border-radius: 50%;
-  filter: blur(28px);
-  content: "";
-  opacity: 0.72;
-  transform: scaleY(0.32);
-}
-
-.hero-phone model-viewer {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  background: transparent;
-  --poster-color: transparent;
-  --progress-bar-color: transparent;
-  --progress-bar-height: 0px;
-  pointer-events: none;
-  transition: opacity 700ms var(--ease);
-}
-
-.hero-phone model-viewer.is-loaded {
-  opacity: 1;
-}
-
-.beta-phone {
-  position: absolute;
-  z-index: 3;
-  top: calc(50% - 70px);
-  right: clamp(-60px, calc(-0.7vw - 42px), -48px);
-  width: clamp(310px, 33vw, 440px);
-  height: 0;
-  pointer-events: none;
-  user-select: none;
-}
-
-.beta-phone__float {
-  position: relative;
-  width: 100%;
-  height: min(660px, 76vh);
-  transform: perspective(1100px) translate3d(var(--phone-drift-x, 0), calc(-50% + var(--phone-drift-y, 0px)), 0) rotateX(var(--phone-rotate-x, 0deg)) rotateY(var(--phone-rotate-y, 0deg)) rotateZ(14deg);
-  transform-origin: 50% 55%;
-  will-change: transform;
-}
-
-.beta-phone model-viewer {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  background: transparent;
-  --poster-color: transparent;
-  --progress-bar-color: transparent;
-  --progress-bar-height: 0px;
-  pointer-events: none;
-  transition: opacity 700ms var(--ease);
-}
-
-.beta-phone model-viewer.is-loaded {
-  opacity: 1;
-}
-
-.hero__content,
-.beta__content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: min(720px, 100%);
-  text-align: center;
-}
-
-.hero h1,
-.beta h2 {
-  margin: 0;
-  font-size: clamp(5rem, 7.78vw, 7rem);
-  font-weight: 900;
-  letter-spacing: -0.012em;
-  line-height: 0.928571;
-  text-wrap: balance;
-}
-
-:root[data-language="de"] .hero .headline-line:nth-child(2) {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-}
-
-:root[data-language="de"] .hero .headline-heart {
-  margin-right: 0.08em;
-}
-
-.headline-line,
-.beta-line,
-.trust-line span {
-  display: block;
-}
-
-.hero-y {
-  display: inline-block;
-  margin-right: -0.075em;
-}
-
-.headline-heart {
-  position: relative;
-  display: inline-block;
-  vertical-align: 0.03em;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
-  font-size: 0.72em;
-  font-variant-emoji: emoji;
-  letter-spacing: 0;
-  line-height: 1;
-  pointer-events: none;
-  user-select: none;
-}
-
-.why-emoji,
-.answers-emoji {
-  position: relative;
-  display: inline-block;
-  pointer-events: none;
-  user-select: none;
-}
-
-.trust-line {
-  margin: 40px 0 0;
-  font-size: clamp(1.05rem, 1.67vw, 1.5rem);
-  line-height: 1.34;
-}
-
-.cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 56px;
-  margin-top: 40px;
-  padding: 18px 34px;
-  color: var(--cta-ink);
-  background: var(--cta-bg);
-  border-radius: 999px;
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
-  font-size: 1.05rem;
-  font-weight: 600;
-  line-height: 1;
-  text-decoration: none;
-  transition: background-color 220ms var(--ease), transform 180ms var(--ease);
-}
-
-.cta:hover {
-  background: color-mix(in srgb, var(--cta-bg) 90%, white);
-}
-
-.cta:active {
-  background: color-mix(in srgb, var(--cta-bg) 92%, black);
-  transform: scale(0.98);
-}
-
-.why {
-  padding: 80px 0 144px;
-}
-
-.why__intro {
-  display: grid;
-  grid-template-columns: 376px 1fr;
-  align-items: start;
-  margin-bottom: 80px;
-}
-
-.why__intro h2,
-.why__intro p {
-  margin: 0;
-  font-size: clamp(2.35rem, 3.33vw, 3rem);
-  line-height: 1;
-}
-
-.why__intro h2 {
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-.why__intro h2 .why-emoji {
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.8em;
-  vertical-align: 0.05em;
-}
-
-.why__intro p {
-  max-width: 904px;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-.feature-grid:focus-visible {
-  outline: 3px solid var(--focus-ring);
-  outline-offset: -3px;
-  border-radius: 20px;
-}
-
-.feature-card {
-  position: relative;
-  display: grid;
-  min-width: 0;
-  height: auto;
-  max-height: 440px;
-  aspect-ratio: 0.92;
-  margin: 0;
-  overflow: hidden;
-  color: var(--card-ink);
-  background: var(--card);
-  border-radius: 24px;
-  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.09);
-  isolation: isolate;
-  transition: background 500ms var(--ease);
-}
-
-.feature-card__ui {
-  position: absolute;
-  inset: 18px 18px auto;
-  aspect-ratio: 1088 / 834;
-  overflow: hidden;
-  padding: 20px;
-  color: #f4ddd1;
-  background: #15110f;
-  border: 1px solid rgba(244, 221, 209, 0.13);
-  border-radius: 18px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 32px rgba(0, 0, 0, 0.18);
-}
-
-:root[data-mode="light"] .feature-card__ui {
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-}
-
-.shot-ui {
-  padding: 0;
-  background: #191411;
-}
-
-.feature-shot {
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  object-fit: contain;
-}
-
-.day-ui {
-  display: block;
-  padding: 0;
-  background: #191411;
-}
-
-.day-ui__story {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  margin: 0;
-  color: #f3ddd2;
-  font-size: clamp(2.12rem, 2.8vw, 2.5rem);
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1;
-}
-
-.day-ui__sentence,
-.day-ui__sentence > span {
-  display: block;
-}
-
-.day-ui__sentence + .day-ui__sentence {
-  margin-top: 0;
-}
-
-.day-ui__story i {
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
-  font-size: 1em;
-  font-style: normal;
-  letter-spacing: 0;
-  vertical-align: 0.02em;
-}
-
-.context-ui {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 15px 18px 17px;
-}
-
-.context-ui__title {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  align-self: stretch;
-  height: 27px;
-  font-size: 0.96rem;
-}
-
-.context-ui__title img {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(36%) sepia(99%) saturate(2620%) hue-rotate(345deg) brightness(102%) contrast(95%);
-}
-
-.context-ui__back {
-  display: grid;
-  width: 27px;
-  height: 27px;
-  margin-right: 1px;
-  place-items: center;
-  color: #fff9f5;
-  background: #302925;
-  border: 1px solid rgba(244, 221, 209, 0.16);
-  border-radius: 50%;
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: 1.8rem;
-  font-weight: 300;
-  line-height: 0.7;
-}
-
-.context-ui__period {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 100%;
-  height: 31px;
-  margin-top: 8px;
-  padding: 3px;
-  align-items: center;
-  color: #fff9f5;
-  background: #4b3e3a;
-  border-radius: 18px;
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.68rem;
-  text-align: center;
-}
-
-.context-ui__period b {
-  display: grid;
-  height: 25px;
-  place-items: center;
-  background: #8b8182;
-  border-radius: 14px;
-}
-
-.context-ui__value {
-  display: flex;
-  align-items: baseline;
-  margin-top: 11px;
-}
-
-.context-ui__value strong {
-  font-size: clamp(3.3rem, 4.5vw, 4.05rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  line-height: 0.82;
-}
-
-.context-ui__value small {
-  margin-left: 5px;
-  color: rgba(244, 221, 209, 0.58);
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.context-ui__status {
-  margin-top: 7px;
-  color: #25a744;
-  font-size: 1.5rem;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.context-ui__range {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: 100%;
-  height: 7px;
-  margin-top: 12px;
-  overflow: visible;
-  border-radius: 8px;
-}
-
-.context-ui__range span:first-child { background: #28a0a8; border-radius: 8px 0 0 8px; }
-.context-ui__range span:nth-child(2) { background: #299e4d; }
-.context-ui__range span:nth-child(3) { background: #d99926; }
-.context-ui__range span:nth-child(4) { background: #db3d2e; border-radius: 0 8px 8px 0; }
-
-.context-ui__range i {
-  position: absolute;
-  top: 50%;
-  left: 30%;
-  width: 16px;
-  height: 16px;
-  background: #29ae4d;
-  border: 4px solid #24542f;
-  border-radius: 50%;
-  box-shadow: 0 0 0 4px rgba(48, 199, 89, 0.12);
-  transform: translate(-50%, -50%);
-}
-
-.context-ui p {
-  order: 4;
-  margin: 4px 0 0;
-  color: rgba(244, 221, 209, 0.88);
-  font-size: 0.78rem;
-  text-align: center;
-}
-
-.context-ui__range { order: 5; }
-
-.life-ui {
-  padding: 16px;
-  background: radial-gradient(circle at 18% 66%, rgba(39, 215, 82, 0.11), transparent 42%), #15110f;
-}
-
-.life-ui__move {
-  height: 164px;
-  padding: 13px 14px;
-  background: linear-gradient(135deg, rgba(25, 82, 39, 0.72), rgba(48, 39, 34, 0.82) 70%);
-  border: 1px solid rgba(37, 199, 80, 0.26);
-  border-radius: 25px;
-}
-
-.life-ui__move-title {
-  display: grid;
-  grid-template-columns: 34px 1fr 25px;
-  align-items: center;
-  gap: 10px;
-}
-
-.life-ui__move-title > span {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  background: rgba(39, 199, 80, 0.2);
-  border-radius: 10px;
-}
-
-.life-ui__move-title img {
-  width: 20px;
-  height: 20px;
-  filter: brightness(0) saturate(100%) invert(64%) sepia(98%) saturate(1051%) hue-rotate(82deg) brightness(100%) contrast(96%);
-}
-
-.life-ui__move-title b {
-  font-size: 1.12rem;
-}
-
-.life-ui__move-title i {
-  display: grid;
-  width: 25px;
-  height: 25px;
-  place-items: center;
-  color: #16351f;
-  background: #29d257;
-  border-radius: 50%;
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.9rem;
-  font-style: normal;
-  font-weight: 900;
-}
-
-.life-ui__move-value {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: end;
-  margin-top: 15px;
-}
-
-.life-ui__move-value strong {
-  font-size: clamp(2.7rem, 4vw, 3.35rem);
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  line-height: 0.82;
-}
-
-.life-ui__move-value small {
-  margin-left: 6px;
-  color: rgba(244, 221, 209, 0.63);
-  font-size: 0.78rem;
-}
-
-.life-ui__move-value em {
-  padding: 5px 8px;
-  color: #12a9b9;
-  background: rgba(18, 169, 185, 0.18);
-  border-radius: 10px;
-  font-size: 0.72rem;
-  font-style: normal;
-  font-weight: 800;
-}
-
-.app-tabs {
-  position: absolute;
-  right: 13px;
-  bottom: 12px;
-  left: 13px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  height: 88px;
-  padding: 6px;
-  background: rgba(51, 45, 41, 0.92);
-  border: 1px solid rgba(244, 221, 209, 0.2);
-  border-radius: 28px;
-  box-shadow: 0 18px 28px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(12px);
-}
-
-.app-tab {
-  display: flex;
-  min-width: 0;
-  min-height: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: #fff8f2;
-  border-radius: 20px;
-}
-
-.app-tab.is-active {
-  color: #ff9b61;
-  background: rgba(244, 221, 209, 0.16);
-}
-
-.app-tab img {
-  width: 25px;
-  height: 25px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-}
-
-.app-tab.is-active img {
-  filter: brightness(0) saturate(100%) invert(69%) sepia(49%) saturate(1717%) hue-rotate(319deg) brightness(104%) contrast(101%);
-}
-
-.app-tab b {
-  overflow: hidden;
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.68rem;
-  text-overflow: ellipsis;
-}
-
-.feature-card__copy {
-  position: relative;
-  z-index: 1;
-  align-self: end;
-  padding: 0 30px 28px;
-  color: var(--card-ink);
-}
-
-.feature-card h3 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  line-height: 1.3;
-}
-
-.feature-card p {
-  margin: 7px 0 0;
-  color: var(--card-ink);
-  font-family: var(--serif);
-  font-size: 0.95rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.35;
-  opacity: 0.72;
-}
-
-.beta__content {
-  width: min(760px, 100%);
-}
-
-.beta__content p {
-  width: min(540px, 100%);
-  margin: 40px 0 0;
-  font-size: clamp(1.05rem, 1.67vw, 1.5rem);
-  line-height: 1.34;
-}
-
-.answers {
-  padding: 104px 0 144px;
-}
-
-.answers__intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 376px;
-  align-items: start;
-  gap: 32px;
-  margin-bottom: 56px;
-}
-
-.answers__intro h2,
-.answers__intro > p {
-  margin: 0;
-  font-size: clamp(2.35rem, 3.33vw, 3rem);
-  line-height: 1;
-}
-
-.answers__intro h2 {
-  grid-column: 2;
-  grid-row: 1;
-  justify-self: stretch;
-  font-weight: 600;
-  letter-spacing: 0;
-  text-align: right;
-}
-
-.answers__intro h2 .answers-emoji {
-  font-family: ui-sans-serif, system-ui, sans-serif;
-  font-size: 0.8em;
-  vertical-align: 0.05em;
-}
-
-.answers__intro > p {
-  grid-column: 1;
-  grid-row: 1;
-  max-width: 904px;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-
-.answers__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-  margin: 0;
-}
-
-.answers__item {
-  min-width: 0;
-  padding: 30px;
-  background: rgba(var(--ink-rgb), 0.045);
-  border: 1px solid rgba(var(--ink-rgb), 0.14);
-  border-radius: 20px;
-  transition: background-color 500ms var(--ease), border-color 500ms var(--ease);
-}
-
-.answers dt {
-  font-size: 1.35rem;
-  font-weight: 650;
-  line-height: 1.2;
-}
-
-.answers dd {
-  margin: 10px 0 0;
-  font-family: var(--serif);
-  font-size: 1rem;
-  font-weight: 450;
-  line-height: 1.5;
-  opacity: 0.76;
-}
-
-.answers dd a {
-  color: inherit;
-  font-weight: 700;
-  text-underline-offset: 0.18em;
-}
 
 .site-footer {
   width: min(1280px, calc(100% - 48px));
@@ -1325,68 +599,6 @@ model-viewer[inert] {
   color: var(--ink);
 }
 
-@media (max-width: 1050px) {
-  .hero h1,
-  .beta h2 {
-    font-size: clamp(4.25rem, 9vw, 5.75rem);
-  }
-
-  .hero-phone {
-    left: -30px;
-    width: clamp(280px, 34vw, 350px);
-    height: 560px;
-  }
-
-  .beta-phone {
-    right: -50px;
-    width: clamp(280px, 34vw, 350px);
-    height: 0;
-  }
-
-  .beta-phone__float {
-    height: 560px;
-  }
-
-  .why__intro {
-    grid-template-columns: minmax(220px, 30%) 1fr;
-    gap: 24px;
-  }
-
-  .answers__intro {
-    grid-template-columns: 1fr minmax(220px, 32%);
-    gap: 24px;
-  }
-
-}
-
-@media (min-width: 761px) and (max-width: 1099px) {
-  .why__intro {
-    margin-bottom: 56px;
-  }
-
-  .feature-grid {
-    grid-auto-columns: min(44vw, 340px);
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    gap: 18px;
-    margin: -56px -24px -72px;
-    padding: 56px 48px 98px 24px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scroll-padding-left: 24px;
-    scroll-snap-type: inline mandatory;
-    scrollbar-width: none;
-  }
-
-  .feature-grid::-webkit-scrollbar {
-    display: none;
-  }
-
-  .feature-card {
-    scroll-snap-align: start;
-  }
-}
-
 @media (max-width: 760px) {
   .site-header {
     height: 74px;
@@ -1467,10 +679,13 @@ model-viewer[inert] {
     margin-left: 0;
   }
 
+  /* Five themes and the light/dark pair do not fit one row of the menu; the pair wraps under them. */
   .appearance-controls {
+    flex-wrap: wrap;
+    gap: 10px;
     width: 100%;
     justify-self: auto;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-right: 0;
   }
 
@@ -1522,181 +737,25 @@ model-viewer[inert] {
     fill: var(--page);
     stroke: currentColor;
     stroke-linecap: round;
-    stroke-width: 1.5;
+    stroke-width: 2;
     transition: transform 300ms var(--ease);
   }
 
-  .mobile-menu-is-open .mobile-menu-toggle svg {
-    transform: rotate(90deg);
+  .mobile-menu-toggle path {
+    transform-origin: 12px 12px;
+    transition: transform 300ms var(--ease), opacity 180ms var(--ease);
   }
 
-  .hero,
-  .beta,
-  .why,
-  .answers {
-    width: min(100% - 32px, 1280px);
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(1) {
+    transform: rotate(45deg) translateY(5px);
   }
 
-  .hero,
-  .beta {
-    display: flex;
-    min-height: 0;
-    flex-direction: column;
-    padding: 72px 0 96px;
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(2) {
+    opacity: 0;
   }
 
-  .hero {
-    padding-top: clamp(448px, 140vw, 570px);
-  }
-
-  .hero-phone {
-    --phone-base-rotate-y: 0deg;
-    --phone-base-rotate-z: -7deg;
-    --phone-base-position-x: -50%;
-    --phone-base-position-y: 0px;
-    top: clamp(230px, 72vw, 300px);
-    left: 50%;
-    width: min(96vw, 380px);
-    height: min(540px, 135vw);
-  }
-
-  .hero-phone__float {
-    transform: perspective(900px) translate3d(var(--phone-drift-x, 0), calc(-50% + var(--phone-drift-y, 0px)), 0) rotateX(var(--phone-rotate-x, 0deg)) rotateY(calc(var(--phone-base-rotate-y) + var(--phone-rotate-y, 0deg))) rotateZ(var(--phone-base-rotate-z));
-  }
-
-  .beta-phone {
-    top: clamp(225px, 70vw, 290px);
-    right: auto;
-    left: 50%;
-    width: min(92vw, 370px);
-    height: 0;
-    translate: -50% 0;
-  }
-
-  .beta-phone__float {
-    height: min(520px, 132vw);
-    transform: perspective(900px) translate3d(var(--phone-drift-x, 0), calc(-50% + var(--phone-drift-y, 0px)), 0) rotateX(var(--phone-rotate-x, 0deg)) rotateY(var(--phone-rotate-y, 0deg)) rotateZ(7deg);
-  }
-
-  .hero h1,
-  .beta h2 {
-    font-size: clamp(3.25rem, 16vw, 5.2rem);
-    line-height: 0.94;
-  }
-
-  :root[data-language="de"] .hero h1 {
-    font-size: clamp(3.05rem, 13.8vw, 3.55rem);
-  }
-
-  .hero__content {
-    transform: none;
-  }
-
-  .trust-line,
-  .beta__content p {
-    margin-top: 28px;
-    font-size: 1.05rem;
-  }
-
-  .cta {
-    margin-top: 28px;
-  }
-
-  .why {
-    padding: 72px 0 96px;
-  }
-
-  .answers {
-    padding: 72px 0 104px;
-  }
-
-  .why__intro {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    margin-bottom: 32px;
-  }
-
-  .why__intro h2 {
-    font-size: clamp(2.3rem, 11vw, 3.3rem);
-    line-height: 1.02;
-  }
-
-  .why__intro p {
-    font-size: clamp(1.9rem, 8.2vw, 2.5rem);
-    line-height: 1.04;
-  }
-
-  .answers__intro {
-    grid-template-columns: 1fr;
-    align-items: start;
-    gap: 32px;
-    margin-bottom: 40px;
-  }
-
-  .answers__intro h2 {
-    grid-column: 1;
-    grid-row: 1;
-    font-size: clamp(2.3rem, 11vw, 3.3rem);
-    line-height: 1.02;
-    text-align: left;
-  }
-
-  .answers__intro > p {
-    grid-column: 1;
-    grid-row: 2;
-    max-width: none;
-    font-size: clamp(1.9rem, 8.2vw, 2.5rem);
-    line-height: 1.04;
-  }
-
-  .answers__grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .answers__item {
-    padding: 24px;
-  }
-
-  .feature-grid {
-    grid-auto-columns: min(82vw, 340px);
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    gap: 16px;
-    margin: -56px -16px -72px -28px;
-    padding: 56px 44px 98px 28px;
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scroll-padding-left: 28px;
-    scroll-snap-type: inline mandatory;
-    scrollbar-width: none;
-  }
-
-  .feature-grid::-webkit-scrollbar {
-    display: none;
-  }
-
-  .feature-card {
-    scroll-snap-align: start;
-  }
-
-  .feature-card__copy {
-    padding: 0 28px 28px;
-  }
-
-  .beta {
-    padding-top: clamp(455px, 138vw, 560px);
-  }
-}
-
-@media (max-width: 430px) {
-  .hero h1,
-  .beta h2 {
-    font-size: clamp(3.05rem, 15vw, 4rem);
-  }
-
-  .feature-grid {
-    grid-auto-columns: 84vw;
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(3) {
+    transform: rotate(-45deg) translateY(-5px);
   }
 }
 
@@ -1706,23 +765,1168 @@ model-viewer[inert] {
   }
 }
 
+/* Landing page, after trevornoah.com and subscrr.app but in the app's own type and colours: a deep
+   band from the launch screens with one word in the accent, a burst of die-cut pieces and 3D stickers,
+   torn paper between bands, and plain scrolling. script.js feeds the pointer to the burst (--px/--py). */
+
+/* Colours come from AppTheme.swift. Each theme is one hue: page, card, text and accent per scheme,
+   plus the deep ink and warm cream the launch screens sample from that theme's painting. */
+:root[data-theme="forest"] { --band: #0c271c; --band-rgb: 12, 39, 28; --band-ink: #f8ebbc; --vivid: #a9eb4b; }
+:root[data-theme="meadow"] { --band: #0a4252; --band-rgb: 10, 66, 82; --band-ink: #fff1c9; --vivid: #ebcc4b; }
+:root[data-theme="coast"] { --band: #083756; --band-rgb: 8, 55, 86; --band-ink: #e3e6ff; --vivid: #4baceb; }
+:root[data-theme="canyon"] { --band: #482219; --band-rgb: 72, 34, 25; --band-ink: #ffecd4; --vivid: #eb804b; }
+:root[data-theme="plain"] { --band: #141414; --band-rgb: 20, 20, 20; --band-ink: #ffffff; --vivid: #ffd60a; }
+
+/* The cream die-cut edge traced around a sticker or one of the app's pieces, with its shadow. The edge is
+   the #die-cut SVG filter in index.html: one pass that grows the piece's own silhouette by 3px and fills
+   it with the theme's cream, so it follows every curve. (Chaining eight offset drop-shadows looked the
+   same but dropped scrolling to a few frames a second.) */
+:root {
+  --die-cut: url("#die-cut") drop-shadow(0 10px 14px rgba(0, 0, 0, 0.24));
+}
+
+html:root[data-mode="light"][data-theme="forest"] { --page: #e1f1ca; --page-rgb: 225, 241, 202; --card: #f6feec; --ink: #1e2611; --ink-rgb: 30, 38, 17; --accent: #7dbd22; }
+html:root[data-mode="light"][data-theme="meadow"] { --page: #f1eaca; --page-rgb: 241, 234, 202; --card: #fefaec; --ink: #262211; --ink-rgb: 38, 34, 17; --accent: #bd9f22; }
+html:root[data-mode="light"][data-theme="coast"] { --page: #cae2f1; --page-rgb: 202, 226, 241; --card: #ecf7fe; --ink: #111e26; --ink-rgb: 17, 30, 38; --accent: #2280bd; }
+html:root[data-mode="light"][data-theme="canyon"] { --page: #f1d7ca; --page-rgb: 241, 215, 202; --card: #fef2ec; --ink: #261811; --ink-rgb: 38, 24, 17; --accent: #bd5522; }
+html:root[data-mode="light"][data-theme="plain"] { --page: #f5f5f5; --page-rgb: 245, 245, 245; --card: #ffffff; --ink: #000000; --ink-rgb: 0, 0, 0; --accent: #ff6c01; }
+html:root[data-mode="dark"][data-theme="forest"] { --page: #161a12; --page-rgb: 22, 26, 18; --card: #262a21; --ink: #e6f4d1; --ink-rgb: 230, 244, 209; --accent: #a9eb4b; }
+html:root[data-mode="dark"][data-theme="meadow"] { --page: #1a1812; --page-rgb: 26, 24, 18; --card: #2a2821; --ink: #f4edd1; --ink-rgb: 244, 237, 209; --accent: #ebcc4b; }
+html:root[data-mode="dark"][data-theme="coast"] { --page: #12171a; --page-rgb: 18, 23, 26; --card: #21262a; --ink: #d1e6f4; --ink-rgb: 209, 230, 244; --accent: #4baceb; }
+html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 26, 20, 18; --card: #2a2421; --ink: #f4ddd1; --ink-rgb: 244, 221, 209; --accent: #eb804b; }
+html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0, 0, 0; --card: #141414; --ink: #ffffff; --ink-rgb: 255, 255, 255; --accent: #ffd60a; }
+
+/* The header sits on the deep band; its controls take the band's cream. script.js gives it the logo
+   drawn for a dark ground in both schemes. */
+.site-header {
+  --page: var(--band);
+  --page-rgb: var(--band-rgb);
+  --ink: var(--band-ink);
+  --ink-rgb: 255, 245, 220;
+  color: var(--band-ink);
+  background: var(--band);
+}
+
+
+/* Hero: deep band, headline, button, then the burst spilling over the torn edge --------------- */
+
+.burst-hero {
+  --px: 0;
+  --py: 0;
+  position: relative;
+  /* The bottom padding keeps the torn edge clear of the pieces. */
+  padding: clamp(40px, 5vw, 80px) 20px clamp(36px, 5vw, 72px);
+  color: var(--band-ink);
+  background: var(--band);
+  text-align: center;
+  isolation: isolate;
+}
+
+.burst-hero h1 {
+  max-width: 7.2em;
+  margin: 0 auto;
+  font-size: clamp(2.9rem, 6.6vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.burst-hero h1 mark {
+  color: var(--vivid);
+  background: none;
+}
+
+.pill-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 54px;
+  margin-top: clamp(26px, 3vw, 40px);
+  padding: 16px 30px;
+  color: var(--band);
+  background: var(--band-ink);
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+  transition: transform 180ms var(--ease), background-color 180ms var(--ease);
+}
+
+.pill-cta:hover {
+  transform: translateY(-2px) rotate(-1.5deg);
+}
+
+.pill-cta:active {
+  transform: scale(0.97);
+}
+
+.pill-cta:focus-visible {
+  outline: 3px solid var(--band-ink);
+  outline-offset: 4px;
+}
+
+/* The burst is a box with a fixed shape; every piece is placed in percent of it, so the whole
+   arrangement scales as one and never reaches the headline. The app's pieces are never drawn larger
+   than their 1x box (tiles 179, icon 104): the box is sized so that is where they land on desktop. */
+.burst {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 640px);
+  aspect-ratio: 16 / 9;
+  margin: clamp(20px, 3vw, 40px) auto 0;
+}
+
+.burst__pieces {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.burst__piece {
+  --tilt: 0deg;
+  --depth: 1;
+  --delay: 0ms;
+  position: absolute;
+  display: block;
+  height: auto;
+  max-width: none;
+  transform:
+    translate3d(calc(var(--px) * var(--depth) * 12px), calc(var(--py) * var(--depth) * 9px), 0)
+    rotate(var(--tilt));
+  animation: pop 900ms cubic-bezier(0.2, 1.4, 0.4, 1) var(--delay) both;
+  user-select: none;
+  will-change: transform;
+}
+
+/* Die-cut look: the app icon gets a cream sticker border; the tiles and 3D stickers get a cream
+   outline traced around their own shape. */
+.burst__piece--icon,
+.burst__tile,
+.burst__sticker {
+  filter: var(--die-cut);
+}
+
+.burst__piece--steps { --tilt: -10deg; --depth: 1.2; --delay: 420ms; top: 21%; left: 14%; width: min(179px, 28%); }
+.burst__piece--sleep { --tilt: 8deg; --depth: 1.3; --delay: 500ms; top: 16%; left: 57.5%; width: min(179px, 28%); }
+.burst__piece--icon { --tilt: -4deg; --depth: 0.5; --delay: 300ms; top: 5%; left: 42%; width: min(104px, 16.25%); z-index: 2; }
+.burst__piece--avocado { --tilt: -16deg; --depth: 1.6; --delay: 620ms; top: 0; left: 31%; width: 11.5%; z-index: 3; }
+.burst__piece--broccoli { --tilt: 12deg; --depth: 1.8; --delay: 700ms; top: 2%; left: 84%; width: 12%; z-index: 3; }
+.burst__piece--coffee { --tilt: 8deg; --depth: 1.5; --delay: 780ms; top: 50%; left: 45%; width: 13%; z-index: 3; }
+
+/* The chip, as a speech bubble coming off the icon. */
+.burst__bubble {
+  position: absolute;
+  z-index: 3;
+  top: 70%;
+  left: 58%;
+  margin: 0;
+  padding: 10px 16px;
+  color: var(--band);
+  background: var(--vivid);
+  border-radius: 999px;
+  font-size: clamp(0.8rem, 1.3vw, 1.05rem);
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+  rotate: -5deg;
+  animation: pop 900ms cubic-bezier(0.2, 1.4, 0.4, 1) 900ms both;
+}
+
+.burst__bubble::after {
+  position: absolute;
+  top: -7px;
+  left: 24px;
+  width: 16px;
+  height: 16px;
+  background: inherit;
+  border-radius: 3px;
+  content: "";
+  rotate: 45deg;
+}
+
+@keyframes pop {
+  from { opacity: 0; scale: 0.4; }
+  to { opacity: 1; scale: 1; }
+}
+
+.torn-edge {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: clamp(34px, 6vw, 90px);
+}
+
+.torn-edge__fringe {
+  fill: var(--band-ink);
+}
+
+.torn-edge__paper {
+  fill: var(--page);
+  transition: fill 500ms var(--ease);
+}
+
+/* Vitals, laid out like a product page: eyebrow, big line, small grey copy, then one loud panel ---- */
+
+.spotlight {
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(64px, 8vw, 120px) 0 clamp(40px, 6vw, 80px);
+  text-align: center;
+}
+
+/* Section label: a small tilted pill in the theme's vivid accent, like a sticker. */
+.eyebrow,
+.privacy__chip {
+  display: inline-flex;
+  margin: 0 0 22px;
+  padding: 9px 16px;
+  color: var(--band);
+  background: var(--vivid);
+  border-radius: 999px;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  font-weight: 700;
+  line-height: 1.1;
+  rotate: -3deg;
+}
+
+.spotlight h2,
+.goals h2,
+.food h2,
+.pricing h2,
+.privacy h2 {
+  max-width: 8.4em;
+  margin: 0 auto;
+  font-size: clamp(2.9rem, 6.6vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+/* Every line under a headline reads like the privacy band's: same size, measure and weight. */
+.muted-copy,
+.privacy__body {
+  max-width: 28em;
+  margin: 26px auto 0;
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  line-height: 1.4;
+}
+
+.muted-copy {
+  color: rgba(var(--ink-rgb), 0.8);
+}
+
+.food__panel {
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--vivid) 22%, transparent), transparent 60%),
+    var(--band);
+  border-radius: clamp(26px, 3vw, 40px);
+}
+
+/* The PNG is 434 x 150 at 1x: the bar plus 40 of glow on every side. The box is the bar itself. */
+.readiness {
+  position: relative;
+  width: min(354px, 100%);
+  aspect-ratio: 354 / 70;
+  margin: 0 0 22px;
+  rotate: -3deg;
+}
+
+.readiness__bar {
+  position: absolute;
+  top: -57.143%;
+  left: -11.299%;
+  width: 122.599%;
+  max-width: none;
+  height: auto;
+}
+
+/* Plain's glow is wider than the export's margin, so the file cuts it straight 26pt in from each side and
+   at the top and bottom. Fade those edges out here; the bar itself (40pt in) stays untouched. */
+:root[data-theme="plain"] .readiness__bar {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 6%, #000 9.2%, #000 90.8%, transparent 94%),
+    linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 6%, #000 9.2%, #000 90.8%, transparent 94%),
+    linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  mask-composite: intersect;
+}
+
+@media (max-width: 760px) {
+  .burst {
+    aspect-ratio: 4 / 3.3;
+  }
+
+  .burst__piece--steps { top: 22%; left: 1%; width: min(179px, 40%); }
+  .burst__piece--sleep { top: 18%; left: 59%; width: min(179px, 40%); }
+  .burst__piece--icon { top: 2%; left: 37%; width: min(104px, 26%); }
+  .burst__piece--avocado { top: 0; left: 20%; width: 15%; }
+  .burst__piece--broccoli { top: 2%; left: 82%; width: 15%; }
+  .burst__piece--coffee { top: 58%; left: 43%; width: 16%; }
+
+  .burst__bubble {
+    top: 72%;
+    right: 3%;
+    left: auto;
+  }
+
+  .burst__sticker {
+    filter: var(--die-cut);
+  }
+
+  .spotlight {
+    width: calc(100% - 32px);
+  }
+
+}
+
+/* Nutrition: words beside a deep panel, panel first ------------------------------------------- */
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  gap: clamp(40px, 6vw, 96px);
+  align-items: center;
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(80px, 10vw, 150px) 0;
+}
+
+.split--mirrored .split__copy {
+  order: 2;
+}
+
+.split h2 {
+  max-width: 7em;
+  margin: 0;
+  font-size: clamp(2.7rem, 5.4vw, 5.25rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.split .muted-copy {
+  margin-left: 0;
+}
+
+/* The app's pieces off their panels: a loose, tilted stack with a cream die-cut edge and 3D stickers
+   around it. Each piece stays at its 1x box (bar 354, card 370, tiles 179) and only shrinks on narrow
+   screens. The readiness bar has no outline, so its glow stays soft. */
+.collage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(430px, 100%);
+  margin: clamp(12px, 2vw, 24px) auto 0;
+  padding: 44px 0 28px;
+}
+
+.split .collage {
+  margin-top: 0;
+  justify-self: center;
+}
+
+.collage__card,
+.collage__tile,
+.food__sentence,
+.food__row {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  filter: var(--die-cut);
+}
+
+.collage__card {
+  width: min(370px, 100%);
+  margin-bottom: 18px;
+  rotate: -3deg;
+}
+
+.collage__row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.collage__tile {
+  width: min(179px, calc(50% - 2px));
+}
+
+.collage__tile--left {
+  z-index: 1;
+  rotate: -6deg;
+  translate: 6px 10px;
+}
+
+.collage__tile--right {
+  rotate: 5deg;
+  translate: -6px -4px;
+}
+
+.collage__sticker {
+  position: absolute;
+  z-index: 2;
+  width: clamp(60px, 7vw, 92px);
+  height: auto;
+  filter: var(--die-cut);
+}
+
+.collage__sticker--moon { top: 0; left: -6%; rotate: -14deg; }
+.collage__sticker--fire { top: 44%; right: -7%; rotate: 10deg; }
+.collage__sticker--apple { bottom: 0; left: -3%; rotate: -8deg; }
+.collage__sticker--fish { top: 0; right: -6%; rotate: 14deg; }
+.collage__sticker--orange { top: 46%; left: -3%; rotate: -10deg; }
+.collage__sticker--salad { right: 0; bottom: -2%; rotate: 8deg; }
+
+/* Privacy: a second deep band, torn top and bottom ---------------------------------------------- */
+
+.privacy {
+  position: relative;
+  margin-top: clamp(24px, 4vw, 56px);
+  padding: clamp(110px, 13vw, 190px) 24px;
+  color: var(--band-ink);
+  background: var(--band);
+  text-align: center;
+}
+
+.torn-edge--top {
+  top: -1px;
+  bottom: auto;
+  transform: scaleY(-1);
+}
+
+.privacy__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* The icon pair: Apple Health and Akari as die-cut tiles leaning apart, the 3D padlock between them. */
+.privacy__stickers {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(46px, 6vw, 86px);
+  margin-bottom: clamp(36px, 4.5vw, 56px);
+}
+
+.privacy__app {
+  display: block;
+  width: clamp(92px, 11vw, 150px);
+  height: auto;
+  filter: var(--die-cut);
+}
+
+
+
+.privacy__app--health { rotate: -8deg; }
+.privacy__app--akari { rotate: 7deg; }
+
+.privacy__lock {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: clamp(76px, 8.6vw, 118px);
+  height: auto;
+  translate: -50% -42%;
+  rotate: 4deg;
+  filter: var(--die-cut);
+}
+}
+
+
+.privacy h2 {
+  max-width: 9em;
+}
+
+.privacy h2 mark {
+  color: var(--vivid);
+  background: none;
+}
+
+.privacy__body {
+  opacity: 0.8;
+}
+
+.privacy__link {
+  margin-top: clamp(28px, 3.5vw, 40px);
+}
+
+/* Goals: one row of pills; the line under it follows the selection ------------------------------ */
+
+.goals {
+  width: min(1000px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(100px, 12vw, 170px) 0 clamp(40px, 6vw, 80px);
+  text-align: center;
+}
+
+.goals__options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: clamp(32px, 4vw, 48px);
+}
+
+.goal-pill {
+  min-height: 52px;
+  margin: 0;
+  padding: 13px 24px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1.5px solid rgba(var(--ink-rgb), 0.14);
+  border-radius: 999px;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 650;
+  line-height: 1.1;
+  transition: color 180ms var(--ease), background-color 180ms var(--ease), border-color 180ms var(--ease), transform 180ms var(--ease);
+}
+
+.goal-pill:hover {
+  border-color: rgba(var(--ink-rgb), 0.4);
+  transform: translateY(-2px);
+}
+
+.goal-pill:active {
+  transform: scale(0.97);
+}
+
+.goal-pill[aria-checked="true"] {
+  color: var(--band-ink);
+  background: var(--band);
+  border-color: var(--band);
+  transform: rotate(-2deg);
+}
+
+.goal-pill:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Reserves room for the longest blurb so switching goals never moves the page. */
+/* The selected goal answers with its own 3D sticker, after the app's goal icons, tossed in beside
+   the blurb each time the goal changes (see selectGoal in script.js). */
+.goals__answer {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(24px, 3.5vw, 48px);
+  align-items: center;
+  width: min(780px, 100%);
+  margin: clamp(40px, 5vw, 60px) auto 0;
+  text-align: left;
+}
+
+.goals__sticker {
+  display: block;
+  width: clamp(112px, 13vw, 176px);
+  height: auto;
+  filter: var(--die-cut);
+  rotate: -6deg;
+}
+
+.goals__sticker.is-tossed {
+  animation: goal-toss 620ms cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+@keyframes goal-toss {
+  from { opacity: 0; scale: 0.4; rotate: -32deg; translate: 0 18px; }
+  to { opacity: 1; scale: 1; rotate: -6deg; translate: 0 0; }
+}
+
+.goals__blurb {
+  min-height: 3.9em;
+  margin: 0;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  line-height: 1.28;
+  text-wrap: pretty;
+}
+
+/* What the goal brings together: one tile per item, with the app's title and line for it. */
+.goals__focuses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  width: min(1040px, 100%);
+  margin: clamp(32px, 4vw, 48px) auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.focus-tile {
+  display: flex;
+  flex: 0 1 186px;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 22px 16px 24px;
+  background: var(--card);
+  border-radius: 22px;
+  /* The same cream die-cut edge and shadow as the app's pieces, drawn as a ring since it is a plain box. */
+  box-shadow: 0 0 0 3px var(--band-ink), 0 10px 14px rgba(0, 0, 0, 0.24);
+  text-align: center;
+  transition: background-color 500ms var(--ease), box-shadow 500ms var(--ease);
+}
+
+.focus-tile img {
+  width: 74px;
+  height: auto;
+  margin-bottom: 8px;
+  filter: var(--die-cut);
+  rotate: -6deg;
+}
+
+.focus-tile:nth-child(even) img {
+  rotate: 6deg;
+}
+
+.focus-tile strong {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.focus-tile span {
+  color: rgba(var(--ink-rgb), 0.7);
+  font-size: 1.02rem;
+  line-height: 1.3;
+}
+
+.focus-tile.is-new {
+  animation: tile-in 520ms cubic-bezier(0.2, 1.3, 0.4, 1) var(--tile-delay, 0ms) both;
+}
+
+/* Six items sit as two even rows of three rather than five and one. */
+.goals__focuses[data-count="6"] {
+  width: min(640px, 100%);
+}
+
+@keyframes tile-in {
+  from { opacity: 0; translate: 0 16px; scale: 0.92; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
+}
+
+/* Food: the closing panel, with two stickers stuck to its edges -------------------------------- */
+
+/* Food breaks the run of centred sections: words left, the panel right (Nutrition mirrors it). */
+.split--words-first {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+}
+
+/* The 354-wide meal sentence with the food it became listed under it, each row at its own width. */
+.food__panel {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: min(560px, 100%);
+  margin: 0 auto;
+  padding: clamp(36px, 5vw, 60px) 20px;
+}
+
+.food__sentence {
+  width: 100%;
+  max-width: 354px;
+  rotate: -2deg;
+}
+
+/* Placed as on the app's Welcome food page (WelcomeView.swift): each row centred at its fraction of the
+   sentence's width and tilted the same way, oats and flat white on the left, the banana on the right. */
+.food__row {
+  --row-width: var(--row-1x);
+  width: var(--row-width);
+  margin-left: clamp(-8px, calc(var(--row-x) * 100% - var(--row-width) / 2), calc(100% - var(--row-width) + 8px));
+  rotate: var(--row-tilt);
+}
+
+.food__row:nth-child(1) { --row-x: 0.30; --row-tilt: -5deg; }
+.food__row:nth-child(2) { --row-x: 0.72; --row-tilt: 4deg; }
+.food__row:nth-child(3) { --row-x: 0.34; --row-tilt: -3deg; }
+
+.food__rows {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: min(354px, 100%);
+}
+
+.food__sticker {
+  position: absolute;
+  z-index: 2;
+  width: clamp(76px, 9vw, 128px);
+  height: auto;
+  filter: var(--die-cut);
+}
+
+.food__sticker--strawberry { top: -6%; left: -5%; rotate: -14deg; }
+.food__sticker--croissant { right: -6%; bottom: 2%; rotate: 12deg; }
+
+@media (max-width: 760px) {
+  .split {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    width: calc(100% - 32px);
+    padding: 72px 0;
+  }
+
+  .split--mirrored .split__copy {
+    order: 0;
+  }
+
+  /* Narrow enough that the glow the bar draws around itself stays on screen. */
+  .readiness {
+    width: min(354px, calc(100% - 56px));
+  }
+
+  .collage__sticker { width: 56px; }
+  .collage__sticker--moon { left: -2%; }
+  .collage__sticker--fire { right: -2%; }
+  .collage__sticker--apple { left: 0; }
+  .collage__sticker--fish { right: -2%; }
+  .collage__sticker--orange { left: -2%; }
+
+  .privacy {
+    padding: 100px 16px;
+  }
+
+  .goals,
+  .food {
+    width: calc(100% - 32px);
+  }
+
+  .goals__answer {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 18px;
+    text-align: center;
+  }
+
+  .goals__blurb {
+    min-height: 5.2em;
+  }
+
+  .goals__focuses {
+    gap: 16px;
+  }
+
+  .focus-tile {
+    flex-basis: calc(50% - 8px);
+    padding: 18px 12px 20px;
+  }
+
+  .focus-tile img {
+    width: 62px;
+  }
+
+  .food__panel {
+    padding: 26px 16px;
+  }
+
+  .food__sticker--strawberry { top: -26px; left: -4px; }
+  .food__sticker--croissant { right: -8px; bottom: -28px; }
+}
+
+/* Pricing: the two plans from the app's paywall as cards, the yearly one picked out like a selection. */
+.pricing {
+  width: min(1000px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(80px, 10vw, 140px) 0 0;
+  text-align: center;
+}
+
+.pricing__plans {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(18px, 3vw, 34px);
+  margin-top: clamp(40px, 5vw, 60px);
+}
+
+.plan {
+  position: relative;
+  flex: 0 1 290px;
+  padding: 30px 30px 32px;
+  background: var(--card);
+  border-radius: 30px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  rotate: 2deg;
+  transition: background-color 500ms var(--ease);
+}
+
+.plan--free {
+  rotate: -1.5deg;
+}
+
+.plan__includes {
+  margin: 10px 0 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.plan--featured {
+  color: var(--band-ink);
+  background:
+    radial-gradient(circle at 30% 0%, color-mix(in srgb, var(--vivid) 22%, transparent), transparent 60%),
+    var(--band);
+  rotate: -2deg;
+}
+
+.plan__name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.plan__price {
+  margin: 16px 0 0;
+  font-size: clamp(2.4rem, 4vw, 3.1rem);
+  white-space: nowrap;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.plan__price small {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+.plan__note {
+  margin: 14px 0 0;
+  color: rgba(var(--ink-rgb), 0.7);
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.plan__note span {
+  white-space: nowrap;
+}
+
+.plan--featured .plan__note {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.plan__save {
+  display: inline-block;
+  flex: 0 0 auto;
+  padding: 5px 11px;
+  color: var(--band);
+  background: var(--vivid);
+  border-radius: 999px;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  rotate: -3deg;
+}
+
+.plan__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.plan__sticker {
+  position: absolute;
+  right: -20px;
+  bottom: -26px;
+  width: 78px;
+  height: auto;
+  filter: var(--die-cut);
+  rotate: 12deg;
+}
+
+.pricing__fine {
+  margin: clamp(30px, 4vw, 44px) auto 0;
+  color: rgba(var(--ink-rgb), 0.6);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 760px) {
+  .pricing {
+    width: calc(100% - 32px);
+  }
+
+  .plan__sticker {
+    right: 4px;
+    bottom: -22px;
+    width: 60px;
+  }
+}
+
+.faq__sticker {
+  display: block;
+  width: clamp(64px, 7vw, 92px);
+  height: auto;
+  margin: 0 0 6px -6px;
+  filter: var(--die-cut);
+  rotate: -10deg;
+}
+
+/* Help shape: the closing call, big and centred, with the icon and a sticker on top ------------- */
+
+.shape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(1100px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(90px, 11vw, 160px) 0 clamp(80px, 10vw, 140px);
+  text-align: center;
+}
+
+.shape__stickers {
+  position: relative;
+  width: clamp(110px, 12vw, 160px);
+  margin-bottom: clamp(28px, 4vw, 44px);
+}
+
+.shape__icon {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: var(--die-cut);
+  rotate: -6deg;
+}
+
+.shape__banana {
+  position: absolute;
+  right: -66%;
+  bottom: -22%;
+  width: 78%;
+  height: auto;
+  filter: var(--die-cut);
+  rotate: 14deg;
+}
+
+.shape h2 {
+  max-width: 7em;
+  margin: 0;
+  font-size: clamp(2.9rem, 6.6vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.band-cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  margin-top: clamp(28px, 3.5vw, 40px);
+  padding: 17px 34px;
+  color: var(--band-ink);
+  background: var(--band);
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+  transition: transform 180ms var(--ease);
+}
+
+.band-cta:hover {
+  transform: translateY(-2px) rotate(-1.5deg);
+}
+
+.band-cta:active {
+  transform: scale(0.97);
+}
+
+.band-cta:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* FAQ: intro beside a list of questions that open in place -------------------------------------- */
+
+.faq {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(36px, 6vw, 96px);
+  align-items: start;
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(40px, 6vw, 80px) 0 clamp(60px, 8vw, 110px);
+}
+
+.faq h2 {
+  margin: 0;
+  font-size: clamp(2.7rem, 5.4vw, 5.25rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+}
+
+.faq .muted-copy {
+  margin-left: 0;
+}
+
+.faq__list {
+  display: grid;
+  gap: 10px;
+}
+
+.faq__item {
+  background: var(--card);
+  border-radius: 22px;
+  transition: background-color 500ms var(--ease);
+}
+
+.faq__item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 26px;
+  border-radius: 22px;
+  cursor: pointer;
+  font-size: clamp(1.15rem, 1.6vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.25;
+  list-style: none;
+}
+
+.faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The plus is two drawn bars rather than a "+" glyph, whose font metrics sat it off centre. */
+.faq__item summary::after {
+  display: block;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  background:
+    linear-gradient(var(--band-ink), var(--band-ink)) center / 14px 2px no-repeat,
+    linear-gradient(var(--band-ink), var(--band-ink)) center / 2px 14px no-repeat,
+    var(--band);
+  border-radius: 50%;
+  content: "";
+  transition: rotate 300ms var(--ease);
+}
+
+.faq__item[open] summary::after {
+  rotate: 45deg;
+}
+
+.faq__item summary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.faq__item p {
+  margin: -6px 0 0;
+  padding: 0 26px 24px;
+  color: rgba(var(--ink-rgb), 0.7);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.faq__item a {
+  color: inherit;
+  font-weight: 700;
+  text-underline-offset: 0.18em;
+}
+
+/* Footer: the page ends on the deep band it started with ---------------------------------------- */
+
+.site-footer {
+  --ink: var(--band-ink);
+  --ink-rgb: 255, 245, 220;
+  position: relative;
+  width: 100%;
+  max-width: none;
+  margin: clamp(40px, 6vw, 80px) 0 0;
+  padding: clamp(110px, 12vw, 170px) max(24px, calc((100% - 1180px) / 2)) 40px;
+  color: var(--band-ink);
+  background: var(--band);
+}
+
+.site-footer .footer-column a {
+  color: var(--band-ink);
+}
+
+.site-footer .footer-logo {
+  width: 104px;
+}
+
+
+.site-footer .credits-heart {
+  color: var(--vivid);
+}
+
+@media (max-width: 760px) {
+  .shape {
+    width: calc(100% - 32px);
+  }
+
+  .faq {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    width: calc(100% - 32px);
+  }
+
+  .faq__item summary {
+    padding: 18px 18px 18px 20px;
+  }
+
+  .faq__item p {
+    padding: 0 20px 20px;
+  }
+
+  .site-footer {
+    padding: 100px 20px 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .burst__piece,
+  .burst__bubble {
+    animation: none;
+  }
+}
+
 .motion-ready .reveal {
   --reveal-x: 0px;
   --reveal-y: 30px;
   --reveal-scale: 0.985;
   --reveal-rotate: 0deg;
   opacity: 0;
-  filter: blur(7px);
   backface-visibility: hidden;
   transform: translate3d(var(--reveal-x), var(--reveal-y), 0) scale(var(--reveal-scale)) rotate(var(--reveal-rotate));
   transition:
     opacity 650ms var(--ease) var(--reveal-delay),
-    filter 720ms var(--ease) var(--reveal-delay),
     transform 850ms var(--ease) var(--reveal-delay);
 }
 
 .motion-ready .reveal.reveal--armed {
-  will-change: opacity, filter, transform;
+  will-change: opacity, transform;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1775,23 +1979,14 @@ model-viewer[inert] {
 .motion-boot .brand,
 .motion-boot .language-button,
 .motion-boot .mobile-menu-toggle,
-.motion-boot .theme-dot,
+.motion-boot .theme-controls,
 .motion-boot .mode-button,
-.motion-boot .hero .headline-line,
-.motion-boot .hero .trust-line,
-.motion-boot .hero .cta {
+.motion-boot .pill-cta {
   opacity: 0;
-}
-
-.phone-motion-boot .hero-phone {
-  opacity: 0;
-  filter: none;
-  transform: translate3d(calc(-100% - 18vw), 0, 0) scale(0.94) rotate(-7deg);
 }
 
 .motion-ready .reveal.is-visible {
   opacity: 1;
-  filter: blur(0);
   transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
 }
 
@@ -1809,79 +2004,27 @@ model-viewer[inert] {
   --reveal-y: 0px;
 }
 
-.motion-ready .hero-phone.reveal--phone {
-  --reveal-x: calc(-100% - 18vw);
-  --reveal-y: 0px;
-  --reveal-scale: 0.94;
-  --reveal-rotate: -7deg;
-  filter: none;
-  transition:
-    opacity 320ms var(--ease) var(--reveal-delay),
-    transform 1150ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay);
-}
-
-.motion-ready .beta-phone.reveal--phone-right {
-  --reveal-x: calc(100% + 18vw);
-  --reveal-y: 0px;
-  --reveal-scale: 0.94;
-  --reveal-rotate: 7deg;
-  filter: none;
-  transition:
-    opacity 320ms var(--ease) var(--reveal-delay),
-    transform 1150ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay);
-}
-
 .motion-ready .reveal--pop {
   --reveal-y: 10px;
   --reveal-scale: 0.78;
-  filter: blur(4px);
-}
-
-.motion-ready .theme-dot.reveal--pop,
-.motion-ready .mode-button.reveal--pop {
-  filter: none;
 }
 
 .motion-ready .reveal--line {
   --reveal-y: 0.72em;
   --reveal-scale: 1;
-  filter: blur(5px);
 }
 
-.motion-ready .feature-card.reveal--card {
-  --reveal-y: 48px;
-  --reveal-scale: 0.94;
-  --reveal-rotate: -1.6deg;
+.motion-ready .reveal--card {
+  --reveal-y: 40px;
+  --reveal-scale: 0.95;
 }
 
-.motion-ready .feature-card:nth-child(2).reveal--card {
-  --reveal-rotate: 1.25deg;
-}
-
-.motion-ready .feature-card:nth-child(3).reveal--card {
-  --reveal-rotate: -0.8deg;
-}
-
-.motion-ready .why__intro h2.reveal--left.is-visible .why-emoji {
-  display: inline-block;
-  animation: sun-arrive 800ms 180ms both var(--ease);
-}
-
-.motion-ready .headline-line.reveal--line.is-visible .headline-heart,
-.motion-ready .beta-line.reveal--line.is-visible .headline-heart {
-  animation: heart-arrive 760ms calc(var(--reveal-delay) + 260ms) both cubic-bezier(0.22, 1.35, 0.36, 1);
-}
-
-@keyframes sun-arrive {
-  0% { opacity: 0; transform: rotate(-70deg) scale(0.45); }
-  65% { opacity: 1; transform: rotate(14deg) scale(1.13); }
-  100% { opacity: 1; transform: rotate(0) scale(1); }
-}
-
-@keyframes heart-arrive {
-  0% { opacity: 0; transform: translate(var(--drag-x, 0), calc(var(--drag-y, 0) + 0.34em)) rotate(-12deg) scale(0.3); }
-  65% { opacity: 1; transform: translate(var(--drag-x, 0), var(--drag-y, 0)) rotate(6deg) scale(1.14); }
-  100% { opacity: 1; transform: translate(var(--drag-x, 0), var(--drag-y, 0)) rotate(0) scale(1); }
+.motion-ready .reveal--piece {
+  --reveal-y: 18px;
+  --reveal-scale: 0.82;
+  transition:
+    opacity 500ms var(--ease) var(--reveal-delay),
+    transform 900ms cubic-bezier(0.22, 1.3, 0.36, 1) var(--reveal-delay);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1896,5 +2039,114 @@ model-viewer[inert] {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Drift, as in the app's Welcome collage (WelcomeView.swift): every piece rises and falls up to 4px and
+   turns up to 0.6deg on a 7-second wave, each a little out of step with its neighbours. script.js wraps each
+   drifting image so the box moves and the image inside keeps its die-cut edge, painted once; the compositor
+   then only moves layers. Sections off screen hold still. */
+.drift-box {
+  display: block;
+  filter: none !important;
+}
+
+.drift-face {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  filter: var(--die-cut);
+}
+
+/* The food rows are shown at the 1x width of the app's export, and that width
+   follows their words, so it differs by language. A row too wide for its place slides back inside the panel. */
+.food__row:nth-child(1) { --row-1x: 129.33px; }
+.food__row:nth-child(2) { --row-1x: 137.33px; }
+.food__row:nth-child(3) { --row-1x: 156.33px; }
+:root[data-language="de"] .food__row:nth-child(1) { --row-1x: 183px; }
+:root[data-language="de"] .food__row:nth-child(2) { --row-1x: 137px; }
+:root[data-language="de"] .food__row:nth-child(3) { --row-1x: 160.67px; }
+
+.food__row > .drift-face {
+  width: 100%;
+}
+
+@keyframes drift {
+  from { transform: translateY(-4px) rotate(-0.6deg); }
+  to { transform: translateY(4px) rotate(0.6deg); }
+}
+
+@keyframes drift-props {
+  from { translate: 0 -4px; rotate: -0.6deg; }
+  to { translate: 0 4px; rotate: 0.6deg; }
+}
+
+.collage__card,
+.collage__tile,
+.collage__sticker,
+.readiness,
+.privacy__app,
+.privacy__lock,
+.food__sentence,
+.food__row,
+.food__sticker,
+.plan__sticker,
+.faq__sticker,
+.shape__icon,
+.shape__banana {
+  --drift-phase: 0s;
+  animation: drift 3.5s ease-in-out var(--drift-phase) infinite alternate;
+}
+
+/* The hero pieces use transform for the pointer, so they drift through translate and rotate. */
+.burst__piece {
+  animation:
+    pop 900ms cubic-bezier(0.2, 1.4, 0.4, 1) var(--delay) both,
+    drift-props 3.5s ease-in-out calc(var(--delay) + 900ms) infinite alternate;
+}
+
+/* Out of step: 1.7 radians apart per piece in the app, about 1.9s on a 7s wave. */
+.collage__tile--right,
+.collage__sticker--fire,
+.collage__sticker--orange,
+.privacy__lock,
+.food__row:nth-child(2),
+.food__sticker--croissant,
+.shape__banana { --drift-phase: -1.9s; }
+
+.collage__sticker--moon,
+.collage__sticker--fish,
+.privacy__app--akari,
+.food__row:nth-child(3),
+.faq__sticker { --drift-phase: -3.8s; }
+
+.collage__tile--left,
+.collage__sticker--apple,
+.collage__sticker--salad,
+.food__sentence,
+.plan__sticker { --drift-phase: -5.7s; }
+
+.is-still,
+.is-still * {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collage__card,
+  .collage__tile,
+  .collage__sticker,
+  .readiness,
+  .privacy__app,
+  .privacy__lock,
+  .food__sentence,
+  .food__row,
+  .food__sticker,
+  .plan__sticker,
+  .faq__sticker,
+  .shape__icon,
+  .shape__banana,
+  .burst__piece {
+    animation: none;
   }
 }
