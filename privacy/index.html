@@ -11,9 +11,10 @@
     <link rel="alternate" hreflang="de" href="https://joinakari.com/privacy/?lang=de" />
     <link rel="alternate" hreflang="x-default" href="https://joinakari.com/privacy/" />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180.png" />
     <script>
       (() => {
-        const themes = ["meadow", "forest", "coast", "canyon"];
+        const themes = ["meadow", "forest", "coast", "canyon", "plain"];
         const modes = ["light", "dark"];
         const languages = ["en", "de"];
         const params = new URLSearchParams(window.location.search);
@@ -34,8 +35,8 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/legal.css?v=20261009-01" />
-    <script src="/legal.js?v=20261009-01" defer></script>
+    <link rel="stylesheet" href="/legal.css?v=20261009-05" />
+    <script src="/legal.js?v=20261009-03" defer></script>
     <title>Akari: Privacy Policy</title>
   </head>
   <body data-legal-page="privacy">
@@ -58,6 +59,7 @@
                 <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Japan theme" data-i18n-aria-label="themeJapanLabel" aria-pressed="true"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
                 <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Scotland theme" data-i18n-aria-label="themeScotlandLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
                 <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="USA theme" data-i18n-aria-label="themeUsaLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="plain" aria-label="Plain theme" data-i18n-aria-label="themePlainLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
               </div>
               <div class="mode-controls">
                 <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" data-i18n-aria-label="lightModeLabel" aria-pressed="false"><span class="mode-icon" aria-hidden="true"></span></button>
@@ -72,10 +74,9 @@
         </a>
         <button class="mobile-menu-toggle" type="button" aria-controls="header-controls-panel" aria-expanded="false" aria-label="Language and appearance settings" data-i18n-aria-label="mobileMenuLabel">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" />
-            <circle cx="9" cy="7" r="1.5" />
-            <circle cx="15" cy="12" r="1.5" />
-            <circle cx="11" cy="17" r="1.5" />
+            <path d="M4 7h16" />
+            <path d="M4 12h16" />
+            <path d="M4 17h16" />
           </svg>
         </button>
       </div>
@@ -103,6 +104,7 @@
             <li data-i18n="shortDevice">Your health information is processed on your iPhone and is not used for advertising.</li>
             <li data-i18n="shortSale">Akari does not sell your personal or health information.</li>
             <li data-i18n="shortChoice">You choose which health sources and permissions to connect, and you can disconnect them at any time.</li>
+            <li data-i18n="shortReports">If you choose to send a food report from the app, it reaches our server so we can correct the match. It carries no account and no Apple Health data.</li>
           </ul>
         </section>
 
@@ -124,6 +126,13 @@
           <h2 data-i18n="storageTitle">Storage and sharing</h2>
           <p data-i18n="storageBody">Akari stores its health views and app data locally on your device. Google authorization credentials are kept in protected device storage. Akari does not operate an advertising profile or sell health information.</p>
           <p data-i18n="sharingBody">Information may be disclosed if required by law, to protect users or the service from fraud or abuse, or to service providers strictly as needed to operate Akari. Those providers may not use the information for their own advertising or unrelated purposes.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="reportsTitle">Food reports</h2>
+          <p data-i18n="reportsSent">When a food match looks wrong, or right, you can send us a food report from the app. Nothing is sent unless you tap Send. Reports are the part of Akari that leaves your iPhone on purpose: they reach our server so we can improve how Akari recognises food.</p>
+          <p data-i18n="reportsContent">A report contains your rating and the reasons you picked, your comment if you write one, what you typed or said, the foods Akari matched with their amounts and nutrients, anything it could not match, a scanned barcode if there was one, and the app’s language, region and version. It does not include your name, an account, your Apple Health data or your location, unless you write something like that into your comment.</p>
+          <p data-i18n-html="reportsKeep">To prevent abuse, the app attaches a random identifier that exists only for food reports; our server keeps just a one-way hash of it and uses it to limit how many reports one installation can send in a day. Our server stores no IP address. Reports are stored with our hosting provider, Cloudflare, and are read only by the Akari team in our review tool. We keep them as long as they help us improve food recognition. To have a report removed, email <a href="mailto:contact@hejrafa.com">contact@hejrafa.com</a> with the date and what you reported.</p>
         </section>
 
         <section class="legal-section">
@@ -168,6 +177,7 @@
               <li><a href="/#goals" data-i18n="footerGoalsLabel">Goals</a></li>
               <li><a href="/#food" data-i18n="footerFoodLabel">Food logging</a></li>
               <li><a href="/#your-data" data-i18n="footerDataLabel">Your data</a></li>
+              <li><a href="/#pricing" data-i18n="footerPricingLabel">Pricing</a></li>
             </ul>
           </div>
           <div class="footer-column">

@@ -15,19 +15,19 @@ const goalSticker = document.querySelector("#goal-sticker");
 const goalFocuses = document.querySelector("#goal-focuses");
 // What each goal brings together, after Goal.focuses in the app, and each item's sticker.
 const focusStickers = {
-  Outside: "goal-dailies",
-  Move: "goal-move",
-  Hydrate: "focus-hydrate",
-  Eat: "focus-eat",
-  Sleep: "goal-sleep",
-  Connect: "focus-connect",
-  Train: "focus-train",
-  Strength: "focus-strength",
-  Burn: "focus-burn",
-  WindDown: "focus-wind-down",
-  Protein: "focus-protein",
-  Fiber: "broccoli",
-  Priorities: "goal-for-you",
+  Outside: "assets/stickers/goal-dailies.png",
+  Move: "assets/stickers/goal-move.png",
+  Hydrate: "assets/welcome/stickers/water.webp",
+  Eat: "assets/welcome/stickers/salad.webp",
+  Sleep: "assets/stickers/goal-sleep.png",
+  Connect: "assets/stickers/focus-connect.png",
+  Train: "assets/stickers/focus-train.png",
+  Strength: "assets/stickers/focus-strength.png",
+  Burn: "assets/stickers/focus-burn.png",
+  WindDown: "assets/stickers/focus-wind-down.png",
+  Protein: "assets/welcome/stickers/egg.webp",
+  Fiber: "assets/welcome/stickers/broccoli.webp",
+  Priorities: "assets/stickers/goal-for-you.png",
 };
 const goalFocusLists = {
   ForYou: ["Priorities"],
@@ -39,12 +39,12 @@ const goalFocusLists = {
 };
 // Each goal's sticker follows the app's goal icon (Goal.swift).
 const goalStickers = {
-  ForYou: "goal-for-you",
-  Dailies: "goal-dailies",
-  Sleep: "goal-sleep",
-  Move: "goal-move",
-  Eat: "goal-eat",
-  Lose: "goal-lose",
+  ForYou: "assets/stickers/goal-for-you.png",
+  Dailies: "assets/stickers/goal-dailies.png",
+  Sleep: "assets/stickers/goal-sleep.png",
+  Move: "assets/stickers/goal-move.png",
+  Eat: "assets/welcome/stickers/carrot.webp",
+  Lose: "assets/stickers/goal-lose.png",
 };
 const siteRoot = new URL(".", document.currentScript?.src || window.location.href);
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
@@ -77,6 +77,7 @@ const translations = {
     themeJapanLabel: "Japan theme",
     themeScotlandLabel: "Scotland theme",
     themeUsaLabel: "USA theme",
+    themePlainLabel: "Plain theme",
     lightModeLabel: "Use light appearance",
     darkModeLabel: "Use dark appearance",
     heroChip: "Sleep, movement, food",
@@ -140,20 +141,25 @@ const translations = {
     goalsTracksLabel: "What this goal brings together",
     foodChip: "Akari does the rest",
     foodTitle: "Write or say what you ate",
+    foodBody: "Type or say it the way you would tell someone. Akari finds each food, its portion and what is in it.",
     launchTitle: "Akari is almost here.",
     launchBody: "We’re getting ready for the App Store. Until then, the beta is open: try Akari now and tell us what you think.",
     faqTitle: "FAQ",
     faqHeadline: "Good to know",
     faqIntro: "Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.",
     faqWhatQuestion: "What is Akari?",
-    faqWhatAnswer: "Akari is an iPhone health app that turns health data into a calm, readable daily story.",
-    faqDataQuestion: "What health data can I see?",
-    faqDataAnswer: "Akari brings supported vitals, activity, nutrition and goals together so you can understand your day in context.",
+    faqWhatAnswer: "Akari is an iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day.",
+    faqPriceQuestion: "What does Akari cost?",
+    faqPriceAnswer: "Most of Akari is free. Food logging, readiness and Health Age need a subscription: €4.99 a month or €39.99 a year, with 14 days free to try and no commitment. During the beta everything is free.",
+    faqNeedQuestion: "What do I need?",
+    faqNeedAnswer: "An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German.",
+    faqMedicalQuestion: "Is Akari medical advice?",
+    faqMedicalAnswer: "No. Akari explains your own data and patterns. It does not diagnose or treat anything, so talk to your doctor about health concerns.",
     faqPrivacyQuestion: "Does my health data leave my iPhone?",
-    faqPrivacyAnswer: "No. Akari works without an account, and your health data stays on your iPhone.",
+    faqPrivacyAnswer: "No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match.",
     faqTryQuestion: "How can I try Akari?",
-    faqTryPrefix: "Join the free public beta through ",
-    faqTrySuffix: " and help shape the app before launch.",
+    faqTryPrefix: "Join the free beta through ",
+    faqTrySuffix: ". The App Store version is coming soon.",
     footerLabel: "Akari credits",
     madePrefix: "Made with ",
     madeSuffix: " in Germany",
@@ -167,6 +173,24 @@ const translations = {
     footerGoalsLabel: "Goals",
     footerFoodLabel: "Food logging",
     footerDataLabel: "Your data",
+    footerPricingLabel: "Pricing",
+    pricingChip: "Pricing",
+    pricingTitle: "Most of Akari is free",
+    pricingBody: "Sleep, movement, vitals and goals are free. Food logging, readiness and Health Age come with a subscription you can try free for 14 days, with no commitment.",
+    planFree: "Free",
+    planFreePrice: "€0",
+    planFreeIncludes: "Sleep, movement, vitals and goals",
+    planIncludes: "Adds food logging, readiness and Health Age",
+    planMonthly: "Monthly",
+    planMonthlyPrice: "€4.99",
+    planPerMonth: "/ month",
+    planFlexible: "Flexible",
+    planYearly: "Yearly",
+    planYearlyPrice: "€39.99",
+    planPerYear: "/ year",
+    planSave: "Save 33%",
+    planYearlyMonthly: "€3.33 a month",
+    pricingFine: "What’s free and what’s in the subscription may still change before launch. During the beta everything is free.",
     footerSupportTitle: "Support",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Legal",
@@ -191,6 +215,7 @@ const translations = {
     themeJapanLabel: "Japan-Design",
     themeScotlandLabel: "Schottland-Design",
     themeUsaLabel: "USA-Design",
+    themePlainLabel: "Schlicht-Design",
     lightModeLabel: "Helles Erscheinungsbild verwenden",
     darkModeLabel: "Dunkles Erscheinungsbild verwenden",
     heroChip: "Schlaf, Bewegung, Essen",
@@ -254,20 +279,25 @@ const translations = {
     goalsTracksLabel: "Was dieses Ziel zusammenbringt",
     foodChip: "Akari macht den Rest",
     foodTitle: "Schreib oder sag, was du isst",
+    foodBody: "Tipp oder sag es so, wie du es jemandem erzählen würdest. Akari findet jedes Lebensmittel, die Portion und was drinsteckt.",
     launchTitle: "Akari ist fast da.",
     launchBody: "Wir bereiten den Start im App Store vor. Bis dahin ist die Beta offen: Teste Akari jetzt und sag uns, was du denkst.",
     faqTitle: "FAQ",
     faqHeadline: "Gut zu wissen",
     faqIntro: "Akari ist in der Beta kostenlos und über Apples TestFlight fürs iPhone verfügbar. Das solltest du vor dem Start wissen.",
     faqWhatQuestion: "Was ist Akari?",
-    faqWhatAnswer: "Akari ist eine iPhone-App, die deine Gesundheitsdaten ruhig und verständlich einordnet.",
-    faqDataQuestion: "Welche Gesundheitsdaten kann ich sehen?",
-    faqDataAnswer: "Akari zeigt Vitalwerte, Aktivität, Ernährung und Ziele gemeinsam. So bekommst du mehr Kontext im Alltag.",
+    faqWhatAnswer: "Akari ist eine iPhone-App, die Schlaf, Bewegung und Essen an einem Ort zusammenbringt und in einfachen Worten erklärt, was sie für deinen Tag bedeuten.",
+    faqPriceQuestion: "Was kostet Akari?",
+    faqPriceAnswer: "Das meiste an Akari ist kostenlos. Für Mahlzeiten erfassen, Tagesform und Gesundheitsalter brauchst du ein Abo: 4,99 € im Monat oder 39,99 € im Jahr, 14 Tage kostenlos testen und ohne Bindung. Während der Beta ist alles kostenlos.",
+    faqNeedQuestion: "Was brauche ich dafür?",
+    faqNeedAnswer: "Ein iPhone mit iOS 26 oder neuer und Apple Health. Akari gibt es auf Deutsch und Englisch.",
+    faqMedicalQuestion: "Ist Akari eine medizinische Beratung?",
+    faqMedicalAnswer: "Nein. Akari erklärt deine eigenen Daten und Muster. Akari stellt keine Diagnosen und behandelt nichts. Bei gesundheitlichen Fragen sprich mit deiner Ärztin oder deinem Arzt.",
     faqPrivacyQuestion: "Bleiben meine Gesundheitsdaten auf dem iPhone?",
-    faqPrivacyAnswer: "Ja. Akari braucht kein Konto, und deine Gesundheitsdaten bleiben auf deinem iPhone.",
+    faqPrivacyAnswer: "Ja. Akari braucht kein Konto und behält deine Gesundheitsdaten auf deinem iPhone. Nur eine Essensmeldung, die du selbst abschickst, landet bei uns, damit wir den Treffer korrigieren können.",
     faqTryQuestion: "Wie teste ich Akari?",
-    faqTryPrefix: "Teste Akari kostenlos über ",
-    faqTrySuffix: " und gestalte die App vor dem Start mit.",
+    faqTryPrefix: "Teste die kostenlose Beta über ",
+    faqTrySuffix: ". Die App-Store-Version kommt bald.",
     footerLabel: "Akari-Info und rechtlicher Hinweis",
     madePrefix: "Mit ",
     madeSuffix: " in Deutschland entwickelt",
@@ -281,6 +311,24 @@ const translations = {
     footerGoalsLabel: "Ziele",
     footerFoodLabel: "Essen erfassen",
     footerDataLabel: "Deine Daten",
+    footerPricingLabel: "Preise",
+    pricingChip: "Preise",
+    pricingTitle: "Das meiste an Akari ist kostenlos",
+    pricingBody: "Schlaf, Bewegung, Vitalwerte und Ziele sind kostenlos. Mahlzeiten erfassen, Tagesform und Gesundheitsalter gibt es im Abo, das du 14 Tage kostenlos und ohne Bindung testen kannst.",
+    planFree: "Kostenlos",
+    planFreePrice: "0 €",
+    planFreeIncludes: "Schlaf, Bewegung, Vitalwerte und Ziele",
+    planIncludes: "Dazu Mahlzeiten erfassen, Tagesform und Gesundheitsalter",
+    planMonthly: "Monatlich",
+    planMonthlyPrice: "4,99 €",
+    planPerMonth: "/ Monat",
+    planFlexible: "Flexibel",
+    planYearly: "Jährlich",
+    planYearlyPrice: "39,99 €",
+    planPerYear: "/ Jahr",
+    planSave: "33 % sparen",
+    planYearlyMonthly: "3,33 € im Monat",
+    pricingFine: "Was kostenlos ist und was im Abo steckt, kann sich bis zum Start noch ändern. Während der Beta ist alles kostenlos.",
     footerSupportTitle: "Hilfe",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Rechtliches",
@@ -349,7 +397,7 @@ function structuredDataFor(language) {
         operatingSystem: "iOS",
         availableOnDevice: "iPhone",
         isAccessibleForFree: true,
-        image: "https://joinakari.com/assets/app-icon.png",
+        image: "https://joinakari.com/assets/icon-512.png",
         screenshot: [
           "https://joinakari.com/assets/theme-media/image_japan_dark_01.webp",
           "https://joinakari.com/assets/theme-media/image_japan_dark_02.webp",
@@ -476,6 +524,8 @@ function languageTransitionItems() {
     ".goals__focuses",
     ".band-cta > [data-i18n]",
     ".faq__item",
+    ".plan",
+    ".pricing__fine",
     ".footer-made",
     ".footer-sitemap",
     ".footer-disclaimer",
@@ -574,40 +624,43 @@ function transitionLanguage(language) {
     });
 }
 
-const themeCountries = {
-  meadow: "germany",
-  forest: "japan",
-  coast: "scotland",
-  canyon: "usa",
+// The header sits on each theme's deep band in both schemes, so the browser chrome takes the band colour.
+const bandColors = {
+  meadow: "#0a4252",
+  forest: "#0c271c",
+  coast: "#083756",
+  canyon: "#482219",
+  plain: "#141414",
 };
+const modes = ["light", "dark"];
 
-const pageColors = {
-  dark: {
-    meadow: "#1d1b07",
-    forest: "#151a0c",
-    coast: "#0d1920",
-    canyon: "#1a100c",
-  },
-  light: {
-    meadow: "#f1eac6",
-    forest: "#e6f4d1",
-    coast: "#d7edf8",
-    canyon: "#f4ddd1",
-  },
-};
+// The app exports each piece as 2x and 3x WebP; the browser picks by screen density.
+function setPieceSources(image, base) {
+  // A piece shown larger than its 1x box always takes the 3x file, so it stays sharp.
+  if ("enlarged" in image.dataset) {
+    const sharp = new URL(`${base}@3x.webp`, siteRoot).href;
+    if (image.src !== sharp) image.src = sharp;
+    return;
+  }
+  const src = new URL(`${base}@2x.webp`, siteRoot).href;
+  if (image.src === src) return;
+  image.srcset = `${src} 2x, ${new URL(`${base}@3x.webp`, siteRoot).href} 3x`;
+  image.src = src;
+}
 
 function updateThemeColor() {
-  const color = pageColors[root.dataset.mode]?.[root.dataset.theme];
+  const color = bandColors[root.dataset.theme];
   if (color && themeColor) themeColor.content = color;
   brandLogos.forEach((logo) => {
     logo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-dark.svg?v=2`, siteRoot).href;
   });
+  const { theme, language, mode } = root.dataset;
+  const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
   document.querySelectorAll("img[data-theme-icon]").forEach((icon) => {
-    icon.src = new URL(`assets/app-icons/${root.dataset.theme}.jpg`, siteRoot).href;
+    setPieceSources(icon, `assets/welcome/${theme}/app-icon-${iconMode}`);
   });
   document.querySelectorAll("img[data-piece]").forEach((piece) => {
-    const source = new URL(`assets/welcome/${root.dataset.language}/${root.dataset.mode}/${piece.dataset.piece}@3x.png`, siteRoot).href;
-    if (piece.src !== source) piece.src = source;
+    setPieceSources(piece, `assets/welcome/${theme}/${language}/${mode}/${piece.dataset.piece}`);
   });
   if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
@@ -623,7 +676,7 @@ function updateThemeColor() {
 }
 
 function selectTheme(theme, persist = true, updateAppearance = true) {
-  if (!pageColors.dark[theme]) return;
+  if (!bandColors[theme]) return;
   const themeChanged = root.dataset.theme !== theme;
   root.dataset.theme = theme;
   themeButtons.forEach((button) => {
@@ -636,7 +689,7 @@ function selectTheme(theme, persist = true, updateAppearance = true) {
 }
 
 function selectMode(mode, persist = true, updateAppearance = true) {
-  if (!pageColors[mode]) return;
+  if (!modes.includes(mode)) return;
   const modeChanged = root.dataset.mode !== mode;
   root.dataset.mode = mode;
   modeButtons.forEach((button) => {
@@ -705,7 +758,7 @@ function selectGoal(pill, moveFocus = false) {
   });
   goalBlurb.dataset.i18n = `goal${pill.dataset.goal}Blurb`;
   goalBlurb.textContent = translations[root.dataset.language]?.[goalBlurb.dataset.i18n] ?? goalBlurb.textContent;
-  goalSticker.src = new URL(`assets/stickers/${goalStickers[pill.dataset.goal]}.png`, siteRoot).href;
+  goalSticker.src = new URL(goalStickers[pill.dataset.goal], siteRoot).href;
   goalSticker.classList.remove("is-tossed");
   void goalSticker.offsetWidth;
   goalSticker.classList.add("is-tossed");
@@ -720,7 +773,7 @@ function renderGoalFocuses(goal) {
     tile.className = "focus-tile is-new";
     tile.style.setProperty("--tile-delay", `${index * 60}ms`);
     const sticker = document.createElement("img");
-    sticker.src = new URL(`assets/stickers/${focusStickers[focus]}.png`, siteRoot).href;
+    sticker.src = new URL(focusStickers[focus], siteRoot).href;
     sticker.alt = "";
     sticker.width = 256;
     sticker.height = 256;
@@ -740,7 +793,7 @@ function renderGoalFocuses(goal) {
 // Fetch the other goal stickers once the page is idle, so a switch never waits on the network.
 window.addEventListener("load", () => {
   [...Object.values(goalStickers), ...Object.values(focusStickers)].forEach((name) => {
-    new Image().src = new URL(`assets/stickers/${name}.png`, siteRoot).href;
+    new Image().src = new URL(name, siteRoot).href;
   });
 }, { once: true });
 
@@ -776,8 +829,8 @@ try {
   const params = new URLSearchParams(window.location.search);
   const requestedTheme = params.get("theme");
   const requestedMode = params.get("mode");
-  const queryTheme = pageColors.dark[requestedTheme] ? requestedTheme : null;
-  const queryMode = pageColors[requestedMode] ? requestedMode : null;
+  const queryTheme = bandColors[requestedTheme] ? requestedTheme : null;
+  const queryMode = modes.includes(requestedMode) ? requestedMode : null;
   const savedTheme = localStorage.getItem("akari-theme");
   const savedMode = localStorage.getItem("akari-mode");
 
@@ -795,6 +848,8 @@ updateThemeColor();
 systemModePreference.addEventListener?.("change", (event) => {
   if (followsSystemMode) selectMode(event.matches ? "dark" : "light", false);
 });
+
+setupDrift();
 
 function setupRevealMotion() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -819,7 +874,8 @@ function setupRevealMotion() {
   prepare(document.querySelectorAll(".brand"), "drop", [0], loadItems);
   prepare(document.querySelectorAll(".language-button"), "pop", [70, 115], loadItems);
   prepare(document.querySelectorAll(".mobile-menu-toggle"), "pop", [70], loadItems);
-  prepare(document.querySelectorAll(".theme-dot, .mode-button"), "pop", [70, 115, 160, 205, 265, 315], loadItems);
+  // The theme pill pops in as one piece, since its dots open and close with hover.
+  prepare(document.querySelectorAll(".theme-controls, .mode-button"), "pop", [70, 265, 315], loadItems);
   // The headline is the page's largest paint, so it is never held back for an entrance.
   prepare(document.querySelectorAll(".pill-cta"), "pop", [620], loadItems);
 
@@ -831,7 +887,8 @@ function setupRevealMotion() {
   prepare(document.querySelectorAll(".privacy__link"), "up", 0, scrollItems);
   prepare(document.querySelectorAll(".goals__options, .band-cta"), "up", 0, scrollItems);
   prepare(document.querySelectorAll(".faq__item"), "up", 70, scrollItems);
-  prepare(document.querySelectorAll(".spotlight__panel, .deep-panel, .food__panel"), "card", 0, cardItems);
+  prepare(document.querySelectorAll(".collage, .food__panel, .pricing__plans"), "card", 0, cardItems);
+  prepare(document.querySelectorAll(".faq__sticker"), "pop", 0, scrollItems);
   prepare(document.querySelectorAll(".footer-brand, .footer-column, .site-footer .footer-disclaimer"), "up", [0, 80, 140, 200, 260], footerItems);
 
   loadItems.forEach((element) => element.classList.add("reveal--armed"));
@@ -954,3 +1011,31 @@ function setupBurst() {
 }
 
 setupBurst();
+
+// Drift, as in the app's Welcome collage (styles.css runs it). Two things keep it cheap:
+// - Each drifting image is wrapped: the wrapper takes its classes, place and motion, and the image inside
+//   keeps the die-cut edge. The edge is then painted once into the wrapper's layer, which the compositor
+//   moves; on the moving element itself the filter would be redrawn every frame.
+// - Sections off screen hold still.
+function setupDrift() {
+  const drifting = ".burst__piece, .collage__card, .collage__tile, .collage__sticker, .privacy__app, .privacy__lock, .food__sentence, .food__row, .food__sticker, .plan__sticker, .faq__sticker, .shape__icon, .shape__banana";
+  document.querySelectorAll(drifting).forEach((piece) => {
+    if (piece.tagName !== "IMG") return;
+    const box = document.createElement("span");
+    box.className = `${piece.className} drift-box`;
+    box.setAttribute("aria-hidden", "true");
+    piece.className = "drift-face";
+    piece.replaceWith(box);
+    box.append(piece);
+  });
+
+  const sections = document.querySelectorAll(".burst-hero, .spotlight, .split, .privacy, .goals, .pricing, .shape, .faq");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => entry.target.classList.toggle("is-still", !entry.isIntersecting));
+  }, { rootMargin: "120px 0px" });
+  sections.forEach((section) => {
+    section.classList.add("is-still");
+    observer.observe(section);
+  });
+}
+

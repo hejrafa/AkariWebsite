@@ -1,6 +1,6 @@
 (() => {
   const root = document.documentElement;
-  const themes = ["meadow", "forest", "coast", "canyon"];
+  const themes = ["meadow", "forest", "coast", "canyon", "plain"];
   const modes = ["light", "dark"];
   const languages = ["en", "de"];
 

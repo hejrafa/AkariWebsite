@@ -45,7 +45,7 @@
     <link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
     <link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
     <link rel="icon" href="assets/favicon.svg?v=1" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon-180.png" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="preload" href="assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin />
     <script id="structured-data" type="application/ld+json">
@@ -81,7 +81,7 @@
             "operatingSystem": "iOS",
             "availableOnDevice": "iPhone",
             "isAccessibleForFree": true,
-            "image": "https://joinakari.com/assets/app-icon.png",
+            "image": "https://joinakari.com/assets/icon-512.png",
             "screenshot": [
               "https://joinakari.com/assets/theme-media/image_japan_dark_01.webp",
               "https://joinakari.com/assets/theme-media/image_japan_dark_02.webp",
@@ -109,7 +109,7 @@
     </script>
     <script>
       (() => {
-        const themes = ["meadow", "forest", "coast", "canyon"];
+        const themes = ["meadow", "forest", "coast", "canyon", "plain"];
         const modes = ["light", "dark"];
         const languages = ["en", "de"];
         const params = new URLSearchParams(window.location.search);
@@ -146,11 +146,22 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20261009-15" />
-    <script src="script.js?v=20261009-11" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20261009-53" />
+    <script src="script.js?v=20261009-22" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skipLink">Skip to content</a>
+    <svg class="sr-only" width="0" height="0" aria-hidden="true" focusable="false">
+      <filter id="die-cut" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+        <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="grown" />
+        <feFlood style="flood-color: var(--band-ink)" />
+        <feComposite in2="grown" operator="in" result="edge" />
+        <feMerge>
+          <feMergeNode in="edge" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </svg>
 
     <header class="site-header" aria-label="Akari website header" data-i18n-aria-label="headerLabel">
       <div class="site-header__inner">
@@ -171,6 +182,7 @@
                 <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Japan theme" data-i18n-aria-label="themeJapanLabel" aria-pressed="true"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
                 <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Scotland theme" data-i18n-aria-label="themeScotlandLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
                 <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="USA theme" data-i18n-aria-label="themeUsaLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="plain" aria-label="Plain theme" data-i18n-aria-label="themePlainLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
               </div>
               <div class="mode-controls">
                 <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" data-i18n-aria-label="lightModeLabel" aria-pressed="false"><span class="mode-icon" aria-hidden="true"></span></button>
@@ -185,10 +197,9 @@
         </a>
         <button class="mobile-menu-toggle" type="button" aria-controls="header-controls-panel" aria-expanded="false" aria-label="Language and appearance settings" data-i18n-aria-label="mobileMenuLabel">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" />
-            <circle cx="9" cy="7" r="1.5" />
-            <circle cx="15" cy="12" r="1.5" />
-            <circle cx="11" cy="17" r="1.5" />
+            <path d="M4 7h16" />
+            <path d="M4 12h16" />
+            <path d="M4 17h16" />
           </svg>
         </button>
       </div>
@@ -207,11 +218,11 @@
           <p class="burst__bubble" data-i18n="heroChip">Sleep, movement, food</p>
           <div class="burst__pieces" aria-hidden="true">
             <img class="burst__piece burst__tile burst__piece--steps" data-piece="tile-steps" alt="" width="179" height="168" />
-            <img class="burst__piece burst__piece--icon" src="assets/app-icons/forest.jpg" alt="" width="384" height="384" data-theme-icon />
+            <img class="burst__piece burst__piece--icon" alt="" width="104" height="104" data-theme-icon />
             <img class="burst__piece burst__tile burst__piece--sleep" data-piece="tile-sleep" alt="" width="179" height="168" fetchpriority="high" />
-            <img class="burst__piece burst__sticker burst__piece--avocado" src="assets/welcome/stickers/avocado.png" alt="" width="256" height="256" />
-            <img class="burst__piece burst__sticker burst__piece--broccoli" src="assets/welcome/stickers/broccoli.png" alt="" width="256" height="256" />
-            <img class="burst__piece burst__sticker burst__piece--coffee" src="assets/welcome/stickers/coffee.png" alt="" width="256" height="256" />
+            <img class="burst__piece burst__sticker burst__piece--avocado" src="assets/welcome/stickers/avocado.webp" alt="" width="256" height="256" />
+            <img class="burst__piece burst__sticker burst__piece--broccoli" src="assets/welcome/stickers/broccoli.webp" alt="" width="256" height="256" />
+            <img class="burst__piece burst__sticker burst__piece--coffee" src="assets/welcome/stickers/coffee.webp" alt="" width="256" height="256" />
           </div>
         </div>
 
@@ -225,10 +236,15 @@
         <p class="eyebrow" data-i18n="vitalsChip">Vitals</p>
         <h2 id="vitals-title" data-i18n="vitalsTitle">Your readiness, every morning</h2>
         <p class="muted-copy spotlight__body" data-i18n="vitalsBody">Each morning Akari reads last night against your own usual nights. Yesterday’s food and strain count too.</p>
-        <div class="spotlight__panel" aria-hidden="true">
+        <div class="collage collage--vitals" aria-hidden="true">
           <div class="readiness"><img class="readiness__bar" data-piece="readiness-bar" alt="" width="434" height="150" loading="lazy" decoding="async" /></div>
-          <img class="spotlight__piece" data-piece="tile-hrv" alt="" width="179" height="168" loading="lazy" decoding="async" />
-          <img class="spotlight__piece" data-piece="tile-rhr" alt="" width="179" height="168" loading="lazy" decoding="async" />
+          <div class="collage__row">
+            <img class="collage__tile collage__tile--left" data-piece="tile-hrv" alt="" width="179" height="168" loading="lazy" decoding="async" />
+            <img class="collage__tile collage__tile--right" data-piece="tile-rhr" alt="" width="179" height="168" loading="lazy" decoding="async" />
+          </div>
+          <img class="collage__sticker collage__sticker--moon" src="assets/stickers/goal-sleep.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="collage__sticker collage__sticker--fire" src="assets/stickers/focus-burn.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="collage__sticker collage__sticker--apple" src="assets/welcome/stickers/green-apple.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
         </div>
       </section>
 
@@ -238,10 +254,15 @@
           <h2 id="nutrition-title" data-i18n="nutritionTitle">More than just calories</h2>
           <p class="muted-copy" data-i18n="nutritionBody">Every nutrient gets a row of its own, with its own symbol. Where there is a limit, Akari marks it. You log food by writing or saying it.</p>
         </div>
-        <div class="deep-panel deep-panel--stack" aria-hidden="true">
-          <img class="deep-panel__piece deep-panel__piece--wide" data-piece="card-fiber" alt="" width="370" height="176" loading="lazy" decoding="async" />
-          <img class="deep-panel__piece" data-piece="tile-magnesium" alt="" width="179" height="168" loading="lazy" decoding="async" />
-          <img class="deep-panel__piece" data-piece="tile-iron" alt="" width="179" height="168" loading="lazy" decoding="async" />
+        <div class="collage collage--nutrition" aria-hidden="true">
+          <img class="collage__card" data-piece="card-fiber" alt="" width="370" height="176" loading="lazy" decoding="async" />
+          <div class="collage__row">
+            <img class="collage__tile collage__tile--left" data-piece="tile-magnesium" alt="" width="179" height="168" loading="lazy" decoding="async" />
+            <img class="collage__tile collage__tile--right" data-piece="tile-iron" alt="" width="179" height="168" loading="lazy" decoding="async" />
+          </div>
+          <img class="collage__sticker collage__sticker--fish" src="assets/welcome/stickers/fish.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="collage__sticker collage__sticker--orange" src="assets/welcome/stickers/orange.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="collage__sticker collage__sticker--salad" src="assets/welcome/stickers/salad.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
         </div>
       </section>
 
@@ -252,9 +273,9 @@
         </svg>
         <div class="privacy__inner">
           <div class="privacy__stickers" aria-hidden="true">
-            <img class="privacy__app privacy__app--health" src="assets/apple-health.jpg" alt="" width="512" height="512" loading="lazy" decoding="async" />
+            <img class="privacy__app privacy__app--health" src="assets/welcome/apple-health@2x.webp" srcset="assets/welcome/apple-health@2x.webp 2x, assets/welcome/apple-health@3x.webp 3x" alt="" width="104" height="104" loading="lazy" decoding="async" />
             <img class="privacy__lock" src="assets/stickers/lock.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
-            <img class="privacy__app privacy__app--akari" src="assets/app-icons/forest.jpg" alt="" width="384" height="384" loading="lazy" decoding="async" data-theme-icon />
+            <img class="privacy__app privacy__app--akari" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-icon />
           </div>
           <p class="privacy__chip" data-i18n="privacyChip">No account, no server</p>
           <h2 id="privacy-title"><span data-i18n="privacyTitleA">Your data stays on</span> <mark data-i18n="privacyTitleB">this iPhone</mark></h2>
@@ -289,25 +310,58 @@
         </ul>
       </section>
 
-      <section class="food" id="food" aria-labelledby="food-title">
-        <p class="eyebrow" data-i18n="foodChip">Akari does the rest</p>
-        <h2 id="food-title" data-i18n="foodTitle">Write or say what you ate</h2>
+      <section class="split split--words-first food" id="food" aria-labelledby="food-title">
+        <div class="split__copy">
+          <p class="eyebrow" data-i18n="foodChip">Akari does the rest</p>
+          <h2 id="food-title" data-i18n="foodTitle">Write or say what you ate</h2>
+          <p class="muted-copy" data-i18n="foodBody">Type or say it the way you would tell someone. Akari finds each food, its portion and what is in it.</p>
+        </div>
         <div class="food__panel" aria-hidden="true">
-          <img class="food__sticker food__sticker--strawberry" src="assets/welcome/stickers/strawberry.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
-          <img class="food__sticker food__sticker--croissant" src="assets/welcome/stickers/croissant.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="food__sticker food__sticker--strawberry" src="assets/welcome/stickers/strawberry.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="food__sticker food__sticker--croissant" src="assets/welcome/stickers/croissant.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
           <img class="food__sentence" data-piece="meal-sentence" alt="" width="354" height="78" loading="lazy" decoding="async" />
           <div class="food__rows">
-            <img class="food__row" data-piece="food-oats" data-own-width alt="" width="129" height="59" loading="lazy" decoding="async" />
-            <img class="food__row" data-piece="food-banana" data-own-width alt="" width="137" height="59" loading="lazy" decoding="async" />
-            <img class="food__row" data-piece="food-flat-white" data-own-width alt="" width="156" height="59" loading="lazy" decoding="async" />
+            <img class="food__row" data-piece="food-oats" data-enlarged alt="" width="129" height="59" loading="lazy" decoding="async" />
+            <img class="food__row" data-piece="food-banana" data-enlarged alt="" width="137" height="59" loading="lazy" decoding="async" />
+            <img class="food__row" data-piece="food-flat-white" data-enlarged alt="" width="156" height="59" loading="lazy" decoding="async" />
           </div>
         </div>
       </section>
 
+      <section class="pricing" id="pricing" aria-labelledby="pricing-title">
+        <p class="eyebrow" data-i18n="pricingChip">Pricing</p>
+        <h2 id="pricing-title" data-i18n="pricingTitle">Most of Akari is free</h2>
+        <p class="muted-copy" data-i18n="pricingBody">Sleep, movement, vitals and goals are free. Food logging, readiness and Health Age come with a subscription you can try free for 14 days, with no commitment.</p>
+        <div class="pricing__plans">
+          <article class="plan plan--free">
+            <h3 class="plan__name" data-i18n="planFree">Free</h3>
+            <p class="plan__price"><span data-i18n="planFreePrice">€0</span></p>
+            <p class="plan__includes" data-i18n="planFreeIncludes">Sleep, movement, vitals and goals</p>
+          </article>
+          <article class="plan">
+            <h3 class="plan__name" data-i18n="planMonthly">Monthly</h3>
+            <p class="plan__price"><span data-i18n="planMonthlyPrice">€4.99</span> <small data-i18n="planPerMonth">/ month</small></p>
+            <p class="plan__includes" data-i18n="planIncludes">Adds food logging, readiness and Health Age</p>
+            <p class="plan__note" data-i18n="planFlexible">Flexible</p>
+          </article>
+          <article class="plan plan--featured">
+            <img class="plan__sticker" src="assets/stickers/goal-dailies.png" alt="" width="256" height="256" loading="lazy" decoding="async" aria-hidden="true" />
+            <div class="plan__head">
+              <h3 class="plan__name" data-i18n="planYearly">Yearly</h3>
+              <span class="plan__save" data-i18n="planSave">Save 33%</span>
+            </div>
+            <p class="plan__price"><span data-i18n="planYearlyPrice">€39.99</span> <small data-i18n="planPerYear">/ year</small></p>
+            <p class="plan__includes" data-i18n="planIncludes">Adds food logging, readiness and Health Age</p>
+            <p class="plan__note" data-i18n="planYearlyMonthly">€3.33 a month</p>
+          </article>
+        </div>
+        <p class="pricing__fine" data-i18n="pricingFine">What’s free and what’s in the subscription may still change before launch. During the beta everything is free.</p>
+      </section>
+
       <section class="shape" id="get-akari" aria-labelledby="launch-title">
         <div class="shape__stickers" aria-hidden="true">
-          <img class="shape__icon" src="assets/app-icons/forest.jpg" alt="" width="384" height="384" loading="lazy" decoding="async" data-theme-icon />
-          <img class="shape__banana" src="assets/welcome/stickers/banana.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <img class="shape__icon" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-icon />
+          <img class="shape__banana" src="assets/welcome/stickers/banana.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
         </div>
         <h2 id="launch-title" data-i18n="launchTitle">Akari is almost here.</h2>
         <p class="muted-copy" data-i18n="launchBody">We’re getting ready for the App Store. Until then, the beta is open: try Akari now and tell us what you think.</p>
@@ -316,6 +370,7 @@
 
       <section class="faq" id="faq" aria-labelledby="faq-title">
         <div class="faq__intro">
+          <img class="faq__sticker" src="assets/stickers/focus-connect.png" alt="" width="256" height="256" loading="lazy" decoding="async" aria-hidden="true" />
           <p class="eyebrow" data-i18n="faqTitle">FAQ</p>
           <h2 id="faq-title" data-i18n="faqHeadline">Good to know</h2>
           <p class="muted-copy" data-i18n="faqIntro">Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.</p>
@@ -323,37 +378,54 @@
         <div class="faq__list">
           <details class="faq__item">
             <summary data-i18n="faqWhatQuestion">What is Akari?</summary>
-            <p data-i18n="faqWhatAnswer">Akari is an iPhone health app that turns health data into a calm, readable daily story.</p>
+            <p data-i18n="faqWhatAnswer">Akari is an iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day.</p>
           </details>
           <details class="faq__item">
-            <summary data-i18n="faqDataQuestion">What health data can I see?</summary>
-            <p data-i18n="faqDataAnswer">Akari brings supported vitals, activity, nutrition and goals together so you can understand your day in context.</p>
+            <summary data-i18n="faqPriceQuestion">What does Akari cost?</summary>
+            <p data-i18n="faqPriceAnswer">Most of Akari is free. Food logging, readiness and Health Age need a subscription: €4.99 a month or €39.99 a year, with 14 days free to try and no commitment. During the beta everything is free.</p>
           </details>
           <details class="faq__item">
             <summary data-i18n="faqPrivacyQuestion">Does my health data leave my iPhone?</summary>
-            <p data-i18n="faqPrivacyAnswer">No. Akari works without an account, and your health data stays on your iPhone.</p>
+            <p data-i18n="faqPrivacyAnswer">No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match.</p>
+          </details>
+          <details class="faq__item">
+            <summary data-i18n="faqNeedQuestion">What do I need?</summary>
+            <p data-i18n="faqNeedAnswer">An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German.</p>
+          </details>
+          <details class="faq__item">
+            <summary data-i18n="faqMedicalQuestion">Is Akari medical advice?</summary>
+            <p data-i18n="faqMedicalAnswer">No. Akari explains your own data and patterns. It does not diagnose or treat anything, so talk to your doctor about health concerns.</p>
           </details>
           <details class="faq__item">
             <summary data-i18n="faqTryQuestion">How can I try Akari?</summary>
-            <p><span data-i18n="faqTryPrefix">Join the free public beta through </span><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Apple TestFlight</a><span data-i18n="faqTrySuffix"> and help shape the app before launch.</span></p>
+            <p><span data-i18n="faqTryPrefix">Join the free beta through </span><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer">Apple TestFlight</a><span data-i18n="faqTrySuffix">. The App Store version is coming soon.</span></p>
           </details>
         </div>
       </section>
     </main>
     <script>
-      // The app's pieces come in a light and a dark rendering per language. Choose the right file before
-      // the browser starts loading, so nobody downloads a variant they will not see. script.js keeps them
-      // in step with the mode and language switches.
+      // The app's pieces come per theme, language and light/dark rendering, as 2x and 3x WebP. Choose the
+      // right files before the browser starts loading, so nobody downloads a variant they will not see.
+      // script.js keeps them in step with the theme, mode and language switches (pieceSources there).
       (() => {
-        const { language, mode } = document.documentElement.dataset;
-        document.querySelectorAll("img[data-piece]").forEach((image) => {
-          // Pieces whose width depends on their words (the food rows) take their 1x width from the file.
-          if ("ownWidth" in image.dataset) {
-            image.addEventListener("load", () => {
-              image.style.width = `${image.naturalWidth / 3}px`;
-            });
+        const { theme, language, mode } = document.documentElement.dataset;
+        const sources = (base) => ({ src: `${base}@2x.webp`, srcset: `${base}@2x.webp 2x, ${base}@3x.webp 3x` });
+        const set = (image, base) => {
+          // A piece shown larger than its 1x box always takes the 3x file, so it stays sharp.
+          if ("enlarged" in image.dataset) {
+            image.src = `${base}@3x.webp`;
+            return;
           }
-          image.src = `assets/welcome/${language}/${mode}/${image.dataset.piece}@3x.png`;
+          const { src, srcset } = sources(base);
+          image.srcset = srcset;
+          image.src = src;
+        };
+        document.querySelectorAll("img[data-piece]").forEach((image) => {
+          set(image, `assets/welcome/${theme}/${language}/${mode}/${image.dataset.piece}`);
+        });
+        const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
+        document.querySelectorAll("img[data-theme-icon]").forEach((image) => {
+          set(image, `assets/welcome/${theme}/app-icon-${iconMode}`);
         });
       })();
     </script>
@@ -380,6 +452,7 @@
               <li><a href="#goals" data-i18n="footerGoalsLabel">Goals</a></li>
               <li><a href="#food" data-i18n="footerFoodLabel">Food logging</a></li>
               <li><a href="#your-data" data-i18n="footerDataLabel">Your data</a></li>
+              <li><a href="#pricing" data-i18n="footerPricingLabel">Pricing</a></li>
             </ul>
           </div>
           <div class="footer-column">

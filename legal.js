@@ -23,6 +23,7 @@ const commonTranslations = {
     themeJapanLabel: "Japan theme",
     themeScotlandLabel: "Scotland theme",
     themeUsaLabel: "USA theme",
+    themePlainLabel: "Plain theme",
     lightModeLabel: "Use light appearance",
     darkModeLabel: "Use dark appearance",
     homeLabel: "Akari home",
@@ -42,6 +43,7 @@ const commonTranslations = {
     footerGoalsLabel: "Goals",
     footerFoodLabel: "Food logging",
     footerDataLabel: "Your data",
+    footerPricingLabel: "Pricing",
     footerSupportTitle: "Support",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Legal",
@@ -61,6 +63,7 @@ const commonTranslations = {
     themeJapanLabel: "Japan-Design",
     themeScotlandLabel: "Schottland-Design",
     themeUsaLabel: "USA-Design",
+    themePlainLabel: "Schlicht-Design",
     lightModeLabel: "Helles Erscheinungsbild verwenden",
     darkModeLabel: "Dunkles Erscheinungsbild verwenden",
     homeLabel: "Akari-Startseite",
@@ -80,6 +83,7 @@ const commonTranslations = {
     footerGoalsLabel: "Ziele",
     footerFoodLabel: "Essen erfassen",
     footerDataLabel: "Deine Daten",
+    footerPricingLabel: "Preise",
     footerSupportTitle: "Hilfe",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Rechtliches",
@@ -102,6 +106,11 @@ const pageTranslations = {
       shortDevice: "Your health information is processed on your iPhone and is not used for advertising.",
       shortSale: "Akari does not sell your personal or health information.",
       shortChoice: "You choose which health sources and permissions to connect, and you can disconnect them at any time.",
+      shortReports: "If you choose to send a food report from the app, it reaches our server so we can correct the match. It carries no account and no Apple Health data.",
+      reportsTitle: "Food reports",
+      reportsSent: "When a food match looks wrong, or right, you can send us a food report from the app. Nothing is sent unless you tap Send. Reports are the part of Akari that leaves your iPhone on purpose: they reach our server so we can improve how Akari recognises food.",
+      reportsContent: "A report contains your rating and the reasons you picked, your comment if you write one, what you typed or said, the foods Akari matched with their amounts and nutrients, anything it could not match, a scanned barcode if there was one, and the app’s language, region and version. It does not include your name, an account, your Apple Health data or your location, unless you write something like that into your comment.",
+      reportsKeep: "To prevent abuse, the app attaches a random identifier that exists only for food reports; our server keeps just a one-way hash of it and uses it to limit how many reports one installation can send in a day. Our server stores no IP address. Reports are stored with our hosting provider, Cloudflare, and are read only by the Akari team in our review tool. We keep them as long as they help us improve food recognition. To have a report removed, email <a href=\"mailto:contact@hejrafa.com\">contact@hejrafa.com</a> with the date and what you reported.",
       accessTitle: "Information Akari accesses",
       accessApple: "<strong>Apple Health.</strong> With your permission, Akari reads the health, activity, sleep, nutrition, and body-measurement categories you select. When you log supported information in Akari, the app may write it to Apple Health only after you grant the corresponding permission.",
       accessGoogle: "<strong>Google Health.</strong> If you connect Google Health, Akari requests read-only access to activity and fitness, health metrics and measurements, and sleep. This can include data from Fitbit, Pixel Watch, and other sources available through Google Health. Akari does not request permission to change or delete your Google Health data.",
@@ -132,6 +141,11 @@ const pageTranslations = {
       shortDevice: "Deine Gesundheitsdaten werden auf deinem iPhone verarbeitet und nicht für Werbung verwendet.",
       shortSale: "Akari verkauft weder personenbezogene Daten noch Gesundheitsdaten.",
       shortChoice: "Du entscheidest, welche Gesundheitsquellen und Berechtigungen du verbindest, und kannst sie jederzeit wieder trennen.",
+      shortReports: "Wenn du in der App eine Essensmeldung abschickst, landet sie auf unserem Server, damit wir den Treffer korrigieren können. Sie enthält kein Konto und keine Apple-Health-Daten.",
+      reportsTitle: "Essensmeldungen",
+      reportsSent: "Wenn ein erkanntes Lebensmittel falsch oder richtig wirkt, kannst du uns aus der App eine Essensmeldung schicken. Gesendet wird nur, wenn du auf Senden tippst. Meldungen sind der Teil von Akari, der dein iPhone bewusst verlässt: Sie landen auf unserem Server, damit wir verbessern können, wie Akari Lebensmittel erkennt.",
+      reportsContent: "Eine Meldung enthält deine Bewertung und die gewählten Gründe, deinen Kommentar, falls du einen schreibst, was du getippt oder gesagt hast, die erkannten Lebensmittel mit Mengen und Nährwerten, alles, was nicht erkannt wurde, einen gescannten Barcode, falls vorhanden, sowie Sprache, Region und Version der App. Sie enthält weder deinen Namen noch ein Konto, deine Apple-Health-Daten oder deinen Standort, es sei denn, du schreibst so etwas in deinen Kommentar.",
+      reportsKeep: "Zum Schutz vor Missbrauch hängt die App eine zufällige Kennung an, die es nur für Essensmeldungen gibt; unser Server speichert davon nur einen Einweg-Hash und begrenzt damit, wie viele Meldungen eine Installation pro Tag senden kann. Unser Server speichert keine IP-Adresse. Meldungen liegen bei unserem Hosting-Anbieter Cloudflare und werden nur vom Akari-Team in unserem Prüfwerkzeug gelesen. Wir bewahren sie auf, solange sie uns helfen, die Lebensmittelerkennung zu verbessern. Wenn eine Meldung gelöscht werden soll, schreib an <a href=\"mailto:contact@hejrafa.com\">contact@hejrafa.com</a> mit dem Datum und dem, was du gemeldet hast.",
       accessTitle: "Auf welche Informationen Akari zugreift",
       accessApple: "<strong>Apple Health.</strong> Mit deiner Erlaubnis liest Akari die von dir ausgewählten Kategorien für Gesundheit, Aktivität, Schlaf, Ernährung und Körpermessungen. Wenn du unterstützte Informationen in Akari einträgst, kann die App sie erst dann in Apple Health speichern, wenn du die entsprechende Berechtigung erteilt hast.",
       accessGoogle: "<strong>Google Health.</strong> Wenn du Google Health verbindest, fordert Akari ausschließlich Lesezugriff auf Aktivität und Fitness, Gesundheitswerte und Messungen sowie Schlaf an. Dazu können Daten von Fitbit, Pixel Watch und anderen über Google Health verfügbaren Quellen gehören. Akari fordert keine Berechtigung an, deine Google-Health-Daten zu ändern oder zu löschen.",
@@ -221,13 +235,13 @@ const pageMetadata = {
 };
 
 const pageColors = {
-  dark: { meadow: "#1a1812", forest: "#161a12", coast: "#12171a", canyon: "#1a1412" },
-  light: { meadow: "#f1eaca", forest: "#e1f1ca", coast: "#cae2f1", canyon: "#f1d7ca" },
+  dark: { meadow: "#1a1812", forest: "#161a12", coast: "#12171a", canyon: "#1a1412", plain: "#000000" },
+  light: { meadow: "#f1eaca", forest: "#e1f1ca", coast: "#cae2f1", canyon: "#f1d7ca", plain: "#f5f5f5" },
 };
 
 // The header and footer sit on each theme's deep band in both schemes, so the browser chrome takes
 // the band colour and the logos use the variant drawn for a dark ground.
-const bandColors = { meadow: "#0a4252", forest: "#0c271c", coast: "#083756", canyon: "#482219" };
+const bandColors = { meadow: "#0a4252", forest: "#0c271c", coast: "#083756", canyon: "#482219", plain: "#141414" };
 
 function persistSitePreference(name, value) {
   try { localStorage.setItem(name, value); } catch (error) {}

@@ -33,6 +33,7 @@
 :root[data-theme="meadow"] { --band: #0a4252; --band-rgb: 10, 66, 82; --band-ink: #fff1c9; --band-ink-rgb: 255, 241, 201; --vivid: #ebcc4b; }
 :root[data-theme="coast"] { --band: #083756; --band-rgb: 8, 55, 86; --band-ink: #e3e6ff; --band-ink-rgb: 227, 230, 255; --vivid: #4baceb; }
 :root[data-theme="canyon"] { --band: #482219; --band-rgb: 72, 34, 25; --band-ink: #ffecd4; --band-ink-rgb: 255, 236, 212; --vivid: #eb804b; }
+:root[data-theme="plain"] { --band: #141414; --band-rgb: 20, 20, 20; --band-ink: #ffffff; --band-ink-rgb: 255, 255, 255; --vivid: #ffd60a; }
 
 :root[data-mode="light"] { color-scheme: light; }
 
@@ -40,10 +41,12 @@ html:root[data-mode="light"][data-theme="forest"] { --page: #e1f1ca; --page-rgb:
 html:root[data-mode="light"][data-theme="meadow"] { --page: #f1eaca; --page-rgb: 241, 234, 202; --card: #fefaec; --ink: #262211; --ink-rgb: 38, 34, 17; --accent: #bd9f22; }
 html:root[data-mode="light"][data-theme="coast"] { --page: #cae2f1; --page-rgb: 202, 226, 241; --card: #ecf7fe; --ink: #111e26; --ink-rgb: 17, 30, 38; --accent: #2280bd; }
 html:root[data-mode="light"][data-theme="canyon"] { --page: #f1d7ca; --page-rgb: 241, 215, 202; --card: #fef2ec; --ink: #261811; --ink-rgb: 38, 24, 17; --accent: #bd5522; }
+html:root[data-mode="light"][data-theme="plain"] { --page: #f5f5f5; --page-rgb: 245, 245, 245; --card: #ffffff; --ink: #000000; --ink-rgb: 0, 0, 0; --accent: #ff6c01; }
 html:root[data-mode="dark"][data-theme="forest"] { --page: #161a12; --page-rgb: 22, 26, 18; --card: #262a21; --ink: #e6f4d1; --ink-rgb: 230, 244, 209; --accent: #a9eb4b; }
 html:root[data-mode="dark"][data-theme="meadow"] { --page: #1a1812; --page-rgb: 26, 24, 18; --card: #2a2821; --ink: #f4edd1; --ink-rgb: 244, 237, 209; --accent: #ebcc4b; }
 html:root[data-mode="dark"][data-theme="coast"] { --page: #12171a; --page-rgb: 18, 23, 26; --card: #21262a; --ink: #d1e6f4; --ink-rgb: 209, 230, 244; --accent: #4baceb; }
 html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 26, 20, 18; --card: #2a2421; --ink: #f4ddd1; --ink-rgb: 244, 221, 209; --accent: #eb804b; }
+html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0, 0, 0; --card: #141414; --ink: #ffffff; --ink-rgb: 255, 255, 255; --accent: #ffd60a; }
 
 * { box-sizing: border-box; }
 
@@ -236,6 +239,7 @@ a:hover { color: var(--accent); }
 :root[data-theme="forest"] .theme-controls { --control-index: 1; }
 :root[data-theme="coast"] .theme-controls { --control-index: 2; }
 :root[data-theme="canyon"] .theme-controls { --control-index: 3; }
+:root[data-theme="plain"] .theme-controls { --control-index: 4; }
 :root[data-mode="dark"] .mode-controls { --control-index: 1; }
 
 .theme-dot,
@@ -273,6 +277,11 @@ a:hover { color: var(--accent); }
   --theme-swatch: #eb804b;
 }
 
+/* Plain has no painting; its swatch is the app's yellow-to-orange launch gradient. */
+.theme-dot[data-theme-target="plain"] {
+  --theme-swatch: linear-gradient(#ffd600, #ff6b00);
+}
+
 .theme-ring {
   display: grid;
   place-items: center;
@@ -291,6 +300,80 @@ a:hover { color: var(--accent); }
 
 .theme-dot:hover .theme-swatch {
   background-color: color-mix(in srgb, var(--theme-swatch) 88%, white);
+}
+
+/* With a mouse, the theme pill shows only the current theme and opens to the left into the full row on
+   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one. */
+@media (hover: hover) and (min-width: 761px) {
+  .theme-controls::before {
+    transition: border-color 500ms var(--ease), transform 300ms var(--ease);
+  }
+
+  .theme-dot {
+    transition: width 300ms var(--ease), visibility 0s, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-ring {
+    transition: opacity 220ms var(--ease) 80ms;
+  }
+
+  .theme-controls:not(:hover, :focus-within)::before {
+    transform: translateX(0);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) {
+    width: 0;
+    visibility: hidden;
+    transition: width 300ms var(--ease), visibility 0s 300ms, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) .theme-ring {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it. */
+  .theme-dot::after,
+  .mode-button::after {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 10px);
+    left: 50%;
+    padding: 7px 11px;
+    color: var(--page);
+    background: var(--ink);
+    border-radius: 999px;
+    content: attr(aria-label);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -4px);
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .theme-dot:hover::after,
+  .theme-dot:focus-visible::after,
+  .mode-button:hover::after,
+  .mode-button:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* The last button sits near the page edge, so its label lines up with its right side instead. */
+  .mode-button[data-mode-target="dark"]::after {
+    left: auto;
+    right: 0;
+    transform: translateY(-4px);
+  }
+
+  .mode-button[data-mode-target="dark"]:hover::after,
+  .mode-button[data-mode-target="dark"]:focus-visible::after {
+    transform: translateY(0);
+  }
 }
 
 .mode-button:hover {
@@ -798,10 +881,13 @@ p, li { font-family: var(--serif); }
     margin-left: 0;
   }
 
+  /* Five themes and the light/dark pair do not fit one row of the menu; the pair wraps under them. */
   .appearance-controls {
+    flex-wrap: wrap;
+    gap: 10px;
     width: 100%;
     justify-self: auto;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-right: 0;
   }
 
@@ -853,12 +939,25 @@ p, li { font-family: var(--serif); }
     fill: var(--page);
     stroke: currentColor;
     stroke-linecap: round;
-    stroke-width: 1.5;
+    stroke-width: 2;
     transition: transform 300ms var(--ease);
   }
 
-  .mobile-menu-is-open .mobile-menu-toggle svg {
-    transform: rotate(90deg);
+  .mobile-menu-toggle path {
+    transform-origin: 12px 12px;
+    transition: transform 300ms var(--ease), opacity 180ms var(--ease);
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(1) {
+    transform: rotate(45deg) translateY(5px);
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(3) {
+    transform: rotate(-45deg) translateY(-5px);
   }
 }
 

@@ -14,16 +14,19 @@
 :root[data-theme="meadow"] { --band: #0a4252; --band-rgb: 10, 66, 82; --band-ink: #fff1c9; --vivid: #ebcc4b; }
 :root[data-theme="coast"] { --band: #083756; --band-rgb: 8, 55, 86; --band-ink: #e3e6ff; --vivid: #4baceb; }
 :root[data-theme="canyon"] { --band: #482219; --band-rgb: 72, 34, 25; --band-ink: #ffecd4; --vivid: #eb804b; }
+:root[data-theme="plain"] { --band: #141414; --band-rgb: 20, 20, 20; --band-ink: #ffffff; --vivid: #ffd60a; }
 
 :root { --page: #161a12; --page-rgb: 22, 26, 18; --card: #262a21; --ink: #e6f4d1; --ink-rgb: 230, 244, 209; --accent: #a9eb4b; }
 html:root[data-mode="light"][data-theme="forest"] { --page: #e1f1ca; --page-rgb: 225, 241, 202; --card: #f6feec; --ink: #1e2611; --ink-rgb: 30, 38, 17; --accent: #7dbd22; }
 html:root[data-mode="light"][data-theme="meadow"] { --page: #f1eaca; --page-rgb: 241, 234, 202; --card: #fefaec; --ink: #262211; --ink-rgb: 38, 34, 17; --accent: #bd9f22; }
 html:root[data-mode="light"][data-theme="coast"] { --page: #cae2f1; --page-rgb: 202, 226, 241; --card: #ecf7fe; --ink: #111e26; --ink-rgb: 17, 30, 38; --accent: #2280bd; }
 html:root[data-mode="light"][data-theme="canyon"] { --page: #f1d7ca; --page-rgb: 241, 215, 202; --card: #fef2ec; --ink: #261811; --ink-rgb: 38, 24, 17; --accent: #bd5522; }
+html:root[data-mode="light"][data-theme="plain"] { --page: #f5f5f5; --page-rgb: 245, 245, 245; --card: #ffffff; --ink: #000000; --ink-rgb: 0, 0, 0; --accent: #ff6c01; }
 html:root[data-mode="dark"][data-theme="forest"] { --page: #161a12; --page-rgb: 22, 26, 18; --card: #262a21; --ink: #e6f4d1; --ink-rgb: 230, 244, 209; --accent: #a9eb4b; }
 html:root[data-mode="dark"][data-theme="meadow"] { --page: #1a1812; --page-rgb: 26, 24, 18; --card: #2a2821; --ink: #f4edd1; --ink-rgb: 244, 237, 209; --accent: #ebcc4b; }
 html:root[data-mode="dark"][data-theme="coast"] { --page: #12171a; --page-rgb: 18, 23, 26; --card: #21262a; --ink: #d1e6f4; --ink-rgb: 209, 230, 244; --accent: #4baceb; }
 html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 26, 20, 18; --card: #2a2421; --ink: #f4ddd1; --ink-rgb: 244, 221, 209; --accent: #eb804b; }
+html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0, 0, 0; --card: #141414; --ink: #ffffff; --ink-rgb: 255, 255, 255; --accent: #ffd60a; }
 
 :root {
   color-scheme: dark;

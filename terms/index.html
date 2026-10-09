@@ -11,9 +11,10 @@
     <link rel="alternate" hreflang="de" href="https://joinakari.com/terms/?lang=de" />
     <link rel="alternate" hreflang="x-default" href="https://joinakari.com/terms/" />
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon-180.png" />
     <script>
       (() => {
-        const themes = ["meadow", "forest", "coast", "canyon"];
+        const themes = ["meadow", "forest", "coast", "canyon", "plain"];
         const modes = ["light", "dark"];
         const languages = ["en", "de"];
         const params = new URLSearchParams(window.location.search);
@@ -34,8 +35,8 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="/legal.css?v=20261009-01" />
-    <script src="/legal.js?v=20261009-01" defer></script>
+    <link rel="stylesheet" href="/legal.css?v=20261009-05" />
+    <script src="/legal.js?v=20261009-03" defer></script>
     <title>Akari: Terms of Use</title>
   </head>
   <body data-legal-page="terms">
@@ -58,6 +59,7 @@
                 <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Japan theme" data-i18n-aria-label="themeJapanLabel" aria-pressed="true"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
                 <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Scotland theme" data-i18n-aria-label="themeScotlandLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
                 <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="USA theme" data-i18n-aria-label="themeUsaLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="plain" aria-label="Plain theme" data-i18n-aria-label="themePlainLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
               </div>
               <div class="mode-controls">
                 <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" data-i18n-aria-label="lightModeLabel" aria-pressed="false"><span class="mode-icon" aria-hidden="true"></span></button>
@@ -72,10 +74,9 @@
         </a>
         <button class="mobile-menu-toggle" type="button" aria-controls="header-controls-panel" aria-expanded="false" aria-label="Language and appearance settings" data-i18n-aria-label="mobileMenuLabel">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h16M4 12h16M4 17h16" />
-            <circle cx="9" cy="7" r="1.5" />
-            <circle cx="15" cy="12" r="1.5" />
-            <circle cx="11" cy="17" r="1.5" />
+            <path d="M4 7h16" />
+            <path d="M4 12h16" />
+            <path d="M4 17h16" />
           </svg>
         </button>
       </div>
@@ -165,6 +166,7 @@
               <li><a href="/#goals" data-i18n="footerGoalsLabel">Goals</a></li>
               <li><a href="/#food" data-i18n="footerFoodLabel">Food logging</a></li>
               <li><a href="/#your-data" data-i18n="footerDataLabel">Your data</a></li>
+              <li><a href="/#pricing" data-i18n="footerPricingLabel">Pricing</a></li>
             </ul>
           </div>
           <div class="footer-column">

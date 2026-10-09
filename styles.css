@@ -297,6 +297,7 @@ main:focus {
 :root[data-theme="forest"] .theme-controls { --control-index: 1; }
 :root[data-theme="coast"] .theme-controls { --control-index: 2; }
 :root[data-theme="canyon"] .theme-controls { --control-index: 3; }
+:root[data-theme="plain"] .theme-controls { --control-index: 4; }
 :root[data-mode="dark"] .mode-controls { --control-index: 1; }
 
 .theme-dot,
@@ -334,6 +335,11 @@ main:focus {
   --theme-swatch: #eb804b;
 }
 
+/* Plain has no painting; its swatch is the app's yellow-to-orange launch gradient. */
+.theme-dot[data-theme-target="plain"] {
+  --theme-swatch: linear-gradient(#ffd600, #ff6b00);
+}
+
 .theme-ring {
   display: grid;
   place-items: center;
@@ -352,6 +358,80 @@ main:focus {
 
 .theme-dot:hover .theme-swatch {
   background-color: color-mix(in srgb, var(--theme-swatch) 88%, white);
+}
+
+/* With a mouse, the theme pill shows only the current theme and opens to the left into the full row on
+   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one. */
+@media (hover: hover) and (min-width: 761px) {
+  .theme-controls::before {
+    transition: border-color 500ms var(--ease), transform 300ms var(--ease);
+  }
+
+  .theme-dot {
+    transition: width 300ms var(--ease), visibility 0s, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-ring {
+    transition: opacity 220ms var(--ease) 80ms;
+  }
+
+  .theme-controls:not(:hover, :focus-within)::before {
+    transform: translateX(0);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) {
+    width: 0;
+    visibility: hidden;
+    transition: width 300ms var(--ease), visibility 0s 300ms, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) .theme-ring {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it. */
+  .theme-dot::after,
+  .mode-button::after {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 10px);
+    left: 50%;
+    padding: 7px 11px;
+    color: var(--page);
+    background: var(--ink);
+    border-radius: 999px;
+    content: attr(aria-label);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -4px);
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .theme-dot:hover::after,
+  .theme-dot:focus-visible::after,
+  .mode-button:hover::after,
+  .mode-button:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* The last button sits near the page edge, so its label lines up with its right side instead. */
+  .mode-button[data-mode-target="dark"]::after {
+    left: auto;
+    right: 0;
+    transform: translateY(-4px);
+  }
+
+  .mode-button[data-mode-target="dark"]:hover::after,
+  .mode-button[data-mode-target="dark"]:focus-visible::after {
+    transform: translateY(0);
+  }
 }
 
 .mode-button:hover {
@@ -599,10 +679,13 @@ main:focus {
     margin-left: 0;
   }
 
+  /* Five themes and the light/dark pair do not fit one row of the menu; the pair wraps under them. */
   .appearance-controls {
+    flex-wrap: wrap;
+    gap: 10px;
     width: 100%;
     justify-self: auto;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-right: 0;
   }
 
@@ -654,12 +737,25 @@ main:focus {
     fill: var(--page);
     stroke: currentColor;
     stroke-linecap: round;
-    stroke-width: 1.5;
+    stroke-width: 2;
     transition: transform 300ms var(--ease);
   }
 
-  .mobile-menu-is-open .mobile-menu-toggle svg {
-    transform: rotate(90deg);
+  .mobile-menu-toggle path {
+    transform-origin: 12px 12px;
+    transition: transform 300ms var(--ease), opacity 180ms var(--ease);
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(1) {
+    transform: rotate(45deg) translateY(5px);
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(3) {
+    transform: rotate(-45deg) translateY(-5px);
   }
 }
 
@@ -679,15 +775,26 @@ main:focus {
 :root[data-theme="meadow"] { --band: #0a4252; --band-rgb: 10, 66, 82; --band-ink: #fff1c9; --vivid: #ebcc4b; }
 :root[data-theme="coast"] { --band: #083756; --band-rgb: 8, 55, 86; --band-ink: #e3e6ff; --vivid: #4baceb; }
 :root[data-theme="canyon"] { --band: #482219; --band-rgb: 72, 34, 25; --band-ink: #ffecd4; --vivid: #eb804b; }
+:root[data-theme="plain"] { --band: #141414; --band-rgb: 20, 20, 20; --band-ink: #ffffff; --vivid: #ffd60a; }
+
+/* The cream die-cut edge traced around a sticker or one of the app's pieces, with its shadow. The edge is
+   the #die-cut SVG filter in index.html: one pass that grows the piece's own silhouette by 3px and fills
+   it with the theme's cream, so it follows every curve. (Chaining eight offset drop-shadows looked the
+   same but dropped scrolling to a few frames a second.) */
+:root {
+  --die-cut: url("#die-cut") drop-shadow(0 10px 14px rgba(0, 0, 0, 0.24));
+}
 
 html:root[data-mode="light"][data-theme="forest"] { --page: #e1f1ca; --page-rgb: 225, 241, 202; --card: #f6feec; --ink: #1e2611; --ink-rgb: 30, 38, 17; --accent: #7dbd22; }
 html:root[data-mode="light"][data-theme="meadow"] { --page: #f1eaca; --page-rgb: 241, 234, 202; --card: #fefaec; --ink: #262211; --ink-rgb: 38, 34, 17; --accent: #bd9f22; }
 html:root[data-mode="light"][data-theme="coast"] { --page: #cae2f1; --page-rgb: 202, 226, 241; --card: #ecf7fe; --ink: #111e26; --ink-rgb: 17, 30, 38; --accent: #2280bd; }
 html:root[data-mode="light"][data-theme="canyon"] { --page: #f1d7ca; --page-rgb: 241, 215, 202; --card: #fef2ec; --ink: #261811; --ink-rgb: 38, 24, 17; --accent: #bd5522; }
+html:root[data-mode="light"][data-theme="plain"] { --page: #f5f5f5; --page-rgb: 245, 245, 245; --card: #ffffff; --ink: #000000; --ink-rgb: 0, 0, 0; --accent: #ff6c01; }
 html:root[data-mode="dark"][data-theme="forest"] { --page: #161a12; --page-rgb: 22, 26, 18; --card: #262a21; --ink: #e6f4d1; --ink-rgb: 230, 244, 209; --accent: #a9eb4b; }
 html:root[data-mode="dark"][data-theme="meadow"] { --page: #1a1812; --page-rgb: 26, 24, 18; --card: #2a2821; --ink: #f4edd1; --ink-rgb: 244, 237, 209; --accent: #ebcc4b; }
 html:root[data-mode="dark"][data-theme="coast"] { --page: #12171a; --page-rgb: 18, 23, 26; --card: #21262a; --ink: #d1e6f4; --ink-rgb: 209, 230, 244; --accent: #4baceb; }
 html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 26, 20, 18; --card: #2a2421; --ink: #f4ddd1; --ink-rgb: 244, 221, 209; --accent: #eb804b; }
+html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0, 0, 0; --card: #141414; --ink: #ffffff; --ink-rgb: 255, 255, 255; --accent: #ffd60a; }
 
 /* The header sits on the deep band; its controls take the band's cream. script.js gives it the logo
    drawn for a dark ground in both schemes. */
@@ -707,7 +814,8 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   --px: 0;
   --py: 0;
   position: relative;
-  padding: clamp(40px, 5vw, 80px) 20px 0;
+  /* The bottom padding keeps the torn edge clear of the pieces. */
+  padding: clamp(40px, 5vw, 80px) 20px clamp(36px, 5vw, 72px);
   color: var(--band-ink);
   background: var(--band);
   text-align: center;
@@ -717,10 +825,10 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
 .burst-hero h1 {
   max-width: 7.2em;
   margin: 0 auto;
-  font-size: clamp(3.2rem, 8.6vw, 8.5rem);
+  font-size: clamp(2.9rem, 6.6vw, 6.5rem);
   font-weight: 900;
   letter-spacing: -0.015em;
-  line-height: 0.92;
+  line-height: 0.95;
   text-wrap: balance;
 }
 
@@ -766,7 +874,7 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   z-index: 2;
   width: min(100%, 640px);
   aspect-ratio: 16 / 9;
-  margin: clamp(20px, 3vw, 40px) auto calc(min(100vw - 40px, 640px) * -0.21);
+  margin: clamp(20px, 3vw, 40px) auto 0;
 }
 
 .burst__pieces {
@@ -788,25 +896,20 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
     rotate(var(--tilt));
   animation: pop 900ms cubic-bezier(0.2, 1.4, 0.4, 1) var(--delay) both;
   user-select: none;
+  will-change: transform;
 }
 
 /* Die-cut look: the app icon gets a cream sticker border; the tiles and 3D stickers get a cream
    outline traced around their own shape. */
-.burst__piece--icon {
-  border: clamp(3px, 0.5vw, 5px) solid var(--band-ink);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-}
-
+.burst__piece--icon,
 .burst__tile,
 .burst__sticker {
-  filter:
-    drop-shadow(3px 0 0 var(--band-ink)) drop-shadow(-3px 0 0 var(--band-ink)) drop-shadow(0 3px 0 var(--band-ink)) drop-shadow(0 -3px 0 var(--band-ink))
-    drop-shadow(0 14px 18px rgba(0, 0, 0, 0.35));
+  filter: var(--die-cut);
 }
 
 .burst__piece--steps { --tilt: -10deg; --depth: 1.2; --delay: 420ms; top: 21%; left: 14%; width: min(179px, 28%); }
 .burst__piece--sleep { --tilt: 8deg; --depth: 1.3; --delay: 500ms; top: 16%; left: 57.5%; width: min(179px, 28%); }
-.burst__piece--icon { --tilt: -4deg; --depth: 0.5; --delay: 300ms; top: 5%; left: 42%; width: min(104px, 16.25%); border-radius: 24%; z-index: 2; }
+.burst__piece--icon { --tilt: -4deg; --depth: 0.5; --delay: 300ms; top: 5%; left: 42%; width: min(104px, 16.25%); z-index: 2; }
 .burst__piece--avocado { --tilt: -16deg; --depth: 1.6; --delay: 620ms; top: 0; left: 31%; width: 11.5%; z-index: 3; }
 .burst__piece--broccoli { --tilt: 12deg; --depth: 1.8; --delay: 700ms; top: 2%; left: 84%; width: 12%; z-index: 3; }
 .burst__piece--coffee { --tilt: 8deg; --depth: 1.5; --delay: 780ms; top: 50%; left: 45%; width: 13%; z-index: 3; }
@@ -873,7 +976,7 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
 .spotlight {
   width: min(1180px, calc(100% - 48px));
   margin: 0 auto;
-  padding: calc(min(100vw - 40px, 640px) * 0.21 + clamp(64px, 8vw, 120px)) 0 clamp(40px, 6vw, 80px);
+  padding: clamp(64px, 8vw, 120px) 0 clamp(40px, 6vw, 80px);
   text-align: center;
 }
 
@@ -896,6 +999,7 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
 .spotlight h2,
 .goals h2,
 .food h2,
+.pricing h2,
 .privacy h2 {
   max-width: 8.4em;
   margin: 0 auto;
@@ -919,8 +1023,6 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   color: rgba(var(--ink-rgb), 0.8);
 }
 
-.spotlight__panel,
-.deep-panel,
 .food__panel {
   background:
     radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--vivid) 22%, transparent), transparent 60%),
@@ -928,32 +1030,13 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   border-radius: clamp(26px, 3vw, 40px);
 }
 
-/* The app's pieces at their 1x boxes: the 354 x 70 readiness bar over two 179-wide tiles. The panel's
-   padding leaves room for the glow the bar draws outside its box; nothing here clips it. */
-.spotlight__panel {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 179px));
-  gap: 12px;
-  justify-content: center;
-  margin-top: clamp(44px, 6vw, 72px);
-  padding: clamp(64px, 8vw, 104px) 20px clamp(48px, 7vw, 96px);
-}
-
-.spotlight__piece {
-  display: block;
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.28));
-}
-
 /* The PNG is 434 x 150 at 1x: the bar plus 40 of glow on every side. The box is the bar itself. */
 .readiness {
   position: relative;
-  grid-column: 1 / -1;
-  justify-self: center;
   width: min(354px, 100%);
   aspect-ratio: 354 / 70;
-  margin-bottom: 20px;
+  margin: 0 0 22px;
+  rotate: -3deg;
 }
 
 .readiness__bar {
@@ -963,6 +1046,19 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   width: 122.599%;
   max-width: none;
   height: auto;
+}
+
+/* Plain's glow is wider than the export's margin, so the file cuts it straight 26pt in from each side and
+   at the top and bottom. Fade those edges out here; the bar itself (40pt in) stays untouched. */
+:root[data-theme="plain"] .readiness__bar {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 6%, #000 9.2%, #000 90.8%, transparent 94%),
+    linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 6%, #000 9.2%, #000 90.8%, transparent 94%),
+    linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  mask-composite: intersect;
 }
 
 @media (max-width: 760px) {
@@ -984,20 +1080,13 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   }
 
   .burst__sticker {
-    filter:
-      drop-shadow(2px 0 0 var(--band-ink)) drop-shadow(-2px 0 0 var(--band-ink)) drop-shadow(0 2px 0 var(--band-ink)) drop-shadow(0 -2px 0 var(--band-ink))
-      drop-shadow(0 10px 12px rgba(0, 0, 0, 0.35));
+    filter: var(--die-cut);
   }
 
   .spotlight {
     width: calc(100% - 32px);
   }
 
-  /* Wide enough side padding that the bar's glow stays on screen. */
-  .spotlight__panel {
-    gap: 10px;
-    padding: 56px 26px 32px;
-  }
 }
 
 /* Nutrition: words beside a deep panel, panel first ------------------------------------------- */
@@ -1030,33 +1119,75 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   margin-left: 0;
 }
 
-/* The 370-wide Fiber card over two 179-wide tiles: 179 + 12 + 179 = 370, as in the app. */
-.deep-panel {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 179px));
-  gap: 12px;
-  justify-content: center;
-  align-content: center;
-  padding: clamp(28px, 5vw, 64px) 16px;
+/* The app's pieces off their panels: a loose, tilted stack with a cream die-cut edge and 3D stickers
+   around it. Each piece stays at its 1x box (bar 354, card 370, tiles 179) and only shrinks on narrow
+   screens. The readiness bar has no outline, so its glow stays soft. */
+.collage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(430px, 100%);
+  margin: clamp(12px, 2vw, 24px) auto 0;
+  padding: 44px 0 28px;
 }
 
-.deep-panel__piece,
+.split .collage {
+  margin-top: 0;
+  justify-self: center;
+}
+
+.collage__card,
+.collage__tile,
 .food__sentence,
 .food__row {
   display: block;
   max-width: 100%;
   height: auto;
-  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.28));
+  filter: var(--die-cut);
 }
 
-.deep-panel__piece,
-.food__sentence {
+.collage__card {
+  width: min(370px, 100%);
+  margin-bottom: 18px;
+  rotate: -3deg;
+}
+
+.collage__row {
+  display: flex;
+  justify-content: center;
   width: 100%;
 }
 
-.deep-panel__piece--wide {
-  grid-column: 1 / -1;
+.collage__tile {
+  width: min(179px, calc(50% - 2px));
 }
+
+.collage__tile--left {
+  z-index: 1;
+  rotate: -6deg;
+  translate: 6px 10px;
+}
+
+.collage__tile--right {
+  rotate: 5deg;
+  translate: -6px -4px;
+}
+
+.collage__sticker {
+  position: absolute;
+  z-index: 2;
+  width: clamp(60px, 7vw, 92px);
+  height: auto;
+  filter: var(--die-cut);
+}
+
+.collage__sticker--moon { top: 0; left: -6%; rotate: -14deg; }
+.collage__sticker--fire { top: 44%; right: -7%; rotate: 10deg; }
+.collage__sticker--apple { bottom: 0; left: -3%; rotate: -8deg; }
+.collage__sticker--fish { top: 0; right: -6%; rotate: 14deg; }
+.collage__sticker--orange { top: 46%; left: -3%; rotate: -10deg; }
+.collage__sticker--salad { right: 0; bottom: -2%; rotate: 8deg; }
 
 /* Privacy: a second deep band, torn top and bottom ---------------------------------------------- */
 
@@ -1099,10 +1230,10 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   display: block;
   width: clamp(92px, 11vw, 150px);
   height: auto;
-  border: clamp(3px, 0.4vw, 5px) solid var(--band-ink);
-  border-radius: 24%;
-  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.35);
+  filter: var(--die-cut);
 }
+
+
 
 .privacy__app--health { rotate: -8deg; }
 .privacy__app--akari { rotate: 7deg; }
@@ -1116,9 +1247,7 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   height: auto;
   translate: -50% -42%;
   rotate: 4deg;
-  filter:
-    drop-shadow(3px 0 0 var(--band-ink)) drop-shadow(-3px 0 0 var(--band-ink)) drop-shadow(0 3px 0 var(--band-ink)) drop-shadow(0 -3px 0 var(--band-ink))
-    drop-shadow(0 16px 22px rgba(0, 0, 0, 0.4));
+  filter: var(--die-cut);
 }
 }
 
@@ -1210,9 +1339,7 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   display: block;
   width: clamp(112px, 13vw, 176px);
   height: auto;
-  filter:
-    drop-shadow(3px 0 0 var(--band-ink)) drop-shadow(-3px 0 0 var(--band-ink)) drop-shadow(0 3px 0 var(--band-ink)) drop-shadow(0 -3px 0 var(--band-ink))
-    drop-shadow(0 18px 24px rgba(0, 0, 0, 0.22));
+  filter: var(--die-cut);
   rotate: -6deg;
 }
 
@@ -1254,15 +1381,17 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   padding: 22px 16px 24px;
   background: var(--card);
   border-radius: 22px;
+  /* The same cream die-cut edge and shadow as the app's pieces, drawn as a ring since it is a plain box. */
+  box-shadow: 0 0 0 3px var(--band-ink), 0 10px 14px rgba(0, 0, 0, 0.24);
   text-align: center;
-  transition: background-color 500ms var(--ease);
+  transition: background-color 500ms var(--ease), box-shadow 500ms var(--ease);
 }
 
 .focus-tile img {
   width: 74px;
   height: auto;
   margin-bottom: 8px;
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.16));
+  filter: var(--die-cut);
   rotate: -6deg;
 }
 
@@ -1298,11 +1427,9 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
 
 /* Food: the closing panel, with two stickers stuck to its edges -------------------------------- */
 
-.food {
-  width: min(1180px, calc(100% - 48px));
-  margin: 0 auto;
-  padding: clamp(60px, 8vw, 110px) 0 clamp(40px, 6vw, 80px);
-  text-align: center;
+/* Food breaks the run of centred sections: words left, the panel right (Nutrition mirrors it). */
+.split--words-first {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
 }
 
 /* The 354-wide meal sentence with the food it became listed under it, each row at its own width. */
@@ -1312,13 +1439,28 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   justify-items: center;
   gap: 14px;
   width: min(560px, 100%);
-  margin: clamp(40px, 5vw, 60px) auto 0;
+  margin: 0 auto;
   padding: clamp(36px, 5vw, 60px) 20px;
 }
 
 .food__sentence {
+  width: 100%;
   max-width: 354px;
+  rotate: -2deg;
 }
+
+/* Placed as on the app's Welcome food page (WelcomeView.swift): each row centred at its fraction of the
+   sentence's width and tilted the same way, oats and flat white on the left, the banana on the right. */
+.food__row {
+  --row-width: var(--row-1x);
+  width: var(--row-width);
+  margin-left: clamp(-8px, calc(var(--row-x) * 100% - var(--row-width) / 2), calc(100% - var(--row-width) + 8px));
+  rotate: var(--row-tilt);
+}
+
+.food__row:nth-child(1) { --row-x: 0.30; --row-tilt: -5deg; }
+.food__row:nth-child(2) { --row-x: 0.72; --row-tilt: 4deg; }
+.food__row:nth-child(3) { --row-x: 0.34; --row-tilt: -3deg; }
 
 .food__rows {
   display: flex;
@@ -1333,13 +1475,11 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   z-index: 2;
   width: clamp(76px, 9vw, 128px);
   height: auto;
-  filter:
-    drop-shadow(3px 0 0 var(--band-ink)) drop-shadow(-3px 0 0 var(--band-ink)) drop-shadow(0 3px 0 var(--band-ink)) drop-shadow(0 -3px 0 var(--band-ink))
-    drop-shadow(0 14px 18px rgba(0, 0, 0, 0.3));
+  filter: var(--die-cut);
 }
 
 .food__sticker--strawberry { top: -6%; left: -5%; rotate: -14deg; }
-.food__sticker--croissant { right: -6%; bottom: 14%; rotate: 12deg; }
+.food__sticker--croissant { right: -6%; bottom: 2%; rotate: 12deg; }
 
 @media (max-width: 760px) {
   .split {
@@ -1353,10 +1493,17 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
     order: 0;
   }
 
-  .deep-panel {
-    gap: 10px;
-    padding: 24px 14px;
+  /* Narrow enough that the glow the bar draws around itself stays on screen. */
+  .readiness {
+    width: min(354px, calc(100% - 56px));
   }
+
+  .collage__sticker { width: 56px; }
+  .collage__sticker--moon { left: -2%; }
+  .collage__sticker--fire { right: -2%; }
+  .collage__sticker--apple { left: 0; }
+  .collage__sticker--fish { right: -2%; }
+  .collage__sticker--orange { left: -2%; }
 
   .privacy {
     padding: 100px 16px;
@@ -1379,11 +1526,11 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   }
 
   .goals__focuses {
-    gap: 10px;
+    gap: 16px;
   }
 
   .focus-tile {
-    flex-basis: calc(50% - 5px);
+    flex-basis: calc(50% - 8px);
     padding: 18px 12px 20px;
   }
 
@@ -1396,7 +1543,149 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   }
 
   .food__sticker--strawberry { top: -26px; left: -4px; }
-  .food__sticker--croissant { right: -8px; }
+  .food__sticker--croissant { right: -8px; bottom: -28px; }
+}
+
+/* Pricing: the two plans from the app's paywall as cards, the yearly one picked out like a selection. */
+.pricing {
+  width: min(1000px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(80px, 10vw, 140px) 0 0;
+  text-align: center;
+}
+
+.pricing__plans {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(18px, 3vw, 34px);
+  margin-top: clamp(40px, 5vw, 60px);
+}
+
+.plan {
+  position: relative;
+  flex: 0 1 290px;
+  padding: 30px 30px 32px;
+  background: var(--card);
+  border-radius: 30px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  rotate: 2deg;
+  transition: background-color 500ms var(--ease);
+}
+
+.plan--free {
+  rotate: -1.5deg;
+}
+
+.plan__includes {
+  margin: 10px 0 0;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.plan--featured {
+  color: var(--band-ink);
+  background:
+    radial-gradient(circle at 30% 0%, color-mix(in srgb, var(--vivid) 22%, transparent), transparent 60%),
+    var(--band);
+  rotate: -2deg;
+}
+
+.plan__name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.plan__price {
+  margin: 16px 0 0;
+  font-size: clamp(2.4rem, 4vw, 3.1rem);
+  white-space: nowrap;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.plan__price small {
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+.plan__note {
+  margin: 14px 0 0;
+  color: rgba(var(--ink-rgb), 0.7);
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+
+.plan__note span {
+  white-space: nowrap;
+}
+
+.plan--featured .plan__note {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.plan__save {
+  display: inline-block;
+  flex: 0 0 auto;
+  padding: 5px 11px;
+  color: var(--band);
+  background: var(--vivid);
+  border-radius: 999px;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  rotate: -3deg;
+}
+
+.plan__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.plan__sticker {
+  position: absolute;
+  right: -20px;
+  bottom: -26px;
+  width: 78px;
+  height: auto;
+  filter: var(--die-cut);
+  rotate: 12deg;
+}
+
+.pricing__fine {
+  margin: clamp(30px, 4vw, 44px) auto 0;
+  color: rgba(var(--ink-rgb), 0.6);
+  font-size: 0.95rem;
+}
+
+@media (max-width: 760px) {
+  .pricing {
+    width: calc(100% - 32px);
+  }
+
+  .plan__sticker {
+    right: 4px;
+    bottom: -22px;
+    width: 60px;
+  }
+}
+
+.faq__sticker {
+  display: block;
+  width: clamp(64px, 7vw, 92px);
+  height: auto;
+  margin: 0 0 6px -6px;
+  filter: var(--die-cut);
+  rotate: -10deg;
 }
 
 /* Help shape: the closing call, big and centred, with the icon and a sticker on top ------------- */
@@ -1421,9 +1710,7 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   display: block;
   width: 100%;
   height: auto;
-  border: clamp(3px, 0.45vw, 6px) solid var(--band-ink);
-  border-radius: 24%;
-  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.25);
+  filter: var(--die-cut);
   rotate: -6deg;
 }
 
@@ -1433,19 +1720,17 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   bottom: -22%;
   width: 78%;
   height: auto;
-  filter:
-    drop-shadow(3px 0 0 var(--band-ink)) drop-shadow(-3px 0 0 var(--band-ink)) drop-shadow(0 3px 0 var(--band-ink)) drop-shadow(0 -3px 0 var(--band-ink))
-    drop-shadow(0 12px 16px rgba(0, 0, 0, 0.3));
+  filter: var(--die-cut);
   rotate: 14deg;
 }
 
 .shape h2 {
   max-width: 7em;
   margin: 0;
-  font-size: clamp(3.2rem, 8.6vw, 8.5rem);
+  font-size: clamp(2.9rem, 6.6vw, 6.5rem);
   font-weight: 900;
   letter-spacing: -0.015em;
-  line-height: 0.92;
+  line-height: 0.95;
   text-wrap: balance;
 }
 
@@ -1635,17 +1920,15 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
   --reveal-scale: 0.985;
   --reveal-rotate: 0deg;
   opacity: 0;
-  filter: blur(7px);
   backface-visibility: hidden;
   transform: translate3d(var(--reveal-x), var(--reveal-y), 0) scale(var(--reveal-scale)) rotate(var(--reveal-rotate));
   transition:
     opacity 650ms var(--ease) var(--reveal-delay),
-    filter 720ms var(--ease) var(--reveal-delay),
     transform 850ms var(--ease) var(--reveal-delay);
 }
 
 .motion-ready .reveal.reveal--armed {
-  will-change: opacity, filter, transform;
+  will-change: opacity, transform;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1698,7 +1981,7 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
 .motion-boot .brand,
 .motion-boot .language-button,
 .motion-boot .mobile-menu-toggle,
-.motion-boot .theme-dot,
+.motion-boot .theme-controls,
 .motion-boot .mode-button,
 .motion-boot .pill-cta {
   opacity: 0;
@@ -1706,7 +1989,6 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
 
 .motion-ready .reveal.is-visible {
   opacity: 1;
-  filter: blur(0);
   transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
 }
 
@@ -1727,18 +2009,11 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
 .motion-ready .reveal--pop {
   --reveal-y: 10px;
   --reveal-scale: 0.78;
-  filter: blur(4px);
-}
-
-.motion-ready .theme-dot.reveal--pop,
-.motion-ready .mode-button.reveal--pop {
-  filter: none;
 }
 
 .motion-ready .reveal--line {
   --reveal-y: 0.72em;
   --reveal-scale: 1;
-  filter: blur(5px);
 }
 
 .motion-ready .reveal--card {
@@ -1749,10 +2024,8 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
 .motion-ready .reveal--piece {
   --reveal-y: 18px;
   --reveal-scale: 0.82;
-  filter: blur(4px);
   transition:
     opacity 500ms var(--ease) var(--reveal-delay),
-    filter 600ms var(--ease) var(--reveal-delay),
     transform 900ms cubic-bezier(0.22, 1.3, 0.36, 1) var(--reveal-delay);
 }
 
@@ -1768,5 +2041,114 @@ html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Drift, as in the app's Welcome collage (WelcomeView.swift): every piece rises and falls up to 4px and
+   turns up to 0.6deg on a 7-second wave, each a little out of step with its neighbours. script.js wraps each
+   drifting image so the box moves and the image inside keeps its die-cut edge, painted once; the compositor
+   then only moves layers. Sections off screen hold still. */
+.drift-box {
+  display: block;
+  filter: none !important;
+}
+
+.drift-face {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  filter: var(--die-cut);
+}
+
+/* The food rows are shown at the 1x width of the app's export, and that width
+   follows their words, so it differs by language. A row too wide for its place slides back inside the panel. */
+.food__row:nth-child(1) { --row-1x: 129.33px; }
+.food__row:nth-child(2) { --row-1x: 137.33px; }
+.food__row:nth-child(3) { --row-1x: 156.33px; }
+:root[data-language="de"] .food__row:nth-child(1) { --row-1x: 183px; }
+:root[data-language="de"] .food__row:nth-child(2) { --row-1x: 137px; }
+:root[data-language="de"] .food__row:nth-child(3) { --row-1x: 160.67px; }
+
+.food__row > .drift-face {
+  width: 100%;
+}
+
+@keyframes drift {
+  from { transform: translateY(-4px) rotate(-0.6deg); }
+  to { transform: translateY(4px) rotate(0.6deg); }
+}
+
+@keyframes drift-props {
+  from { translate: 0 -4px; rotate: -0.6deg; }
+  to { translate: 0 4px; rotate: 0.6deg; }
+}
+
+.collage__card,
+.collage__tile,
+.collage__sticker,
+.readiness,
+.privacy__app,
+.privacy__lock,
+.food__sentence,
+.food__row,
+.food__sticker,
+.plan__sticker,
+.faq__sticker,
+.shape__icon,
+.shape__banana {
+  --drift-phase: 0s;
+  animation: drift 3.5s ease-in-out var(--drift-phase) infinite alternate;
+}
+
+/* The hero pieces use transform for the pointer, so they drift through translate and rotate. */
+.burst__piece {
+  animation:
+    pop 900ms cubic-bezier(0.2, 1.4, 0.4, 1) var(--delay) both,
+    drift-props 3.5s ease-in-out calc(var(--delay) + 900ms) infinite alternate;
+}
+
+/* Out of step: 1.7 radians apart per piece in the app, about 1.9s on a 7s wave. */
+.collage__tile--right,
+.collage__sticker--fire,
+.collage__sticker--orange,
+.privacy__lock,
+.food__row:nth-child(2),
+.food__sticker--croissant,
+.shape__banana { --drift-phase: -1.9s; }
+
+.collage__sticker--moon,
+.collage__sticker--fish,
+.privacy__app--akari,
+.food__row:nth-child(3),
+.faq__sticker { --drift-phase: -3.8s; }
+
+.collage__tile--left,
+.collage__sticker--apple,
+.collage__sticker--salad,
+.food__sentence,
+.plan__sticker { --drift-phase: -5.7s; }
+
+.is-still,
+.is-still * {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collage__card,
+  .collage__tile,
+  .collage__sticker,
+  .readiness,
+  .privacy__app,
+  .privacy__lock,
+  .food__sentence,
+  .food__row,
+  .food__sticker,
+  .plan__sticker,
+  .faq__sticker,
+  .shape__icon,
+  .shape__banana,
+  .burst__piece {
+    animation: none;
   }
 }
