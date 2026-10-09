@@ -2,13 +2,13 @@
   "id": "/",
   "name": "Akari: Understand your health data",
   "short_name": "Akari",
-  "description": "A private iPhone health app for calm daily insights across your vitals, activity and nutrition.",
+  "description": "A private iPhone app that brings your sleep, movement and food together and explains them in plain words.",
   "lang": "en",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#151a0c",
-  "theme_color": "#151a0c",
+  "background_color": "#0c271c",
+  "theme_color": "#0c271c",
   "icons": [
     {
       "src": "/assets/favicon.svg",

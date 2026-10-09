@@ -342,25 +342,36 @@ const translations = {
 const pageMetadata = {
   en: {
     title: "Akari: Understand your health data",
-    description: "Akari is a private iPhone health app that turns health data, including vitals, activity and nutrition, into calm daily insights. Join the free TestFlight beta.",
-    socialTitle: "Akari: Understand your health data",
-    socialDescription: "Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.",
-    twitterDescription: "Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place.",
+    description: "Akari is a private iPhone app for sleep, movement and food: your readiness each morning, every nutrient in view, and food you log by saying it. Free beta.",
+    socialTitle: "Akari: Your whole day in one place",
+    socialDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
+    twitterDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
     imageAlt: "Akari logo in an orange-to-yellow gradient on a black background",
   },
   de: {
     title: "Akari: Verstehe deine Gesundheitsdaten",
-    description: "Akari ist eine private Gesundheits-App fürs iPhone. Sie macht aus Vitalwerten, Aktivität und Ernährung verständliche Einblicke für jeden Tag. Jetzt kostenlos testen.",
-    socialTitle: "Akari: Verstehe deine Gesundheitsdaten",
-    socialDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages und bringt Vitalwerte, Ernährung und Ziele an einem Ort zusammen.",
-    twitterDescription: "Akari macht aus deinen Gesundheitsdaten eine klare Geschichte deines Tages und bringt Vitalwerte, Ernährung und Ziele an einem Ort zusammen.",
+    description: "Akari ist eine private iPhone-App für Schlaf, Bewegung und Essen: jeden Morgen deine Tagesform, jeder Nährstoff im Blick, Essen einfach sagen. Kostenlose Beta.",
+    socialTitle: "Akari: Dein ganzer Tag an einem Ort",
+    socialDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
+    twitterDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
     imageAlt: "Akari-Logo mit orange-gelbem Verlauf auf schwarzem Hintergrund",
   },
 };
 
+// Structured data follows the page: the same claims, the same FAQ, and pieces of the app as its images.
 function structuredDataFor(language) {
   const isGerman = language === "de";
+  const copy = translations[language];
   const url = isGerman ? "https://joinakari.com/?lang=de" : "https://joinakari.com/";
+  const piece = (name) => `https://joinakari.com/assets/welcome/forest/${language}/light/${name}@3x.webp`;
+  const faq = [
+    ["faqWhatQuestion", copy.faqWhatAnswer],
+    ["faqPriceQuestion", copy.faqPriceAnswer],
+    ["faqNeedQuestion", copy.faqNeedAnswer],
+    ["faqMedicalQuestion", copy.faqMedicalAnswer],
+    ["faqPrivacyQuestion", copy.faqPrivacyAnswer],
+    ["faqTryQuestion", `${copy.faqTryPrefix}Apple TestFlight${copy.faqTrySuffix}`],
+  ];
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -370,8 +381,8 @@ function structuredDataFor(language) {
         url,
         name: "Akari",
         description: isGerman
-          ? "Akari hilft Menschen, ihre Gesundheitsdaten mit ruhigen, verständlichen Einblicken für jeden Tag besser zu verstehen."
-          : "Akari helps people understand their health data through calm daily insights.",
+          ? "Akari bringt Schlaf, Bewegung und Essen auf dem iPhone zusammen und erklärt sie in einfachen Worten."
+          : "Akari brings sleep, movement and food together on iPhone and explains them in plain words.",
         inLanguage: language,
       },
       {
@@ -391,44 +402,54 @@ function structuredDataFor(language) {
         name: "Akari",
         url,
         description: isGerman
-          ? "Akari macht Gesundheitsdaten zu einer ruhigen, verständlichen Geschichte des Tages. Dazu erklärt die App unterstützte Vitalwerte, Aktivität und Ernährung mit einfachen Worten."
-          : "Akari turns health data into a calm, readable daily story with simple explanations across supported vitals, activity and nutrition data.",
+          ? "Akari ist eine iPhone-App, die Schlaf, Bewegung und Essen an einem Ort zusammenbringt und in einfachen Worten erklärt, was sie für den Tag bedeuten. Sie liest Apple Health auf dem iPhone und behält die Gesundheitsdaten dort."
+          : "Akari is an iPhone app that brings sleep, movement and food together in one place and explains in plain words what they mean for the day. It reads Apple Health on the iPhone and keeps health data there.",
         applicationCategory: "HealthApplication",
-        operatingSystem: "iOS",
+        operatingSystem: "iOS 26 or later",
         availableOnDevice: "iPhone",
+        inLanguage: ["en", "de"],
         isAccessibleForFree: true,
         image: "https://joinakari.com/assets/icon-512.png",
-        screenshot: [
-          "https://joinakari.com/assets/theme-media/image_japan_dark_01.webp",
-          "https://joinakari.com/assets/theme-media/image_japan_dark_02.webp",
-          "https://joinakari.com/assets/theme-media/image_japan_dark_03.webp",
-        ],
+        screenshot: [piece("tile-sleep"), piece("readiness-bar"), piece("card-fiber"), piece("meal-sentence")],
         featureList: isGerman
           ? [
-              "Eine ruhige Tagesansicht ohne Punktesysteme oder Wertung",
-              "Einfache Erklärungen mit anschaulichen Beispielen",
-              "Unterstützte Vitalwerte, Aktivität und Ernährung in einer App",
-              "Kein Konto erforderlich",
-              "Gesundheitsdaten bleiben auf dem iPhone",
+              "Jeden Morgen die Tagesform, gemessen an deinen eigenen üblichen Nächten",
+              "Jeder Nährstoff in einer eigenen Zeile, Grenzen markiert",
+              "Essen eintragen, indem du es schreibst oder sagst",
+              "Ziele für Schlaf, Bewegung, gutes Essen und Gewicht",
+              "Kein Konto, Gesundheitsdaten bleiben auf dem iPhone",
+              "Auf Deutsch und Englisch",
             ]
           : [
-              "A calm daily view without scores or judgment",
-              "Simple explanations with relatable examples",
-              "Supported vitals, activity and nutrition in one app",
-              "No account required",
-              "Health data stays on the user's iPhone",
+              "Readiness each morning, read against your own usual nights",
+              "Every nutrient in its own row, with limits marked",
+              "Log food by writing or saying what you ate",
+              "Goals for sleep, movement, eating well and weight",
+              "No account, and health data stays on the iPhone",
+              "In English and German",
             ],
         downloadUrl: "https://testflight.apple.com/join/wrv4aFVQ",
         softwareRequirements: isGerman
-          ? "Während der Beta sind ein iPhone mit Apple Health und TestFlight erforderlich."
-          : "Requires an iPhone with Apple Health and TestFlight during beta.",
+          ? "iPhone mit iOS 26 oder neuer und Apple Health. Während der Beta über Apple TestFlight."
+          : "An iPhone with iOS 26 or later and Apple Health. During the beta, through Apple TestFlight.",
         offers: {
           "@type": "Offer",
+          name: isGerman ? "Kostenlose Beta" : "Free beta",
           price: "0",
-          priceCurrency: isGerman ? "EUR" : "USD",
+          priceCurrency: "EUR",
           availability: "https://schema.org/InStock",
           url: "https://testflight.apple.com/join/wrv4aFVQ",
         },
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${url}#faq`,
+        inLanguage: language,
+        mainEntity: faq.map(([question, answer]) => ({
+          "@type": "Question",
+          name: copy[question],
+          acceptedAnswer: { "@type": "Answer", text: answer },
+        })),
       },
     ],
   };

@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#151a0c" />
+    <meta name="theme-color" content="#0c271c" />
     <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Akari is a private iPhone health app that turns health data, including vitals, activity and nutrition, into calm daily insights. Join the free TestFlight beta."
+      content="Akari is a private iPhone app for sleep, movement and food: your readiness each morning, every nutrient in view, and food you log by saying it. Free beta."
     />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="author" content="Akari" />
@@ -15,10 +15,10 @@
     <meta name="apple-mobile-web-app-title" content="Akari" />
     <link rel="canonical" href="https://joinakari.com/" />
 
-    <meta property="og:title" content="Akari: Understand your health data" />
+    <meta property="og:title" content="Akari: Your whole day in one place" />
     <meta
       property="og:description"
-      content="Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place."
+      content="Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://joinakari.com/" />
@@ -32,10 +32,10 @@
     <meta property="og:image:alt" content="Akari logo in an orange-to-yellow gradient on a black background" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Akari: Understand your health data" />
+    <meta name="twitter:title" content="Akari: Your whole day in one place" />
     <meta
       name="twitter:description"
-      content="Akari turns your health data into a calm, readable daily story. It brings your vitals, nutrition and goals together in one place."
+      content="Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day."
     />
     <meta name="twitter:image" content="https://joinakari.com/assets/social.png?v=2" />
     <meta name="twitter:image:alt" content="Akari logo in an orange-to-yellow gradient on a black background" />
@@ -57,7 +57,7 @@
             "@id": "https://joinakari.com/#website",
             "url": "https://joinakari.com/",
             "name": "Akari",
-            "description": "Akari helps people understand their health data through calm daily insights.",
+            "description": "Akari brings sleep, movement and food together on iPhone and explains them in plain words.",
             "inLanguage": "en"
           },
           {
@@ -65,9 +65,13 @@
             "@id": "https://joinakari.com/#webpage",
             "url": "https://joinakari.com/",
             "name": "Akari: Understand your health data",
-            "description": "A private iPhone health app for calm daily insights across your vitals, activity and nutrition.",
-            "isPartOf": { "@id": "https://joinakari.com/#website" },
-            "mainEntity": { "@id": "https://joinakari.com/#app" },
+            "description": "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
+            "isPartOf": {
+              "@id": "https://joinakari.com/#website"
+            },
+            "mainEntity": {
+              "@id": "https://joinakari.com/#app"
+            },
             "primaryImageOfPage": "https://joinakari.com/assets/social.png?v=2",
             "inLanguage": "en"
           },
@@ -76,33 +80,95 @@
             "@id": "https://joinakari.com/#app",
             "name": "Akari",
             "url": "https://joinakari.com/",
-            "description": "Akari turns health data into a calm, readable daily story with simple explanations across supported vitals, activity and nutrition data.",
+            "description": "Akari is an iPhone app that brings sleep, movement and food together in one place and explains in plain words what they mean for the day. It reads Apple Health on the iPhone and keeps health data there.",
             "applicationCategory": "HealthApplication",
-            "operatingSystem": "iOS",
+            "operatingSystem": "iOS 26 or later",
             "availableOnDevice": "iPhone",
+            "inLanguage": [
+              "en",
+              "de"
+            ],
             "isAccessibleForFree": true,
             "image": "https://joinakari.com/assets/icon-512.png",
             "screenshot": [
-              "https://joinakari.com/assets/theme-media/image_japan_dark_01.webp",
-              "https://joinakari.com/assets/theme-media/image_japan_dark_02.webp",
-              "https://joinakari.com/assets/theme-media/image_japan_dark_03.webp"
+              "https://joinakari.com/assets/welcome/forest/en/light/tile-sleep@3x.webp",
+              "https://joinakari.com/assets/welcome/forest/en/light/readiness-bar@3x.webp",
+              "https://joinakari.com/assets/welcome/forest/en/light/card-fiber@3x.webp",
+              "https://joinakari.com/assets/welcome/forest/en/light/meal-sentence@3x.webp"
             ],
             "featureList": [
-              "A calm daily view without scores or judgment",
-              "Simple explanations with relatable examples",
-              "Supported vitals, activity and nutrition in one app",
-              "No account required",
-              "Health data stays on the user's iPhone"
+              "Readiness each morning, read against your own usual nights",
+              "Every nutrient in its own row, with limits marked",
+              "Log food by writing or saying what you ate",
+              "Goals for sleep, movement, eating well and weight",
+              "No account, and health data stays on the iPhone",
+              "In English and German"
             ],
             "downloadUrl": "https://testflight.apple.com/join/wrv4aFVQ",
-            "softwareRequirements": "Requires an iPhone with Apple Health and TestFlight during beta.",
+            "softwareRequirements": "An iPhone with iOS 26 or later and Apple Health. During the beta, through Apple TestFlight.",
             "offers": {
               "@type": "Offer",
+              "name": "Free beta",
               "price": "0",
-              "priceCurrency": "USD",
+              "priceCurrency": "EUR",
               "availability": "https://schema.org/InStock",
               "url": "https://testflight.apple.com/join/wrv4aFVQ"
             }
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://joinakari.com/#faq",
+            "inLanguage": "en",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is Akari?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Akari is an iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What does Akari cost?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Most of Akari is free. Food logging, readiness and Health Age need a subscription: €4.99 a month or €39.99 a year, with 14 days free to try and no commitment. During the beta everything is free."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What do I need?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Is Akari medical advice?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Akari explains your own data and patterns. It does not diagnose or treat anything, so talk to your doctor about health concerns."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does my health data leave my iPhone?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How can I try Akari?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Join the free beta through Apple TestFlight. The App Store version is coming soon."
+                }
+              }
+            ]
           }
         ]
       }
@@ -146,8 +212,8 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20261009-53" />
-    <script src="script.js?v=20261009-22" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20261009-54" />
+    <script src="script.js?v=20261009-23" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skipLink">Skip to content</a>
