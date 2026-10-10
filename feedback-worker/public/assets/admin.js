@@ -7,6 +7,10 @@ const playfulEmojis = [...document.querySelectorAll(".playful-emoji")];
 const logoutLink = document.querySelector("[data-logout]");
 const languageButtons = [...document.querySelectorAll("[data-language-target]")];
 const indicatorGroups = [...document.querySelectorAll(".admin-tabs, .summary")];
+const rangeButtons = [...document.querySelectorAll("[data-range]")];
+const visitStats = document.querySelector("#visit-stats");
+const visitsPlot = document.querySelector(".visits-plot");
+const visitBreakdowns = document.querySelector("#visit-breakdowns");
 const root = document.documentElement;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let activeFilter = "open";
@@ -14,14 +18,23 @@ let allReports = [];
 let activePanel = null;
 let panelTrigger = null;
 let feedbackLoaded = false;
+let visitRange = 30;
+let visitData = null;
+let visitsRequest = 0;
 let currentLanguage = root.dataset.language === "de" ? "de" : "en";
 
 const translations = {
   en: {
     languageGroupLabel: "Choose a language", languageEnglishLabel: "View in English", languageGermanLabel: "View in German",
     homeLabel: "Akari home", adminPagesLabel: "Admin pages", dashboardNavLabel: "Dashboard", foodReviewNavLabel: "Food inbox", logoutLabel: "Log out",
-    dashboardTitle: "Dashboard", dashboardLede: "A clearer view of how Akari is being used.", dashboardEmojiLabel: "Play with the dashboard emoji",
-    comingSoon: "Coming soon", analyticsTitle: "Akari analytics", analyticsBody: "Downloads, revenue, subscriptions, and the metrics that show how Akari is growing will appear here.",
+    dashboardTitle: "Dashboard", dashboardLede: "Who’s finding joinakari.com, and where they’re coming from.", dashboardEmojiLabel: "Play with the dashboard emoji",
+    visitsTitle: "Website visits", rangeLabel: "Time range", range7: "7 days", range30: "30 days", range90: "90 days",
+    statVisitors: "Visitors", statViews: "Page views", versusPrevious: "{change} vs. previous {days} days",
+    chartSummary: "Visitors per day over the last {days} days, {total} in total.", loadingVisits: "Loading visits…", noVisits: "No visits yet. They’ll show up here as people find the website.",
+    tooltipVisitors: "{count} visitors", tooltipVisitor: "1 visitor", tooltipViews: "{count} page views", tooltipView: "1 page view", tableDay: "Day",
+    breakdownPages: "Pages", breakdownSources: "Came from", breakdownCountries: "Countries", breakdownEmpty: "Nothing yet",
+    pageHome: "Home", pagePrivacy: "Privacy", pageTerms: "Terms", sourceDirect: "Direct", unknown: "Unknown",
+    visitsNote: "Counted without cookies. A visitor is recognised for one day only.",
     foodReviewTitle: "Food inbox", foodReviewLede: "Wrong matches, odd portions and off nutrition, flagged by people using Akari. Fix each one, then check it off.", foodReviewEmojiLabel: "Play with the food inbox emoji",
     feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
     pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Inbox",
@@ -41,8 +54,14 @@ const translations = {
   de: {
     languageGroupLabel: "Sprache wählen", languageEnglishLabel: "Seite auf Englisch anzeigen", languageGermanLabel: "Seite auf Deutsch anzeigen",
     homeLabel: "Akari Startseite", adminPagesLabel: "Admin-Seiten", dashboardNavLabel: "Übersicht", foodReviewNavLabel: "Meldungen", logoutLabel: "Abmelden",
-    dashboardTitle: "Übersicht", dashboardLede: "Ein klarer Blick darauf, wie Akari genutzt wird.", dashboardEmojiLabel: "Mit dem Übersichts-Emoji spielen",
-    comingSoon: "Demnächst", analyticsTitle: "Akari Analysen", analyticsBody: "Downloads, Umsatz, Abonnements und weitere Kennzahlen zum Wachstum von Akari werden hier angezeigt.",
+    dashboardTitle: "Übersicht", dashboardLede: "Wer joinakari.com findet und woher die Leute kommen.", dashboardEmojiLabel: "Mit dem Übersichts-Emoji spielen",
+    visitsTitle: "Website-Besuche", rangeLabel: "Zeitraum", range7: "7 Tage", range30: "30 Tage", range90: "90 Tage",
+    statVisitors: "Besucher", statViews: "Seitenaufrufe", versusPrevious: "{change} ggü. den {days} Tagen davor",
+    chartSummary: "Besucher pro Tag in den letzten {days} Tagen, insgesamt {total}.", loadingVisits: "Besuche werden geladen…", noVisits: "Noch keine Besuche. Sie erscheinen hier, sobald Leute die Website finden.",
+    tooltipVisitors: "{count} Besucher", tooltipVisitor: "1 Besucher", tooltipViews: "{count} Seitenaufrufe", tooltipView: "1 Seitenaufruf", tableDay: "Tag",
+    breakdownPages: "Seiten", breakdownSources: "Gekommen von", breakdownCountries: "Länder", breakdownEmpty: "Noch nichts",
+    pageHome: "Startseite", pagePrivacy: "Datenschutz", pageTerms: "Nutzungsbedingungen", sourceDirect: "Direkt", unknown: "Unbekannt",
+    visitsNote: "Gezählt ohne Cookies. Ein Besucher wird nur einen Tag lang wiedererkannt.",
     foodReviewTitle: "Meldungen", foodReviewLede: "Falsche Treffer, seltsame Portionen und fehlerhafte Nährwerte, gemeldet von Akari-Nutzern. Korrigieren, dann abhaken.", foodReviewEmojiLabel: "Mit dem Meldungen-Emoji spielen",
     feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
     pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Meldungen",
@@ -83,6 +102,7 @@ function selectLanguage(language, persist = true) {
   translateStatic();
   syncPage();
   if (allReports.length) render(allReports);
+  if (visitData) renderVisits(visitData);
   if (activePanel) closeReportPanel();
 }
 
@@ -110,6 +130,7 @@ function syncPage() {
     feedbackLoaded = true;
     load();
   }
+  if (page === "dashboard" && !visitData) loadVisits();
 }
 
 window.addEventListener("hashchange", syncPage);
@@ -231,6 +252,252 @@ for (const button of filterButtons) {
     syncIndicators();
     render(allReports);
   });
+}
+
+for (const button of rangeButtons) {
+  button.addEventListener("click", () => {
+    visitRange = Number(button.dataset.range);
+    for (const candidate of rangeButtons) {
+      const selected = candidate === button;
+      candidate.classList.toggle("is-active", selected);
+      candidate.setAttribute("aria-pressed", String(selected));
+    }
+    loadVisits();
+  });
+}
+
+// Website visits ---------------------------------------------------------------------------------
+
+async function loadVisits() {
+  const request = ++visitsRequest;
+  visitsPlot.setAttribute("aria-busy", "true");
+  try {
+    const response = await fetch(`/admin-api/visits?days=${visitRange}`);
+    if (!response.ok) throw new Error(`Request failed (${response.status})`);
+    let data = await response.json();
+    if (isLocalPreview() && data.totals.views === 0) data = previewVisits(data);
+    if (request !== visitsRequest) return;
+    visitData = data;
+    renderVisits(data);
+  } catch (error) {
+    if (request !== visitsRequest) return;
+    visitsPlot.replaceChildren(element("p", "visits-state", error.message));
+  } finally {
+    if (request === visitsRequest) visitsPlot.removeAttribute("aria-busy");
+  }
+}
+
+function renderVisits(data) {
+  visitStats.replaceChildren(
+    visitStat(t("statVisitors"), data.totals.visitors, comparison(data.totals.visitors, data.previous.visitors, data.days)),
+    visitStat(t("statViews"), data.totals.views, comparison(data.totals.views, data.previous.views, data.days)),
+  );
+
+  if (data.totals.views === 0) {
+    visitsPlot.replaceChildren(element("p", "visits-state", t("noVisits")));
+  } else {
+    visitsPlot.replaceChildren(visitsChart(data), visitsTable(data));
+  }
+
+  const { pages, sources, countries } = data.breakdowns;
+  visitBreakdowns.replaceChildren(
+    breakdownList(t("breakdownPages"), pages, pageLabel),
+    breakdownList(t("breakdownSources"), sources, (value) => value ?? t("sourceDirect")),
+    breakdownList(t("breakdownCountries"), countries, countryLabel),
+  );
+}
+
+function visitStat(label, value, detail) {
+  const stat = element("div", "visit-stat");
+  const description = element("dd");
+  description.append(element("strong", "", formatNumber(value)));
+  if (detail) description.append(element("span", "visit-stat-detail", detail));
+  stat.append(element("dt", "", label), description);
+  return stat;
+}
+
+function comparison(current, previous, days) {
+  if (!previous) return "";
+  const change = Math.round(((current - previous) / previous) * 100);
+  if (change === 0) return "";
+  return t("versusPrevious", { change: `${change > 0 ? "↑" : "↓"} ${Math.abs(change)}%`, days });
+}
+
+// One series, so no legend: the stat beside it names it. Hovering shows the
+// day's numbers.
+function visitsChart(data) {
+  const svgNS = "http://www.w3.org/2000/svg";
+  const width = 720;
+  const height = 220;
+  const pad = { top: 20, right: 14, bottom: 30, left: 14 };
+  const points = data.daily;
+  const max = Math.max(1, ...points.map((point) => point.visitors));
+  const top = niceCeiling(max);
+  const x = (index) => pad.left + (points.length === 1 ? 0 : (index / (points.length - 1)) * (width - pad.left - pad.right));
+  const y = (value) => pad.top + (1 - value / top) * (height - pad.top - pad.bottom);
+  const baseline = y(0);
+
+  const wrap = element("div", "visits-chart-wrap");
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  svg.setAttribute("preserveAspectRatio", "none");
+  svg.setAttribute("role", "img");
+  svg.setAttribute("aria-label", t("chartSummary", { days: data.days, total: formatNumber(data.totals.visitors) }));
+  const shape = (name, attributes) => {
+    const node = document.createElementNS(svgNS, name);
+    for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+    svg.append(node);
+    return node;
+  };
+
+  // A fill that fades out towards the baseline, so the line carries the chart.
+  const defs = shape("defs", {});
+  const gradient = document.createElementNS(svgNS, "linearGradient");
+  for (const [key, value] of Object.entries({ id: "visits-fill", x1: 0, y1: 0, x2: 0, y2: 1 })) gradient.setAttribute(key, value);
+  for (const [offset, name] of [["0", "visits-fill-top"], ["1", "visits-fill-bottom"]]) {
+    const stop = document.createElementNS(svgNS, "stop");
+    stop.setAttribute("offset", offset);
+    stop.setAttribute("class", name);
+    gradient.append(stop);
+  }
+  defs.append(gradient);
+
+  for (const fraction of [0.5, 1]) {
+    shape("line", { class: "visits-grid", x1: pad.left, x2: width - pad.right, y1: y(top * fraction), y2: y(top * fraction) });
+  }
+  shape("line", { class: "visits-baseline", x1: pad.left, x2: width - pad.right, y1: baseline, y2: baseline });
+  const line = smoothPath(points.map((point, index) => [x(index), y(point.visitors)]));
+  shape("path", { class: "visits-area", fill: "url(#visits-fill)", d: `${line} L${x(points.length - 1).toFixed(1)} ${baseline} L${x(0).toFixed(1)} ${baseline} Z` });
+  shape("path", { class: "visits-line", d: line });
+  const crosshair = shape("line", { class: "visits-crosshair", y1: pad.top, y2: baseline, x1: 0, x2: 0 });
+
+  const scale = element("span", "visits-scale", formatNumber(top));
+  scale.style.top = `${(y(top) / height) * 100}%`;
+  const axis = element("div", "visits-axis");
+  for (const index of [0, Math.floor((points.length - 1) / 2), points.length - 1]) {
+    const tick = element("span", "", formatDay(points[index].day, { day: "numeric", month: "short" }));
+    tick.style.left = `${(x(index) / width) * 100}%`;
+    axis.append(tick);
+  }
+
+  const marker = element("span", "visits-marker");
+  const tooltip = element("div", "visits-tooltip");
+  tooltip.setAttribute("role", "status");
+  wrap.append(svg, scale, axis, marker, tooltip);
+
+  const show = (index) => {
+    const point = points[index];
+    const left = (x(index) / width) * 100;
+    crosshair.setAttribute("x1", x(index));
+    crosshair.setAttribute("x2", x(index));
+    marker.style.left = `${left}%`;
+    marker.style.top = `${(y(point.visitors) / height) * 100}%`;
+    tooltip.replaceChildren(
+      element("span", "visits-tooltip-day", formatDay(point.day, { weekday: "short", day: "numeric", month: "short" })),
+      element("strong", "", point.visitors === 1 ? t("tooltipVisitor") : t("tooltipVisitors", { count: formatNumber(point.visitors) })),
+      element("span", "", point.views === 1 ? t("tooltipView") : t("tooltipViews", { count: formatNumber(point.views) })),
+    );
+    tooltip.style.left = `${left}%`;
+    tooltip.classList.toggle("is-flipped", left > 60);
+    wrap.classList.add("is-hovering");
+  };
+  const hide = () => wrap.classList.remove("is-hovering");
+  const indexAt = (event) => {
+    const bounds = svg.getBoundingClientRect();
+    const position = ((event.clientX - bounds.left) / bounds.width) * width;
+    const fraction = (position - pad.left) / (width - pad.left - pad.right);
+    return Math.min(points.length - 1, Math.max(0, Math.round(fraction * (points.length - 1))));
+  };
+  wrap.addEventListener("pointermove", (event) => show(indexAt(event)));
+  wrap.addEventListener("pointerdown", (event) => show(indexAt(event)));
+  wrap.addEventListener("pointerleave", hide);
+  return wrap;
+}
+
+// A monotone cubic through every point (Fritsch–Carlson): smooth, but it never
+// overshoots a day's value or dips below zero between days.
+function smoothPath(coordinates) {
+  const count = coordinates.length;
+  if (count < 3) return coordinates.map(([px, py], index) => `${index ? "L" : "M"}${px.toFixed(1)} ${py.toFixed(1)}`).join(" ");
+  const slopes = [];
+  for (let index = 0; index < count - 1; index += 1) {
+    const [x0, y0] = coordinates[index];
+    const [x1, y1] = coordinates[index + 1];
+    slopes.push((y1 - y0) / (x1 - x0));
+  }
+  const tangents = coordinates.map((_, index) => {
+    if (index === 0) return slopes[0];
+    if (index === count - 1) return slopes[count - 2];
+    const before = slopes[index - 1];
+    const after = slopes[index];
+    return before * after <= 0 ? 0 : (2 * before * after) / (before + after);
+  });
+  let path = `M${coordinates[0][0].toFixed(1)} ${coordinates[0][1].toFixed(1)}`;
+  for (let index = 0; index < count - 1; index += 1) {
+    const [x0, y0] = coordinates[index];
+    const [x1, y1] = coordinates[index + 1];
+    const third = (x1 - x0) / 3;
+    path += ` C${(x0 + third).toFixed(1)} ${(y0 + tangents[index] * third).toFixed(1)} ${(x1 - third).toFixed(1)} ${(y1 - tangents[index + 1] * third).toFixed(1)} ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+  }
+  return path;
+}
+
+function niceCeiling(value) {
+  const magnitude = 10 ** Math.floor(Math.log10(value));
+  for (const step of [1, 2, 2.5, 5, 10]) {
+    if (value <= step * magnitude) return step * magnitude;
+  }
+  return 10 * magnitude;
+}
+
+// The same numbers as a table, for screen readers.
+function visitsTable(data) {
+  const table = element("table", "visually-hidden");
+  const head = element("tr");
+  head.append(element("th", "", t("tableDay")), element("th", "", t("statVisitors")), element("th", "", t("statViews")));
+  table.append(head);
+  for (const point of data.daily) {
+    const row = element("tr");
+    row.append(element("td", "", formatDay(point.day, { dateStyle: "medium" })), element("td", "", formatNumber(point.visitors)), element("td", "", formatNumber(point.views)));
+    table.append(row);
+  }
+  return table;
+}
+
+function breakdownList(title, rows, labelFor) {
+  const section = element("section", "breakdown");
+  section.append(element("h3", "", title));
+  if (!rows.length) {
+    section.append(element("p", "breakdown-empty", t("breakdownEmpty")));
+    return section;
+  }
+  const list = element("ol", "breakdown-list");
+  for (const row of rows.slice(0, 5)) {
+    const item = element("li", "breakdown-row");
+    item.append(element("span", "breakdown-label", labelFor(row.value)), element("span", "breakdown-value", formatNumber(row.visitors)));
+    list.append(item);
+  }
+  section.append(list);
+  return section;
+}
+
+function pageLabel(path) {
+  return ({ "/": t("pageHome"), "/privacy/": t("pagePrivacy"), "/terms/": t("pageTerms") })[path] ?? path;
+}
+
+function countryLabel(code) {
+  if (!code) return t("unknown");
+  const flag = String.fromCodePoint(...[...code].map((letter) => 0x1f1e6 + letter.charCodeAt(0) - 65));
+  let name = code;
+  try {
+    name = new Intl.DisplayNames([currentLanguage], { type: "region" }).of(code) ?? code;
+  } catch {}
+  return `${flag} ${name}`;
+}
+
+function formatDay(day, options) {
+  if (!day) return "";
+  return new Intl.DateTimeFormat(currentLanguage === "de" ? "de-DE" : "en-US", { timeZone: "UTC", ...options }).format(new Date(`${day}T00:00:00Z`));
 }
 
 async function load() {
@@ -861,6 +1128,31 @@ function formatNumber(value) {
 
 function isLocalPreview() {
   return ["127.0.0.1", "localhost"].includes(window.location.hostname);
+}
+
+// Local development has no visits, so the dashboard shows a believable
+// sample to design against, like the food inbox's preview reports.
+function previewVisits(data) {
+  const daily = data.daily.map((point, index) => {
+    const weekday = new Date(`${point.day}T00:00:00Z`).getUTCDay();
+    const trend = 14 + index * 0.35;
+    const visitors = Math.round(trend * (weekday === 0 || weekday === 6 ? 0.7 : 1) + Math.abs(Math.sin(index * 1.7)) * 9);
+    return { day: point.day, visitors, views: Math.round(visitors * 1.6) };
+  });
+  const visitors = daily.reduce((sum, point) => sum + point.visitors, 0);
+  const views = daily.reduce((sum, point) => sum + point.views, 0);
+  const share = (entries) => entries.map(([value, fraction]) => ({ value, visitors: Math.round(visitors * fraction), views: Math.round(views * fraction) }));
+  return {
+    ...data,
+    daily,
+    totals: { visitors, views },
+    previous: { visitors: Math.round(visitors * 0.82), views: Math.round(views * 0.86) },
+    breakdowns: {
+      pages: share([["/", 0.86], ["/privacy/", 0.09], ["/terms/", 0.05]]),
+      sources: share([[null, 0.48], ["news.ycombinator.com", 0.21], ["google.com", 0.14], ["testflight", 0.09], ["reddit.com", 0.05], ["t.co", 0.03]]),
+      countries: share([["DE", 0.41], ["US", 0.24], ["GB", 0.09], ["AT", 0.07], ["CH", 0.06], ["JP", 0.05], ["NL", 0.04], [null, 0.04]]),
+    },
+  };
 }
 
 function previewReports() {

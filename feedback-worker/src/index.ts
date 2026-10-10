@@ -3,6 +3,7 @@ interface Env {
   ASSETS: Fetcher;
   ADMIN_HOST: string;
   API_HOST: string;
+  SITE_HOST: string;
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD_HASH: string;
   ADDITIONAL_ADMINS?: string;
@@ -103,6 +104,11 @@ export default {
       return createFeedback(request, env);
     }
 
+    if (request.method === "POST" && url.pathname === "/v1/visit") {
+      if (!isConfiguredAPIHost && !isWorkersDev && !isLocal) return notFound();
+      return recordVisit(request, env, isLocal);
+    }
+
     if (url.pathname.startsWith("/auth/")) {
       if (!isAdminHost && !isWorkersDev && !isLocal) return notFound();
       if (request.method === "POST" && url.pathname === "/auth/login") {
@@ -122,6 +128,9 @@ export default {
       if (!(await hasAdminSession(request, env, isLocal))) return unauthorized();
       if (request.method === "GET" && url.pathname === "/admin-api/reports") {
         return listReports(url, env);
+      }
+      if (request.method === "GET" && url.pathname === "/admin-api/visits") {
+        return listVisits(url, env);
       }
       const match = url.pathname.match(/^\/admin-api\/reports\/([^/]+)$/);
       if (request.method === "PATCH" && match) {
@@ -415,6 +424,136 @@ async function updateReport(request: Request, env: Env, id: string): Promise<Res
   const result = await statement.run();
   if (result.meta.changes === 0) return notFound();
   return json({ updated: true });
+}
+
+// Website visits are counted without cookies or anything stored in the
+// browser. A visitor is a hash of the IP address and browser with a salt that
+// lives for one UTC day; the IP address itself is never stored, and once the
+// day's salt is deleted the hashes can't be linked to anyone or to each other.
+const botAgentPattern = /bot|crawl|spider|slurp|headless|lighthouse|preview|monitor|curl|wget|python|http-?client|java\//iu;
+const visitRanges = new Set([7, 30, 90]);
+let cachedSalt: { day: string; salt: string } | null = null;
+
+async function recordVisit(request: Request, env: Env, isLocal: boolean): Promise<Response> {
+  // The beacon never reads the answer, so filtered visits look like counted ones.
+  const done = new Response(null, { status: 204, headers: { "cache-control": "no-store" } });
+  const agent = request.headers.get("user-agent") ?? "";
+  if (!isLocal && !isSiteOrigin(request.headers.get("origin"), env)) return done;
+  if (!agent || botAgentPattern.test(agent)) return done;
+
+  const body = await request.text();
+  if (body.length > 2_000) return done;
+  let input: unknown;
+  try {
+    input = JSON.parse(body);
+  } catch {
+    return done;
+  }
+  if (!isRecord(input)) return done;
+  const path = visitPath(input.path);
+  if (!path) return done;
+
+  const day = new Date().toISOString().slice(0, 10);
+  const salt = await dailySalt(env, day);
+  const ip = request.headers.get("cf-connecting-ip") ?? "";
+  const visitor = (await sha256(`${salt}|${ip}|${agent}`)).slice(0, 16);
+  const country = (request as Request & { cf?: { country?: unknown } }).cf?.country;
+
+  await env.DB.prepare(`
+    INSERT INTO site_visits (created_at, day, path, source, country, visitor)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).bind(
+    new Date().toISOString(),
+    day,
+    path,
+    visitSource(input.source),
+    typeof country === "string" && /^[A-Z]{2}$/u.test(country) && country !== "XX" ? country : null,
+    visitor,
+  ).run();
+  return done;
+}
+
+function isSiteOrigin(origin: string | null, env: Env): boolean {
+  if (!origin || !env.SITE_HOST) return false;
+  const site = env.SITE_HOST.toLowerCase();
+  return origin === `https://${site}` || origin === `https://www.${site}`;
+}
+
+function visitPath(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const path = value.toLowerCase().replace(/index\.html$/u, "");
+  return /^\/[a-z0-9/_-]{0,80}$/u.test(path) ? path : null;
+}
+
+/// A referring site's host name or a campaign tag (`?ref=` / `utm_source`).
+function visitSource(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const source = value.trim().toLowerCase().replace(/^www\./u, "");
+  return /^[a-z0-9._-]{1,60}$/u.test(source) ? source : null;
+}
+
+async function dailySalt(env: Env, day: string): Promise<string> {
+  if (cachedSalt?.day === day) return cachedSalt.salt;
+  const fresh = [...crypto.getRandomValues(new Uint8Array(16))].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  const created = await env.DB.prepare("INSERT OR IGNORE INTO site_visit_salts (day, salt) VALUES (?, ?)")
+    .bind(day, fresh).run();
+  if (created.meta.changes > 0) {
+    // The first visit of a day forgets every earlier day's salt.
+    await env.DB.prepare("DELETE FROM site_visit_salts WHERE day < ?").bind(day).run();
+  }
+  const row = await env.DB.prepare("SELECT salt FROM site_visit_salts WHERE day = ?")
+    .bind(day).first<{ salt: string }>();
+  const salt = row?.salt ?? fresh;
+  cachedSalt = { day, salt };
+  return salt;
+}
+
+interface VisitCountRow { views: number; visitors: number }
+interface VisitDayRow extends VisitCountRow { day: string }
+interface VisitBreakdownRow extends VisitCountRow { value: string | null }
+
+async function listVisits(url: URL, env: Env): Promise<Response> {
+  const requested = Number(url.searchParams.get("days") ?? 30);
+  const days = visitRanges.has(requested) ? requested : 30;
+  const dayAt = (offset: number) => new Date(Date.now() - offset * 86_400_000).toISOString().slice(0, 10);
+  const since = dayAt(days - 1);
+  const previousSince = dayAt(days * 2 - 1);
+
+  // A visitor hash only means something within its day, so visitors over a
+  // range are the sum of each day's visitors.
+  const totals = (where: string, ...values: string[]) => env.DB.prepare(`
+    SELECT COUNT(*) AS views, COUNT(DISTINCT day || visitor) AS visitors
+    FROM site_visits WHERE ${where}
+  `).bind(...values).first<VisitCountRow>();
+  const breakdown = (column: string) => env.DB.prepare(`
+    SELECT ${column} AS value, COUNT(*) AS views, COUNT(DISTINCT day || visitor) AS visitors
+    FROM site_visits WHERE day >= ?
+    GROUP BY ${column} ORDER BY visitors DESC, views DESC LIMIT 8
+  `).bind(since).all<VisitBreakdownRow>().then((result) => result.results ?? []);
+
+  const [current, previous, daily, pages, sources, countries] = await Promise.all([
+    totals("day >= ?", since),
+    totals("day >= ? AND day < ?", previousSince, since),
+    env.DB.prepare(`
+      SELECT day, COUNT(*) AS views, COUNT(DISTINCT visitor) AS visitors
+      FROM site_visits WHERE day >= ? GROUP BY day
+    `).bind(since).all<VisitDayRow>().then((result) => result.results ?? []),
+    breakdown("path"),
+    breakdown("source"),
+    breakdown("country"),
+  ]);
+
+  const byDay = new Map(daily.map((row) => [row.day, row]));
+  return json({
+    days,
+    totals: { views: current?.views ?? 0, visitors: current?.visitors ?? 0 },
+    previous: { views: previous?.views ?? 0, visitors: previous?.visitors ?? 0 },
+    daily: Array.from({ length: days }, (_, index) => {
+      const day = dayAt(days - 1 - index);
+      return { day, views: byDay.get(day)?.views ?? 0, visitors: byDay.get(day)?.visitors ?? 0 };
+    }),
+    breakdowns: { pages, sources, countries },
+  });
 }
 
 function validatePayload(input: unknown): FoodFeedbackPayload | null {

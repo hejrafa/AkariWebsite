@@ -27,6 +27,7 @@
   "vars": {
     "ADMIN_HOST": "admin.joinakari.com",
     "API_HOST": "api.joinakari.com",
+    "SITE_HOST": "joinakari.com",
     "ADMIN_EMAIL": "contact@hejrafa.com"
   },
   "d1_databases": [

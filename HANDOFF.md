@@ -10,8 +10,15 @@ Both applications are in [hejrafa/AkariWebsite](https://github.com/hejrafa/Akari
 | Food-feedback dashboard | `feedback-worker/public/` | https://admin.joinakari.com | Cloudflare Worker; separate deployment |
 | Login and food-feedback API | `feedback-worker/src/index.ts` | https://api.joinakari.com | Same Worker as the admin dashboard |
 | Feedback database | `feedback-worker/migrations/` | Cloudflare D1, `akari-food-feedback` | Apply pending migrations separately |
+| Website visit counting | `visit.js` (site), `/v1/visit` and `/admin-api/visits` in `feedback-worker/src/index.ts` | Dashboard page of https://admin.joinakari.com | Site via GitHub Pages; endpoint and dashboard with the Worker |
 
 The Worker is named `akari-food-feedback`. Its domains and database binding are recorded in `feedback-worker/wrangler.jsonc`.
+
+## Website visits
+
+Every public page loads `visit.js`, which sends one beacon per page load to `https://api.joinakari.com/v1/visit`: the path and the referring host or `utm_source`/`ref` tag. It sets no cookies and stores nothing in the browser, and it does nothing on localhost. The Worker drops requests from other origins and obvious bots, adds Cloudflare's country code, and stores a 16-character hash of the IP address and user agent with a random salt kept in `site_visit_salts` for the current UTC day only. The IP address and user agent are never stored; the first visit of a new day deletes older salts, so earlier hashes can't be linked to anyone. Visitors over a range are therefore the sum of daily visitors. The privacy policy's "Visiting this website" section describes this; update it if the beacon collects anything new.
+
+The dashboard reads `/admin-api/visits?days=7|30|90`. Locally, with no visits recorded, it shows labelled sample data.
 
 ## Access for a co-maintainer
 

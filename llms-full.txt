@@ -42,6 +42,7 @@ Akari also offers a Health Age, which is part of the subscription.
 - Akari needs no account.
 - Akari reads Apple Health on the iPhone and keeps the user's health data there. Users can optionally connect Google Health with read-only access to fill gaps.
 - The one thing that leaves the iPhone on purpose is a food report, and only when the user taps Send. A food report helps Akari correct a food it matched wrongly or could not find. It contains the rating and reasons, an optional comment, what was typed or said, the matched foods with amounts and nutrients, anything unmatched, a scanned barcode if there was one, and the app's language, region and version. It does not include a name, an account, Apple Health data or location.
+- The website counts visits without cookies: it records the page, referring site and country, and tells visitors apart only with a one-way hash that changes daily. No IP address is stored.
 - Full details are in the privacy policy: https://joinakari.com/privacy/
 
 ## Pricing
