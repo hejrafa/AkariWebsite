@@ -347,7 +347,7 @@ const pageMetadata = {
     socialTitle: "Akari: Your whole day in one place",
     socialDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
     twitterDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
-    imageAlt: "Akari logo in an orange-to-yellow gradient on a black background",
+    imageAlt: "Akari app icon and logo on black",
   },
   de: {
     title: "Akari: Verstehe deine Gesundheitsdaten",
@@ -355,11 +355,12 @@ const pageMetadata = {
     socialTitle: "Akari: Dein ganzer Tag an einem Ort",
     socialDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
     twitterDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
-    imageAlt: "Akari-Logo mit orange-gelbem Verlauf auf schwarzem Hintergrund",
+    imageAlt: "App-Symbol und Logo von Akari auf Schwarz",
   },
 };
 
 // Structured data follows the page: the same claims, the same FAQ, and pieces of the app as its images.
+// The Organization's logo is the plain app icon, so search shows that rather than a theme's painting.
 function structuredDataFor(language) {
   const isGerman = language === "de";
   const copy = translations[language];
@@ -377,6 +378,13 @@ function structuredDataFor(language) {
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Organization",
+        "@id": "https://joinakari.com/#organization",
+        name: "Akari",
+        url: "https://joinakari.com/",
+        logo: "https://joinakari.com/assets/icons/icon-512.png",
+      },
+      {
         "@type": "WebSite",
         "@id": "https://joinakari.com/#website",
         url,
@@ -393,8 +401,9 @@ function structuredDataFor(language) {
         name: pageMetadata[language].title,
         description: pageMetadata[language].socialDescription,
         isPartOf: { "@id": "https://joinakari.com/#website" },
+        publisher: { "@id": "https://joinakari.com/#organization" },
         mainEntity: { "@id": "https://joinakari.com/#app" },
-        primaryImageOfPage: "https://joinakari.com/assets/social.png?v=2",
+        primaryImageOfPage: "https://joinakari.com/assets/social.png?v=3",
         inLanguage: language,
       },
       {
@@ -406,11 +415,12 @@ function structuredDataFor(language) {
           ? "Akari ist eine iPhone-App, die Schlaf, Bewegung und Essen an einem Ort zusammenbringt und in einfachen Worten erklärt, was sie für den Tag bedeuten. Sie liest Apple Health auf dem iPhone und behält die Gesundheitsdaten dort."
           : "Akari is an iPhone app that brings sleep, movement and food together in one place and explains in plain words what they mean for the day. It reads Apple Health on the iPhone and keeps health data there.",
         applicationCategory: "HealthApplication",
-        operatingSystem: "iOS 26 or later",
+        operatingSystem: "iOS",
         availableOnDevice: "iPhone",
         inLanguage: ["en", "de"],
         isAccessibleForFree: true,
-        image: "https://joinakari.com/assets/icon-512.png",
+        image: "https://joinakari.com/assets/icons/icon-512.png",
+        publisher: { "@id": "https://joinakari.com/#organization" },
         screenshot: [piece("tile-sleep"), piece("readiness-bar"), piece("card-fiber"), piece("meal-sentence")],
         featureList: isGerman
           ? [
