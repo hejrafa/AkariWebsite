@@ -212,23 +212,12 @@
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20261009-54" />
-    <script src="script.js?v=20261009-24" defer></script>
+    <link rel="stylesheet" href="styles.css?v=20261012-01" />
+    <script src="script.js?v=20261012-01" defer></script>
     <script src="visit.js?v=20261010-01" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skipLink">Skip to content</a>
-    <svg class="sr-only" width="0" height="0" aria-hidden="true" focusable="false">
-      <filter id="die-cut" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-        <feMorphology in="SourceAlpha" operator="dilate" radius="3" result="grown" />
-        <feFlood style="flood-color: var(--band-ink)" />
-        <feComposite in2="grown" operator="in" result="edge" />
-        <feMerge>
-          <feMergeNode in="edge" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </svg>
 
     <header class="site-header" aria-label="Akari website header" data-i18n-aria-label="headerLabel">
       <div class="site-header__inner">
@@ -284,12 +273,12 @@
         <div class="burst">
           <p class="burst__bubble" data-i18n="heroChip">Sleep, movement, food</p>
           <div class="burst__pieces" aria-hidden="true">
-            <img class="burst__piece burst__tile burst__piece--steps" data-piece="tile-steps" alt="" width="179" height="168" />
-            <img class="burst__piece burst__piece--icon" alt="" width="104" height="104" data-theme-icon />
-            <img class="burst__piece burst__tile burst__piece--sleep" data-piece="tile-sleep" alt="" width="179" height="168" fetchpriority="high" />
-            <img class="burst__piece burst__sticker burst__piece--avocado" src="assets/welcome/stickers/avocado.webp" alt="" width="256" height="256" />
-            <img class="burst__piece burst__sticker burst__piece--broccoli" src="assets/welcome/stickers/broccoli.webp" alt="" width="256" height="256" />
-            <img class="burst__piece burst__sticker burst__piece--coffee" src="assets/welcome/stickers/coffee.webp" alt="" width="256" height="256" />
+            <span class="burst__piece burst__tile burst__piece--steps cut" style="--w: 179; --h: 168"><img class="cut__image" data-piece="tile-steps" alt="" width="179" height="168" /></span>
+            <span class="burst__piece burst__piece--icon cut" style="--w: 104; --h: 104"><img class="cut__image" alt="" width="104" height="104" data-theme-icon /></span>
+            <span class="burst__piece burst__tile burst__piece--sleep cut" style="--w: 179; --h: 168"><img class="cut__image" data-piece="tile-sleep" alt="" width="179" height="168" fetchpriority="high" /></span>
+            <span class="burst__piece burst__sticker burst__piece--avocado cut"><img class="cut__image" data-sticker="welcome/stickers/avocado" alt="" width="256" height="256" /></span>
+            <span class="burst__piece burst__sticker burst__piece--broccoli cut"><img class="cut__image" data-sticker="welcome/stickers/broccoli" alt="" width="256" height="256" /></span>
+            <span class="burst__piece burst__sticker burst__piece--coffee cut"><img class="cut__image" data-sticker="welcome/stickers/coffee" alt="" width="256" height="256" /></span>
           </div>
         </div>
 
@@ -306,12 +295,12 @@
         <div class="collage collage--vitals" aria-hidden="true">
           <div class="readiness"><img class="readiness__bar" data-piece="readiness-bar" alt="" width="434" height="150" loading="lazy" decoding="async" /></div>
           <div class="collage__row">
-            <img class="collage__tile collage__tile--left" data-piece="tile-hrv" alt="" width="179" height="168" loading="lazy" decoding="async" />
-            <img class="collage__tile collage__tile--right" data-piece="tile-rhr" alt="" width="179" height="168" loading="lazy" decoding="async" />
+            <span class="collage__tile collage__tile--left cut" style="--w: 179; --h: 168"><img class="cut__image" data-piece="tile-hrv" alt="" width="179" height="168" loading="lazy" decoding="async" /></span>
+            <span class="collage__tile collage__tile--right cut" style="--w: 179; --h: 168"><img class="cut__image" data-piece="tile-rhr" alt="" width="179" height="168" loading="lazy" decoding="async" /></span>
           </div>
-          <img class="collage__sticker collage__sticker--moon" src="assets/stickers/goal-sleep.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
-          <img class="collage__sticker collage__sticker--fire" src="assets/stickers/focus-burn.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
-          <img class="collage__sticker collage__sticker--apple" src="assets/welcome/stickers/green-apple.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <span class="collage__sticker collage__sticker--moon cut"><img class="cut__image" data-sticker="stickers/goal-sleep" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
+          <span class="collage__sticker collage__sticker--fire cut"><img class="cut__image" data-sticker="stickers/focus-burn" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
+          <span class="collage__sticker collage__sticker--apple cut"><img class="cut__image" data-sticker="welcome/stickers/green-apple" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
         </div>
       </section>
 
@@ -322,14 +311,14 @@
           <p class="muted-copy" data-i18n="nutritionBody">Every nutrient gets a row of its own, with its own symbol. Where there is a limit, Akari marks it. You log food by writing or saying it.</p>
         </div>
         <div class="collage collage--nutrition" aria-hidden="true">
-          <img class="collage__card" data-piece="card-fiber" alt="" width="370" height="176" loading="lazy" decoding="async" />
+          <span class="collage__card cut" style="--w: 370; --h: 176"><img class="cut__image" data-piece="card-fiber" alt="" width="370" height="176" loading="lazy" decoding="async" /></span>
           <div class="collage__row">
-            <img class="collage__tile collage__tile--left" data-piece="tile-magnesium" alt="" width="179" height="168" loading="lazy" decoding="async" />
-            <img class="collage__tile collage__tile--right" data-piece="tile-iron" alt="" width="179" height="168" loading="lazy" decoding="async" />
+            <span class="collage__tile collage__tile--left cut" style="--w: 179; --h: 168"><img class="cut__image" data-piece="tile-magnesium" alt="" width="179" height="168" loading="lazy" decoding="async" /></span>
+            <span class="collage__tile collage__tile--right cut" style="--w: 179; --h: 168"><img class="cut__image" data-piece="tile-iron" alt="" width="179" height="168" loading="lazy" decoding="async" /></span>
           </div>
-          <img class="collage__sticker collage__sticker--fish" src="assets/welcome/stickers/fish.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
-          <img class="collage__sticker collage__sticker--orange" src="assets/welcome/stickers/orange.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
-          <img class="collage__sticker collage__sticker--salad" src="assets/welcome/stickers/salad.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <span class="collage__sticker collage__sticker--fish cut"><img class="cut__image" data-sticker="welcome/stickers/fish" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
+          <span class="collage__sticker collage__sticker--orange cut"><img class="cut__image" data-sticker="welcome/stickers/orange" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
+          <span class="collage__sticker collage__sticker--salad cut"><img class="cut__image" data-sticker="welcome/stickers/salad" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
         </div>
       </section>
 
@@ -340,9 +329,9 @@
         </svg>
         <div class="privacy__inner">
           <div class="privacy__stickers" aria-hidden="true">
-            <img class="privacy__app privacy__app--health" src="assets/welcome/apple-health@2x.webp" srcset="assets/welcome/apple-health@2x.webp 2x, assets/welcome/apple-health@3x.webp 3x" alt="" width="104" height="104" loading="lazy" decoding="async" />
-            <img class="privacy__lock" src="assets/stickers/lock.png" alt="" width="256" height="256" loading="lazy" decoding="async" />
-            <img class="privacy__app privacy__app--akari" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-icon />
+            <span class="privacy__app privacy__app--health cut" style="--w: 104; --h: 104"><img class="cut__image" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-health /></span>
+            <span class="privacy__lock cut"><img class="cut__image" data-sticker="stickers/lock" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
+            <span class="privacy__app privacy__app--akari cut" style="--w: 104; --h: 104"><img class="cut__image" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-icon /></span>
           </div>
           <p class="privacy__chip" data-i18n="privacyChip">No account needed</p>
           <h2 id="privacy-title"><span data-i18n="privacyTitleA">Your data stays on</span> <mark data-i18n="privacyTitleB">this iPhone</mark></h2>
@@ -367,13 +356,13 @@
           <button class="goal-pill" type="button" role="radio" aria-checked="false" tabindex="-1" data-goal="Lose" data-i18n="goalLose">Lose weight</button>
         </div>
         <div class="goals__answer">
-          <img class="goals__sticker" id="goal-sticker" src="assets/stickers/goal-sleep.png" alt="" width="256" height="256" aria-hidden="true" />
+          <span class="goals__sticker cut" id="goal-sticker" aria-hidden="true"><img class="cut__image" data-sticker="stickers/goal-sleep" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
           <p class="goals__blurb" id="goal-blurb" aria-live="polite" data-i18n="goalSleepBlurb">Build the night from the day around it: morning light, screens down in the evening, and a full night behind you.</p>
         </div>
         <ul class="goals__focuses" id="goal-focuses" data-count="3" aria-label="What this goal brings together" data-i18n-aria-label="goalsTracksLabel">
-            <li class="focus-tile"><img src="assets/stickers/goal-sleep.png" alt="" width="256" height="256" loading="lazy" decoding="async" /><strong data-i18n="focusSleepTitle">Sleep</strong><span data-i18n="focusSleepBody">A full night behind you</span></li>
-            <li class="focus-tile"><img src="assets/stickers/focus-wind-down.png" alt="" width="256" height="256" loading="lazy" decoding="async" /><strong data-i18n="focusWindDownTitle">Wind down</strong><span data-i18n="focusWindDownBody">Screens down before bed</span></li>
-            <li class="focus-tile"><img src="assets/stickers/goal-dailies.png" alt="" width="256" height="256" loading="lazy" decoding="async" /><strong data-i18n="focusOutsideTitle">Get outside</strong><span data-i18n="focusOutsideBody">Daylight and fresh air, even briefly</span></li>
+            <li class="focus-tile"><span class="focus-tile__sticker cut"><img class="cut__image" data-sticker="stickers/goal-sleep" alt="" width="256" height="256" loading="lazy" decoding="async" /></span><strong data-i18n="focusSleepTitle">Sleep</strong><span data-i18n="focusSleepBody">A full night behind you</span></li>
+            <li class="focus-tile"><span class="focus-tile__sticker cut"><img class="cut__image" data-sticker="stickers/focus-wind-down" alt="" width="256" height="256" loading="lazy" decoding="async" /></span><strong data-i18n="focusWindDownTitle">Wind down</strong><span data-i18n="focusWindDownBody">Screens down before bed</span></li>
+            <li class="focus-tile"><span class="focus-tile__sticker cut"><img class="cut__image" data-sticker="stickers/goal-dailies" alt="" width="256" height="256" loading="lazy" decoding="async" /></span><strong data-i18n="focusOutsideTitle">Get outside</strong><span data-i18n="focusOutsideBody">Daylight and fresh air, even briefly</span></li>
         </ul>
       </section>
 
@@ -384,13 +373,13 @@
           <p class="muted-copy" data-i18n="foodBody">Type or say it the way you would tell someone. Akari finds each food, its portion and what is in it.</p>
         </div>
         <div class="food__panel" aria-hidden="true">
-          <img class="food__sticker food__sticker--strawberry" src="assets/welcome/stickers/strawberry.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
-          <img class="food__sticker food__sticker--croissant" src="assets/welcome/stickers/croissant.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
-          <img class="food__sentence" data-piece="meal-sentence" alt="" width="354" height="78" loading="lazy" decoding="async" />
+          <span class="food__sticker food__sticker--strawberry cut"><img class="cut__image" data-sticker="welcome/stickers/strawberry" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
+          <span class="food__sticker food__sticker--croissant cut"><img class="cut__image" data-sticker="welcome/stickers/croissant" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
+          <span class="food__sentence cut" style="--w: 354; --h: 77.667"><img class="cut__image" data-piece="meal-sentence" alt="" width="354" height="78" loading="lazy" decoding="async" /></span>
           <div class="food__rows">
-            <img class="food__row" data-piece="food-oats" data-enlarged alt="" width="129" height="59" loading="lazy" decoding="async" />
-            <img class="food__row" data-piece="food-banana" data-enlarged alt="" width="137" height="59" loading="lazy" decoding="async" />
-            <img class="food__row" data-piece="food-flat-white" data-enlarged alt="" width="156" height="59" loading="lazy" decoding="async" />
+            <span class="food__row cut"><img class="cut__image" data-piece="food-oats" data-enlarged alt="" width="129" height="59" loading="lazy" decoding="async" /></span>
+            <span class="food__row cut"><img class="cut__image" data-piece="food-banana" data-enlarged alt="" width="137" height="59" loading="lazy" decoding="async" /></span>
+            <span class="food__row cut"><img class="cut__image" data-piece="food-flat-white" data-enlarged alt="" width="156" height="59" loading="lazy" decoding="async" /></span>
           </div>
         </div>
       </section>
@@ -412,7 +401,7 @@
             <p class="plan__note" data-i18n="planFlexible">Flexible</p>
           </article>
           <article class="plan plan--featured">
-            <img class="plan__sticker" src="assets/stickers/goal-dailies.png" alt="" width="256" height="256" loading="lazy" decoding="async" aria-hidden="true" />
+            <span class="plan__sticker cut" aria-hidden="true"><img class="cut__image" data-sticker="stickers/goal-dailies" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
             <div class="plan__head">
               <h3 class="plan__name" data-i18n="planYearly">Yearly</h3>
               <span class="plan__save" data-i18n="planSave">Save 33%</span>
@@ -427,8 +416,8 @@
 
       <section class="shape" id="get-akari" aria-labelledby="launch-title">
         <div class="shape__stickers" aria-hidden="true">
-          <img class="shape__icon" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-icon />
-          <img class="shape__banana" src="assets/welcome/stickers/banana.webp" alt="" width="256" height="256" loading="lazy" decoding="async" />
+          <span class="shape__icon cut" style="--w: 104; --h: 104"><img class="cut__image" alt="" width="104" height="104" loading="lazy" decoding="async" data-theme-icon /></span>
+          <span class="shape__banana cut"><img class="cut__image" data-sticker="welcome/stickers/banana" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
         </div>
         <h2 id="launch-title" data-i18n="launchTitle">Akari is almost here.</h2>
         <p class="muted-copy" data-i18n="launchBody">We’re getting ready for the App Store. Until then, the beta is open: try Akari now and tell us what you think.</p>
@@ -437,7 +426,7 @@
 
       <section class="faq" id="faq" aria-labelledby="faq-title">
         <div class="faq__intro">
-          <img class="faq__sticker" src="assets/stickers/focus-connect.png" alt="" width="256" height="256" loading="lazy" decoding="async" aria-hidden="true" />
+          <span class="faq__sticker cut" aria-hidden="true"><img class="cut__image" data-sticker="stickers/focus-connect" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
           <p class="eyebrow" data-i18n="faqTitle">FAQ</p>
           <h2 id="faq-title" data-i18n="faqHeadline">Good to know</h2>
           <p class="muted-copy" data-i18n="faqIntro">Akari is free during beta and available for iPhone through Apple’s TestFlight. Here is what to know before you try it.</p>
@@ -471,28 +460,40 @@
       </section>
     </main>
     <script>
-      // The app's pieces come per theme, language and light/dark rendering, as 2x and 3x WebP. Choose the
+      // The app's pieces come per theme, language and light/dark rendering, and the stickers and icons per
+      // theme, as 2x and 3x WebP with the theme's die-cut edge baked in (tools/bake_die_cuts.py). Choose the
       // right files before the browser starts loading, so nobody downloads a variant they will not see.
-      // script.js keeps them in step with the theme, mode and language switches (pieceSources there).
+      // script.js keeps them in step with the theme, mode and language switches (cutImageBase there).
+      // A sticker is baked at several widths; each takes the one nearest the width its box is shown at.
       (() => {
         const { theme, language, mode } = document.documentElement.dataset;
-        const sources = (base) => ({ src: `${base}@2x.webp`, srcset: `${base}@2x.webp 2x, ${base}@3x.webp 3x` });
-        const set = (image, base) => {
+        const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
+        const stickerWidths = [56, 72, 92, 120, 160];
+        const nearest = (width) => stickerWidths.reduce((best, size) => (Math.abs(Math.log(width / size)) < Math.abs(Math.log(width / best)) ? size : best));
+        const base = (image, boxWidth) => {
+          const cut = image.classList.contains("cut__image") ? "-cut" : "";
+          if (image.dataset.piece) return `assets/welcome/${theme}/${language}/${mode}/${image.dataset.piece}${cut}`;
+          if ("themeIcon" in image.dataset) return `assets/welcome/${theme}/app-icon-${iconMode}-cut`;
+          if ("themeHealth" in image.dataset) return `assets/welcome/${theme}/apple-health-cut`;
+          const width = nearest(boxWidth || 80);
+          image.parentElement.style.setProperty("--w", width);
+          image.parentElement.style.setProperty("--h", width);
+          const sticker = image.dataset.sticker.split("/");
+          const name = sticker.pop();
+          return `assets/${sticker.join("/")}/${theme}/${name}-${width}`;
+        };
+        const images = [...document.querySelectorAll("img[data-piece], img[data-theme-icon], img[data-theme-health], img[data-sticker]")];
+        // Read every box's width before changing anything, so the page is laid out once.
+        const widths = images.map((image) => (image.dataset.sticker ? image.parentElement.offsetWidth : 0));
+        images.forEach((image, index) => {
+          const path = base(image, widths[index]);
           // A piece shown larger than its 1x box always takes the 3x file, so it stays sharp.
           if ("enlarged" in image.dataset) {
-            image.src = `${base}@3x.webp`;
+            image.src = `${path}@3x.webp`;
             return;
           }
-          const { src, srcset } = sources(base);
-          image.srcset = srcset;
-          image.src = src;
-        };
-        document.querySelectorAll("img[data-piece]").forEach((image) => {
-          set(image, `assets/welcome/${theme}/${language}/${mode}/${image.dataset.piece}`);
-        });
-        const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
-        document.querySelectorAll("img[data-theme-icon]").forEach((image) => {
-          set(image, `assets/welcome/${theme}/app-icon-${iconMode}`);
+          image.srcset = `${path}@2x.webp 2x, ${path}@3x.webp 3x`;
+          image.src = `${path}@2x.webp`;
         });
       })();
     </script>

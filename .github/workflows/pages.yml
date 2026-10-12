@@ -37,6 +37,14 @@ jobs:
           cp -R assets privacy terms site/
           # The app's export keeps a @3x PNG source next to each WebP; the page only loads the WebP.
           find site/assets/welcome -name '*@3x.png' -delete
+          # The page shows copies of the pieces, icons and stickers with the die-cut edge and shadow baked
+          # in. They are made here, from the sources just staged, so the repository keeps only the sources.
+          # Anything baked by a local preview is dropped first, so each file is baked and uploaded once.
+          find site/assets -name '*-cut@*.webp' -delete
+          rm -rf site/assets/welcome/stickers/*/ site/assets/stickers/*/
+          python3 -m venv "$RUNNER_TEMP/bake"
+          "$RUNNER_TEMP/bake/bin/pip" install --quiet --disable-pip-version-check 'pillow~=12.3'
+          "$RUNNER_TEMP/bake/bin/python" tools/bake_die_cuts.py --root site
 
       - name: Upload static website
         uses: actions/upload-pages-artifact@v5
