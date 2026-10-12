@@ -743,7 +743,7 @@ function updateThemeColor() {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
     const adminURL = new URL(localPreview
       ? "http://127.0.0.1:8791/login"
-      : "https://admin.joinakari.com/");
+      : "https://admin.joinakari.com/login");
     adminURL.searchParams.set("theme", root.dataset.theme);
     adminURL.searchParams.set("mode", root.dataset.mode);
     adminURL.searchParams.set("lang", root.dataset.language);

@@ -16,7 +16,7 @@ Then open `http://localhost:8000/`. The bake writes the page's die-cut pieces an
 
 ## Discovery files
 
-- `robots.txt` allows search and AI search crawlers and references the sitemap.
+- `robots.txt` allows search and AI search crawlers and references the sitemap. `admin.joinakari.com` and `api.joinakari.com` answer `/robots.txt` from the Worker with `Disallow: /`: the dashboard and its login carry `noindex` anyway, and the API is for the app, but Search Console's domain property lists both hosts. The footer's Admin link goes straight to `/login` with `rel="nofollow"`, since `/` redirects there when signed out.
 - `sitemap.xml` lists the landing page and the privacy and terms pages in English and German, with the app's pieces from `assets/welcome` as the landing page's images.
 - `llms.txt` and `llms-full.txt` provide concise machine-readable product information.
 - `manifest.webmanifest` describes the website for browsers and installed shortcuts.

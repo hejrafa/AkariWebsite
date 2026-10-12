@@ -289,7 +289,7 @@ function updateAppearance() {
   brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-dark.svg?v=2`; });
   if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
-    const adminURL = new URL(localPreview ? "http://127.0.0.1:8791/login" : "https://admin.joinakari.com/");
+    const adminURL = new URL(localPreview ? "http://127.0.0.1:8791/login" : "https://admin.joinakari.com/login");
     adminURL.searchParams.set("theme", theme);
     adminURL.searchParams.set("mode", mode);
     adminURL.searchParams.set("lang", root.dataset.language || "en");
