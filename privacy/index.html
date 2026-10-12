@@ -6,7 +6,18 @@
     <meta name="theme-color" content="#0c271c" />
     <meta name="color-scheme" content="light dark" />
     <meta name="description" content="Akari privacy policy, including how Apple Health and Google Health data are handled." />
-    <link rel="canonical" href="https://joinakari.com/privacy/" />
+    <script>
+      // The canonical URL follows the address: ?lang=de is the German page, anything else the English one.
+      // Both are this one file, so a canonical written into the HTML would point the German address at the
+      // English page for crawlers that read only the HTML, against the hreflang pair below. Written here
+      // instead, it is right either way; the language switch keeps it in step (legal.js).
+      (() => {
+        const link = document.createElement("link");
+        link.rel = "canonical";
+        link.href = new URLSearchParams(window.location.search).get("lang") === "de" ? "https://joinakari.com/privacy/?lang=de" : "https://joinakari.com/privacy/";
+        document.head.append(link);
+      })();
+    </script>
     <link rel="alternate" hreflang="en" href="https://joinakari.com/privacy/" />
     <link rel="alternate" hreflang="de" href="https://joinakari.com/privacy/?lang=de" />
     <link rel="alternate" hreflang="x-default" href="https://joinakari.com/privacy/" />

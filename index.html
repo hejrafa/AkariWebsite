@@ -13,7 +13,18 @@
     <meta name="author" content="Akari" />
     <meta name="application-name" content="Akari" />
     <meta name="apple-mobile-web-app-title" content="Akari" />
-    <link rel="canonical" href="https://joinakari.com/" />
+    <script>
+      // The canonical URL follows the address: ?lang=de is the German page, anything else the English one.
+      // Both are this one file, so a canonical written into the HTML would point the German address at the
+      // English page for crawlers that read only the HTML, against the hreflang pair below. Written here
+      // instead, it is right either way; the language switch keeps it in step (script.js).
+      (() => {
+        const link = document.createElement("link");
+        link.rel = "canonical";
+        link.href = new URLSearchParams(window.location.search).get("lang") === "de" ? "https://joinakari.com/?lang=de" : "https://joinakari.com/";
+        document.head.append(link);
+      })();
+    </script>
 
     <meta property="og:title" content="Akari: Your whole day in one place" />
     <meta
