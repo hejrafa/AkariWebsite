@@ -156,6 +156,15 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
+    // Neither host has a page for search engines: the dashboard and its login carry noindex, and the API
+    // answers apps. This keeps crawlers from asking (the domain-wide Search Console property lists them).
+    if (request.method === "GET" && url.pathname === "/robots.txt") {
+      if (!isAdminHost && !isConfiguredAPIHost && !isWorkersDev && !isLocal) return notFound();
+      return new Response("User-agent: *\nDisallow: /\n", {
+        headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=86400" },
+      });
+    }
+
     if (request.method === "GET" && url.pathname === "/health") {
       return json({ ok: true });
     }

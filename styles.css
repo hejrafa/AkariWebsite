@@ -777,12 +777,41 @@ main:focus {
 :root[data-theme="canyon"] { --band: #482219; --band-rgb: 72, 34, 25; --band-ink: #ffecd4; --vivid: #eb804b; }
 :root[data-theme="plain"] { --band: #141414; --band-rgb: 20, 20, 20; --band-ink: #ffffff; --vivid: #ffd60a; }
 
-/* The cream die-cut edge traced around a sticker or one of the app's pieces, with its shadow. The edge is
-   the #die-cut SVG filter in index.html: one pass that grows the piece's own silhouette by 3px and fills
-   it with the theme's cream, so it follows every curve. (Chaining eight offset drop-shadows looked the
-   same but dropped scrolling to a few frames a second.) */
+/* The cream die-cut edge traced around a sticker or one of the app's pieces, with its shadow, is baked into
+   the image files by tools/bake_die_cuts.py: the piece's silhouette grown by 3px in the theme's cream, and
+   a 0 10px 14px shadow at 24 % under both. (Drawn at runtime, as an SVG filter, it filled in late while
+   scrolling on iPhone.) Each baked file is the piece on a transparent margin, --cut-side px left and right,
+   --cut-top above and --cut-bottom below at 1x, in step with SIDE, TOP and BOTTOM in the script.
+   A .cut box keeps the piece's own size and place; the .cut__image inside spills out by that margin.
+   --w and --h on the box are the unbaked piece's 1x size: the box takes its shape from them, as the image
+   used to, so its height never waits for the file. Percentage margins resolve against the box's width,
+   so the inner piece lands exactly on the box at any scale. */
 :root {
-  --die-cut: url("#die-cut") drop-shadow(0 10px 14px rgba(0, 0, 0, 0.24));
+  --cut-side: 20;
+  --cut-top: 10;
+  --cut-bottom: 30;
+}
+
+/* A sticker is baked at several widths; script.js sets --w and --h to the one it picked for the box. */
+.cut {
+  --w: 72;
+  --h: 72;
+  display: flow-root;
+  aspect-ratio: var(--w) / var(--h);
+  min-height: 0;
+}
+
+.cut__image {
+  display: block;
+  width: calc(100% + 2 * var(--cut-side) / var(--w) * 100%);
+  max-width: none;
+  height: auto;
+  aspect-ratio: calc(var(--w) + 2 * var(--cut-side)) / calc(var(--h) + var(--cut-top) + var(--cut-bottom));
+  margin:
+    calc(var(--cut-top) / var(--w) * -100%) 0
+    calc(var(--cut-bottom) / var(--w) * -100%) calc(var(--cut-side) / var(--w) * -100%);
+  pointer-events: none;
+  user-select: none;
 }
 
 html:root[data-mode="light"][data-theme="forest"] { --page: #e1f1ca; --page-rgb: 225, 241, 202; --card: #f6feec; --ink: #1e2611; --ink-rgb: 30, 38, 17; --accent: #7dbd22; }
@@ -897,14 +926,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   animation: pop 900ms cubic-bezier(0.2, 1.4, 0.4, 1) var(--delay) both;
   user-select: none;
   will-change: transform;
-}
-
-/* Die-cut look: the app icon gets a cream sticker border; the tiles and 3D stickers get a cream
-   outline traced around their own shape. */
-.burst__piece--icon,
-.burst__tile,
-.burst__sticker {
-  filter: var(--die-cut);
 }
 
 .burst__piece--steps { --tilt: -10deg; --depth: 1.2; --delay: 420ms; top: 21%; left: 14%; width: min(179px, 28%); }
@@ -1079,10 +1100,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
     left: auto;
   }
 
-  .burst__sticker {
-    filter: var(--die-cut);
-  }
-
   .spotlight {
     width: calc(100% - 32px);
   }
@@ -1144,7 +1161,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   display: block;
   max-width: 100%;
   height: auto;
-  filter: var(--die-cut);
 }
 
 .collage__card {
@@ -1179,7 +1195,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   z-index: 2;
   width: clamp(60px, 7vw, 92px);
   height: auto;
-  filter: var(--die-cut);
 }
 
 .collage__sticker--moon { top: 0; left: -6%; rotate: -14deg; }
@@ -1230,7 +1245,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   display: block;
   width: clamp(92px, 11vw, 150px);
   height: auto;
-  filter: var(--die-cut);
 }
 
 
@@ -1247,8 +1261,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   height: auto;
   translate: -50% -42%;
   rotate: 4deg;
-  filter: var(--die-cut);
-}
 }
 
 
@@ -1339,7 +1351,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   display: block;
   width: clamp(112px, 13vw, 176px);
   height: auto;
-  filter: var(--die-cut);
   rotate: -6deg;
 }
 
@@ -1387,15 +1398,14 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   transition: background-color 500ms var(--ease), box-shadow 500ms var(--ease);
 }
 
-.focus-tile img {
+.focus-tile__sticker {
   width: 74px;
   height: auto;
   margin-bottom: 8px;
-  filter: var(--die-cut);
   rotate: -6deg;
 }
 
-.focus-tile:nth-child(even) img {
+.focus-tile:nth-child(even) .focus-tile__sticker {
   rotate: 6deg;
 }
 
@@ -1475,7 +1485,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   z-index: 2;
   width: clamp(76px, 9vw, 128px);
   height: auto;
-  filter: var(--die-cut);
 }
 
 .food__sticker--strawberry { top: -6%; left: -5%; rotate: -14deg; }
@@ -1534,7 +1543,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
     padding: 18px 12px 20px;
   }
 
-  .focus-tile img {
+  .focus-tile__sticker {
     width: 62px;
   }
 
@@ -1657,7 +1666,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   bottom: -26px;
   width: 78px;
   height: auto;
-  filter: var(--die-cut);
   rotate: 12deg;
 }
 
@@ -1680,11 +1688,10 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 }
 
 .faq__sticker {
-  display: block;
+  display: flow-root;
   width: clamp(64px, 7vw, 92px);
   height: auto;
   margin: 0 0 6px -6px;
-  filter: var(--die-cut);
   rotate: -10deg;
 }
 
@@ -1707,10 +1714,9 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 }
 
 .shape__icon {
-  display: block;
+  display: flow-root;
   width: 100%;
   height: auto;
-  filter: var(--die-cut);
   rotate: -6deg;
 }
 
@@ -1720,7 +1726,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   bottom: -22%;
   width: 78%;
   height: auto;
-  filter: var(--die-cut);
   rotate: 14deg;
 }
 
@@ -2043,34 +2048,19 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 }
 
 /* Drift, as in the app's Welcome collage (WelcomeView.swift): every piece rises and falls up to 4px and
-   turns up to 0.6deg on a 7-second wave, each a little out of step with its neighbours. script.js wraps each
-   drifting image so the box moves and the image inside keeps its die-cut edge, painted once; the compositor
-   then only moves layers. Sections off screen hold still. */
-.drift-box {
-  display: block;
-  filter: none !important;
-}
-
-.drift-face {
-  display: block;
-  width: 100%;
-  max-width: none;
-  height: auto;
-  filter: var(--die-cut);
-}
+   turns up to 0.6deg on a 7-second wave, each a little out of step with its neighbours. It moves each
+   piece's .cut box, so the compositor only moves layers. Sections off screen hold still (script.js). */
 
 /* The food rows are shown at the 1x width of the app's export, and that width
-   follows their words, so it differs by language. A row too wide for its place slides back inside the panel. */
-.food__row:nth-child(1) { --row-1x: 129.33px; }
-.food__row:nth-child(2) { --row-1x: 137.33px; }
-.food__row:nth-child(3) { --row-1x: 156.33px; }
-:root[data-language="de"] .food__row:nth-child(1) { --row-1x: 183px; }
-:root[data-language="de"] .food__row:nth-child(2) { --row-1x: 137px; }
-:root[data-language="de"] .food__row:nth-child(3) { --row-1x: 160.67px; }
-
-.food__row > .drift-face {
-  width: 100%;
-}
+   follows their words, so it differs by language. A row too wide for its place slides back inside the panel.
+   --w and --h, the same size as a number, shape the box and place the baked image in it (.cut). */
+.food__row { --h: 59.33; }
+.food__row:nth-child(1) { --row-1x: 129.33px; --w: 129.33; }
+.food__row:nth-child(2) { --row-1x: 137.33px; --w: 137.33; }
+.food__row:nth-child(3) { --row-1x: 156.33px; --w: 156.33; }
+:root[data-language="de"] .food__row:nth-child(1) { --row-1x: 183px; --w: 183; }
+:root[data-language="de"] .food__row:nth-child(2) { --row-1x: 137px; --w: 137; }
+:root[data-language="de"] .food__row:nth-child(3) { --row-1x: 160.67px; --w: 160.67; }
 
 @keyframes drift {
   from { transform: translateY(-4px) rotate(-0.6deg); }
@@ -2150,3 +2140,4 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
     animation: none;
   }
 }
+

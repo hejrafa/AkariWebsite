@@ -13,21 +13,22 @@ const goalOptions = document.querySelector(".goals__options");
 const goalBlurb = document.querySelector("#goal-blurb");
 const goalSticker = document.querySelector("#goal-sticker");
 const goalFocuses = document.querySelector("#goal-focuses");
-// What each goal brings together, after Goal.focuses in the app, and each item's sticker.
+// What each goal brings together, after Goal.focuses in the app, and each item's sticker (a data-sticker
+// name: the folder under assets/ and the sticker; the baked files are per theme, see cutImageBase).
 const focusStickers = {
-  Outside: "assets/stickers/goal-dailies.png",
-  Move: "assets/stickers/goal-move.png",
-  Hydrate: "assets/welcome/stickers/water.webp",
-  Eat: "assets/welcome/stickers/salad.webp",
-  Sleep: "assets/stickers/goal-sleep.png",
-  Connect: "assets/stickers/focus-connect.png",
-  Train: "assets/stickers/focus-train.png",
-  Strength: "assets/stickers/focus-strength.png",
-  Burn: "assets/stickers/focus-burn.png",
-  WindDown: "assets/stickers/focus-wind-down.png",
-  Protein: "assets/welcome/stickers/egg.webp",
-  Fiber: "assets/welcome/stickers/broccoli.webp",
-  Priorities: "assets/stickers/goal-for-you.png",
+  Outside: "stickers/goal-dailies",
+  Move: "stickers/goal-move",
+  Hydrate: "welcome/stickers/water",
+  Eat: "welcome/stickers/salad",
+  Sleep: "stickers/goal-sleep",
+  Connect: "stickers/focus-connect",
+  Train: "stickers/focus-train",
+  Strength: "stickers/focus-strength",
+  Burn: "stickers/focus-burn",
+  WindDown: "stickers/focus-wind-down",
+  Protein: "welcome/stickers/egg",
+  Fiber: "welcome/stickers/broccoli",
+  Priorities: "stickers/goal-for-you",
 };
 const goalFocusLists = {
   ForYou: ["Priorities"],
@@ -39,12 +40,12 @@ const goalFocusLists = {
 };
 // Each goal's sticker follows the app's goal icon (Goal.swift).
 const goalStickers = {
-  ForYou: "assets/stickers/goal-for-you.png",
-  Dailies: "assets/stickers/goal-dailies.png",
-  Sleep: "assets/stickers/goal-sleep.png",
-  Move: "assets/stickers/goal-move.png",
-  Eat: "assets/welcome/stickers/carrot.webp",
-  Lose: "assets/stickers/goal-lose.png",
+  ForYou: "stickers/goal-for-you",
+  Dailies: "stickers/goal-dailies",
+  Sleep: "stickers/goal-sleep",
+  Move: "stickers/goal-move",
+  Eat: "welcome/stickers/carrot",
+  Lose: "stickers/goal-lose",
 };
 const siteRoot = new URL(".", document.currentScript?.src || window.location.href);
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
@@ -346,7 +347,7 @@ const pageMetadata = {
     socialTitle: "Akari: Your whole day in one place",
     socialDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
     twitterDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
-    imageAlt: "Akari logo in an orange-to-yellow gradient on a black background",
+    imageAlt: "Akari app icon and logo on black",
   },
   de: {
     title: "Akari: Verstehe deine Gesundheitsdaten",
@@ -354,11 +355,12 @@ const pageMetadata = {
     socialTitle: "Akari: Dein ganzer Tag an einem Ort",
     socialDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
     twitterDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
-    imageAlt: "Akari-Logo mit orange-gelbem Verlauf auf schwarzem Hintergrund",
+    imageAlt: "App-Symbol und Logo von Akari auf Schwarz",
   },
 };
 
 // Structured data follows the page: the same claims, the same FAQ, and pieces of the app as its images.
+// The Organization's logo is the plain app icon, so search shows that rather than a theme's painting.
 function structuredDataFor(language) {
   const isGerman = language === "de";
   const copy = translations[language];
@@ -376,6 +378,13 @@ function structuredDataFor(language) {
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Organization",
+        "@id": "https://joinakari.com/#organization",
+        name: "Akari",
+        url: "https://joinakari.com/",
+        logo: "https://joinakari.com/assets/icons/icon-512.png",
+      },
+      {
         "@type": "WebSite",
         "@id": "https://joinakari.com/#website",
         url,
@@ -392,8 +401,9 @@ function structuredDataFor(language) {
         name: pageMetadata[language].title,
         description: pageMetadata[language].socialDescription,
         isPartOf: { "@id": "https://joinakari.com/#website" },
+        publisher: { "@id": "https://joinakari.com/#organization" },
         mainEntity: { "@id": "https://joinakari.com/#app" },
-        primaryImageOfPage: "https://joinakari.com/assets/social.png?v=2",
+        primaryImageOfPage: "https://joinakari.com/assets/social.png?v=3",
         inLanguage: language,
       },
       {
@@ -405,11 +415,12 @@ function structuredDataFor(language) {
           ? "Akari ist eine iPhone-App, die Schlaf, Bewegung und Essen an einem Ort zusammenbringt und in einfachen Worten erklärt, was sie für den Tag bedeuten. Sie liest Apple Health auf dem iPhone und behält die Gesundheitsdaten dort."
           : "Akari is an iPhone app that brings sleep, movement and food together in one place and explains in plain words what they mean for the day. It reads Apple Health on the iPhone and keeps health data there.",
         applicationCategory: "HealthApplication",
-        operatingSystem: "iOS 26 or later",
+        operatingSystem: "iOS",
         availableOnDevice: "iPhone",
         inLanguage: ["en", "de"],
         isAccessibleForFree: true,
-        image: "https://joinakari.com/assets/icon-512.png",
+        image: "https://joinakari.com/assets/icons/icon-512.png",
+        publisher: { "@id": "https://joinakari.com/#organization" },
         screenshot: [piece("tile-sleep"), piece("readiness-bar"), piece("card-fiber"), piece("meal-sentence")],
         featureList: isGerman
           ? [
@@ -655,8 +666,42 @@ const bandColors = {
 };
 const modes = ["light", "dark"];
 
-// The app exports each piece as 2x and 3x WebP; the browser picks by screen density.
-function setPieceSources(image, base) {
+// A sticker is shown anywhere from about 50 to 180px wide, so tools/bake_die_cuts.py bakes it at each of
+// these widths and each sticker takes the nearest to its box, which keeps its edge close to 3px.
+const stickerWidths = [56, 72, 92, 120, 160];
+
+function nearestStickerWidth(boxWidth) {
+  const width = boxWidth || 80;
+  return stickerWidths.reduce((best, size) => (Math.abs(Math.log(width / size)) < Math.abs(Math.log(width / best)) ? size : best));
+}
+
+// Where an image's files are, without the @2x/@3x.webp. The app's pieces are per theme, language and
+// mode; the icons and stickers per theme, since the die-cut edge baked into them (tools/bake_die_cuts.py)
+// takes the theme's cream. The same rules choose the first files in index.html, before this script loads.
+function cutImageBase(image, stickerWidth) {
+  const { theme, language, mode } = root.dataset;
+  const cut = image.classList.contains("cut__image") ? "-cut" : "";
+  if (image.dataset.piece) return `assets/welcome/${theme}/${language}/${mode}/${image.dataset.piece}${cut}`;
+  if ("themeIcon" in image.dataset) {
+    const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
+    return `assets/welcome/${theme}/app-icon-${iconMode}-cut`;
+  }
+  if ("themeHealth" in image.dataset) return `assets/welcome/${theme}/apple-health-cut`;
+  const sticker = image.dataset.sticker.split("/");
+  const name = sticker.pop();
+  return `assets/${sticker.join("/")}/${theme}/${name}-${stickerWidth}`;
+}
+
+// Every image comes as 2x and 3x WebP; the browser picks by screen density. boxWidth is the width a
+// sticker's box is laid out at, read by the caller (see updateImageSources).
+function setImageSources(image, boxWidth = 0) {
+  let stickerWidth;
+  if (image.dataset.sticker) {
+    stickerWidth = nearestStickerWidth(boxWidth);
+    image.parentElement.style.setProperty("--w", stickerWidth);
+    image.parentElement.style.setProperty("--h", stickerWidth);
+  }
+  const base = cutImageBase(image, stickerWidth);
   // A piece shown larger than its 1x box always takes the 3x file, so it stays sharp.
   if ("enlarged" in image.dataset) {
     const sharp = new URL(`${base}@3x.webp`, siteRoot).href;
@@ -669,25 +714,46 @@ function setPieceSources(image, base) {
   image.src = src;
 }
 
+// Reads every sticker box's width before changing any image, so the page is laid out once.
+function updateImageSources(images) {
+  const widths = images.map((image) => (image.dataset.sticker ? image.parentElement.offsetWidth : 0));
+  images.forEach((image, index) => setImageSources(image, widths[index]));
+}
+
+function updateAllImageSources() {
+  updateImageSources([...document.querySelectorAll("img[data-piece], img[data-theme-icon], img[data-theme-health], img[data-sticker]")]);
+}
+
+// The file a sticker would load in a box this wide, for fetching ahead of a goal switch.
+function stickerFile(sticker, boxWidth) {
+  const probe = document.createElement("img");
+  probe.dataset.sticker = sticker;
+  return new URL(`${cutImageBase(probe, nearestStickerWidth(boxWidth))}@${window.devicePixelRatio > 2 ? 3 : 2}x.webp`, siteRoot).href;
+}
+
+// The stickers' boxes follow the viewport's width, so a resize can call for another baked width. Only a
+// change of width counts: iOS resizes the viewport's height as its toolbars come and go while scrolling.
+let lastViewportWidth = window.innerWidth;
+let resizeFrame = 0;
+window.addEventListener("resize", () => {
+  if (window.innerWidth === lastViewportWidth) return;
+  lastViewportWidth = window.innerWidth;
+  cancelAnimationFrame(resizeFrame);
+  resizeFrame = requestAnimationFrame(() => updateImageSources([...document.querySelectorAll("img[data-sticker]")]));
+});
+
 function updateThemeColor() {
   const color = bandColors[root.dataset.theme];
   if (color && themeColor) themeColor.content = color;
   brandLogos.forEach((logo) => {
     logo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-dark.svg?v=2`, siteRoot).href;
   });
-  const { theme, language, mode } = root.dataset;
-  const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
-  document.querySelectorAll("img[data-theme-icon]").forEach((icon) => {
-    setPieceSources(icon, `assets/welcome/${theme}/app-icon-${iconMode}`);
-  });
-  document.querySelectorAll("img[data-piece]").forEach((piece) => {
-    setPieceSources(piece, `assets/welcome/${theme}/${language}/${mode}/${piece.dataset.piece}`);
-  });
+  updateAllImageSources();
   if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
     const adminURL = new URL(localPreview
       ? "http://127.0.0.1:8791/login"
-      : "https://admin.joinakari.com/");
+      : "https://admin.joinakari.com/login");
     adminURL.searchParams.set("theme", root.dataset.theme);
     adminURL.searchParams.set("mode", root.dataset.mode);
     adminURL.searchParams.set("lang", root.dataset.language);
@@ -779,7 +845,9 @@ function selectGoal(pill, moveFocus = false) {
   });
   goalBlurb.dataset.i18n = `goal${pill.dataset.goal}Blurb`;
   goalBlurb.textContent = translations[root.dataset.language]?.[goalBlurb.dataset.i18n] ?? goalBlurb.textContent;
-  goalSticker.src = new URL(goalStickers[pill.dataset.goal], siteRoot).href;
+  const goalImage = goalSticker.querySelector("img");
+  goalImage.dataset.sticker = goalStickers[pill.dataset.goal];
+  setImageSources(goalImage, goalSticker.offsetWidth);
   goalSticker.classList.remove("is-tossed");
   void goalSticker.offsetWidth;
   goalSticker.classList.add("is-tossed");
@@ -793,11 +861,16 @@ function renderGoalFocuses(goal) {
     const tile = document.createElement("li");
     tile.className = "focus-tile is-new";
     tile.style.setProperty("--tile-delay", `${index * 60}ms`);
-    const sticker = document.createElement("img");
-    sticker.src = new URL(focusStickers[focus], siteRoot).href;
-    sticker.alt = "";
-    sticker.width = 256;
-    sticker.height = 256;
+    const sticker = document.createElement("span");
+    sticker.className = "focus-tile__sticker cut";
+    const image = document.createElement("img");
+    image.className = "cut__image";
+    image.dataset.sticker = focusStickers[focus];
+    image.alt = "";
+    image.width = 256;
+    image.height = 256;
+    image.decoding = "async";
+    sticker.append(image);
     const title = document.createElement("strong");
     title.dataset.i18n = `focus${focus}Title`;
     title.textContent = copy[title.dataset.i18n];
@@ -809,13 +882,14 @@ function renderGoalFocuses(goal) {
   });
   goalFocuses.dataset.count = String(tiles.length);
   goalFocuses.replaceChildren(...tiles);
+  updateImageSources([...goalFocuses.querySelectorAll("img[data-sticker]")]);
 }
 
 // Fetch the other goal stickers once the page is idle, so a switch never waits on the network.
 window.addEventListener("load", () => {
-  [...Object.values(goalStickers), ...Object.values(focusStickers)].forEach((name) => {
-    new Image().src = new URL(name, siteRoot).href;
-  });
+  const focusWidth = goalFocuses.querySelector(".focus-tile__sticker")?.offsetWidth;
+  Object.values(goalStickers).forEach((sticker) => { new Image().src = stickerFile(sticker, goalSticker.offsetWidth); });
+  Object.values(focusStickers).forEach((sticker) => { new Image().src = stickerFile(sticker, focusWidth); });
 }, { once: true });
 
 goalOptions?.addEventListener("click", (event) => {
@@ -1033,23 +1107,9 @@ function setupBurst() {
 
 setupBurst();
 
-// Drift, as in the app's Welcome collage (styles.css runs it). Two things keep it cheap:
-// - Each drifting image is wrapped: the wrapper takes its classes, place and motion, and the image inside
-//   keeps the die-cut edge. The edge is then painted once into the wrapper's layer, which the compositor
-//   moves; on the moving element itself the filter would be redrawn every frame.
-// - Sections off screen hold still.
+// Drift, as in the app's Welcome collage (styles.css runs it on each piece's box, so the compositor only
+// moves layers). Sections off screen hold still.
 function setupDrift() {
-  const drifting = ".burst__piece, .collage__card, .collage__tile, .collage__sticker, .privacy__app, .privacy__lock, .food__sentence, .food__row, .food__sticker, .plan__sticker, .faq__sticker, .shape__icon, .shape__banana";
-  document.querySelectorAll(drifting).forEach((piece) => {
-    if (piece.tagName !== "IMG") return;
-    const box = document.createElement("span");
-    box.className = `${piece.className} drift-box`;
-    box.setAttribute("aria-hidden", "true");
-    piece.className = "drift-face";
-    piece.replaceWith(box);
-    box.append(piece);
-  });
-
   const sections = document.querySelectorAll(".burst-hero, .spotlight, .split, .privacy, .goals, .pricing, .shape, .faq");
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => entry.target.classList.toggle("is-still", !entry.isIntersecting));

@@ -118,3 +118,14 @@ test("logout clears the browser session and API host cannot serve admin routes",
 test("missing signing configuration fails closed", async () => {
   assert.equal((await login(teammateEmail, teammatePassword, { ...env, SESSION_SECRET: "" })).status, 503);
 });
+
+test("both hosts tell crawlers to stay out, and other hosts get nothing", async () => {
+  for (const host of ["admin.example.com", "api.example.com"]) {
+    const response = await worker.fetch(new Request(`https://${host}/robots.txt`), env);
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type"), /^text\/plain/);
+    assert.equal(await response.text(), "User-agent: *\nDisallow: /\n");
+  }
+  const elsewhere = await worker.fetch(new Request("https://joinakari.example/robots.txt"), env);
+  assert.equal(elsewhere.status, 404);
+});
