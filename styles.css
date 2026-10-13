@@ -245,16 +245,6 @@ main:focus {
   background: transparent;
 }
 
-/* Safari draws a layered element a pixel or two off from where it paints it without a layer, so a button
-   that scales on hover, or a selection that slides, lands with a jump when the layer made for the motion
-   is dropped. These keep their layers, the buttons and the selections under them alike. */
-.language-switch::before,
-.language-button,
-.mode-controls::before,
-.mode-button {
-  will-change: transform;
-}
-
 .appearance-controls {
   display: flex;
   grid-column: 3;
@@ -408,7 +398,8 @@ main:focus {
   }
 
   /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it.
-     Each keeps a layer, so it doesn't land a pixel off when its fade ends (see .language-button). */
+     Each keeps a layer: Safari draws a layer a pixel off from the page, so a label whose layer was only
+     made for its fade would land with a jump when the fade ends. */
   .theme-dot::after,
   .mode-button::after {
     position: absolute;
