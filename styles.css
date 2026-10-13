@@ -1981,12 +1981,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   will-change: opacity, transform;
 }
 
-/* After its entrance an element keeps a layer: Safari draws a layer a pixel or two off from the page, so
-   dropping it would make the element jump once it had settled (script.js swaps the reveal classes for this). */
-.reveal-done {
-  will-change: transform;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   :root.language-view-transition {
     view-transition-name: none;
