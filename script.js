@@ -972,7 +972,7 @@ function setupRevealMotion() {
   // The theme pill pops in as one piece, since its dots open and close with hover.
   prepare(document.querySelectorAll(".theme-controls, .mode-button"), "pop", [70, 265, 315], loadItems);
   // The headline is the page's largest paint, so it is never held back for an entrance.
-  prepare(document.querySelectorAll(".pill-cta"), "pop", [620], loadItems);
+  prepare(document.querySelectorAll(".burst-hero .pill-cta"), "pop", [620], loadItems);
 
   prepare(document.querySelectorAll(".eyebrow"), "pop", 0, scrollItems);
   prepare(document.querySelectorAll("main h2:not(#hero-title)"), "up", 0, scrollItems);

@@ -361,10 +361,14 @@ main:focus {
 }
 
 /* With a mouse, the theme pill shows only the current theme and opens to the left into the full row on
-   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one. */
+   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one.
+   The ring moves by left, not transform: the dots grow on the main thread, and a transform would run on
+   the compositor at its own pace and drift off the dot it circles. */
 @media (hover: hover) and (min-width: 761px) {
   .theme-controls::before {
-    transition: border-color 500ms var(--ease), transform 300ms var(--ease);
+    left: calc(3px + var(--control-index, 0) * var(--control-size));
+    transform: none;
+    transition: border-color 500ms var(--ease), left 300ms var(--ease);
   }
 
   .theme-dot {
@@ -376,7 +380,7 @@ main:focus {
   }
 
   .theme-controls:not(:hover, :focus-within)::before {
-    transform: translateX(0);
+    left: 3px;
   }
 
   .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) {
@@ -419,6 +423,13 @@ main:focus {
   .mode-button:focus-visible::after {
     opacity: 1;
     transform: translate(-50%, 0);
+  }
+
+  /* As the pill opens, its dots slide under a resting pointer one after another. A short wait before a
+     dot answers the hover keeps each one's label and tint from flashing on the way past. */
+  .theme-dot:hover::after,
+  .theme-dot:hover .theme-swatch {
+    transition-delay: 250ms;
   }
 
   /* The last button sits near the page edge, so its label lines up with its right side instead. */
@@ -866,27 +877,34 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   background: none;
 }
 
+/* The link holds still and the pill inside it lifts on hover, so the pill never moves out from under a
+   resting pointer and drops its own hover. The same goes for .band-cta. */
 .pill-cta {
   display: inline-flex;
-  align-items: center;
-  min-height: 54px;
   margin-top: clamp(26px, 3vw, 40px);
-  padding: 16px 30px;
-  color: var(--band);
-  background: var(--band-ink);
   border-radius: 999px;
   font-size: 1.05rem;
   font-weight: 650;
   line-height: 1;
   text-decoration: none;
+}
+
+.pill-cta > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 54px;
+  padding: 16px 30px;
+  color: var(--band);
+  background: var(--band-ink);
+  border-radius: 999px;
   transition: transform 180ms var(--ease), background-color 180ms var(--ease);
 }
 
-.pill-cta:hover {
+.pill-cta:hover > span {
   transform: translateY(-2px) rotate(-1.5deg);
 }
 
-.pill-cta:active {
+.pill-cta:active > span {
   transform: scale(0.97);
 }
 
@@ -1741,25 +1759,30 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 
 .band-cta {
   display: inline-flex;
-  align-items: center;
-  min-height: 56px;
   margin-top: clamp(28px, 3.5vw, 40px);
-  padding: 17px 34px;
-  color: var(--band-ink);
-  background: var(--band);
   border-radius: 999px;
   font-size: 1.1rem;
   font-weight: 650;
   line-height: 1;
   text-decoration: none;
+}
+
+.band-cta > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 17px 34px;
+  color: var(--band-ink);
+  background: var(--band);
+  border-radius: 999px;
   transition: transform 180ms var(--ease);
 }
 
-.band-cta:hover {
+.band-cta:hover > span {
   transform: translateY(-2px) rotate(-1.5deg);
 }
 
-.band-cta:active {
+.band-cta:active > span {
   transform: scale(0.97);
 }
 
@@ -1986,7 +2009,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 .motion-boot .mobile-menu-toggle,
 .motion-boot .theme-controls,
 .motion-boot .mode-button,
-.motion-boot .pill-cta {
+.motion-boot .burst-hero .pill-cta {
   opacity: 0;
 }
 
