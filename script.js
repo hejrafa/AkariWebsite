@@ -1014,6 +1014,8 @@ function setupRevealMotion() {
       [...element.classList]
         .filter((className) => className === "reveal" || className === "is-visible" || className.startsWith("reveal--"))
         .forEach((className) => element.classList.remove(className));
+      // Keeps the layer the entrance ran on (see .reveal-done).
+      element.classList.add("reveal-done");
       element.style.removeProperty("--reveal-delay");
     }, delay + cleanupDuration);
   }

@@ -245,6 +245,16 @@ main:focus {
   background: transparent;
 }
 
+/* Safari draws a layered element a pixel or two off from where it paints it without a layer, so a button
+   that scales on hover, or a selection that slides, lands with a jump when the layer made for the motion
+   is dropped. These keep their layers, the buttons and the selections under them alike. */
+.language-switch::before,
+.language-button,
+.mode-controls::before,
+.mode-button {
+  will-change: transform;
+}
+
 .appearance-controls {
   display: flex;
   grid-column: 3;
@@ -375,8 +385,16 @@ main:focus {
     transition: width 300ms var(--ease), visibility 0s, color 180ms var(--ease), transform 180ms var(--ease);
   }
 
+  /* Each swatch is as wide as its dot up to its full size, so it grows from nothing with the dot. A fade
+     would need a layer for its length, and Safari lands the layered swatch with a jump. */
   .theme-ring {
-    transition: opacity 220ms var(--ease) 80ms;
+    width: 100%;
+  }
+
+  .theme-swatch {
+    width: min(22px, 100%);
+    height: auto;
+    aspect-ratio: 1;
   }
 
   .theme-controls:not(:hover, :focus-within)::before {
@@ -389,12 +407,8 @@ main:focus {
     transition: width 300ms var(--ease), visibility 0s 300ms, color 180ms var(--ease), transform 180ms var(--ease);
   }
 
-  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) .theme-ring {
-    opacity: 0;
-    transition-delay: 0s;
-  }
-
-  /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it. */
+  /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it.
+     Each keeps a layer, so it doesn't land a pixel off when its fade ends (see .language-button). */
   .theme-dot::after,
   .mode-button::after {
     position: absolute;
@@ -415,6 +429,7 @@ main:focus {
     pointer-events: none;
     transform: translate(-50%, -4px);
     transition: opacity 140ms ease, transform 140ms ease;
+    will-change: opacity, transform;
   }
 
   .theme-dot:hover::after,
@@ -878,7 +893,9 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 }
 
 /* The link holds still and the pill inside it lifts on hover, so the pill never moves out from under a
-   resting pointer and drops its own hover. The same goes for .band-cta. */
+   resting pointer and drops its own hover. The pill stays on its own layer: Safari draws a layer a pixel
+   off from the page, so a layer made only for the lift would land the pill with a jump. The same goes
+   for .band-cta. */
 .pill-cta {
   display: inline-flex;
   margin-top: clamp(26px, 3vw, 40px);
@@ -898,6 +915,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   background: var(--band-ink);
   border-radius: 999px;
   transition: transform 180ms var(--ease), background-color 180ms var(--ease);
+  will-change: transform;
 }
 
 .pill-cta:hover > span {
@@ -999,6 +1017,11 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   display: block;
   width: 100%;
   height: clamp(34px, 6vw, 90px);
+  /* Safari draws a layered element a pixel or two off from where it paints it without a layer, and the
+     edge is layered whenever it overlaps animated content. Keeping it on a layer stops it jumping, and the
+     paper runs on past the flat edge (overflow) so the offset never uncovers a line of the band. */
+  overflow: visible;
+  will-change: transform;
 }
 
 .torn-edge__fringe {
@@ -1776,6 +1799,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   background: var(--band);
   border-radius: 999px;
   transition: transform 180ms var(--ease);
+  will-change: transform;
 }
 
 .band-cta:hover > span {
@@ -1955,6 +1979,12 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 
 .motion-ready .reveal.reveal--armed {
   will-change: opacity, transform;
+}
+
+/* After its entrance an element keeps a layer: Safari draws a layer a pixel or two off from the page, so
+   dropping it would make the element jump once it had settled (script.js swaps the reveal classes for this). */
+.reveal-done {
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: no-preference) {
