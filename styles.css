@@ -40,8 +40,9 @@
   --ink-rgb: 241, 234, 198;
   --serif: "Akari New York", "New York", serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  background: var(--page);
-  transition: --page 500ms var(--ease), --ink 500ms var(--ease), --accent 500ms var(--ease);
+  /* The page starts and ends on the deep band, so overscroll at either end shows the band too. */
+  background: var(--band, var(--page));
+  transition: --page 500ms var(--ease), --ink 500ms var(--ease), --accent 500ms var(--ease), background-color 500ms var(--ease);
 }
 
 
