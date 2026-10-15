@@ -56,7 +56,7 @@ const commonTranslations = {
     headerLabel: "Kopfbereich der Akari-Website",
     mobileMenuLabel: "Einstellungen für Sprache und Darstellung",
     mobileLanguageLabel: "Sprache",
-    mobileAppearanceLabel: "Design",
+    mobileAppearanceLabel: "Darstellung",
     appearanceLabel: "Erscheinungsbild der Seite wählen",
     themeGroupLabel: "Farbthema wählen",
     themeMeadowLabel: "Wasserkuppe",
@@ -313,6 +313,9 @@ function updateAppearance() {
 
   if (themeColor) themeColor.content = bandColors[theme];
   themeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.themeTarget === theme)));
+  // The mobile menu names the current theme next to its appearance label, from the dot's translated label.
+  const themeName = document.querySelector('.theme-dot[aria-pressed="true"]')?.getAttribute("aria-label") ?? "";
+  document.querySelectorAll(".mobile-theme-name").forEach((element) => { element.textContent = themeName; });
   modeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.modeTarget === mode)));
   brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-dark.svg?v=2`; });
   if (adminLink) {

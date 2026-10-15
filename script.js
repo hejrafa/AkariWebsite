@@ -208,7 +208,7 @@ const translations = {
     headerLabel: "Kopfbereich der Akari-Website",
     mobileMenuLabel: "Einstellungen für Sprache und Darstellung",
     mobileLanguageLabel: "Sprache",
-    mobileAppearanceLabel: "Design",
+    mobileAppearanceLabel: "Darstellung",
     languageGroupLabel: "Sprache wählen",
     languageEnglishLabel: "Seite auf Englisch anzeigen",
     languageGermanLabel: "Seite auf Deutsch anzeigen",
@@ -529,6 +529,7 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
   languageButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.languageTarget === language));
   });
+  updateThemeName();
   document.querySelectorAll('.footer-sitemap a[href^="/privacy/"], .footer-sitemap a[href^="/terms/"], .privacy__link').forEach((link) => {
     const url = new URL(link.getAttribute("href"), window.location.origin);
     if (language === "de") url.searchParams.set("lang", "de");
@@ -768,6 +769,12 @@ function updateThemeColor() {
 
 }
 
+// The mobile menu names the current theme next to its appearance label, from the dot's translated label.
+function updateThemeName() {
+  const name = document.querySelector('.theme-dot[aria-pressed="true"]')?.getAttribute("aria-label") ?? "";
+  document.querySelectorAll(".mobile-theme-name").forEach((element) => { element.textContent = name; });
+}
+
 function selectTheme(theme, persist = true, updateAppearance = true) {
   if (!bandColors[theme]) return;
   const themeChanged = root.dataset.theme !== theme;
@@ -775,6 +782,7 @@ function selectTheme(theme, persist = true, updateAppearance = true) {
   themeButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.themeTarget === theme));
   });
+  updateThemeName();
   if (persist) {
     persistSitePreference("akari-theme", theme);
   }
