@@ -67,7 +67,9 @@ body {
   margin: 0;
   overflow-x: hidden;
   color: var(--ink);
-  background: var(--page);
+  /* Safari paints overscroll in the body's background colour over the root's, not the root's alone.
+     The page colour is drawn as an image instead, so the body still shows it and overscroll shows the band. */
+  background: linear-gradient(var(--page), var(--page));
   font-family: var(--serif);
   font-optical-sizing: auto;
   letter-spacing: 0;

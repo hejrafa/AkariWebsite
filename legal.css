@@ -8,6 +8,13 @@
   font-display: swap;
 }
 
+/* Registered so a theme or mode switch fades the page colour, which the body paints as an image. */
+@property --page {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #161a12;
+}
+
 /* Colours come from the app's AppTheme.swift, as on the landing page (styles.css). Each
    theme has a deep band and its cream ink, plus page, card, ink and accent per scheme. */
 :root {
@@ -53,18 +60,20 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 /* The page starts and ends on the deep band, so overscroll at either end shows the band too. */
 html {
   background: var(--band);
-  transition: background-color 500ms var(--ease);
+  transition: background-color 500ms var(--ease), --page 500ms var(--ease);
 }
 
 body {
   min-width: 320px;
   margin: 0;
   color: var(--ink);
-  background: var(--page);
+  /* Safari paints overscroll in the body's background colour over the root's, not the root's alone.
+     The page colour is drawn as an image instead, so the body still shows it and overscroll shows the band. */
+  background: linear-gradient(var(--page), var(--page));
   font-family: var(--serif);
   font-optical-sizing: auto;
   text-rendering: optimizeLegibility;
-  transition: color 500ms var(--ease), background-color 500ms var(--ease);
+  transition: color 500ms var(--ease);
 }
 
 a { color: inherit; text-underline-offset: 0.18em; }
