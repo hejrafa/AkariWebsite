@@ -9,7 +9,7 @@
   <link rel="icon" href="https://joinakari.com/assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="https://joinakari.com/assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin>
   <script src="/assets/appearance.js?v=20261015-01"></script>
-  <link rel="stylesheet" href="/assets/admin.css?v=20261015-01">
+  <link rel="stylesheet" href="/assets/admin.css?v=20261015-02">
 </head>
 <body>
   <header class="site-header">
@@ -70,6 +70,23 @@
         <div class="visit-breakdowns" id="visit-breakdowns"></div>
         <p class="visits-note" data-i18n="visitsNote">Counted without cookies. A visitor is recognised for one day only.</p>
       </section>
+
+      <section class="visits testers" aria-labelledby="testers-title">
+        <div class="visits-head">
+          <h2 id="testers-title" data-i18n="testersTitle">Testers</h2>
+          <div class="testers-refresh">
+            <p class="testers-updated" id="testers-updated" aria-live="polite"></p>
+            <button class="summary-card" type="button" id="testers-refresh" data-i18n="refresh">Refresh</button>
+          </div>
+        </div>
+
+        <div class="visits-card testers-card" id="testers-card" aria-live="polite">
+          <p class="visits-state" data-i18n="loadingTesters">Loading testers…</p>
+        </div>
+
+        <div class="testers-builds" id="testers-builds"></div>
+        <p class="visits-note" data-i18n="testersNote">From TestFlight via the App Store Connect API, once a day. Numbers only.</p>
+      </section>
     </section>
 
     <section class="page-view" data-page="feedback" hidden>
@@ -94,6 +111,6 @@
       </section>
     </section>
   </main>
-  <script type="module" src="/assets/admin.js?v=20261010-04"></script>
+  <script type="module" src="/assets/admin.js?v=20261015-01"></script>
 </body>
 </html>

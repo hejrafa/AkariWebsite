@@ -1,3 +1,5 @@
+import { readTestFlight, refreshTestFlight } from "./testflight.ts";
+
 interface Env {
   DB: D1Database;
   ASSETS: Fetcher;
@@ -8,6 +10,9 @@ interface Env {
   ADMIN_PASSWORD_HASH: string;
   ADDITIONAL_ADMINS?: string;
   SESSION_SECRET: string;
+  ASC_KEY_ID?: string;
+  ASC_ISSUER_ID?: string;
+  ASC_PRIVATE_KEY?: string;
 }
 
 type FeedbackRating = "positive" | "negative";
@@ -132,6 +137,12 @@ export default {
       if (request.method === "GET" && url.pathname === "/admin-api/visits") {
         return listVisits(url, env);
       }
+      if (request.method === "GET" && url.pathname === "/admin-api/testflight") {
+        return json(await readTestFlight(env));
+      }
+      if (request.method === "POST" && url.pathname === "/admin-api/testflight/refresh") {
+        return refreshTestFlightNow(env);
+      }
       const match = url.pathname.match(/^\/admin-api\/reports\/([^/]+)$/);
       if (request.method === "PATCH" && match) {
         return updateReport(request, env, decodeURIComponent(match[1]));
@@ -171,7 +182,29 @@ export default {
 
     return notFound();
   },
+
+  // Daily at 06:00 UTC (wrangler.jsonc): today's TestFlight numbers.
+  async scheduled(_controller: ScheduledController, env: Env, context: ExecutionContext): Promise<void> {
+    context.waitUntil(refreshTestFlight(env).then(
+      (result) => { if (result.status === "key_missing") console.log("TestFlight refresh skipped: no App Store Connect key"); },
+      (error: unknown) => console.error("TestFlight refresh failed:", error instanceof Error ? error.message : "unknown error"),
+    ));
+  },
 };
+
+async function refreshTestFlightNow(env: Env): Promise<Response> {
+  try {
+    const result = await refreshTestFlight(env, { limited: true });
+    if (result.status === "key_missing") return json({ error: "key_missing" }, 503);
+    if (result.status === "rate_limited") {
+      return json({ error: "rate_limited", retryAfter: result.retryAfter }, 429, { "retry-after": String(result.retryAfter) });
+    }
+    return json(await readTestFlight(env));
+  } catch (error) {
+    // The message names Apple's status and path only, never the key or token.
+    return json({ error: "refresh_failed", detail: error instanceof Error ? error.message : "unknown error" }, 502);
+  }
+}
 
 const sessionCookieName = "akari_admin_session";
 const sessionLifetimeSeconds = 8 * 60 * 60;

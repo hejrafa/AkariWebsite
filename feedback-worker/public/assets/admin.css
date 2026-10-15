@@ -392,6 +392,30 @@ h1 {
 .breakdown-empty { margin: 0; padding: 9px 0; color: var(--muted); }
 .visits-note { margin: 16px 0 0; color: var(--muted); font-size: 0.92rem; text-align: center; }
 
+/* Dashboard: TestFlight testers ----------------------------------------------------------------- */
+
+.testers-refresh { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; }
+.testers-updated { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 0.88rem; }
+.testers-refresh .summary-card { min-height: 44px; padding: 0 18px; font-size: 1rem; }
+.testers-refresh .summary-card:disabled { opacity: 0.6; transform: none; }
+.testers-card { grid-template-columns: minmax(0, 1fr); }
+.testers-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.testers-empty { min-height: 140px; gap: 10px; align-content: center; }
+.testers-empty p { margin: 0; }
+.testers-key { justify-self: center; padding: 4px 12px; border-radius: 999px; background: var(--tint); color: var(--ink); font-family: var(--sans); font-size: 0.82rem; font-weight: 650; }
+.testers-trend { display: flex; align-items: flex-end; gap: 4px; height: 64px; }
+.testers-bar { flex: 1; min-width: 0; height: var(--bar, 4px); border-radius: 4px 4px 2px 2px; background: var(--accent); }
+.testers-bar.is-empty { height: 4px; background: var(--faint); }
+.testers-builds { margin-top: 16px; }
+.builds-scroll { overflow-x: auto; }
+.builds-table { width: 100%; border-collapse: collapse; font-size: 1rem; white-space: nowrap; }
+.builds-table th { padding: 6px 12px 8px 0; color: var(--muted); font-family: var(--sans); font-size: 0.8rem; font-weight: 650; text-align: left; }
+.builds-table td { padding: 9px 12px 9px 0; border-top: 1px solid var(--faint); font-variant-numeric: tabular-nums; }
+.builds-table :is(th, td):nth-child(n + 4):nth-child(-n + 6) { text-align: right; }
+.build-name { font-weight: 800; }
+.build-state { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--tint); color: var(--muted); font-family: var(--sans); font-size: 0.75rem; font-weight: 650; }
+.build-expired { color: var(--muted); }
+
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 
 /* Food inbox: filter pills ---------------------------------------------------------------------- */
@@ -1021,6 +1045,8 @@ h1 {
   .admin-nav { margin-right: 16px; }
   .visits-card { grid-template-columns: 1fr; }
   .visit-stats { grid-template-columns: 1fr 1fr; }
+  .testers-stats { grid-template-columns: 1fr 1fr; }
+  .testers-refresh { justify-content: flex-start; }
   .visit-breakdowns { grid-template-columns: 1fr; }
   .empty-state { min-height: 220px; padding: 36px 28px; }
   .detail-panel { width: min(100%, 620px); }

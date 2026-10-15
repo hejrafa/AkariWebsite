@@ -11,6 +11,10 @@ const rangeButtons = [...document.querySelectorAll("[data-range]")];
 const visitStats = document.querySelector("#visit-stats");
 const visitsPlot = document.querySelector(".visits-plot");
 const visitBreakdowns = document.querySelector("#visit-breakdowns");
+const testersCard = document.querySelector("#testers-card");
+const testersBuilds = document.querySelector("#testers-builds");
+const testersUpdated = document.querySelector("#testers-updated");
+const testersRefresh = document.querySelector("#testers-refresh");
 const root = document.documentElement;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 let activeFilter = "open";
@@ -21,6 +25,8 @@ let feedbackLoaded = false;
 let visitRange = 30;
 let visitData = null;
 let visitsRequest = 0;
+let testerData = null;
+let testerNotice = "";
 let currentLanguage = root.dataset.language === "de" ? "de" : "en";
 
 const translations = {
@@ -35,6 +41,15 @@ const translations = {
     breakdownPages: "Pages", breakdownSources: "Came from", breakdownCountries: "Countries", breakdownEmpty: "Nothing yet",
     pageHome: "Home", pagePrivacy: "Privacy", pageTerms: "Terms", sourceDirect: "Direct", unknown: "Unknown",
     visitsNote: "Counted without cookies. A visitor is recognised for one day only.",
+    testersTitle: "Testers", refresh: "Refresh", refreshing: "Refreshing…", loadingTesters: "Loading testers…",
+    noTesterData: "No data yet. Add the App Store Connect key and press Refresh.", keyMissing: "Key missing",
+    statTesters: "Testers", statInstalled: "Installed", statSessions: "Sessions, last 30 days", statCrashes: "Crashes, last 30 days",
+    viaPublicLink: "{count} via the public link", ofTesters: "{share} of testers",
+    testersUpdated: "Last updated {time}", refreshWait: "Refreshed a moment ago. Try again in {minutes} min.", refreshFailed: "Refresh failed: {detail}",
+    testersTrend: "Testers per day over the last 30 days.", trendDay: "{day}: {count} testers", trendNoData: "{day}: no data",
+    buildsTitle: "Builds", tableBuild: "Build", tableVersion: "Version", tableUploaded: "Uploaded", tableInstalls: "Installs", tableSessions: "Sessions", tableCrashes: "Crashes", tableExpires: "Expires",
+    noBuilds: "No builds yet", buildExpired: "Expired", state_PROCESSING: "Processing", state_FAILED: "Failed", state_INVALID: "Invalid",
+    testersNote: "From TestFlight via the App Store Connect API, once a day. Numbers only.",
     foodReviewTitle: "Food inbox", foodReviewLede: "Wrong matches, odd portions and off nutrition, flagged by people using Akari. Fix each one, then check it off.", foodReviewEmojiLabel: "Play with the food inbox emoji",
     feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
     pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Inbox",
@@ -62,6 +77,15 @@ const translations = {
     breakdownPages: "Seiten", breakdownSources: "Gekommen von", breakdownCountries: "Länder", breakdownEmpty: "Noch nichts",
     pageHome: "Startseite", pagePrivacy: "Datenschutz", pageTerms: "Nutzungsbedingungen", sourceDirect: "Direkt", unknown: "Unbekannt",
     visitsNote: "Gezählt ohne Cookies. Ein Besucher wird nur einen Tag lang wiedererkannt.",
+    testersTitle: "Tester", refresh: "Aktualisieren", refreshing: "Wird aktualisiert…", loadingTesters: "Tester werden geladen…",
+    noTesterData: "Noch keine Daten. App-Store-Connect-Schlüssel hinterlegen und auf Aktualisieren klicken.", keyMissing: "Schlüssel fehlt",
+    statTesters: "Tester", statInstalled: "Installiert", statSessions: "Sitzungen, letzte 30 Tage", statCrashes: "Abstürze, letzte 30 Tage",
+    viaPublicLink: "{count} über den öffentlichen Link", ofTesters: "{share} der Tester",
+    testersUpdated: "Zuletzt aktualisiert {time}", refreshWait: "Gerade erst aktualisiert. In {minutes} Min. erneut versuchen.", refreshFailed: "Aktualisierung fehlgeschlagen: {detail}",
+    testersTrend: "Tester pro Tag in den letzten 30 Tagen.", trendDay: "{day}: {count} Tester", trendNoData: "{day}: keine Daten",
+    buildsTitle: "Builds", tableBuild: "Build", tableVersion: "Version", tableUploaded: "Hochgeladen", tableInstalls: "Installationen", tableSessions: "Sitzungen", tableCrashes: "Abstürze", tableExpires: "Läuft ab",
+    noBuilds: "Noch keine Builds", buildExpired: "Abgelaufen", state_PROCESSING: "Wird verarbeitet", state_FAILED: "Fehlgeschlagen", state_INVALID: "Ungültig",
+    testersNote: "Aus TestFlight über die App-Store-Connect-API, einmal am Tag. Nur Zahlen.",
     foodReviewTitle: "Meldungen", foodReviewLede: "Falsche Treffer, seltsame Portionen und fehlerhafte Nährwerte, gemeldet von Akari-Nutzern. Korrigieren, dann abhaken.", foodReviewEmojiLabel: "Mit dem Meldungen-Emoji spielen",
     feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
     pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Meldungen",
@@ -103,6 +127,7 @@ function selectLanguage(language, persist = true) {
   syncPage();
   if (allReports.length) render(allReports);
   if (visitData) renderVisits(visitData);
+  if (testerData) renderTesters(testerData);
   if (activePanel) closeReportPanel();
 }
 
@@ -131,6 +156,7 @@ function syncPage() {
     load();
   }
   if (page === "dashboard" && !visitData) loadVisits();
+  if (page === "dashboard" && !testerData) loadTesters();
 }
 
 window.addEventListener("hashchange", syncPage);
@@ -498,6 +524,128 @@ function countryLabel(code) {
 function formatDay(day, options) {
   if (!day) return "";
   return new Intl.DateTimeFormat(currentLanguage === "de" ? "de-DE" : "en-US", { timeZone: "UTC", ...options }).format(new Date(`${day}T00:00:00Z`));
+}
+
+// TestFlight testers ----------------------------------------------------------------------------
+
+testersRefresh.addEventListener("click", refreshTesters);
+
+async function loadTesters() {
+  try {
+    const response = await fetch("/admin-api/testflight");
+    if (!response.ok) throw new Error(`Request failed (${response.status})`);
+    let data = await response.json();
+    if (isLocalPreview() && !data.latest) data = previewTesters(data);
+    testerData = data;
+    renderTesters(data);
+  } catch (error) {
+    testersCard.replaceChildren(element("p", "visits-state", error.message));
+  }
+}
+
+async function refreshTesters() {
+  testersRefresh.disabled = true;
+  testersRefresh.textContent = t("refreshing");
+  testerNotice = "";
+  try {
+    const response = await fetch("/admin-api/testflight/refresh", { method: "POST" });
+    const data = await response.json().catch(() => ({}));
+    if (response.ok) {
+      testerData = data;
+    } else if (data.error === "key_missing") {
+      testerData = { ...(testerData ?? { latest: null, trend: [] }), configured: false };
+    } else if (data.error === "rate_limited") {
+      testerNotice = t("refreshWait", { minutes: Math.max(1, Math.ceil((data.retryAfter ?? 60) / 60)) });
+    } else {
+      testerNotice = t("refreshFailed", { detail: data.detail ?? `Request failed (${response.status})` });
+    }
+  } catch (error) {
+    testerNotice = t("refreshFailed", { detail: error.message });
+  } finally {
+    testersRefresh.disabled = false;
+    if (testerData) renderTesters(testerData);
+    else testersUpdated.textContent = testerNotice;
+  }
+}
+
+function renderTesters(data) {
+  testersRefresh.textContent = t("refresh");
+  const latest = data.latest;
+  const updated = latest ? t("testersUpdated", { time: formatDate(latest.takenAt) }) : "";
+  testersUpdated.textContent = [testerNotice || updated, data.configured === false ? t("keyMissing") : ""].filter(Boolean).join(" · ");
+
+  if (!latest) {
+    const empty = element("div", "visits-state testers-empty");
+    empty.append(element("p", "", t("noTesterData")));
+    if (data.configured === false) empty.append(element("span", "testers-key", t("keyMissing")));
+    testersCard.replaceChildren(empty);
+    testersBuilds.replaceChildren();
+    return;
+  }
+
+  const stats = element("dl", "visit-stats testers-stats");
+  const share = latest.testersTotal ? `${Math.round((latest.testersInstalled / latest.testersTotal) * 100)}%` : "";
+  stats.append(
+    visitStat(t("statTesters"), latest.testersTotal, t("viaPublicLink", { count: formatNumber(latest.testersPublicLink) })),
+    visitStat(t("statInstalled"), latest.testersInstalled, share ? t("ofTesters", { share }) : ""),
+    visitStat(t("statSessions"), latest.sessions30d),
+    visitStat(t("statCrashes"), latest.crashes30d),
+  );
+  testersCard.replaceChildren(stats, testersTrend(data.trend ?? []));
+  testersBuilds.replaceChildren(buildsTable(latest.builds ?? []));
+}
+
+// One bar per day: the day's tester count. Days without a snapshot stay empty.
+function testersTrend(trend) {
+  const row = element("div", "testers-trend");
+  row.setAttribute("role", "img");
+  row.setAttribute("aria-label", t("testersTrend"));
+  const max = Math.max(1, ...trend.map((point) => point.testers ?? 0));
+  for (const point of trend) {
+    const bar = element("span", point.testers === null ? "testers-bar is-empty" : "testers-bar");
+    const day = formatDay(point.day, { day: "numeric", month: "short" });
+    bar.title = point.testers === null ? t("trendNoData", { day }) : t("trendDay", { day, count: formatNumber(point.testers) });
+    if (point.testers !== null) bar.style.setProperty("--bar", `${Math.max(4, (point.testers / max) * 100)}%`);
+    row.append(bar);
+  }
+  return row;
+}
+
+function buildsTable(builds) {
+  const section = element("section", "breakdown testers-table-card");
+  section.append(element("h3", "", t("buildsTitle")));
+  if (!builds.length) {
+    section.append(element("p", "breakdown-empty", t("noBuilds")));
+    return section;
+  }
+  const scroller = element("div", "builds-scroll");
+  const table = element("table", "builds-table");
+  const head = element("tr");
+  for (const key of ["tableBuild", "tableVersion", "tableUploaded", "tableInstalls", "tableSessions", "tableCrashes", "tableExpires"]) {
+    head.append(element("th", "", t(key)));
+  }
+  table.append(head);
+  for (const build of builds) {
+    const row = element("tr");
+    const name = element("td", "build-name", build.build);
+    if (build.processingState && build.processingState !== "VALID") {
+      name.append(element("span", "build-state", t(`state_${build.processingState}`)));
+    }
+    const day = (value) => (value ? formatDay(value.slice(0, 10), { day: "numeric", month: "short", year: "numeric" }) : "–");
+    row.append(
+      name,
+      element("td", "", build.version ?? "–"),
+      element("td", "", day(build.uploaded)),
+      element("td", "build-number", formatNumber(build.installs)),
+      element("td", "build-number", formatNumber(build.sessions)),
+      element("td", "build-number", formatNumber(build.crashes)),
+      element("td", build.expired ? "build-expired" : "", build.expired ? t("buildExpired") : day(build.expires)),
+    );
+    table.append(row);
+  }
+  scroller.append(table);
+  section.append(scroller);
+  return section;
 }
 
 async function load() {
@@ -1152,6 +1300,30 @@ function previewVisits(data) {
       sources: share([[null, 0.48], ["news.ycombinator.com", 0.21], ["google.com", 0.14], ["testflight", 0.09], ["reddit.com", 0.05], ["t.co", 0.03]]),
       countries: share([["DE", 0.41], ["US", 0.24], ["GB", 0.09], ["AT", 0.07], ["CH", 0.06], ["JP", 0.05], ["NL", 0.04], [null, 0.04]]),
     },
+  };
+}
+
+// A believable TestFlight sample for local development, like the visits one.
+function previewTesters(data) {
+  const now = Date.now();
+  const day = (offset) => new Date(now - offset * 86_400_000).toISOString();
+  const trend = Array.from({ length: 30 }, (_, index) => {
+    const offset = 29 - index;
+    return { day: day(offset).slice(0, 10), testers: index < 4 ? null : 18 + Math.round(index * 1.6), installed: null };
+  });
+  const builds = [
+    ["42", "0.9.2", 0, "PROCESSING", 90, 0, 0, 0],
+    ["41", "0.9.1", 3, "VALID", 87, 31, 214, 2],
+    ["40", "0.9.1", 9, "VALID", 81, 17, 139, 4],
+    ["38", "0.9.0", 19, "VALID", 71, 9, 58, 1],
+    ["35", "0.8.4", 95, "VALID", -5, 6, 21, 0],
+  ].map(([build, version, uploaded, processingState, expires, installs, sessions, crashes]) => ({
+    build, version, uploaded: day(uploaded), processingState, expires: day(-expires), expired: expires < 0, installs, sessions, crashes,
+  }));
+  return {
+    ...data,
+    latest: { takenAt: day(0), testersTotal: 64, testersPublicLink: 51, testersInstalled: 47, sessions30d: 412, crashes30d: 7, builds },
+    trend,
   };
 }
 
