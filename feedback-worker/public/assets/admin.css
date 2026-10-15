@@ -44,7 +44,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --header-h: 98px;
   --tear-h: clamp(28px, 4.5vw, 64px);
-  background: var(--page);
   color: var(--ink);
   font-family: var(--serif);
 }
@@ -54,13 +53,18 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 }
 
 * { box-sizing: border-box; }
-html { min-width: 320px; overflow-x: hidden; overflow-x: clip; background: var(--page); }
+/* The root only shows when overscrolling. Safari fills both ends with one colour, so the root takes the
+   band near the top, under the header, and the page colour near the bottom (appearance.js says which). */
+html { min-width: 320px; overflow-x: hidden; overflow-x: clip; background: var(--band); }
+html[data-scroll-end="bottom"] { background: var(--page); }
 body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
   overflow-x: clip;
-  background: var(--page);
+  /* Safari lays the body's background colour over the root's in overscroll, so the page colour is drawn
+     as an image: the body still shows it, and overscroll shows the root. */
+  background: linear-gradient(var(--page), var(--page));
   color: var(--ink);
   font-optical-sizing: auto;
   text-rendering: optimizeLegibility;

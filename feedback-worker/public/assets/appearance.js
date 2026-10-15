@@ -79,7 +79,17 @@
     if (languages.includes(requestedLanguage)) persist("akari-language", root.dataset.language);
   }
 
+  // Overscroll shows the root's colour at both ends (admin.css): the band while nearer the top, where the
+  // header is, and the page colour while nearer the bottom.
+  function syncScrollEnd() {
+    const range = root.scrollHeight - innerHeight;
+    const end = range > 0 && scrollY > range / 2 ? "bottom" : "top";
+    if (root.dataset.scrollEnd !== end) root.dataset.scrollEnd = end;
+  }
+
   apply();
+  addEventListener("scroll", syncScrollEnd, { passive: true });
+  addEventListener("resize", syncScrollEnd);
   window.AkariAppearance = { apply, persist, landingURL, syncPageChrome };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", syncPageChrome, { once: true });
   else syncPageChrome();
