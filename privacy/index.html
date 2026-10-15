@@ -48,7 +48,7 @@
       })();
     </script>
     <link rel="stylesheet" href="/legal.css?v=20261009-05" />
-    <script src="/legal.js?v=20261015-01" defer></script>
+    <script src="/legal.js?v=20261015-02" defer></script>
     <script src="/visit.js?v=20261010-01" defer></script>
     <title>Akari: Privacy Policy</title>
   </head>
@@ -164,7 +164,7 @@
           <p data-i18n="photosSent">You can log a meal by taking or choosing a photo of it. Nothing is sent unless you choose a photo for a meal. Packages and nutrition labels are still read on your iPhone; only a meal photo leaves it, so Akari can describe what is on the plate.</p>
           <p data-i18n="photosContent">What is sent is the photo, the app’s language and version, a few food words the iPhone’s own image recognition found in it, and a random identifier. It contains no Apple Health data, no account and no location. A photo shows whatever is in the frame, so keep people and documents out of it.</p>
           <p data-i18n="photosWhere">The photo goes to Akari’s server, which runs on Cloudflare. The server passes it to Anthropic’s Claude API, which reads the photo and returns a short description of the meal to the app.</p>
-          <p data-i18n="photosKeep">Akari keeps nothing of the photo or the description. To limit how many photos can be sent in a day, our server keeps daily counters: one for the random identifier, which exists only for this purpose, and one for the IP address your connection comes from. Both expire after two days. Nothing else from the request is stored.</p>
+          <p data-i18n="photosKeep">Akari keeps nothing of the photo or the description. To limit how many photos can be sent in a day, our server keeps daily counters under a one-way hash of the random identifier and of your IP address, made with a random value that is deleted when the day ends. The IP address is not stored, the counters expire after two days, and nothing else from the request is kept.</p>
           <p data-i18n-html="photosAnthropic">Anthropic handles the photo under its <a href="https://www.anthropic.com/legal/commercial-terms" rel="noreferrer">Commercial Terms</a>, which do not allow it to train models on it. By default, Anthropic deletes the photo and the description within 30 days. It keeps them longer, for up to two years, only if its safety systems flag a request as breaking its usage policy, or where the law requires it. <a href="https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data" rel="noreferrer">Anthropic’s privacy pages</a> explain this in detail.</p>
           <p data-i18n="photosOff">To stop sending photos, turn off Photo meals in Profile. The camera then offers barcode scanning only.</p>
         </section>

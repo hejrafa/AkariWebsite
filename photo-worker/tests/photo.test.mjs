@@ -7,6 +7,14 @@ const device = "3f2b8c1e-9a4d-4e7f-b1c2-5d6e7f8a9b0c";
 const jpeg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, ...new Array(64).fill(7)]);
 const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, ...new Array(64).fill(7)]);
 const today = () => new Date().toISOString().slice(0, 10);
+const salt = "5a17";
+
+// The counter key the worker derives for a device id or an address under the test salt.
+async function counterKey(kind, value, day = today(), withSalt = salt) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${withSalt}|${kind}|${value}`));
+  const hash = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("").slice(0, 16);
+  return `${kind}:${hash}:${day}`;
+}
 
 function kv(seed = {}) {
   const store = new Map(Object.entries(seed));
@@ -24,7 +32,7 @@ function kv(seed = {}) {
 }
 
 function setup({ seed, env: overrides } = {}) {
-  const counters = kv(seed);
+  const counters = kv({ [`salt:${today()}`]: salt, ...seed });
   const env = { PHOTO_COUNTERS: counters, ANTHROPIC_API_KEY: "test-key", ...overrides };
   const pending = [];
   const ctx = { waitUntil: (promise) => pending.push(promise), passThroughOnException() {} };
@@ -144,12 +152,12 @@ test("a hint longer than 120 characters is cut before cleaning", async () => {
 });
 
 for (const [name, seed, reason] of [
-  ["device", (day) => ({ [`device:${device}:${day}`]: "40" }), "device"],
-  ["client address", (day) => ({ [`address:203.0.113.7:${day}`]: "120" }), "device"],
-  ["global", (day) => ({ [`global:${day}`]: "3000" }), "global"],
+  ["device", async () => ({ [await counterKey("device", device)]: "40" }), "device"],
+  ["client address", async () => ({ [await counterKey("address", "203.0.113.7")]: "120" }), "device"],
+  ["global", async () => ({ [`global:${today()}`]: "3000" }), "global"],
 ]) {
   test(`the ${name} cap answers 429 before Anthropic is called`, async () => {
-    const { response, calls, counters } = await run(photo(), { seed: seed(today()) }, message({ food: true, main: "x", meal: "x" }));
+    const { response, calls, counters } = await run(photo(), { seed: await seed() }, message({ food: true, main: "x", meal: "x" }));
     assert.equal(response.status, 429);
     assert.deepEqual(await response.json(), { reason });
     assert.equal(calls.length, 0);
@@ -158,17 +166,45 @@ for (const [name, seed, reason] of [
 }
 
 test("caps come from the environment", async () => {
-  const { response, calls } = await run(photo(), { env: { DEVICE_DAILY_CAP: "2" }, seed: { [`device:${device}:${today()}`]: "2" } }, message({ food: true, main: "x", meal: "x" }));
+  const { response, calls } = await run(photo(), { env: { DEVICE_DAILY_CAP: "2" }, seed: { [await counterKey("device", device)]: "2" } }, message({ food: true, main: "x", meal: "x" }));
   assert.equal(response.status, 429);
   assert.equal(calls.length, 0);
 });
 
 test("each photo counts once against the device, the address and the day, with a 48 hour expiry", async () => {
   const { counters } = await run(photo(), { seed: { [`global:${today()}`]: "9" } }, message({ food: true, main: "x", meal: "x" }));
-  assert.equal(counters.store.get(`device:${device}:${today()}`), "1");
-  assert.equal(counters.store.get(`address:203.0.113.7:${today()}`), "1");
+  assert.equal(counters.store.get(await counterKey("device", device)), "1");
+  assert.equal(counters.store.get(await counterKey("address", "203.0.113.7")), "1");
   assert.equal(counters.store.get(`global:${today()}`), "10");
   assert.ok(counters.puts.every((put) => put.options.expirationTtl === 172800));
+});
+
+test("no counter key holds the IP address or the device id", async () => {
+  const { counters } = await run(photo(), {}, message({ food: true, main: "x", meal: "x" }));
+  const keys = [...counters.store.keys()];
+  assert.equal(keys.length, 4);
+  assert.ok(keys.every((key) => !key.includes("203.0.113") && !key.includes(device.slice(0, 8))));
+});
+
+test("the first photo of a day makes a salt that expires when the day ends", async () => {
+  // A fresh module, so no salt is cached from the tests above.
+  const { default: fresh } = await import(`../src/index.ts?salt=${Date.now()}`);
+  const anthropic = stubAnthropic(message({ food: true, main: "x", meal: "x" }));
+  const counters = kv();
+  const pending = [];
+  try {
+    await fresh.fetch(photo(), { PHOTO_COUNTERS: counters, ANTHROPIC_API_KEY: "test-key" }, { waitUntil: (p) => pending.push(p) });
+    await Promise.all(pending);
+  } finally {
+    anthropic.restore();
+  }
+  const saltPut = counters.puts.find((put) => put.key === `salt:${today()}`);
+  assert.match(saltPut.value, /^[0-9a-f]{32}$/);
+  const midnight = Date.parse(`${today()}T00:00:00Z`) / 1000 + 86_400;
+  // Midnight, or a minute from now when that is later, since KV wants 60 s at least.
+  assert.ok(saltPut.options.expiration >= midnight && saltPut.options.expiration <= midnight + 60);
+  assert.equal(counters.store.get(await counterKey("device", device, today(), saltPut.value)), "1");
+  assert.equal(counters.store.get(await counterKey("address", "203.0.113.7", today(), saltPut.value)), "1");
 });
 
 test("an upstream failure retries once after a second, then answers 503", async () => {

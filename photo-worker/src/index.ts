@@ -4,6 +4,9 @@ import type { Language } from "./prompt.ts";
 
 // POST /photo: one meal photo in, three short fields out. Nothing is stored; the
 // daily counters in PHOTO_COUNTERS are the only state, and they expire after 48 h.
+// The device and address counters are keyed by a hash with a salt that lives for
+// one UTC day, so KV never holds an IP address or a device id, and once the day's
+// salt expires the keys can't be linked to anyone or to each other.
 
 export interface Env {
   PHOTO_COUNTERS: KVNamespace;
@@ -62,9 +65,10 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
 
   const day = new Date().toISOString().slice(0, 10);
   const address = request.headers.get("cf-connecting-ip") ?? "unknown";
+  const salt = await dailySalt(env, day);
   const counters = [
-    { key: `device:${device}:${day}`, cap: cap(env.DEVICE_DAILY_CAP, 40), reason: "device" },
-    { key: `address:${address}:${day}`, cap: cap(env.ADDRESS_DAILY_CAP, 120), reason: "device" },
+    { key: `device:${await hashed(salt, "device", device)}:${day}`, cap: cap(env.DEVICE_DAILY_CAP, 40), reason: "device" },
+    { key: `address:${await hashed(salt, "address", address)}:${day}`, cap: cap(env.ADDRESS_DAILY_CAP, 120), reason: "device" },
     { key: `global:${day}`, cap: cap(env.GLOBAL_DAILY_CAP, 3000), reason: "global" },
   ];
   const counts = await Promise.all(counters.map(async (c) => Number(await env.PHOTO_COUNTERS.get(c.key)) || 0));
@@ -159,6 +163,34 @@ function base64(bytes: Uint8Array): string {
   let binary = "";
   for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   return btoa(binary);
+}
+
+let cachedSalt: { day: string; salt: string } | null = null;
+
+// The salt expires when its day ends; that day's counters are never read after it.
+// KV has no insert-if-absent, so two isolates racing on a day's first photo may each
+// keep their own salt, which only splits that day's counts the way a lost increment does.
+async function dailySalt(env: Env, day: string): Promise<string> {
+  if (cachedSalt?.day === day) return cachedSalt.salt;
+  const key = `salt:${day}`;
+  let salt = await env.PHOTO_COUNTERS.get(key);
+  if (!salt) {
+    salt = hex(crypto.getRandomValues(new Uint8Array(16)));
+    const midnight = Date.parse(`${day}T00:00:00Z`) / 1000 + 86_400;
+    // KV refuses an expiration less than 60 s away.
+    await env.PHOTO_COUNTERS.put(key, salt, { expiration: Math.max(midnight, Math.ceil(Date.now() / 1000) + 60) });
+  }
+  cachedSalt = { day, salt };
+  return salt;
+}
+
+async function hashed(salt: string, kind: string, value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${salt}|${kind}|${value}`));
+  return hex(new Uint8Array(digest)).slice(0, 16);
+}
+
+function hex(bytes: Uint8Array): string {
+  return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function cap(value: string | undefined, fallback: number): number {
