@@ -16,6 +16,7 @@ const testersUpdated = document.querySelector("#testers-updated");
 const testersRefresh = document.querySelector("#testers-refresh");
 const root = document.documentElement;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const stickerWidths = [56, 72, 92, 120, 160];
 let activeFilter = "open";
 let allReports = [];
 let activePanel = null;
@@ -32,7 +33,7 @@ const translations = {
   en: {
     languageGroupLabel: "Choose a language", languageEnglishLabel: "View in English", languageGermanLabel: "View in German",
     homeLabel: "Akari home", adminPagesLabel: "Admin pages", dashboardNavLabel: "Dashboard", foodReviewNavLabel: "Food inbox", logoutLabel: "Log out",
-    dashboardTitle: "Dashboard", dashboardLede: "Who’s peeking at the website, where they wandered in from, and who’s brave enough to poke at the beta.", dashboardEmojiLabel: "Play with the dashboard emoji",
+    dashboardTitle: "Dashboard", dashboardLede: "Who’s peeking at the website, where they wandered in from, and who’s brave enough to poke at the beta.", dashboardEmojiLabel: "Play with the dashboard sticker",
     visitsTitle: "Website visits", rangeLabel: "Time range", range7: "7 days", range30: "30 days", range90: "90 days",
     statVisitors: "Visitors", statViews: "Page views", versusPrevious: "{change} vs. previous {days} days",
     chartSummary: "Visitors per day over the last {days} days, {total} in total.", loadingVisits: "Loading visits…", noVisits: "No visits yet. They’ll show up here as people find the website.",
@@ -44,7 +45,7 @@ const translations = {
     statTesters: "Testers", statInstalled: "Installed", statSessions: "Sessions, last 30 days", statCrashes: "Crashes, last 30 days",
     testersUpdated: "Last updated {time}", refreshWait: "Refreshed a moment ago. Try again in {minutes} min.", refreshFailed: "Refresh failed: {detail}",
     testersTrend: "Testers per day over the last 30 days.", tooltipTesters: "{count} testers", tooltipTester: "1 tester", tooltipInstalled: "{count} installed", tooltipNoData: "No data",
-    foodReviewTitle: "Food inbox", foodReviewLede: "Mix-ups, mystery portions and nutrition that looks a little suspicious, sent in by sharp-eyed testers.", foodReviewEmojiLabel: "Play with the food inbox emoji",
+    foodReviewTitle: "Food inbox", foodReviewLede: "Mix-ups, mystery portions and nutrition that looks a little suspicious, sent in by sharp-eyed testers.", foodReviewEmojiLabel: "Play with the food inbox sticker",
     feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
     pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Inbox",
     tableIssue: "Issue", tableInput: "Entered", tableComment: "Comment", tableMatch: "Matched",
@@ -63,7 +64,7 @@ const translations = {
   de: {
     languageGroupLabel: "Sprache wählen", languageEnglishLabel: "Seite auf Englisch anzeigen", languageGermanLabel: "Seite auf Deutsch anzeigen",
     homeLabel: "Akari Startseite", adminPagesLabel: "Admin-Seiten", dashboardNavLabel: "Übersicht", foodReviewNavLabel: "Meldungen", logoutLabel: "Abmelden",
-    dashboardTitle: "Übersicht", dashboardLede: "Wer auf der Website vorbeischaut, woher die Leute hereinspaziert sind und wer sich mutig durch die Beta klickt.", dashboardEmojiLabel: "Mit dem Übersichts-Emoji spielen",
+    dashboardTitle: "Übersicht", dashboardLede: "Wer auf der Website vorbeischaut, woher die Leute hereinspaziert sind und wer sich mutig durch die Beta klickt.", dashboardEmojiLabel: "Mit dem Übersichts-Sticker spielen",
     visitsTitle: "Website-Besuche", rangeLabel: "Zeitraum", range7: "7 Tage", range30: "30 Tage", range90: "90 Tage",
     statVisitors: "Besucher", statViews: "Seitenaufrufe", versusPrevious: "{change} ggü. den {days} Tagen davor",
     chartSummary: "Besucher pro Tag in den letzten {days} Tagen, insgesamt {total}.", loadingVisits: "Besuche werden geladen…", noVisits: "Noch keine Besuche. Sie erscheinen hier, sobald Leute die Website finden.",
@@ -75,7 +76,7 @@ const translations = {
     statTesters: "Tester", statInstalled: "Installiert", statSessions: "Sitzungen, letzte 30 Tage", statCrashes: "Abstürze, letzte 30 Tage",
     testersUpdated: "Zuletzt aktualisiert {time}", refreshWait: "Gerade erst aktualisiert. In {minutes} Min. erneut versuchen.", refreshFailed: "Aktualisierung fehlgeschlagen: {detail}",
     testersTrend: "Tester pro Tag in den letzten 30 Tagen.", tooltipTesters: "{count} Tester", tooltipTester: "1 Tester", tooltipInstalled: "{count} installiert", tooltipNoData: "Keine Daten",
-    foodReviewTitle: "Meldungen", foodReviewLede: "Verwechslungen, rätselhafte Portionen und Nährwerte, die etwas verdächtig aussehen, eingeschickt von aufmerksamen Testern.", foodReviewEmojiLabel: "Mit dem Meldungen-Emoji spielen",
+    foodReviewTitle: "Meldungen", foodReviewLede: "Verwechslungen, rätselhafte Portionen und Nährwerte, die etwas verdächtig aussehen, eingeschickt von aufmerksamen Testern.", foodReviewEmojiLabel: "Mit dem Meldungen-Sticker spielen",
     feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
     pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Meldungen",
     tableIssue: "Problem", tableInput: "Eingabe", tableComment: "Kommentar", tableMatch: "Treffer",
@@ -139,6 +140,7 @@ function syncPage() {
 
   document.title = page === "feedback" ? t("pageTitleFeedback") : t("pageTitleDashboard");
   syncIndicators();
+  syncStickers();
   if (page !== "feedback") closeReportPanel();
   if (page === "feedback" && !feedbackLoaded) {
     feedbackLoaded = true;
@@ -150,7 +152,29 @@ function syncPage() {
 
 window.addEventListener("hashchange", syncPage);
 window.addEventListener("resize", syncIndicators);
+window.addEventListener("resize", syncStickers);
+window.addEventListener("akariappearancechange", syncStickers);
 document.fonts?.ready.then(syncIndicators);
+document.fonts?.ready.then(syncStickers);
+
+// The headlines' stickers are baked per theme, since the die-cut edge takes the theme's cream, and at a
+// ladder of widths, into public/assets/stickers (pnpm bake); each takes the width nearest its box, as on
+// the landing page (cutImageBase in the site's script.js). A hidden page's sticker is measured when shown.
+function syncStickers() {
+  const images = [...document.querySelectorAll("img[data-sticker]")].filter((image) => image.parentElement.offsetWidth);
+  const boxWidths = images.map((image) => image.parentElement.offsetWidth);
+  images.forEach((image, index) => {
+    const width = stickerWidths.reduce((best, size) => (Math.abs(Math.log(boxWidths[index] / size)) < Math.abs(Math.log(boxWidths[index] / best)) ? size : best));
+    image.parentElement.style.setProperty("--w", width);
+    image.parentElement.style.setProperty("--h", width);
+    const sticker = image.dataset.sticker.split("/");
+    const name = sticker.pop();
+    const base = `/assets/${sticker.join("/")}/${root.dataset.theme}/${name}-${width}`;
+    if (image.getAttribute("src") === `${base}@2x.webp`) return;
+    image.srcset = `${base}@2x.webp 2x, ${base}@3x.webp 3x`;
+    image.src = `${base}@2x.webp`;
+  });
+}
 
 // Slides each segmented control's pill under its active item, like the
 // language switch. Items differ in width, so the pill is measured.
@@ -192,10 +216,10 @@ function popEmoji(emoji) {
   const distance = 42 + Math.random() * 36;
   const particle = document.createElement("span");
   particle.className = "emoji-particle";
-  particle.textContent = emoji.textContent.trim();
+  particle.append(emoji.querySelector(".cut").cloneNode(true));
   particle.style.left = `${bounds.left + bounds.width / 2}px`;
   particle.style.top = `${bounds.top + bounds.height / 2}px`;
-  particle.style.setProperty("--particle-size", `${Math.round(bounds.height)}px`);
+  particle.style.setProperty("--particle-size", `${Math.round(bounds.width)}px`);
   particle.style.setProperty("--pop-x", `${Math.cos(angle) * distance}px`);
   particle.style.setProperty("--pop-y", `${Math.sin(angle) * distance}px`);
   particle.style.setProperty("--spin", `${-18 + Math.random() * 36}deg`);

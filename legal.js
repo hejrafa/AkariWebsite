@@ -23,7 +23,7 @@ const commonTranslations = {
     themeForestLabel: "Shiratani",
     themeCoastLabel: "Loch Tay",
     themeCanyonLabel: "Green River Overlook",
-    themePlainLabel: "Plain",
+    themePlainLabel: "Sun",
     lightModeLabel: "Use light appearance",
     darkModeLabel: "Use dark appearance",
     homeLabel: "Akari home",
@@ -63,7 +63,7 @@ const commonTranslations = {
     themeForestLabel: "Shiratani",
     themeCoastLabel: "Loch Tay",
     themeCanyonLabel: "Green River Overlook",
-    themePlainLabel: "Schlicht",
+    themePlainLabel: "Sonne",
     lightModeLabel: "Helles Erscheinungsbild verwenden",
     darkModeLabel: "Dunkles Erscheinungsbild verwenden",
     homeLabel: "Akari-Startseite",
@@ -98,7 +98,7 @@ const pageTranslations = {
   privacy: {
     en: {
       title: "Privacy, without the fine-print fog.",
-      emojiLabel: "Play with the lock emoji",
+      emojiLabel: "Play with the lock sticker",
       intro: "Akari is built to help you understand your health without turning it into someone else’s business.",
       updated: "Effective October 15, 2026",
       shortTitle: "The short version",
@@ -151,7 +151,7 @@ const pageTranslations = {
     },
     de: {
       title: "Datenschutz, klar und verständlich.",
-      emojiLabel: "Mit dem Schloss-Emoji spielen",
+      emojiLabel: "Mit dem Schloss-Sticker spielen",
       intro: "Akari hilft dir, deine Gesundheit zu verstehen, ohne sie zum Geschäft anderer zu machen.",
       updated: "Gültig ab 15. Oktober 2026",
       shortTitle: "Kurz gesagt",
@@ -206,7 +206,7 @@ const pageTranslations = {
   terms: {
     en: {
       title: "Terms you can actually read.",
-      emojiLabel: "Play with the handshake emoji",
+      emojiLabel: "Play with the handshake sticker",
       intro: "These terms govern your use of the Akari app, beta builds, and website.",
       updated: "Effective September 21, 2026",
       usingTitle: "Using Akari",
@@ -232,7 +232,7 @@ const pageTranslations = {
     },
     de: {
       title: "Regeln, die du wirklich lesen kannst.",
-      emojiLabel: "Mit dem Handschlag-Emoji spielen",
+      emojiLabel: "Mit dem Handschlag-Sticker spielen",
       intro: "Diese Bedingungen gelten für deine Nutzung der Akari-App, der Beta-Versionen und der Website.",
       updated: "Gültig ab 21. September 2026",
       usingTitle: "Akari verwenden",
@@ -305,6 +305,34 @@ function updateInternalLinks(language) {
   });
 }
 
+// The headline's sticker is baked per theme, since its die-cut edge takes the theme's cream, and at a ladder
+// of widths (tools/bake_die_cuts.py); it takes the width nearest its box, as on the landing page (cutImageBase
+// in script.js). The box follows the headline's size, so a resize can call for another width.
+const stickerWidths = [56, 72, 92, 120, 160];
+
+function updateStickers() {
+  const images = [...document.querySelectorAll("img[data-sticker]")];
+  const boxWidths = images.map((image) => image.parentElement.offsetWidth || 80);
+  images.forEach((image, index) => {
+    const width = stickerWidths.reduce((best, size) => (Math.abs(Math.log(boxWidths[index] / size)) < Math.abs(Math.log(boxWidths[index] / best)) ? size : best));
+    image.parentElement.style.setProperty("--w", width);
+    image.parentElement.style.setProperty("--h", width);
+    const sticker = image.dataset.sticker.split("/");
+    const name = sticker.pop();
+    const base = `/assets/${sticker.join("/")}/${root.dataset.theme}/${name}-${width}`;
+    if (image.getAttribute("src") === `${base}@2x.webp`) return;
+    image.srcset = `${base}@2x.webp 2x, ${base}@3x.webp 3x`;
+    image.src = `${base}@2x.webp`;
+  });
+}
+
+let lastViewportWidth = window.innerWidth;
+window.addEventListener("resize", () => {
+  if (window.innerWidth === lastViewportWidth) return;
+  lastViewportWidth = window.innerWidth;
+  updateStickers();
+});
+
 function updateAppearance() {
   const theme = pageColors.dark[root.dataset.theme] ? root.dataset.theme : "forest";
   const mode = pageColors[root.dataset.mode] ? root.dataset.mode : (systemModePreference.matches ? "dark" : "light");
@@ -318,6 +346,7 @@ function updateAppearance() {
   document.querySelectorAll(".mobile-theme-name").forEach((element) => { element.textContent = themeName; });
   modeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.modeTarget === mode)));
   brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-dark.svg?v=2`; });
+  updateStickers();
   if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
     const adminURL = new URL(localPreview ? "http://127.0.0.1:8791/login" : "https://admin.joinakari.com/login");
@@ -468,10 +497,10 @@ function popEmoji(emoji) {
   const particle = document.createElement("span");
 
   particle.className = "emoji-particle";
-  particle.textContent = emoji.textContent.trim();
+  particle.append(emoji.querySelector(".cut").cloneNode(true));
   particle.style.left = `${bounds.left + bounds.width / 2}px`;
   particle.style.top = `${bounds.top + bounds.height / 2}px`;
-  particle.style.setProperty("--particle-size", `${Math.round(bounds.height)}px`);
+  particle.style.setProperty("--particle-size", `${Math.round(bounds.width)}px`);
   particle.style.setProperty("--pop-x", `${Math.cos(angle) * distance}px`);
   particle.style.setProperty("--pop-y", `${Math.sin(angle) * distance}px`);
   particle.style.setProperty("--spin", `${-18 + Math.random() * 36}deg`);

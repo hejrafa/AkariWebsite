@@ -269,24 +269,36 @@ h1 {
   line-height: 0.92;
   text-wrap: balance;
 }
+/* The headline's sticker, as tall as the headline's capitals. Its cream die-cut edge and shadow are baked
+   into the file (pnpm bake), which is the sticker on a transparent margin of --cut-side px left and right,
+   --cut-top above and --cut-bottom below at 1x; the .cut box keeps the sticker's own size and the image
+   spills out by that margin, as on the landing page. admin.js picks the file. */
+:root { --cut-side: 20; --cut-top: 10; --cut-bottom: 30; }
+.cut { --w: 72; --h: 72; display: flow-root; aspect-ratio: var(--w) / var(--h); }
+.cut__image {
+  display: block;
+  width: calc(100% + 2 * var(--cut-side) / var(--w) * 100%);
+  max-width: none;
+  height: auto;
+  aspect-ratio: calc(var(--w) + 2 * var(--cut-side)) / calc(var(--h) + var(--cut-top) + var(--cut-bottom));
+  margin:
+    calc(var(--cut-top) / var(--w) * -100%) 0
+    calc(var(--cut-bottom) / var(--w) * -100%) calc(var(--cut-side) / var(--w) * -100%);
+  pointer-events: none;
+  user-select: none;
+}
 .title-emoji {
   position: relative;
-  display: inline-grid;
-  width: 0.82em;
-  height: 0.82em;
-  place-items: center;
+  display: inline-block;
+  width: 0.7em;
+  width: 1cap;
   padding: 0;
   border: 0;
   margin: 0 0 0 0.08em;
-  vertical-align: 0.04em;
   color: inherit;
   background: transparent;
   cursor: grab;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
-  font-size: 0.54em;
-  font-weight: 400;
-  letter-spacing: 0;
-  line-height: 1;
+  font: inherit;
   touch-action: none;
   transform: translate(var(--drag-x, 0px), var(--drag-y, 0px));
   transition: transform 480ms cubic-bezier(0.22, 1.3, 0.36, 1), scale 180ms var(--ease);
@@ -298,10 +310,8 @@ h1 {
   position: fixed;
   z-index: 300;
   margin: 0;
+  width: var(--particle-size);
   pointer-events: none;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
-  font-size: var(--particle-size);
-  line-height: 1;
   animation: emoji-pop 1180ms both var(--ease);
 }
 .lede { width: min(30em, 100%); margin: 26px auto 0; color: var(--muted); font-size: clamp(1.1rem, 1.5vw, 1.3rem); line-height: 1.45; }

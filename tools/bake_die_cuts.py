@@ -21,8 +21,10 @@ Each output is the input on a transparent margin of SIDE px left and right, TOP 
 (at 1x; twice that in a 2x file, three times in a 3x), so the shadow is never clipped. styles.css
 (.cut__image) reads the same numbers to place the inner piece exactly where the unbaked one was.
 
-Usage: python3 tools/bake_die_cuts.py [--root DIR] [--jobs N]
+Usage: python3 tools/bake_die_cuts.py [--root DIR] [--jobs N] [--stickers NAME ... --out DIR]
 Reads and writes under DIR, the repository by default; the deploy workflow passes its staged site/.
+With --stickers, bakes only those Fluent stickers, into <out>/<theme>/: the admin dashboard is served
+by the feedback worker, which keeps its own committed copies (pnpm bake in feedback-worker/).
 An output newer than its input and than this script is left alone, so a second run does nothing.
 Needs Pillow (pip install pillow).
 """
@@ -102,6 +104,13 @@ def sticker_source(path: Path, size: int, scale: int) -> Image.Image:
     return image
 
 
+def sticker_jobs(source: Path, out: Path):
+    for theme in THEMES:
+        for size in STICKER_SIZES:
+            for scale in SCALES:
+                yield source, out / theme / f"{source.stem}-{size}@{scale}x.webp", theme, scale, size
+
+
 def jobs(root: Path):
     """(source, output, theme, scale, sticker size or None) for every baked file."""
     welcome = root / "assets" / "welcome"
@@ -150,14 +159,28 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", type=Path, default=SCRIPT.parent.parent, help="folder holding assets/ (default: the repository)")
     parser.add_argument("--jobs", type=int, default=os.cpu_count() or 1, help="images baked in parallel")
+    parser.add_argument("--stickers", nargs="+", metavar="NAME", help="bake only these assets/stickers/<name>.png")
+    parser.add_argument("--out", type=Path, help="with --stickers: the folder their theme folders go in")
     args = parser.parse_args()
     root = args.root.resolve()
-    if not (root / "assets" / "welcome").is_dir():
+    if args.stickers:
+        if not args.out:
+            parser.error("--stickers needs --out")
+        sources = [root / "assets" / "stickers" / f"{name}.png" for name in args.stickers]
+        missing = [str(source) for source in sources if not source.exists()]
+        if missing:
+            print(f"No such sticker: {', '.join(missing)}", file=sys.stderr)
+            return 1
+        out = args.out.resolve()
+        every = [job for source in sources for job in sticker_jobs(source, out)]
+    elif (root / "assets" / "welcome").is_dir():
+        every = list(jobs(root))
+    else:
         print(f"No assets/welcome under {root}", file=sys.stderr)
         return 1
 
-    pending = [job for job in jobs(root) if not is_current(job[0], job[1])]
-    total = sum(1 for _ in jobs(root))
+    pending = [job for job in every if not is_current(job[0], job[1])]
+    total = len(every)
     if not pending:
         print(f"All {total} baked images are up to date.")
         return 0
