@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "akari-photo",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-15",
+  "workers_dev": false,
+  "preview_urls": false,
+  "dev": {
+    "port": 8792,
+    "host": "localhost"
+  },
+  // The feedback worker owns api.joinakari.com as a custom domain; this path
+  // route runs in front of it, and only for /photo.
+  "routes": [
+    {
+      "pattern": "api.joinakari.com/photo*",
+      "zone_name": "joinakari.com"
+    }
+  ],
+  "vars": {
+    "DEVICE_DAILY_CAP": "40",
+    "ADDRESS_DAILY_CAP": "120",
+    "GLOBAL_DAILY_CAP": "3000"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "PHOTO_COUNTERS",
+      "id": "2a9caead25614f1e897025c5c4252854"
+    }
+  ]
+}
