@@ -1301,7 +1301,7 @@ function previewTesters(data) {
   });
   return {
     ...data,
-    latest: { takenAt: day(0), testersTotal: 64, testersPublicLink: 51, testersInstalled: 47, sessions30d: 412, crashes30d: 7, builds: [] },
+    latest: { takenAt: day(0), testersTotal: 64, testersPublicLink: 51, testersInstalled: 47, sessions30d: 412, crashes30d: 7 },
     trend,
   };
 }

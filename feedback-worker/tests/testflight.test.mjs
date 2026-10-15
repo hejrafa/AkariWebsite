@@ -43,7 +43,7 @@ const person = (id, state) => ({ type: "betaTesters", id, attributes: { firstNam
 
 // App Store Connect as the fixtures describe it: five app testers over two
 // pages, three groups (one with the public link, one tester only there, one in
-// two groups), two builds.
+// two groups).
 function appStoreConnect(path, query) {
   const page = (data, next, total) => ({ data, links: { self: `${api}${path}`, ...(next ? { next } : {}) }, meta: { paging: { limit: 200, ...(total === undefined ? {} : { total }) } } });
   if (path === "/v1/apps") return { data: [{ type: "apps", id: "app-1", attributes: { bundleId: query.get("filter[bundleId]") } }], links: {} };
@@ -64,16 +64,6 @@ function appStoreConnect(path, query) {
     { dataPoints: [{ start: "2026-09-16", end: "2026-10-15", values: { sessionCount: 10, crashCount: 1, feedbackCount: 2 } }], dimensions: { betaTesters: { data: "t1" } } },
     { dataPoints: [{ start: "2026-09-16", end: "2026-10-15", values: { sessionCount: 5, crashCount: 0 } }], dimensions: { betaTesters: { data: "t3" } } },
   ]), included: [person("t1", "INSTALLED"), person("t3", "INSTALLED")] };
-  if (path === "/v1/builds") return {
-    data: [
-      { type: "builds", id: "b-41", attributes: { version: "41", uploadedDate: "2026-10-12T08:00:00Z", expirationDate: "2027-01-10T08:00:00Z", expired: false, processingState: "VALID" }, relationships: { preReleaseVersion: { data: { type: "preReleaseVersions", id: "pv-1" } } } },
-      { type: "builds", id: "b-40", attributes: { version: "40", uploadedDate: "2026-10-01T08:00:00Z", expirationDate: "2026-12-30T08:00:00Z", expired: false, processingState: "VALID" }, relationships: { preReleaseVersion: { data: { type: "preReleaseVersions", id: "pv-1" } } } },
-    ],
-    included: [{ type: "preReleaseVersions", id: "pv-1", attributes: { version: "0.9.1" } }],
-    links: {},
-  };
-  if (path === "/v1/builds/b-41/metrics/betaBuildUsages") return page([{ dataPoints: [{ values: { installCount: 3, sessionCount: 20, crashCount: 1, inviteCount: 9 } }] }]);
-  if (path === "/v1/builds/b-40/metrics/betaBuildUsages") return page([{ dataPoints: [{ values: { installCount: 2, sessionCount: 7, crashCount: 0 } }, { values: { installCount: 1 } }] }]);
   return null;
 }
 
@@ -124,25 +114,19 @@ test("lists follow next links, stop at 200, and the token only goes to Apple", a
   await assert.rejects(get("/v1/unknown"), { message: "App Store Connect answered 404 for /v1/unknown: NOT_FOUND No such resource." });
 });
 
-test("a snapshot holds counts and build rows only, one row per day", async () => {
+test("a snapshot holds counts only, one row per day", async () => {
   const env = environment();
   const before = requests.length;
   const snapshot = await collectSnapshot(ascClient("token"), new Date("2026-10-15T06:00:00Z"));
   assert.deepEqual(
-    { ...snapshot, builds: undefined },
-    { takenAt: "2026-10-15T06:00:00.000Z", testersTotal: 6, testersPublicLink: 5, testersInstalled: 4, sessions30d: 15, crashes30d: 1, builds: undefined },
+    snapshot,
+    { takenAt: "2026-10-15T06:00:00.000Z", testersTotal: 6, testersPublicLink: 5, testersInstalled: 4, sessions30d: 15, crashes30d: 1 },
   );
-  assert.deepEqual(snapshot.builds, [
-    { build: "41", version: "0.9.1", uploaded: "2026-10-12T08:00:00Z", processingState: "VALID", expires: "2027-01-10T08:00:00Z", expired: false, installs: 3, sessions: 20, crashes: 1 },
-    { build: "40", version: "0.9.1", uploaded: "2026-10-01T08:00:00Z", processingState: "VALID", expires: "2026-12-30T08:00:00Z", expired: false, installs: 3, sessions: 7, crashes: 0 },
-  ]);
   const testerRequests = requests.slice(before).filter((request) => request.url.pathname === "/v1/betaTesters");
   assert.ok(testerRequests.every((request) => request.url.searchParams.get("fields[betaTesters]") === "state"));
   const usageRequest = requests.slice(before).find((request) => request.url.pathname.endsWith("/metrics/betaTesterUsages"));
   assert.equal(usageRequest.url.searchParams.get("groupBy"), "betaTesters");
-  const buildUsageRequests = requests.slice(before).filter((request) => request.url.pathname.endsWith("/metrics/betaBuildUsages"));
-  assert.equal(buildUsageRequests.length, 2);
-  assert.ok(buildUsageRequests.every((request) => request.url.search === ""));
+  assert.ok(requests.slice(before).every((request) => !request.url.pathname.startsWith("/v1/builds")));
 
   await storeSnapshot(env, snapshot);
   await storeSnapshot(env, { ...snapshot, takenAt: "2026-10-15T09:30:00.000Z", testersTotal: 6 });
@@ -150,7 +134,7 @@ test("a snapshot holds counts and build rows only, one row per day", async () =>
   assert.equal(rows.length, 1);
   assert.equal(rows[0].testers_total, 6);
   const stored = JSON.stringify(rows);
-  assert.doesNotMatch(stored, /Name t|Tester|@example\.com|"t[1-6]"|app-1|b-4[01]|pv-1|g-public/);
+  assert.doesNotMatch(stored, /Name t|Tester|@example\.com|"t[1-6]"|app-1|g-public/);
 });
 
 test("refreshing needs a session, a key, and waits 10 minutes between runs", async () => {
@@ -194,7 +178,6 @@ test("the dashboard API returns the latest snapshot and a 30-day trend", async (
   assert.equal(data.configured, true);
   assert.equal(data.latest.takenAt, snapshot.takenAt);
   assert.equal(data.latest.testersTotal, 6);
-  assert.equal(data.latest.builds.length, 2);
   assert.equal(data.trend.length, 30);
   assert.deepEqual(data.trend.at(-1), { day: dayAt(0).slice(0, 10), testers: 6, installed: 4 });
   assert.equal(data.trend.at(-4).testers, 2);

@@ -9,18 +9,6 @@ export interface TestFlightEnv {
   ASC_PRIVATE_KEY?: string;
 }
 
-export interface TestFlightBuild {
-  build: string;
-  version: string | null;
-  uploaded: string | null;
-  processingState: string | null;
-  expires: string | null;
-  expired: boolean;
-  installs: number;
-  sessions: number;
-  crashes: number;
-}
-
 export interface TestFlightSnapshot {
   takenAt: string;
   testersTotal: number;
@@ -28,7 +16,6 @@ export interface TestFlightSnapshot {
   testersInstalled: number;
   sessions30d: number;
   crashes30d: number;
-  builds: TestFlightBuild[];
 }
 
 interface SnapshotRow {
@@ -39,7 +26,6 @@ interface SnapshotRow {
   testers_installed: number;
   sessions_30d: number;
   crashes_30d: number;
-  builds_json: string;
 }
 
 type Document = Record<string, any>;
@@ -48,7 +34,6 @@ type Get = (target: string) => Promise<Document>;
 const apiOrigin = "https://api.appstoreconnect.apple.com";
 const bundleId = "com.hejrafa.SacredHeart";
 const listCap = 200;
-const buildCount = 10;
 const tokenLifetimeSeconds = 20 * 60;
 const refreshInterval = 10 * 60 * 1000;
 const trendDays = 30;
@@ -173,14 +158,12 @@ export async function collectSnapshot(get: Get, now = new Date()): Promise<TestF
   if (!app) throw new Error(`App Store Connect has no app with bundle id ${bundleId}`);
   const appId = encodeURIComponent(app.id);
 
-  const [groups, testers, usage, builds] = await Promise.all([
+  const [groups, testers, usage] = await Promise.all([
     paginate(get, `/v1/apps/${appId}/betaGroups?fields[betaGroups]=name,isInternalGroup,publicLinkEnabled&limit=${listCap}`),
     listTesters(get, `filter[apps]=${appId}`),
     // Apple only answers per tester; the rows are summed, and the testers they
     // name (and any included tester details) are never read.
     paginate(get, `/v1/apps/${appId}/metrics/betaTesterUsages?period=P30D&groupBy=betaTesters&limit=${listCap}`),
-    get(`/v1/builds?filter[app]=${appId}&sort=-uploadedDate&limit=${buildCount}&include=preReleaseVersion` +
-      `&fields[builds]=version,uploadedDate,expirationDate,expired,processingState,preReleaseVersion&fields[preReleaseVersions]=version`),
   ]);
 
   // Each group is read on its own; everyone is counted once, whether they are
@@ -199,30 +182,6 @@ export async function collectSnapshot(get: Get, now = new Date()): Promise<TestF
   }
   const usageSums = sumValues(usage.items, "sessionCount", "crashCount");
 
-  const versions = new Map<string, string>();
-  for (const included of Array.isArray(builds.included) ? builds.included : []) {
-    if (included?.type === "preReleaseVersions" && typeof included.attributes?.version === "string") {
-      versions.set(included.id, included.attributes.version);
-    }
-  }
-  const buildRows = await Promise.all((Array.isArray(builds.data) ? builds.data : []).slice(0, buildCount).map(async (build: Document) => {
-    // Apple's reference lists `limit` here, but the API refuses it without groupBy.
-    const { items } = await paginate(get, `/v1/builds/${encodeURIComponent(build.id)}/metrics/betaBuildUsages`);
-    const sums = sumValues(items, "installCount", "sessionCount", "crashCount");
-    const attributes = build.attributes ?? {};
-    return {
-      build: String(attributes.version ?? ""),
-      version: versions.get(build.relationships?.preReleaseVersion?.data?.id) ?? null,
-      uploaded: stringOrNull(attributes.uploadedDate),
-      processingState: stringOrNull(attributes.processingState),
-      expires: stringOrNull(attributes.expirationDate),
-      expired: attributes.expired === true,
-      installs: sums.installCount,
-      sessions: sums.sessionCount,
-      crashes: sums.crashCount,
-    };
-  }));
-
   return {
     takenAt: now.toISOString(),
     testersTotal: everyone.size,
@@ -230,7 +189,6 @@ export async function collectSnapshot(get: Get, now = new Date()): Promise<TestF
     testersInstalled: [...everyone.values()].filter((state) => state === "INSTALLED").length,
     sessions30d: usageSums.sessionCount,
     crashes30d: usageSums.crashCount,
-    builds: buildRows,
   };
 }
 
@@ -241,8 +199,8 @@ function stringOrNull(value: unknown): string | null {
 export async function storeSnapshot(env: TestFlightEnv, snapshot: TestFlightSnapshot): Promise<void> {
   await env.DB.prepare(`
     INSERT OR REPLACE INTO testflight_snapshots (
-      day, taken_at, testers_total, testers_public_link, testers_installed, sessions_30d, crashes_30d, builds_json
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      day, taken_at, testers_total, testers_public_link, testers_installed, sessions_30d, crashes_30d
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)
   `).bind(
     snapshot.takenAt.slice(0, 10),
     snapshot.takenAt,
@@ -251,7 +209,6 @@ export async function storeSnapshot(env: TestFlightEnv, snapshot: TestFlightSnap
     snapshot.testersInstalled,
     snapshot.sessions30d,
     snapshot.crashes30d,
-    JSON.stringify(snapshot.builds),
   ).run();
 }
 
@@ -294,11 +251,6 @@ export async function readTestFlight(env: TestFlightEnv) {
 }
 
 function presentSnapshot(row: SnapshotRow): TestFlightSnapshot {
-  let builds: TestFlightBuild[] = [];
-  try {
-    const parsed: unknown = JSON.parse(row.builds_json);
-    if (Array.isArray(parsed)) builds = parsed;
-  } catch {}
   return {
     takenAt: row.taken_at,
     testersTotal: row.testers_total,
@@ -306,6 +258,5 @@ function presentSnapshot(row: SnapshotRow): TestFlightSnapshot {
     testersInstalled: row.testers_installed,
     sessions30d: row.sessions_30d,
     crashes30d: row.crashes_30d,
-    builds,
   };
 }
