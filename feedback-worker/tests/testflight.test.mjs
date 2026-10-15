@@ -41,8 +41,9 @@ function environment(extra = {}) {
 
 const person = (id, state) => ({ type: "betaTesters", id, attributes: { firstName: `Name ${id}`, lastName: "Tester", email: `${id}@example.com`, state } });
 
-// App Store Connect as the fixtures describe it: five testers over two pages,
-// three groups (one with the public link), two builds.
+// App Store Connect as the fixtures describe it: five app testers over two
+// pages, three groups (one with the public link, one tester only there, one in
+// two groups), two builds.
 function appStoreConnect(path, query) {
   const page = (data, next, total) => ({ data, links: { self: `${api}${path}`, ...(next ? { next } : {}) }, meta: { paging: { limit: 200, ...(total === undefined ? {} : { total }) } } });
   if (path === "/v1/apps") return { data: [{ type: "apps", id: "app-1", attributes: { bundleId: query.get("filter[bundleId]") } }], links: {} };
@@ -56,13 +57,13 @@ function appStoreConnect(path, query) {
       ? page([person("t3", "INSTALLED"), person("t4", "INSTALLED"), person("t5", "ACCEPTED")], null, 5)
       : page([person("t1", "INSTALLED"), person("t2", "INVITED")], `${api}/v1/betaTesters?filter[apps]=app-1&fields[betaTesters]=state&limit=200&cursor=2`, 5);
   }
-  if (path === "/v1/betaTesters" && query.get("filter[betaGroups]") === "g-public") return page([person("t1", "INSTALLED"), person("t3", "INSTALLED"), person("t4", "INSTALLED"), person("t5", "ACCEPTED")], null, 4);
+  if (path === "/v1/betaTesters" && query.get("filter[betaGroups]") === "g-public") return page([person("t1", "INSTALLED"), person("t3", "INSTALLED"), person("t4", "INSTALLED"), person("t5", "ACCEPTED"), person("t6", "INSTALLED")], null, 5);
   if (path === "/v1/betaTesters" && query.get("filter[betaGroups]") === "g-friends") return page([person("t1", "INSTALLED")], null, 1);
   if (path === "/v1/betaTesters" && query.get("filter[betaGroups]") === "g-team") return page([], null, 0);
-  if (path === "/v1/apps/app-1/metrics/betaTesterUsages") return page([{ dataPoints: [
-    { start: "2026-09-16", end: "2026-10-01", values: { sessionCount: 10, crashCount: 1, feedbackCount: 2 } },
-    { start: "2026-10-01", end: "2026-10-15", values: { sessionCount: 5, crashCount: 0 } },
-  ] }]);
+  if (path === "/v1/apps/app-1/metrics/betaTesterUsages") return { ...page([
+    { dataPoints: [{ start: "2026-09-16", end: "2026-10-15", values: { sessionCount: 10, crashCount: 1, feedbackCount: 2 } }], dimensions: { betaTesters: { data: "t1" } } },
+    { dataPoints: [{ start: "2026-09-16", end: "2026-10-15", values: { sessionCount: 5, crashCount: 0 } }], dimensions: { betaTesters: { data: "t3" } } },
+  ]), included: [person("t1", "INSTALLED"), person("t3", "INSTALLED")] };
   if (path === "/v1/builds") return {
     data: [
       { type: "builds", id: "b-41", attributes: { version: "41", uploadedDate: "2026-10-12T08:00:00Z", expirationDate: "2027-01-10T08:00:00Z", expired: false, processingState: "VALID" }, relationships: { preReleaseVersion: { data: { type: "preReleaseVersions", id: "pv-1" } } } },
@@ -81,7 +82,7 @@ globalThis.fetch = async (input, init = {}) => {
   const url = new URL(input);
   requests.push({ url, authorization: new Headers(init.headers).get("authorization") });
   const body = url.origin === api ? appStoreConnect(url.pathname, url.searchParams) : null;
-  return body ? Response.json(body) : Response.json({ errors: [{ status: "404" }] }, { status: 404 });
+  return body ? Response.json(body) : Response.json({ errors: [{ status: "404", code: "NOT_FOUND", title: "Not found", detail: "No such resource." }] }, { status: 404 });
 };
 
 const decode = (part) => JSON.parse(Buffer.from(part, "base64url").toString());
@@ -107,14 +108,20 @@ test("lists follow next links, stop at 200, and the token only goes to Apple", a
   assert.equal(requests.at(-1).authorization, "Bearer token");
 
   let pages = 0;
-  const endless = async () => {
+  const targets = [];
+  const endless = async (target) => {
+    targets.push(target);
     pages += 1;
     return { data: Array.from({ length: 50 }, (_, id) => ({ id: `${pages}-${id}` })), links: { next: `${api}/v1/next?page=${pages}` } };
   };
-  assert.equal((await paginate(endless, "/v1/first")).items.length, 200);
+  assert.equal((await paginate(endless, "/v1/first?groupBy=betaTesters&limit=200")).items.length, 200);
   assert.equal(pages, 4);
+  // A next link that drops a required parameter gets it back.
+  assert.equal(new URL(targets[1]).searchParams.get("groupBy"), "betaTesters");
+  assert.equal(new URL(targets[1]).searchParams.get("page"), "1");
 
   await assert.rejects(get("https://elsewhere.example/v1/apps"), /another host/);
+  await assert.rejects(get("/v1/unknown"), { message: "App Store Connect answered 404 for /v1/unknown: NOT_FOUND No such resource." });
 });
 
 test("a snapshot holds counts and build rows only, one row per day", async () => {
@@ -123,7 +130,7 @@ test("a snapshot holds counts and build rows only, one row per day", async () =>
   const snapshot = await collectSnapshot(ascClient("token"), new Date("2026-10-15T06:00:00Z"));
   assert.deepEqual(
     { ...snapshot, builds: undefined },
-    { takenAt: "2026-10-15T06:00:00.000Z", testersTotal: 5, testersPublicLink: 4, testersInstalled: 3, sessions30d: 15, crashes30d: 1, builds: undefined },
+    { takenAt: "2026-10-15T06:00:00.000Z", testersTotal: 6, testersPublicLink: 5, testersInstalled: 4, sessions30d: 15, crashes30d: 1, builds: undefined },
   );
   assert.deepEqual(snapshot.builds, [
     { build: "41", version: "0.9.1", uploaded: "2026-10-12T08:00:00Z", processingState: "VALID", expires: "2027-01-10T08:00:00Z", expired: false, installs: 3, sessions: 20, crashes: 1 },
@@ -131,6 +138,11 @@ test("a snapshot holds counts and build rows only, one row per day", async () =>
   ]);
   const testerRequests = requests.slice(before).filter((request) => request.url.pathname === "/v1/betaTesters");
   assert.ok(testerRequests.every((request) => request.url.searchParams.get("fields[betaTesters]") === "state"));
+  const usageRequest = requests.slice(before).find((request) => request.url.pathname.endsWith("/metrics/betaTesterUsages"));
+  assert.equal(usageRequest.url.searchParams.get("groupBy"), "betaTesters");
+  const buildUsageRequests = requests.slice(before).filter((request) => request.url.pathname.endsWith("/metrics/betaBuildUsages"));
+  assert.equal(buildUsageRequests.length, 2);
+  assert.ok(buildUsageRequests.every((request) => request.url.search === ""));
 
   await storeSnapshot(env, snapshot);
   await storeSnapshot(env, { ...snapshot, takenAt: "2026-10-15T09:30:00.000Z", testersTotal: 6 });
@@ -138,7 +150,7 @@ test("a snapshot holds counts and build rows only, one row per day", async () =>
   assert.equal(rows.length, 1);
   assert.equal(rows[0].testers_total, 6);
   const stored = JSON.stringify(rows);
-  assert.doesNotMatch(stored, /Name t|Tester|@example\.com|"t[1-5]"|app-1|b-4[01]|pv-1|g-public/);
+  assert.doesNotMatch(stored, /Name t|Tester|@example\.com|"t[1-6]"|app-1|b-4[01]|pv-1|g-public/);
 });
 
 test("refreshing needs a session, a key, and waits 10 minutes between runs", async () => {
@@ -154,7 +166,7 @@ test("refreshing needs a session, a key, and waits 10 minutes between runs", asy
 
   const first = await worker.fetch(new Request("http://localhost/admin-api/testflight/refresh", { method: "POST" }), env);
   assert.equal(first.status, 200);
-  assert.equal((await first.json()).latest.testersTotal, 5);
+  assert.equal((await first.json()).latest.testersTotal, 6);
   assert.ok(requests.slice(before).every((request) => request.url.origin === api && /^Bearer [\w-]+\.[\w-]+\.[\w-]+$/.test(request.authorization)));
 
   const again = await worker.fetch(new Request("http://localhost/admin-api/testflight/refresh", { method: "POST" }), env);
@@ -181,10 +193,10 @@ test("the dashboard API returns the latest snapshot and a 30-day trend", async (
   const data = await (await worker.fetch(new Request("http://localhost/admin-api/testflight"), { ...env, ...key })).json();
   assert.equal(data.configured, true);
   assert.equal(data.latest.takenAt, snapshot.takenAt);
-  assert.equal(data.latest.testersTotal, 5);
+  assert.equal(data.latest.testersTotal, 6);
   assert.equal(data.latest.builds.length, 2);
   assert.equal(data.trend.length, 30);
-  assert.deepEqual(data.trend.at(-1), { day: dayAt(0).slice(0, 10), testers: 5, installed: 3 });
+  assert.deepEqual(data.trend.at(-1), { day: dayAt(0).slice(0, 10), testers: 6, installed: 4 });
   assert.equal(data.trend.at(-4).testers, 2);
   assert.equal(data.trend.filter((point) => point.testers !== null).length, 2);
 });

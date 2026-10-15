@@ -100,9 +100,24 @@ export function ascClient(token: string): Get {
     // `next` links come from the response; the token only ever goes to Apple.
     if (url.origin !== apiOrigin) throw new Error("App Store Connect sent a link to another host");
     const response = await fetch(url, { headers: { authorization: `Bearer ${token}`, accept: "application/json" } });
-    if (!response.ok) throw new Error(`App Store Connect answered ${response.status} for ${url.pathname}`);
+    if (!response.ok) {
+      const reason = await errorReason(response);
+      throw new Error(`App Store Connect answered ${response.status} for ${url.pathname}${reason ? `: ${reason}` : ""}`);
+    }
     return response.json<Document>();
   };
+}
+
+/// Apple's own words for a failed request: the first error's code and detail.
+async function errorReason(response: Response): Promise<string> {
+  try {
+    const body: Document = await response.json();
+    const error = Array.isArray(body.errors) ? body.errors[0] : null;
+    if (!error) return "";
+    return [error.code, error.detail ?? error.title].filter((part) => typeof part === "string").join(" ").slice(0, 300);
+  } catch {
+    return "";
+  }
 }
 
 /// Follows `links.next` until the list ends or holds `cap` items.
@@ -116,19 +131,27 @@ export async function paginate(get: Get, path: string, cap = listCap): Promise<{
     items.push(...data);
     if (total === null && typeof page.meta?.paging?.total === "number") total = page.meta.paging.total;
     const link = page.links?.next;
-    next = data.length && typeof link === "string" && link !== next ? link : undefined;
+    next = data.length && typeof link === "string" && link !== next ? withQueryOf(path, link) : undefined;
   }
   return { items: items.slice(0, cap), total };
 }
 
-/// Testers matching a filter, asking only for their state. Apple's paging
-/// total counts past the 200 listed; installs are counted from the list.
-async function countTesters(get: Get, filter: string): Promise<{ total: number; installed: number }> {
-  const { items, total } = await paginate(get, `/v1/betaTesters?${filter}&fields[betaTesters]=state&limit=${listCap}`);
-  return {
-    total: total ?? items.length,
-    installed: items.filter((tester) => tester.attributes?.state === "INSTALLED").length,
-  };
+/// Apple's metric `next` links can drop parameters the endpoint requires
+/// (such as `groupBy`), so the first request's ones are carried over.
+function withQueryOf(first: string, link: string): string {
+  const original = new URL(first, apiOrigin);
+  const url = new URL(link, apiOrigin);
+  original.searchParams.forEach((value, name) => {
+    if (!url.searchParams.has(name)) url.searchParams.set(name, value);
+  });
+  return url.href;
+}
+
+/// Testers matching a filter (up to 200), asking only for their state. The
+/// ids only exist here, to count someone in several groups once.
+async function listTesters(get: Get, filter: string): Promise<Map<string, unknown>> {
+  const { items } = await paginate(get, `/v1/betaTesters?${filter}&fields[betaTesters]=state&limit=${listCap}`);
+  return new Map(items.map((tester) => [String(tester.id), tester.attributes?.state]));
 }
 
 function sumValues(series: Document[], ...names: string[]): Record<string, number> {
@@ -152,17 +175,28 @@ export async function collectSnapshot(get: Get, now = new Date()): Promise<TestF
 
   const [groups, testers, usage, builds] = await Promise.all([
     paginate(get, `/v1/apps/${appId}/betaGroups?fields[betaGroups]=name,isInternalGroup,publicLinkEnabled&limit=${listCap}`),
-    countTesters(get, `filter[apps]=${appId}`),
-    paginate(get, `/v1/apps/${appId}/metrics/betaTesterUsages?period=P30D&limit=${listCap}`),
+    listTesters(get, `filter[apps]=${appId}`),
+    // Apple only answers per tester; the rows are summed, and the testers they
+    // name (and any included tester details) are never read.
+    paginate(get, `/v1/apps/${appId}/metrics/betaTesterUsages?period=P30D&groupBy=betaTesters&limit=${listCap}`),
     get(`/v1/builds?filter[app]=${appId}&sort=-uploadedDate&limit=${buildCount}&include=preReleaseVersion` +
       `&fields[builds]=version,uploadedDate,expirationDate,expired,processingState,preReleaseVersion&fields[preReleaseVersions]=version`),
   ]);
 
-  // Each group is counted on its own; the total above counts every tester once.
-  const groupCounts = await Promise.all(groups.items.map(async (group) => ({
+  // Each group is read on its own; everyone is counted once, whether they are
+  // in several groups or only have a build shared with them directly.
+  const groupTesters = await Promise.all(groups.items.map(async (group) => ({
     publicLink: group.attributes?.publicLinkEnabled === true,
-    ...(await countTesters(get, `filter[betaGroups]=${encodeURIComponent(group.id)}`)),
+    testers: await listTesters(get, `filter[betaGroups]=${encodeURIComponent(group.id)}`),
   })));
+  const everyone = new Map(testers);
+  const publicLink = new Set<string>();
+  for (const group of groupTesters) {
+    for (const [id, state] of group.testers) {
+      everyone.set(id, state);
+      if (group.publicLink) publicLink.add(id);
+    }
+  }
   const usageSums = sumValues(usage.items, "sessionCount", "crashCount");
 
   const versions = new Map<string, string>();
@@ -172,7 +206,8 @@ export async function collectSnapshot(get: Get, now = new Date()): Promise<TestF
     }
   }
   const buildRows = await Promise.all((Array.isArray(builds.data) ? builds.data : []).slice(0, buildCount).map(async (build: Document) => {
-    const { items } = await paginate(get, `/v1/builds/${encodeURIComponent(build.id)}/metrics/betaBuildUsages?limit=${listCap}`);
+    // Apple's reference lists `limit` here, but the API refuses it without groupBy.
+    const { items } = await paginate(get, `/v1/builds/${encodeURIComponent(build.id)}/metrics/betaBuildUsages`);
     const sums = sumValues(items, "installCount", "sessionCount", "crashCount");
     const attributes = build.attributes ?? {};
     return {
@@ -190,9 +225,9 @@ export async function collectSnapshot(get: Get, now = new Date()): Promise<TestF
 
   return {
     takenAt: now.toISOString(),
-    testersTotal: testers.total,
-    testersPublicLink: groupCounts.filter((group) => group.publicLink).reduce((sum, group) => sum + group.total, 0),
-    testersInstalled: testers.installed,
+    testersTotal: everyone.size,
+    testersPublicLink: publicLink.size,
+    testersInstalled: [...everyone.values()].filter((state) => state === "INSTALLED").length,
     sessions30d: usageSums.sessionCount,
     crashes30d: usageSums.crashCount,
     builds: buildRows,
