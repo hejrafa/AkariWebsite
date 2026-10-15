@@ -1,6 +1,6 @@
 # Akari product information
 
-Last updated: 2026-10-09
+Last updated: 2026-10-15
 
 ## Summary
 
@@ -18,9 +18,9 @@ Each morning Akari reads last night against the user's own usual nights. Yesterd
 
 Every nutrient gets a row of its own, with its own symbol. Where there is a limit, Akari marks it.
 
-### Write or say what you ate
+### Write, say or snap what you ate
 
-Users log food by typing or saying it the way they would tell someone, for example "Oats with banana and a flat white". Akari finds each food, its portion and what is in it. A barcode can be scanned as well.
+Users log food by typing or saying it the way they would tell someone, for example "Oats with banana and a flat white", or by taking a photo of the meal. Akari finds each food, its portion and what is in it. A barcode can be scanned as well.
 
 ### One goal is enough to start
 
@@ -40,8 +40,9 @@ Akari also offers a Health Age, which is part of the subscription.
 ## Privacy
 
 - Akari needs no account.
-- Akari reads Apple Health on the iPhone and keeps the user's health data there. Users can optionally connect Google Health with read-only access to fill gaps.
-- The one thing that leaves the iPhone on purpose is a food report, and only when the user taps Send. A food report helps Akari correct a food it matched wrongly or could not find. It contains the rating and reasons, an optional comment, what was typed or said, the matched foods with amounts and nutrients, anything unmatched, a scanned barcode if there was one, and the app's language, region and version. It does not include a name, an account, Apple Health data or location.
+- Akari reads Apple Health on the iPhone and keeps the user's health data there.
+- A food report leaves the iPhone on purpose, and only when the user taps Send. A food report helps Akari correct a food it matched wrongly or could not find. It contains the rating and reasons, an optional comment, what was typed or said, the matched foods with amounts and nutrients, anything unmatched, a scanned barcode if there was one, and the app's language, region and version. It does not include a name, an account, Apple Health data or location.
+- A meal photo the user chooses to log is read by an AI service through Akari's server and not stored by Akari. The server passes the photo to Anthropic's Claude API, which returns a short description of the meal; Akari keeps nothing of the photo or the description, only daily counters that limit how many photos can be sent and expire after two days. Under Anthropic's commercial terms the photo is not used to train models. The photo carries no Apple Health data and no account. Packages and nutrition labels are still read on the iPhone, and users can turn photo meals off in the app (Profile, Photo meals).
 - The website counts visits without cookies: it records the page, referring site and country, and tells visitors apart only with a one-way hash that changes daily. No IP address is stored.
 - Full details are in the privacy policy: https://joinakari.com/privacy/
 
@@ -88,7 +89,7 @@ No. Akari explains your own data and patterns. It does not diagnose or treat any
 
 ### Does my health data leave my iPhone?
 
-No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches Akari's server, so the team can fix the match.
+No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches Akari's server, so the team can fix the match. A meal photo you choose to log is read by an AI service through Akari's server and not stored by Akari; details: https://joinakari.com/privacy/#meal-photos
 
 ### How can I try Akari?
 

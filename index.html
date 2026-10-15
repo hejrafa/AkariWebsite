@@ -124,7 +124,7 @@
             "featureList": [
               "Readiness each morning, read against your own usual nights",
               "Every nutrient in its own row, with limits marked",
-              "Log food by writing or saying what you ate",
+              "Log food by writing, saying or photographing what you ate",
               "Goals for sleep, movement, eating well and weight",
               "No account, and health data stays on the iPhone",
               "In English and German"
@@ -182,7 +182,7 @@
                 "name": "Does my health data leave my iPhone?",
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match."
+                  "text": "No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match. A meal photo you choose to log is read by an AI service through our server, and we do not store it; more in the privacy policy."
                 }
               },
               {
@@ -238,7 +238,7 @@
       })();
     </script>
     <link rel="stylesheet" href="styles.css?v=20261013-04" />
-    <script src="script.js?v=20261012-01" defer></script>
+    <script src="script.js?v=20261015-01" defer></script>
     <script src="visit.js?v=20261010-01" defer></script>
   </head>
   <body>
@@ -360,7 +360,7 @@
           </div>
           <p class="privacy__chip" data-i18n="privacyChip">No account needed</p>
           <h2 id="privacy-title"><span data-i18n="privacyTitleA">Your data stays on</span> <mark data-i18n="privacyTitleB">this iPhone</mark></h2>
-          <p class="privacy__body" data-i18n="privacyBody">Akari reads Apple Health on your iPhone and keeps what it works out right there.</p>
+          <p class="privacy__body" data-i18n="privacyBody">Akari reads Apple Health on your iPhone and keeps what it works out right there. Only a meal photo you choose to log leaves it, to be read by an AI service through our server, and we do not store it.</p>
           <a class="pill-cta privacy__link" href="/privacy/"><span data-i18n="privacyLink">Read the privacy policy</span></a>
         </div>
         <svg class="torn-edge" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
@@ -394,8 +394,8 @@
       <section class="split split--words-first food" id="food" aria-labelledby="food-title">
         <div class="split__copy">
           <p class="eyebrow" data-i18n="foodChip">Akari does the rest</p>
-          <h2 id="food-title" data-i18n="foodTitle">Write or say what you ate</h2>
-          <p class="muted-copy" data-i18n="foodBody">Type or say it the way you would tell someone. Akari finds each food, its portion and what is in it.</p>
+          <h2 id="food-title" data-i18n="foodTitle">Write, say or snap what you ate</h2>
+          <p class="muted-copy" data-i18n="foodBody">Type it, say it, or take a photo. Akari finds each food, its portion and what is in it.</p>
         </div>
         <div class="food__panel" aria-hidden="true">
           <span class="food__sticker food__sticker--strawberry cut"><img class="cut__image" data-sticker="welcome/stickers/strawberry" alt="" width="256" height="256" loading="lazy" decoding="async" /></span>
@@ -467,7 +467,7 @@
           </details>
           <details class="faq__item">
             <summary data-i18n="faqPrivacyQuestion">Does my health data leave my iPhone?</summary>
-            <p data-i18n="faqPrivacyAnswer">No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match.</p>
+            <p><span data-i18n="faqPrivacyAnswer">No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches us, so we can fix the match.</span><span data-i18n="faqPrivacyPhotoPrefix"> A meal photo you choose to log is read by an AI service through our server, and we do not store it; more in the </span><a href="/privacy/#meal-photos" data-i18n="faqPrivacyPhotoLink">privacy policy</a><span data-i18n="faqPrivacyPhotoSuffix">.</span></p>
           </details>
           <details class="faq__item">
             <summary data-i18n="faqNeedQuestion">What do I need?</summary>

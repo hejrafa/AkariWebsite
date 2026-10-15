@@ -2,14 +2,14 @@
 
 > Akari is a private iPhone app that brings your sleep, movement and food together in one place and explains in plain words what they mean for your day.
 
-Akari reads Apple Health on the iPhone and keeps what it works out there. Each morning it shows your readiness, read against your own usual nights. Every nutrient gets its own row, and you log food by writing or saying what you ate. You pick one goal to start with, such as sleeping better or moving more.
+Akari reads Apple Health on the iPhone and keeps what it works out there. Each morning it shows your readiness, read against your own usual nights. Every nutrient gets its own row, and you log food by writing, saying or photographing what you ate. You pick one goal to start with, such as sleeping better or moving more.
 
 ## Key facts
 
 - Platform: iPhone with iOS 26 or later
-- Data source: Apple Health, and optionally Google Health (read-only)
+- Data source: Apple Health
 - Languages: English and German
-- Privacy: no account is required, and health data stays on the user's iPhone; only a food report the user chooses to send reaches Akari's server
+- Privacy: no account is required, and health data stays on the user's iPhone; only a food report the user chooses to send reaches Akari's server, and a meal photo the user chooses to log is read by an AI service through Akari's server and not stored by Akari
 - Pricing: most of Akari is free; food logging, readiness and Health Age need a subscription (€4.99 a month or €39.99 a year, 14 days free). This may still change before launch.
 - Availability: free public beta through Apple TestFlight, with everything free during the beta; the App Store version is coming soon
 - Scope: Akari explains the user's own data and patterns; it does not diagnose or treat anything or replace professional medical advice
