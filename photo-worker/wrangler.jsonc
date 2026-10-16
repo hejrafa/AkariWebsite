@@ -27,10 +27,16 @@
     "ADDRESS_DAILY_CAP": "240",
     "GLOBAL_DAILY_CAP": "6000"
   },
-  "kv_namespaces": [
+  // Daily at 03:00 UTC: delete counter and salt rows older than yesterday.
+  "triggers": {
+    "crons": ["0 3 * * *"]
+  },
+  "d1_databases": [
     {
-      "binding": "PHOTO_COUNTERS",
-      "id": "2a9caead25614f1e897025c5c4252854"
+      "binding": "COUNTERS",
+      "database_name": "akari-photo-counters",
+      "database_id": "fd804d03-9eba-44b7-b69d-8bdc0a2d5680",
+      "migrations_dir": "migrations"
     }
   ]
 }

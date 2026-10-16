@@ -179,7 +179,7 @@ test("a photo goes first in the user turn, switches on the photo rules, and pick
   assert.ok(!text.text.includes(jpeg));
   assert.equal((await response.json()).foods[0].pick, null);
   // One meal, one count, photo or not.
-  assert.equal(counters.store.get(await counterKey("device", device)), "1");
+  assert.equal(counters.count(await counterKey("device", device)), 1);
   assert.equal(JSON.parse(lines[0]).photo, true);
 });
 
@@ -199,7 +199,7 @@ test("a photo is checked by its bytes and its size", async () => {
   const oversized = await run(meal({ ...fixtures.kaesespaetzle, photo: big.toString("base64") }), {}, message(goodKaesespaetzle));
   assert.equal(oversized.response.status, 413);
   assert.equal(oversized.calls.length, 0);
-  assert.equal(oversized.counters.puts.length, 0);
+  assert.equal(oversized.counters.written, 0);
 
   const justFits = Buffer.alloc(600 * 1024, 7);
   justFits.set([0xff, 0xd8, 0xff]);
@@ -261,7 +261,7 @@ test("more than 12 foods or more than 8 candidates answers 400 without asking", 
     assert.equal(response.status, 400);
     assert.deepEqual(await response.json(), { reason: "malformed" });
     assert.equal(calls.length, 0);
-    assert.equal(counters.puts.length, 0);
+    assert.equal(counters.written, 0);
   }
   const { response } = await run(meal({ text: "just enough", foods: Array.from({ length: 12 }, (_, i) => food(i, 8)) }), {}, message({ foods: [], merged: [] }));
   assert.equal(response.status, 200);
@@ -294,16 +294,16 @@ test("a body over 32 KB answers 413 and a wrong type 415", async () => {
 });
 
 test("a meal counts against the same allowance as a photo", async () => {
-  const { counters } = await run(meal(), { seed: { [`global:${today()}`]: "9" } }, message(goodKaesespaetzle));
-  assert.equal(counters.store.get(await counterKey("device", device)), "1");
-  assert.equal(counters.store.get(await counterKey("address", "203.0.113.7")), "1");
-  assert.equal(counters.store.get(`global:${today()}`), "10");
+  const { counters } = await run(meal(), { seed: { [`global:${today()}`]: 9 } }, message(goodKaesespaetzle));
+  assert.equal(counters.count(await counterKey("device", device)), 1);
+  assert.equal(counters.count(await counterKey("address", "203.0.113.7")), 1);
+  assert.equal(counters.count(`global:${today()}`), 10);
 });
 
 for (const [name, seed, reason] of [
-  ["device", async () => ({ [await counterKey("device", device)]: "80" }), "device"],
-  ["address", async () => ({ [await counterKey("address", "203.0.113.7")]: "240" }), "device"],
-  ["global", async () => ({ [`global:${today()}`]: "6000" }), "global"],
+  ["device", async () => ({ [await counterKey("device", device)]: 80 }), "device"],
+  ["address", async () => ({ [await counterKey("address", "203.0.113.7")]: 240 }), "device"],
+  ["global", async () => ({ [`global:${today()}`]: 6000 }), "global"],
 ]) {
   test(`a meal is refused at the ${name} cap with 429 before Anthropic is called`, async () => {
     const { response, calls } = await run(meal(), { seed: await seed() }, message(goodKaesespaetzle));

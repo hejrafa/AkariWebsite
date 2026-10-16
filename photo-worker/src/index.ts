@@ -5,14 +5,14 @@ import type { Language, MealCandidate, MealFood } from "./prompt.ts";
 // POST /photo: one meal photo in, three short fields out. POST /meal: the meal line,
 // the phone's catalogue candidates and optionally the same photo in, Haiku's picks
 // out. A meal counts against the same daily allowance as a photo, once, with or
-// without its photo. Nothing is stored; the daily counters in
-// PHOTO_COUNTERS are the only state, and they expire after 48 h.
+// without its photo. Nothing is stored; the daily counters in the COUNTERS D1
+// database are the only state, and the cron deletes them once they are two days old.
 // The device and address counters are keyed by a hash with a salt that lives for
-// one UTC day, so KV never holds an IP address or a device id, and once the day's
-// salt expires the keys can't be linked to anyone or to each other.
+// one UTC day, so D1 never holds an IP address or a device id, and once the day's
+// salt is deleted the keys can't be linked to anyone or to each other.
 
 export interface Env {
-  PHOTO_COUNTERS: KVNamespace;
+  COUNTERS: D1Database;
   ANTHROPIC_API_KEY?: string;
   DEVICE_DAILY_CAP?: string;
   ADDRESS_DAILY_CAP?: string;
@@ -32,7 +32,6 @@ const MAX_CANDIDATES = 8;
 const KINDS = new Set(["dish", "ingredient", "branded", "drink"]);
 const BUDGET_MS = 20_000;
 const RETRY_DELAY_MS = 1_000;
-const COUNTER_TTL_SECONDS = 48 * 60 * 60;
 const DEVICE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 type MediaType = "image/jpeg" | "image/png";
@@ -79,16 +78,21 @@ interface MealAnswer {
 class UpstreamFailure extends Error {}
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     try {
-      return await handle(request, env, ctx);
+      return await handle(request, env);
     } catch {
       return new Response(null, { status: 500, headers: baseHeaders() });
     }
   },
+
+  // Daily at 03:00 UTC (wrangler.jsonc): only today's and yesterday's rows stay.
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
+    ctx.waitUntil(purge(env));
+  },
 } satisfies ExportedHandler<Env>;
 
-async function handle(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+async function handle(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const endpoint = request.method === "POST" && (url.pathname === "/photo" || url.pathname === "/meal") ? url.pathname : null;
   if (!endpoint) return json(404, { reason: "not_found" });
@@ -98,7 +102,7 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
   const device = request.headers.get("x-akari-device")?.trim().toLowerCase() ?? "";
   if (!DEVICE_ID.test(device)) return json(400, { reason: "device" });
 
-  return endpoint === "/photo" ? photo(request, env, ctx, device) : meal(request, env, ctx, device);
+  return endpoint === "/photo" ? photo(request, env, device) : meal(request, env, device);
 }
 
 function isScoreboard(env: Env, device: string): boolean {
@@ -111,7 +115,7 @@ function scoreboardLog(env: Env, device: string): { scoreboard?: true } {
   return isScoreboard(env, device) ? { scoreboard: true } : {};
 }
 
-async function photo(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
+async function photo(request: Request, env: Env, device: string): Promise<Response> {
   const declared = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (declared !== "image/jpeg" && declared !== "image/png") return json(415, { reason: "type" });
   if (Number(request.headers.get("content-length") ?? 0) > MAX_BYTES) return json(413, { reason: "size" });
@@ -122,7 +126,7 @@ async function photo(request: Request, env: Env, ctx: ExecutionContext, device: 
   if (!mediaType) return json(415, { reason: "type" });
 
   if (!env.ANTHROPIC_API_KEY) return json(503, { reason: "unconfigured" });
-  const refused = await spend(request, env, ctx, device);
+  const refused = await spend(request, env, device);
   if (refused) return refused;
 
   const language = languageOf(request);
@@ -157,7 +161,7 @@ async function photo(request: Request, env: Env, ctx: ExecutionContext, device: 
   }
 }
 
-async function meal(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
+async function meal(request: Request, env: Env, device: string): Promise<Response> {
   const declared = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (declared !== "application/json") return json(415, { reason: "type" });
   if (Number(request.headers.get("content-length") ?? 0) > MAX_MEAL_BYTES + MAX_PHOTO_BASE64) return json(413, { reason: "size" });
@@ -180,7 +184,7 @@ async function meal(request: Request, env: Env, ctx: ExecutionContext, device: s
   if (!input) return json(400, { reason: "malformed" });
 
   if (!env.ANTHROPIC_API_KEY) return json(503, { reason: "unconfigured" });
-  const refused = await spend(request, env, ctx, device);
+  const refused = await spend(request, env, device);
   if (refused) return refused;
 
   const language = languageOf(request);
@@ -236,8 +240,11 @@ async function meal(request: Request, env: Env, ctx: ExecutionContext, device: s
 
 // Checks the device, address and global allowance and spends one from each, or
 // answers the 429 that says which ran out. The scoreboard device spends only the
-// global allowance.
-async function spend(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response | null> {
+// global allowance. The read and the spend go to D1 as one batch, which runs as one
+// transaction, and the spend writes nothing while any of the counters is at its cap,
+// so a refused call costs no write and doesn't use up the address or global
+// allowance for anyone else.
+async function spend(request: Request, env: Env, device: string): Promise<Response | null> {
   const day = new Date().toISOString().slice(0, 10);
   const global = { key: `global:${day}`, cap: cap(env.GLOBAL_DAILY_CAP, 6000), reason: "global" };
   let counters = [global];
@@ -250,20 +257,32 @@ async function spend(request: Request, env: Env, ctx: ExecutionContext, device: 
       global,
     ];
   }
-  const counts = await Promise.all(counters.map(async (c) => Number(await env.PHOTO_COUNTERS.get(c.key)) || 0));
-  const hit = counters.find((c, i) => counts[i] >= c.cap);
-  if (hit) return json(429, { reason: hit.reason });
-
   // Count the attempt before asking, so failed calls still spend the day's allowance.
-  // KV allows one write per key per second; a lost increment under load is acceptable.
-  ctx.waitUntil(
-    Promise.all(
-      counters.map((c, i) =>
-        env.PHOTO_COUNTERS.put(c.key, String(counts[i] + 1), { expirationTtl: COUNTER_TTL_SECONDS }).catch(() => {}),
-      ),
+  const [read] = await env.COUNTERS.batch<{ key: string; count: number }>([
+    env.COUNTERS.prepare(`SELECT key, count FROM counters WHERE key IN (${counters.map(() => "?").join(", ")})`).bind(
+      ...counters.map((c) => c.key),
     ),
-  );
-  return null;
+    env.COUNTERS.prepare(
+      `WITH spend (key, cap) AS (VALUES ${counters.map(() => "(?, ?)").join(", ")})
+       INSERT INTO counters (key, day, count)
+       SELECT key, ?, 1 FROM spend
+       WHERE NOT EXISTS (SELECT 1 FROM spend LEFT JOIN counters USING (key) WHERE coalesce(count, 0) >= cap)
+       ON CONFLICT (key) DO UPDATE SET count = count + 1`,
+    ).bind(...counters.flatMap((c) => [c.key, c.cap]), day),
+  ]);
+  const counts = new Map(read.results.map((row) => [row.key, row.count]));
+  const hit = counters.find((c) => (counts.get(c.key) ?? 0) >= c.cap);
+  return hit ? json(429, { reason: hit.reason }) : null;
+}
+
+// Counter and salt rows from before yesterday. Yesterday's stay so a call that
+// started just before midnight still finds its rows.
+async function purge(env: Env): Promise<void> {
+  const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  await env.COUNTERS.batch([
+    env.COUNTERS.prepare("DELETE FROM counters WHERE day < ?").bind(yesterday),
+    env.COUNTERS.prepare("DELETE FROM salts WHERE day < ?").bind(yesterday),
+  ]);
 }
 
 function languageOf(request: Request): Language {
@@ -458,21 +477,23 @@ function base64(bytes: Uint8Array): string {
 
 let cachedSalt: { day: string; salt: string } | null = null;
 
-// The salt expires when its day ends; that day's counters are never read after it.
-// KV has no insert-if-absent, so two isolates racing on a day's first photo may each
-// keep their own salt, which only splits that day's counts the way a lost increment does.
+// The day's salt, read once per isolate and day. When the day has none yet, two
+// isolates racing on its first photo both try to insert one; the first insert wins
+// and both read that one back.
 async function dailySalt(env: Env, day: string): Promise<string> {
   if (cachedSalt?.day === day) return cachedSalt.salt;
-  const key = `salt:${day}`;
-  let salt = await env.PHOTO_COUNTERS.get(key);
-  if (!salt) {
-    salt = hex(crypto.getRandomValues(new Uint8Array(16)));
-    const midnight = Date.parse(`${day}T00:00:00Z`) / 1000 + 86_400;
-    // KV refuses an expiration less than 60 s away.
-    await env.PHOTO_COUNTERS.put(key, salt, { expiration: Math.max(midnight, Math.ceil(Date.now() / 1000) + 60) });
+  const read = env.COUNTERS.prepare("SELECT salt FROM salts WHERE day = ?").bind(day);
+  let row = await read.first<{ salt: string }>();
+  if (!row) {
+    const fresh = hex(crypto.getRandomValues(new Uint8Array(16)));
+    const [, after] = await env.COUNTERS.batch<{ salt: string }>([
+      env.COUNTERS.prepare("INSERT INTO salts (day, salt) VALUES (?, ?) ON CONFLICT (day) DO NOTHING").bind(day, fresh),
+      read,
+    ]);
+    row = after.results[0];
   }
-  cachedSalt = { day, salt };
-  return salt;
+  cachedSalt = { day, salt: row.salt };
+  return row.salt;
 }
 
 async function hashed(salt: string, kind: string, value: string): Promise<string> {

@@ -29,9 +29,9 @@ function photo(id) {
 // The device and address counters for this id, both at today's cap, and the global one below it.
 async function atCaps(id) {
   return {
-    [await counterKey("device", id)]: "80",
-    [await counterKey("address", address)]: "240",
-    [`global:${today()}`]: "9",
+    [await counterKey("device", id)]: 80,
+    [await counterKey("address", address)]: 240,
+    [`global:${today()}`]: 9,
   };
 }
 
@@ -57,17 +57,17 @@ for (const [name, request, answer] of [
     const { result, lines } = await logged(() => run(request(scoreboard), { seed, env }, message(answer)));
     assert.equal(result.response.status, 200);
     assert.equal(result.calls.length, 1);
-    assert.equal(result.counters.store.get(`global:${today()}`), "10");
-    assert.equal(result.counters.store.get(await counterKey("device", scoreboard)), "80");
-    assert.equal(result.counters.store.get(await counterKey("address", address)), "240");
-    assert.deepEqual(result.counters.puts.map((put) => put.key), [`global:${today()}`]);
+    assert.equal(result.counters.count(`global:${today()}`), 10);
+    assert.equal(result.counters.count(await counterKey("device", scoreboard)), 80);
+    assert.equal(result.counters.count(await counterKey("address", address)), 240);
+    assert.equal(result.counters.written, 1);
     assert.equal(lines.length, 1);
     assert.equal(lines[0].scoreboard, true);
   });
 }
 
 test("the global cap still stops the scoreboard", async () => {
-  const seed = { [`global:${today()}`]: "6000" };
+  const seed = { [`global:${today()}`]: 6000 };
   const { response, calls } = await run(meal(scoreboard), { seed, env: { SCOREBOARD_DEVICE: scoreboard } }, message(mealAnswer));
   assert.equal(response.status, 429);
   assert.deepEqual(await response.json(), { reason: "global" });
