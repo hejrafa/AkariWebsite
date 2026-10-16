@@ -14,6 +14,7 @@ const visitBreakdowns = document.querySelector("#visit-breakdowns");
 const testersCard = document.querySelector("#testers-card");
 const testersUpdated = document.querySelector("#testers-updated");
 const testersRefresh = document.querySelector("#testers-refresh");
+const missingCard = document.querySelector("#missing-foods");
 const root = document.documentElement;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const stickerWidths = [56, 72, 92, 120, 160];
@@ -27,6 +28,8 @@ let visitData = null;
 let visitsRequest = 0;
 let testerData = null;
 let testerNotice = "";
+let missingFoods = null;
+let showResolvedMissing = false;
 let currentLanguage = root.dataset.language === "de" ? "de" : "en";
 
 const translations = {
@@ -48,6 +51,11 @@ const translations = {
     foodReviewTitle: "Food inbox", foodReviewLede: "Mix-ups, mystery portions and nutrition that looks a little suspicious, sent in by sharp-eyed testers.", foodReviewEmojiLabel: "Play with the food inbox sticker",
     feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
     pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Inbox",
+    missingTitle: "Missing foods", missingLede: "Foods Akari couldn’t find among its verified foods, most asked for first. Tick one off once a verified row exists.",
+    loadingMissing: "Loading missing foods…", noMissing: "Nothing missing yet. Foods Akari can’t verify will be counted here.",
+    missingName: "Name", missingLanguage: "Language", missingCount: "Count", missingFirstSeen: "First seen", missingLastSeen: "Last seen", missingResolved: "Resolved",
+    missingAllResolved: "Every missing food is resolved.", showResolved: "Show resolved ({count})", hideResolved: "Hide resolved",
+    markResolved: "Mark {name} as resolved", markOpen: "Mark {name} as not resolved", language_en: "English", language_de: "German",
     tableIssue: "Issue", tableInput: "Entered", tableComment: "Comment", tableMatch: "Matched",
     openDetails: "Open details for {title}", noComment: "No comment", noMatchData: "No food matched",
     copyPrompt: "Copy prompt", copied: "Copied", tryAgain: "Try again", reopen: "Reopen", resolve: "Resolve", reopening: "Reopening", resolving: "Resolving", reopened: "Reopened", resolved: "Resolved",
@@ -79,6 +87,11 @@ const translations = {
     foodReviewTitle: "Meldungen", foodReviewLede: "Verwechslungen, rätselhafte Portionen und Nährwerte, die etwas verdächtig aussehen, eingeschickt von aufmerksamen Testern.", foodReviewEmojiLabel: "Mit dem Meldungen-Sticker spielen",
     feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
     pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Meldungen",
+    missingTitle: "Fehlende Lebensmittel", missingLede: "Lebensmittel, die Akari unter den geprüften nicht gefunden hat, die häufigsten zuerst. Abhaken, sobald es einen geprüften Eintrag gibt.",
+    loadingMissing: "Fehlende Lebensmittel werden geladen…", noMissing: "Noch fehlt nichts. Lebensmittel, die Akari nicht prüfen kann, werden hier gezählt.",
+    missingName: "Name", missingLanguage: "Sprache", missingCount: "Anzahl", missingFirstSeen: "Zuerst gesehen", missingLastSeen: "Zuletzt gesehen", missingResolved: "Erledigt",
+    missingAllResolved: "Alle fehlenden Lebensmittel sind erledigt.", showResolved: "Erledigte anzeigen ({count})", hideResolved: "Erledigte ausblenden",
+    markResolved: "{name} als erledigt markieren", markOpen: "{name} wieder öffnen", language_en: "Englisch", language_de: "Deutsch",
     tableIssue: "Problem", tableInput: "Eingabe", tableComment: "Kommentar", tableMatch: "Treffer",
     openDetails: "Details öffnen: {title}", noComment: "Kein Kommentar", noMatchData: "Kein Lebensmittel gefunden",
     copyPrompt: "Prompt kopieren", copied: "Kopiert", tryAgain: "Erneut versuchen", reopen: "Wieder öffnen", resolve: "Erledigen", reopening: "Wird geöffnet", resolving: "Wird erledigt", reopened: "Wieder geöffnet", resolved: "Erledigt",
@@ -118,6 +131,7 @@ function selectLanguage(language, persist = true) {
   if (allReports.length) render(allReports);
   if (visitData) renderVisits(visitData);
   if (testerData) renderTesters(testerData);
+  if (missingFoods) renderMissingFoods();
   if (activePanel) closeReportPanel();
 }
 
@@ -145,6 +159,7 @@ function syncPage() {
   if (page === "feedback" && !feedbackLoaded) {
     feedbackLoaded = true;
     load();
+    loadMissingFoods();
   }
   if (page === "dashboard" && !visitData) loadVisits();
   if (page === "dashboard" && !testerData) loadTesters();
@@ -537,6 +552,118 @@ function countryLabel(code) {
 function formatDay(day, options) {
   if (!day) return "";
   return new Intl.DateTimeFormat(currentLanguage === "de" ? "de-DE" : "en-US", { timeZone: "UTC", ...options }).format(new Date(`${day}T00:00:00Z`));
+}
+
+// Missing foods -----------------------------------------------------------------------------------
+// Names the app could not match to a verified food, counted per name and language. Open rows
+// come first by count; resolved ones fold under a link.
+
+async function loadMissingFoods() {
+  missingCard.replaceChildren(element("p", "visits-state", t("loadingMissing")));
+  try {
+    const response = await fetch("/admin-api/missing-foods");
+    if (!response.ok) throw new Error(`Request failed (${response.status})`);
+    missingFoods = (await response.json()).foods ?? [];
+    renderMissingFoods();
+  } catch (error) {
+    missingCard.replaceChildren(element("p", "visits-state", error.message));
+  }
+}
+
+function renderMissingFoods() {
+  if (!missingFoods.length) {
+    missingCard.replaceChildren(element("p", "visits-state", t("noMissing")));
+    return;
+  }
+  const open = missingFoods.filter((food) => !food.resolved);
+  const resolved = missingFoods.filter((food) => food.resolved);
+  const table = element("table", "missing-table");
+  const head = element("tr");
+  for (const [key, className] of [["missingName", "missing-name"], ["missingLanguage", "missing-language"], ["missingCount", "missing-count"], ["missingFirstSeen", "missing-first"], ["missingLastSeen", "missing-last"], ["missingResolved", "missing-resolved"]]) {
+    const cell = element("th", className, t(key));
+    cell.scope = "col";
+    head.append(cell);
+  }
+  const thead = element("thead");
+  thead.append(head);
+  const openBody = element("tbody");
+  for (const food of open) openBody.append(missingRow(food));
+  table.append(thead, openBody);
+  if (showResolvedMissing && resolved.length) {
+    const resolvedBody = element("tbody", "missing-resolved-rows");
+    for (const food of resolved) resolvedBody.append(missingRow(food));
+    table.append(resolvedBody);
+  }
+  const children = [];
+  if (open.length || showResolvedMissing) children.push(table);
+  if (!open.length) children.push(element("p", "missing-empty", t("missingAllResolved")));
+  if (resolved.length) {
+    const toggle = element("button", "missing-toggle", showResolvedMissing ? t("hideResolved") : t("showResolved", { count: formatNumber(resolved.length) }));
+    toggle.type = "button";
+    toggle.setAttribute("aria-expanded", String(showResolvedMissing));
+    toggle.addEventListener("click", () => {
+      showResolvedMissing = !showResolvedMissing;
+      renderMissingFoods();
+    });
+    children.push(toggle);
+  }
+  missingCard.replaceChildren(...children);
+}
+
+function missingRow(food) {
+  const row = element("tr", food.resolved ? "is-resolved" : "");
+  const name = element("th", "missing-name", food.name);
+  name.scope = "row";
+  const tick = element("td", "missing-resolved");
+  const toggle = element("button", "complete-toggle");
+  toggle.type = "button";
+  toggle.classList.toggle("is-checked", food.resolved);
+  toggle.setAttribute("aria-pressed", String(food.resolved));
+  toggle.setAttribute("aria-label", t(food.resolved ? "markOpen" : "markResolved", { name: food.name }));
+  toggle.innerHTML = completeSVG;
+  toggle.addEventListener("click", async () => {
+    const next = !food.resolved;
+    toggle.disabled = true;
+    toggle.classList.remove("is-error");
+    toggle.classList.toggle("is-checked", next);
+    const [saved] = await Promise.all([saveMissingFood(food, next), wait(reduceMotion.matches ? 0 : 420)]);
+    if (!saved) {
+      toggle.classList.toggle("is-checked", food.resolved);
+      toggle.classList.add("is-error");
+      toggle.setAttribute("aria-label", t("tryAgain"));
+      toggle.disabled = false;
+      return;
+    }
+    food.resolved = next;
+    renderMissingFoods();
+  });
+  tick.append(toggle);
+  row.append(
+    name,
+    element("td", "missing-language", t(`language_${food.language}`)),
+    element("td", "missing-count", formatNumber(food.count)),
+    element("td", "missing-first", formatSeen(food.firstSeen)),
+    element("td", "missing-last", formatSeen(food.lastSeen)),
+    tick,
+  );
+  return row;
+}
+
+async function saveMissingFood(food, resolved) {
+  try {
+    const response = await fetch("/admin-api/missing-foods/resolve", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name: food.name, language: food.language, resolved }),
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+function formatSeen(value) {
+  return new Intl.DateTimeFormat(currentLanguage === "de" ? "de-DE" : "en-US", { dateStyle: "medium" }).format(new Date(value));
 }
 
 // TestFlight testers ----------------------------------------------------------------------------

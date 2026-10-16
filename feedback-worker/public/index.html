@@ -9,7 +9,7 @@
   <link rel="icon" href="https://joinakari.com/assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="https://joinakari.com/assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin>
   <script src="/assets/appearance.js?v=20261015-01"></script>
-  <link rel="stylesheet" href="/assets/admin.css?v=20261015-06">
+  <link rel="stylesheet" href="/assets/admin.css?v=20261016-01">
 </head>
 <body>
   <header class="site-header">
@@ -105,8 +105,18 @@
       <section id="reports" class="reports" aria-live="polite">
         <p id="state" class="state" data-i18n="loadingFeedback">Loading feedback…</p>
       </section>
+
+      <section class="visits missing-foods" aria-labelledby="missing-title">
+        <div class="visits-head">
+          <h2 id="missing-title" data-i18n="missingTitle">Missing foods</h2>
+        </div>
+        <p class="missing-lede" data-i18n="missingLede">Foods Akari couldn’t find among its verified foods, most asked for first. Tick one off once a verified row exists.</p>
+        <div class="missing-card" id="missing-foods" aria-live="polite">
+          <p class="visits-state" data-i18n="loadingMissing">Loading missing foods…</p>
+        </div>
+      </section>
     </section>
   </main>
-  <script type="module" src="/assets/admin.js?v=20261015-09"></script>
+  <script type="module" src="/assets/admin.js?v=20261016-01"></script>
 </body>
 </html>
