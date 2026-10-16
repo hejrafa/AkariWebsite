@@ -99,7 +99,8 @@ test("the vocabulary file loads and the prompt carries every id", () => {
   assert.equal(new Set(vocabulary.entries.map((entry) => entry.id)).size, vocabulary.entries.length);
   const rules = composeRulesText(vocabulary.entries);
   for (const entry of vocabulary.entries) {
-    const line = `${entry.id} | ${entry.displayName ?? entry.ingredient} | ${entry.displayNameDE ?? ""}`.trimEnd();
+    const aliases = entry.searchAliases?.length ? ` | also: ${entry.searchAliases.join(", ")}` : "";
+    const line = `${entry.id} | ${entry.displayName ?? entry.ingredient} | ${entry.displayNameDE ?? ""}${aliases}`.trimEnd();
     assert.ok(rules.includes(`\n${line}\n`) || rules.endsWith(`\n${line}`), entry.id);
   }
 });

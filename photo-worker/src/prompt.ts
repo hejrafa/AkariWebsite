@@ -2,7 +2,7 @@
 // PROMPT_VERSION whenever a text or a schema changes; the worker returns it in the
 // X-Akari-Prompt header so the app can tell answers from different prompts apart.
 
-export const PROMPT_VERSION = "2026-10-16.5";
+export const PROMPT_VERSION = "2026-10-16.6";
 
 export type Language = "en" | "de";
 
@@ -275,7 +275,11 @@ const englishName = (entry: VocabularyEntry) => entry.displayName ?? entry.ingre
 
 // One line per verified food: id | English name | German name (empty when the list has none).
 export function vocabularyLines(entries: VocabularyEntry[]): string {
-  return entries.map((entry) => `${entry.id} | ${englishName(entry)} | ${entry.displayNameDE ?? ""}`.trimEnd()).join("\n");
+  // Aliases follow, so a food under another name (edamame, sushi rice) finds its id.
+  return entries.map((entry) => {
+    const aliases = entry.searchAliases?.length ? ` | also: ${entry.searchAliases.join(", ")}` : "";
+    return `${entry.id} | ${englishName(entry)} | ${entry.displayNameDE ?? ""}${aliases}`.trimEnd();
+  }).join("\n");
 }
 
 // The cached block: rules and vocabulary, identical for every language, photo or not.
@@ -301,6 +305,9 @@ Rules:
   ingredient with no fitting id has reference null; the app then reports it as
   missing. Its name is then a plain generic food name, never a brand. Never make
   up an id or bend a near one to fit: a different food is not the food.
+- The same food under another name is that food: edamame are cooked soybeans,
+  sushi rice is cooked white rice, Hähnchenbrust is chicken breast. Read the
+  "also:" names of each verified food before answering missing.
 - A template may stand for a whole food (reference = the template's id, no
   ingredients) only when the text names that dish and adds nothing to it.
   Otherwise copy the template's ingredients into the dish and adjust them to what

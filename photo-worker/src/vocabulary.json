@@ -2,7 +2,7 @@
  "source": {
   "repo": "hejrafa/AkariFoodIndex",
   "path": "verified-foods.json",
-  "commit": "0d26a4b137c54a422719b3ca482f14a685d89b26",
+  "commit": "a269a84698fed1a64c342b141edd6878ca221550",
   "policy": "curated-reference-foods-v7"
  },
  "entries": [
@@ -501,7 +501,14 @@
   },
   {
    "id": "bls:G750432",
-   "ingredient": "Soybean, cooked"
+   "ingredient": "Soybean, cooked",
+   "searchAliases": [
+    "Edamame",
+    "edamame",
+    "soybeans",
+    "Sojabohnen",
+    "Sojabohnen gekocht"
+   ]
   },
   {
    "id": "bls:G211100",
@@ -565,7 +572,14 @@
   },
   {
    "id": "bls:C352032",
-   "ingredient": "White rice, cooked"
+   "ingredient": "White rice, cooked",
+   "searchAliases": [
+    "sushi rice",
+    "Sushireis",
+    "white rice",
+    "rice, cooked",
+    "Reis gekocht"
+   ]
   },
   {
    "id": "bls:M141300",
