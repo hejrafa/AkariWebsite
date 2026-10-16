@@ -9,18 +9,23 @@
     "port": 8792,
     "host": "localhost"
   },
-  // The feedback worker owns api.joinakari.com as a custom domain; this path
-  // route runs in front of it, and only for /photo.
+  // The feedback worker owns api.joinakari.com as a custom domain and serves
+  // other paths there, so these path routes run in front of it only for /photo
+  // and /meal; a catch-all api.joinakari.com/* would swallow the feedback API.
   "routes": [
     {
       "pattern": "api.joinakari.com/photo*",
       "zone_name": "joinakari.com"
+    },
+    {
+      "pattern": "api.joinakari.com/meal",
+      "zone_name": "joinakari.com"
     }
   ],
   "vars": {
-    "DEVICE_DAILY_CAP": "40",
-    "ADDRESS_DAILY_CAP": "120",
-    "GLOBAL_DAILY_CAP": "3000"
+    "DEVICE_DAILY_CAP": "80",
+    "ADDRESS_DAILY_CAP": "240",
+    "GLOBAL_DAILY_CAP": "6000"
   },
   "kv_namespaces": [
     {

@@ -1,0 +1,47 @@
+{
+  "kaesespaetzle": {
+    "text": "1 plate of Käsespätzle with fried onions and chives, 1 bowl of green salad, 250 ml water",
+    "foods": [
+      { "query": "Käsespätzle", "amount": "1 plate", "candidates": [
+        { "id": "akari:recipe:kaesespaetzle:v1", "name": "Käsespätzle", "kind": "dish", "verified": false, "serving": "1 plate (350 g)" },
+        { "id": "bls:C351000", "name": "Spätzle, cooked", "kind": "ingredient", "verified": true, "serving": "100 g" },
+        { "id": "bls:M412000", "name": "Emmentaler cheese", "kind": "ingredient", "verified": true, "serving": "30 g" }
+      ] },
+      { "query": "fried onions", "amount": null, "candidates": [
+        { "id": "bls:G661100", "name": "Onions, fried", "kind": "ingredient", "verified": true, "serving": "30 g" },
+        { "id": "off:4008400401621", "name": "Röstzwiebeln", "kind": "branded", "verified": false, "serving": "10 g" },
+        { "id": "usda:170000", "name": "Onions, raw", "kind": "ingredient", "verified": false, "serving": "1 medium (110 g)" }
+      ] },
+      { "query": "chives", "amount": null, "candidates": [
+        { "id": "bls:G770000", "name": "Chives, fresh", "kind": "ingredient", "verified": true, "serving": "1 tbsp (3 g)" }
+      ] },
+      { "query": "green salad", "amount": "1 bowl", "candidates": [
+        { "id": "bls:G530100", "name": "Green salad, mixed leaves", "kind": "ingredient", "verified": true, "serving": "1 bowl (80 g)" },
+        { "id": "akari:recipe:gruener-salat:v1", "name": "Green salad with vinaigrette", "kind": "dish", "verified": false, "serving": "1 bowl (120 g)" }
+      ] },
+      { "query": "water", "amount": "250 ml", "candidates": [
+        { "id": "usda:174158", "name": "Water, tap", "kind": "drink", "verified": false, "serving": "250 ml" },
+        { "id": "bls:N110000", "name": "Water, mineral", "kind": "drink", "verified": true, "serving": "250 ml" }
+      ] }
+    ]
+  },
+  "friedRice": {
+    "text": "Vegetable fried rice with sweet and sour chicken",
+    "foods": [
+      { "query": "vegetable fried rice", "amount": null, "candidates": [
+        { "id": "akari:recipe:vegetable-fried-rice:v1", "name": "Vegetable fried rice", "kind": "dish", "verified": false, "serving": "1 plate (300 g)" },
+        { "id": "usda:168878", "name": "Rice, white, cooked", "kind": "ingredient", "verified": true, "serving": "1 cup (158 g)" },
+        { "id": "usda:170393", "name": "Mixed vegetables, frozen, cooked", "kind": "ingredient", "verified": false, "serving": "100 g" }
+      ] },
+      { "query": "sweet", "amount": null, "candidates": [
+        { "id": "usda:169655", "name": "Sweets, candies, hard", "kind": "ingredient", "verified": false, "serving": "1 piece (6 g)" },
+        { "id": "usda:168833", "name": "Sweet potato, baked", "kind": "ingredient", "verified": false, "serving": "1 medium (114 g)" }
+      ] },
+      { "query": "sour chicken", "amount": null, "candidates": [
+        { "id": "akari:recipe:sweet-sour-chicken:v1", "name": "Sweet and sour chicken", "kind": "dish", "verified": false, "serving": "1 portion (250 g)" },
+        { "id": "usda:171477", "name": "Chicken breast, roasted", "kind": "ingredient", "verified": true, "serving": "100 g" },
+        { "id": "usda:174520", "name": "Sweet and sour sauce", "kind": "ingredient", "verified": false, "serving": "2 tbsp (35 g)" }
+      ] }
+    ]
+  }
+}

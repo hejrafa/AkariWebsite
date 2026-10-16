@@ -1,9 +1,11 @@
 import Anthropic, { APIConnectionError, APIConnectionTimeoutError, APIError } from "@anthropic-ai/sdk";
-import { ANSWER_SCHEMA, PROMPT_VERSION, sanitiseHint, systemText, userText } from "./prompt.ts";
-import type { Language } from "./prompt.ts";
+import { ANSWER_SCHEMA, MEAL_SCHEMA, PROMPT_VERSION, ROLES, mealSystemText, mealUserText, sanitiseHint, systemText, userText } from "./prompt.ts";
+import type { Language, MealCandidate, MealFood } from "./prompt.ts";
 
-// POST /photo: one meal photo in, three short fields out. Nothing is stored; the
-// daily counters in PHOTO_COUNTERS are the only state, and they expire after 48 h.
+// POST /photo: one meal photo in, three short fields out. POST /meal: the meal line
+// and the phone's catalogue candidates in, Haiku's picks out. A meal counts against
+// the same daily allowance as a photo. Nothing is stored; the daily counters in
+// PHOTO_COUNTERS are the only state, and they expire after 48 h.
 // The device and address counters are keyed by a hash with a salt that lives for
 // one UTC day, so KV never holds an IP address or a device id, and once the day's
 // salt expires the keys can't be linked to anyone or to each other.
@@ -18,6 +20,10 @@ export interface Env {
 
 const MODEL = "claude-haiku-5-5";
 const MAX_BYTES = 600 * 1024;
+const MAX_MEAL_BYTES = 32 * 1024;
+const MAX_FOODS = 12;
+const MAX_CANDIDATES = 8;
+const KINDS = new Set(["dish", "ingredient", "branded", "drink"]);
 const BUDGET_MS = 20_000;
 const RETRY_DELAY_MS = 1_000;
 const COUNTER_TTL_SECONDS = 48 * 60 * 60;
@@ -29,6 +35,25 @@ interface Answer {
   food: boolean;
   main: string;
   meal: string;
+}
+
+interface MealRequest {
+  text: string;
+  foods: MealFood[];
+}
+
+interface MealAnswerFood {
+  query: string;
+  pick: string | null;
+  amount: number | null;
+  unit: string | null;
+  role: (typeof ROLES)[number];
+  partOf?: string;
+}
+
+interface MealAnswer {
+  foods: MealAnswerFood[];
+  merged: { foods: string[]; as: string }[];
 }
 
 class UpstreamFailure extends Error {}
@@ -45,13 +70,18 @@ export default {
 
 async function handle(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
-  if (request.method !== "POST" || url.pathname !== "/photo") return json(404, { reason: "not_found" });
+  const endpoint = request.method === "POST" && (url.pathname === "/photo" || url.pathname === "/meal") ? url.pathname : null;
+  if (!endpoint) return json(404, { reason: "not_found" });
   // The app is not a browser; anything sending an Origin is.
   if (request.headers.has("origin")) return json(403, { reason: "origin" });
 
   const device = request.headers.get("x-akari-device")?.trim().toLowerCase() ?? "";
   if (!DEVICE_ID.test(device)) return json(400, { reason: "device" });
 
+  return endpoint === "/photo" ? photo(request, env, ctx, device) : meal(request, env, ctx, device);
+}
+
+async function photo(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
   const declared = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (declared !== "image/jpeg" && declared !== "image/png") return json(415, { reason: "type" });
   if (Number(request.headers.get("content-length") ?? 0) > MAX_BYTES) return json(413, { reason: "size" });
@@ -62,14 +92,108 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
   if (!mediaType) return json(415, { reason: "type" });
 
   if (!env.ANTHROPIC_API_KEY) return json(503, { reason: "unconfigured" });
+  const refused = await spend(request, env, ctx, device);
+  if (refused) return refused;
 
+  const language = languageOf(request);
+  const hint = sanitiseHint(request.headers.get("x-akari-hint"));
+  const build = buildOf(request);
+
+  const started = Date.now();
+  try {
+    const message = await ask(env.ANTHROPIC_API_KEY, {
+      model: MODEL,
+      max_tokens: 400,
+      thinking: { type: "disabled" },
+      system: systemText(language),
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: mediaType, data: base64(bytes) } },
+            { type: "text", text: userText(language, hint) },
+          ],
+        },
+      ],
+      output_config: { format: { type: "json_schema", schema: ANSWER_SCHEMA } },
+    });
+    const answer = readAnswer(message);
+    // Counts only: never the photo, the answer or the device id.
+    console.log(JSON.stringify({ photo: "ok", ms: Date.now() - started, prompt: PROMPT_VERSION, build, ...usage(message) }));
+    return json(200, answer);
+  } catch (error) {
+    console.log(JSON.stringify({ photo: "upstream", ms: Date.now() - started, status: error instanceof APIError ? error.status ?? "network" : "answer" }));
+    return json(503, { reason: "upstream" });
+  }
+}
+
+async function meal(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
+  const declared = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
+  if (declared !== "application/json") return json(415, { reason: "type" });
+  if (Number(request.headers.get("content-length") ?? 0) > MAX_MEAL_BYTES) return json(413, { reason: "size" });
+
+  const bytes = new Uint8Array(await request.arrayBuffer());
+  if (bytes.byteLength > MAX_MEAL_BYTES) return json(413, { reason: "size" });
+  let body: unknown;
+  try {
+    body = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+  } catch {
+    return json(400, { reason: "malformed" });
+  }
+  const input = readMealRequest(body);
+  if (!input) return json(400, { reason: "malformed" });
+
+  if (!env.ANTHROPIC_API_KEY) return json(503, { reason: "unconfigured" });
+  const refused = await spend(request, env, ctx, device);
+  if (refused) return refused;
+
+  const language = languageOf(request);
+  const build = buildOf(request);
+
+  const started = Date.now();
+  try {
+    const message = await ask(env.ANTHROPIC_API_KEY, {
+      model: MODEL,
+      max_tokens: 1500,
+      thinking: { type: "disabled" },
+      system: mealSystemText(language),
+      messages: [{ role: "user", content: mealUserText(input.text, input.foods) }],
+      output_config: { format: { type: "json_schema", schema: MEAL_SCHEMA } },
+    });
+    const { answer, dropped } = readMeal(message, input);
+    // Counts only: never the meal text, the names or the device id.
+    const picked = answer.foods.filter((food) => food.pick).length;
+    console.log(
+      JSON.stringify({
+        meal: "ok",
+        ms: Date.now() - started,
+        prompt: PROMPT_VERSION,
+        build,
+        asked: input.foods.length,
+        foods: answer.foods.length,
+        picked,
+        merged: answer.merged.length,
+        dropped,
+        ...usage(message),
+      }),
+    );
+    return json(200, answer);
+  } catch (error) {
+    console.log(JSON.stringify({ meal: "upstream", ms: Date.now() - started, status: error instanceof APIError ? error.status ?? "network" : "answer" }));
+    return json(503, { reason: "upstream" });
+  }
+}
+
+// Checks the device, address and global allowance and spends one from each, or
+// answers the 429 that says which ran out.
+async function spend(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response | null> {
   const day = new Date().toISOString().slice(0, 10);
   const address = request.headers.get("cf-connecting-ip") ?? "unknown";
   const salt = await dailySalt(env, day);
   const counters = [
-    { key: `device:${await hashed(salt, "device", device)}:${day}`, cap: cap(env.DEVICE_DAILY_CAP, 40), reason: "device" },
-    { key: `address:${await hashed(salt, "address", address)}:${day}`, cap: cap(env.ADDRESS_DAILY_CAP, 120), reason: "device" },
-    { key: `global:${day}`, cap: cap(env.GLOBAL_DAILY_CAP, 3000), reason: "global" },
+    { key: `device:${await hashed(salt, "device", device)}:${day}`, cap: cap(env.DEVICE_DAILY_CAP, 80), reason: "device" },
+    { key: `address:${await hashed(salt, "address", address)}:${day}`, cap: cap(env.ADDRESS_DAILY_CAP, 240), reason: "device" },
+    { key: `global:${day}`, cap: cap(env.GLOBAL_DAILY_CAP, 6000), reason: "global" },
   ];
   const counts = await Promise.all(counters.map(async (c) => Number(await env.PHOTO_COUNTERS.get(c.key)) || 0));
   const hit = counters.find((c, i) => counts[i] >= c.cap);
@@ -84,49 +208,29 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
       ),
     ),
   );
-
-  const language: Language = request.headers.get("x-akari-language")?.trim().toLowerCase().startsWith("de") ? "de" : "en";
-  const hint = sanitiseHint(request.headers.get("x-akari-hint"));
-  const build = request.headers.get("x-akari-build")?.replace(/[^0-9.]/g, "").slice(0, 16) || undefined;
-
-  const started = Date.now();
-  try {
-    const { answer, usage } = await ask(env.ANTHROPIC_API_KEY, bytes, mediaType, language, hint);
-    // Counts only: never the photo, the answer or the device id.
-    console.log(JSON.stringify({ photo: "ok", ms: Date.now() - started, prompt: PROMPT_VERSION, build, ...usage }));
-    return json(200, answer);
-  } catch (error) {
-    console.log(JSON.stringify({ photo: "upstream", ms: Date.now() - started, status: error instanceof APIError ? error.status ?? "network" : "answer" }));
-    return json(503, { reason: "upstream" });
-  }
+  return null;
 }
 
-async function ask(apiKey: string, bytes: Uint8Array, mediaType: MediaType, language: Language, hint: string) {
+function languageOf(request: Request): Language {
+  return request.headers.get("x-akari-language")?.trim().toLowerCase().startsWith("de") ? "de" : "en";
+}
+
+function buildOf(request: Request): string | undefined {
+  return request.headers.get("x-akari-build")?.replace(/[^0-9.]/g, "").slice(0, 16) || undefined;
+}
+
+function usage(message: Anthropic.Message) {
+  return { input_tokens: message.usage.input_tokens, output_tokens: message.usage.output_tokens };
+}
+
+async function ask(apiKey: string, params: Anthropic.MessageCreateParamsNonStreaming): Promise<Anthropic.Message> {
   const client = new Anthropic({ apiKey, maxRetries: 0, fetch: (input, init) => fetch(input, init) });
   const deadline = Date.now() + BUDGET_MS;
-  const params: Anthropic.MessageCreateParamsNonStreaming = {
-    model: MODEL,
-    max_tokens: 400,
-    thinking: { type: "disabled" },
-    system: systemText(language),
-    messages: [
-      {
-        role: "user",
-        content: [
-          { type: "image", source: { type: "base64", media_type: mediaType, data: base64(bytes) } },
-          { type: "text", text: userText(language, hint) },
-        ],
-      },
-    ],
-    output_config: { format: { type: "json_schema", schema: ANSWER_SCHEMA } },
-  };
-
   for (let attempt = 0; ; attempt++) {
     const remaining = deadline - Date.now();
     if (remaining <= 0) throw new UpstreamFailure("budget");
     try {
-      const message = await client.messages.create(params, { timeout: remaining });
-      return { answer: readAnswer(message), usage: { input_tokens: message.usage.input_tokens, output_tokens: message.usage.output_tokens } };
+      return await client.messages.create(params, { timeout: remaining });
     } catch (error) {
       if (attempt > 0 || !retryable(error) || deadline - Date.now() <= RETRY_DELAY_MS) throw error;
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
@@ -140,16 +244,113 @@ function retryable(error: unknown): boolean {
   return error instanceof APIError && error.status !== undefined && (error.status === 429 || error.status >= 500);
 }
 
-function readAnswer(message: Anthropic.Message): Answer {
+function readJson(message: Anthropic.Message): Record<string, unknown> {
   if (message.stop_reason !== "end_turn") throw new UpstreamFailure(message.stop_reason ?? "unknown");
   const text = message.content.find((block) => block.type === "text");
   if (!text || text.type !== "text") throw new UpstreamFailure("no text");
   const parsed: unknown = JSON.parse(text.text);
-  if (!parsed || typeof parsed !== "object") throw new UpstreamFailure("shape");
-  const { food, main, meal } = parsed as Record<string, unknown>;
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new UpstreamFailure("shape");
+  return parsed as Record<string, unknown>;
+}
+
+function readAnswer(message: Anthropic.Message): Answer {
+  const { food, main, meal } = readJson(message);
   if (typeof food !== "boolean" || typeof main !== "string" || typeof meal !== "string") throw new UpstreamFailure("shape");
   if (!food) return { food: false, main: "", meal: "" };
   return { food: true, main: main.trim().slice(0, 120), meal: meal.trim().slice(0, 400) };
+}
+
+// The request as the phone must send it, or null for a 400. Strings are bounded so
+// one food can't carry the whole 32 KB into the prompt.
+function readMealRequest(body: unknown): MealRequest | null {
+  if (!isRecord(body)) return null;
+  const text = boundedString(body.text, 2000);
+  if (!text || !Array.isArray(body.foods) || body.foods.length === 0 || body.foods.length > MAX_FOODS) return null;
+  const foods: MealFood[] = [];
+  for (const raw of body.foods) {
+    if (!isRecord(raw)) return null;
+    const query = boundedString(raw.query, 120);
+    if (!query || foods.some((food) => food.query === query)) return null;
+    const amount = raw.amount === null || raw.amount === undefined ? null : boundedString(raw.amount, 60);
+    if (amount === undefined) return null;
+    if (!Array.isArray(raw.candidates) || raw.candidates.length > MAX_CANDIDATES) return null;
+    const candidates: MealCandidate[] = [];
+    for (const c of raw.candidates) {
+      if (!isRecord(c)) return null;
+      const id = boundedString(c.id, 200);
+      const name = boundedString(c.name, 200);
+      const serving = c.serving === null || c.serving === undefined ? null : boundedString(c.serving, 120);
+      if (!id || !name || serving === undefined || typeof c.kind !== "string" || !KINDS.has(c.kind) || typeof c.verified !== "boolean") return null;
+      candidates.push({ id, name, kind: c.kind as MealCandidate["kind"], verified: c.verified, serving });
+    }
+    foods.push({ query, amount: amount || null, candidates });
+  }
+  return { text, foods };
+}
+
+// Haiku's answer, held to the request: picks only from the candidates the phone
+// sent, merges only of queries the phone sent, partOf only another answered food.
+// Anything else is dropped or set to null, and counted for the log.
+function readMeal(message: Anthropic.Message, input: MealRequest): { answer: MealAnswer; dropped: number } {
+  const parsed = readJson(message);
+  if (!Array.isArray(parsed.foods) || !Array.isArray(parsed.merged)) throw new UpstreamFailure("shape");
+  let dropped = 0;
+
+  const candidates = new Map(input.foods.map((food) => [food.query, new Set(food.candidates.map((c) => c.id))]));
+  const pieces = new Set<string>();
+  const merged: MealAnswer["merged"] = [];
+  for (const raw of parsed.merged) {
+    const as = isRecord(raw) ? boundedString(raw.as, 120) : undefined;
+    const names = isRecord(raw) && Array.isArray(raw.foods) ? [...new Set(raw.foods)] : [];
+    const valid = as && !candidates.has(as) && names.length >= 2 && names.every((name) => typeof name === "string" && candidates.has(name) && !pieces.has(name));
+    if (!valid) {
+      dropped++;
+      continue;
+    }
+    const joined = names as string[];
+    joined.forEach((name) => pieces.add(name));
+    candidates.set(as, new Set(joined.flatMap((name) => [...candidates.get(name)!])));
+    merged.push({ foods: joined, as });
+  }
+
+  const foods: MealAnswerFood[] = [];
+  const partOf = new Map<MealAnswerFood, unknown>();
+  for (const raw of parsed.foods) {
+    const query = isRecord(raw) && typeof raw.query === "string" ? raw.query : "";
+    if (!isRecord(raw) || !candidates.has(query) || pieces.has(query) || foods.some((food) => food.query === query)) {
+      dropped++;
+      continue;
+    }
+    let pick = typeof raw.pick === "string" ? raw.pick : null;
+    if (pick !== null && !candidates.get(query)!.has(pick)) {
+      pick = null;
+      dropped++;
+    }
+    const amount = typeof raw.amount === "number" && Number.isFinite(raw.amount) && raw.amount > 0 ? raw.amount : null;
+    const unit = amount === null ? null : boundedString(raw.unit, 24) || null;
+    const role = ROLES.find((r) => r === raw.role) ?? "side";
+    const food: MealAnswerFood = { query, pick, amount, unit, role };
+    foods.push(food);
+    partOf.set(food, raw.partOf);
+  }
+  for (const food of foods) {
+    const parent = partOf.get(food);
+    if (typeof parent !== "string") continue;
+    if (parent !== food.query && foods.some((other) => other.query === parent)) food.partOf = parent;
+    else dropped++;
+  }
+  return { answer: { foods, merged }, dropped };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+// A trimmed string of at most max characters, "" for an empty one, undefined for
+// anything else. Control characters become spaces.
+function boundedString(value: unknown, max: number): string | undefined {
+  if (typeof value !== "string" || value.length > max) return undefined;
+  return value.replace(/[\u0000-\u001f\u007f]/g, " ").trim();
 }
 
 function sniff(bytes: Uint8Array): MediaType | null {
