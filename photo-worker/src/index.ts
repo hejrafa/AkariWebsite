@@ -2,9 +2,10 @@ import Anthropic, { APIConnectionError, APIConnectionTimeoutError, APIError } fr
 import { ANSWER_SCHEMA, MEAL_SCHEMA, PROMPT_VERSION, ROLES, mealSystemText, mealUserText, sanitiseHint, systemText, userText } from "./prompt.ts";
 import type { Language, MealCandidate, MealFood } from "./prompt.ts";
 
-// POST /photo: one meal photo in, three short fields out. POST /meal: the meal line
-// and the phone's catalogue candidates in, Haiku's picks out. A meal counts against
-// the same daily allowance as a photo. Nothing is stored; the daily counters in
+// POST /photo: one meal photo in, three short fields out. POST /meal: the meal line,
+// the phone's catalogue candidates and optionally the same photo in, Haiku's picks
+// out. A meal counts against the same daily allowance as a photo, once, with or
+// without its photo. Nothing is stored; the daily counters in
 // PHOTO_COUNTERS are the only state, and they expire after 48 h.
 // The device and address counters are keyed by a hash with a salt that lives for
 // one UTC day, so KV never holds an IP address or a device id, and once the day's
@@ -21,6 +22,8 @@ export interface Env {
 const MODEL = "claude-haiku-5-5";
 const MAX_BYTES = 600 * 1024;
 const MAX_MEAL_BYTES = 32 * 1024;
+// The photo rides in the meal body as base64, on top of the 32 KB for the rest.
+const MAX_PHOTO_BASE64 = Math.ceil(MAX_BYTES / 3) * 4;
 const MAX_FOODS = 12;
 const MAX_CANDIDATES = 8;
 const KINDS = new Set(["dish", "ingredient", "branded", "drink"]);
@@ -42,6 +45,17 @@ interface MealRequest {
   foods: MealFood[];
 }
 
+interface MealPhoto {
+  data: string;
+  mediaType: MediaType;
+}
+
+interface Grams {
+  estimate: number;
+  low: number;
+  high: number;
+}
+
 interface MealAnswerFood {
   query: string;
   pick: string | null;
@@ -49,6 +63,9 @@ interface MealAnswerFood {
   unit: string | null;
   role: (typeof ROLES)[number];
   partOf?: string;
+  confidence: number;
+  grams: Grams | null;
+  assumed?: true;
 }
 
 interface MealAnswer {
@@ -130,16 +147,22 @@ async function photo(request: Request, env: Env, ctx: ExecutionContext, device: 
 async function meal(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
   const declared = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (declared !== "application/json") return json(415, { reason: "type" });
-  if (Number(request.headers.get("content-length") ?? 0) > MAX_MEAL_BYTES) return json(413, { reason: "size" });
+  if (Number(request.headers.get("content-length") ?? 0) > MAX_MEAL_BYTES + MAX_PHOTO_BASE64) return json(413, { reason: "size" });
 
   const bytes = new Uint8Array(await request.arrayBuffer());
-  if (bytes.byteLength > MAX_MEAL_BYTES) return json(413, { reason: "size" });
+  if (bytes.byteLength > MAX_MEAL_BYTES + MAX_PHOTO_BASE64) return json(413, { reason: "size" });
   let body: unknown;
   try {
     body = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
   } catch {
     return json(400, { reason: "malformed" });
   }
+  const photoField = isRecord(body) ? body.photo : undefined;
+  const photoChars = typeof photoField === "string" ? photoField.length : 0;
+  if (bytes.byteLength - photoChars > MAX_MEAL_BYTES) return json(413, { reason: "size" });
+  const photo = readMealPhoto(photoField);
+  if (photo === "size" || photo === "type") return json(photo === "size" ? 413 : 415, { reason: photo });
+  if (photo === "malformed") return json(400, { reason: "malformed" });
   const input = readMealRequest(body);
   if (!input) return json(400, { reason: "malformed" });
 
@@ -156,13 +179,24 @@ async function meal(request: Request, env: Env, ctx: ExecutionContext, device: s
       model: MODEL,
       max_tokens: 1500,
       thinking: { type: "disabled" },
-      system: mealSystemText(language),
-      messages: [{ role: "user", content: mealUserText(input.text, input.foods) }],
+      system: mealSystemText(language, photo !== null),
+      messages: [
+        {
+          role: "user",
+          content: [
+            ...(photo ? [{ type: "image" as const, source: { type: "base64" as const, media_type: photo.mediaType, data: photo.data } }] : []),
+            { type: "text", text: mealUserText(input.text, input.foods) },
+          ],
+        },
+      ],
       output_config: { format: { type: "json_schema", schema: MEAL_SCHEMA } },
     });
     const { answer, dropped } = readMeal(message, input);
     // Counts only: never the meal text, the names or the device id.
     const picked = answer.foods.filter((food) => food.pick).length;
+    const confidence = answer.foods.length
+      ? Math.round((answer.foods.reduce((sum, food) => sum + food.confidence, 0) / answer.foods.length) * 10) / 10
+      : null;
     console.log(
       JSON.stringify({
         meal: "ok",
@@ -174,6 +208,8 @@ async function meal(request: Request, env: Env, ctx: ExecutionContext, device: s
         picked,
         merged: answer.merged.length,
         dropped,
+        photo: photo !== null,
+        confidence,
         ...usage(message),
       }),
     );
@@ -260,6 +296,20 @@ function readAnswer(message: Anthropic.Message): Answer {
   return { food: true, main: main.trim().slice(0, 120), meal: meal.trim().slice(0, 400) };
 }
 
+// The optional photo: null when there is none, else base64 JPEG or PNG bytes of at
+// most 600 KB, checked by size and by its first bytes without decoding it whole.
+function readMealPhoto(value: unknown): MealPhoto | null | "size" | "type" | "malformed" {
+  if (value === undefined || value === null) return null;
+  if (typeof value !== "string" || value.length === 0) return "malformed";
+  if (value.length % 4 !== 0 || !/^[A-Za-z0-9+/]*={0,2}$/.test(value)) return "malformed";
+  const padding = value.endsWith("==") ? 2 : value.endsWith("=") ? 1 : 0;
+  if ((value.length / 4) * 3 - padding > MAX_BYTES) return "size";
+  const head = Uint8Array.from(atob(value.slice(0, 16)), (char) => char.charCodeAt(0));
+  const mediaType = sniff(head);
+  if (!mediaType) return "type";
+  return { data: value, mediaType };
+}
+
 // The request as the phone must send it, or null for a 400. Strings are bounded so
 // one food can't carry the whole 32 KB into the prompt.
 function readMealRequest(body: unknown): MealRequest | null {
@@ -329,7 +379,15 @@ function readMeal(message: Anthropic.Message, input: MealRequest): { answer: Mea
     const amount = typeof raw.amount === "number" && Number.isFinite(raw.amount) && raw.amount > 0 ? raw.amount : null;
     const unit = amount === null ? null : boundedString(raw.unit, 24) || null;
     const role = ROLES.find((r) => r === raw.role) ?? "side";
-    const food: MealAnswerFood = { query, pick, amount, unit, role };
+    // The schema can't bound numbers, so a confidence outside 0 to 1 or a range that
+    // doesn't hold its estimate falls back here instead of failing the meal.
+    let confidence = 0.5;
+    if (typeof raw.confidence === "number" && raw.confidence >= 0 && raw.confidence <= 1) confidence = Math.round(raw.confidence * 100) / 100;
+    else dropped++;
+    const grams = readGrams(raw.grams);
+    if (grams === undefined) dropped++;
+    const food: MealAnswerFood = { query, pick, amount, unit, role, confidence, grams: grams ?? null };
+    if (raw.assumed === true) food.assumed = true;
     foods.push(food);
     partOf.set(food, raw.partOf);
   }
@@ -340,6 +398,19 @@ function readMeal(message: Anthropic.Message, input: MealRequest): { answer: Mea
     else dropped++;
   }
   return { answer: { foods, merged }, dropped };
+}
+
+// A gram range with low <= estimate <= high, all positive, or null when the model
+// said it can't state one, or undefined when what it said doesn't hold.
+function readGrams(value: unknown): Grams | null | undefined {
+  if (value === null) return null;
+  if (!isRecord(value)) return undefined;
+  const { estimate, low, high } = value;
+  const positive = (n: unknown): n is number => typeof n === "number" && Number.isFinite(n) && n > 0;
+  if (!positive(estimate) || !positive(low) || !positive(high) || low > estimate || estimate > high) return undefined;
+  // A tenth of a gram keeps small amounts such as chives above zero and the order intact.
+  const tenth = (n: number) => Math.round(n * 10) / 10;
+  return { estimate: tenth(estimate), low: tenth(low), high: tenth(high) };
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
