@@ -11,5 +11,6 @@ admin dashboard keeps its own baked copies in `feedback-worker/public/assets/sti
 | `carrot.png` | `assets/Carrot/3D/carrot_3d.png` | Food inbox headline |
 | `handshake.png` | `assets/Handshake/3D/handshake_3d.png` | Terms headline |
 | `lock.png` | `assets/Locked/3D/locked_3d.png` | Privacy section, privacy headline |
+| `sun-behind-cloud.png` | `assets/Sun behind cloud/3D/sun_behind_cloud_3d.png` | Readiness collage, as the app's Vitals hero shows it on a good day |
 
 The goal and focus stickers (`goal-*.png`, `focus-*.png`) came from the same repository before this list was kept.

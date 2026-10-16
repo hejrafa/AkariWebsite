@@ -89,7 +89,7 @@ No. Akari explains your own data and patterns. It does not diagnose or treat any
 
 ### Does my health data leave my iPhone?
 
-No. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches Akari's server, so the team can fix the match. A meal photo you choose to log is read by an AI service through Akari's server and not stored by Akari; details: https://joinakari.com/privacy/#meal-photos
+Your data stays private. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches Akari's server, so the team can fix the match. A meal photo you choose to log is read by an AI service through Akari's server and not stored by Akari; details: https://joinakari.com/privacy/#meal-photos
 
 ### How can I try Akari?
 

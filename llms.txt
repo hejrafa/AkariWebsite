@@ -9,7 +9,7 @@ Akari reads Apple Health on the iPhone and keeps what it works out there. Each m
 - Platform: iPhone with iOS 26 or later
 - Data source: Apple Health
 - Languages: English and German
-- Privacy: no account is required, and health data stays on the user's iPhone; only a food report the user chooses to send reaches Akari's server, and a meal photo the user chooses to log is read by an AI service through Akari's server and not stored by Akari
+- Privacy: the user's data stays private. No account is required, and health data stays on the user's iPhone; only a food report the user chooses to send reaches Akari's server, and a meal photo the user chooses to log is read by an AI service through Akari's server and not stored by Akari
 - Pricing: most of Akari is free; food logging, readiness and Health Age need a subscription (€4.99 a month or €39.99 a year, 14 days free). This may still change before launch.
 - Availability: free public beta through Apple TestFlight, with everything free during the beta; the App Store version is coming soon
 - Scope: Akari explains the user's own data and patterns; it does not diagnose or treat anything or replace professional medical advice

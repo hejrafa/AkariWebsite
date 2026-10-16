@@ -1253,7 +1253,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   height: auto;
 }
 
-.collage__sticker--moon { top: 0; left: -6%; rotate: -14deg; }
+.collage__sticker--sun { top: 0; left: -6%; rotate: -14deg; }
 .collage__sticker--fire { top: 44%; right: -7%; rotate: 10deg; }
 .collage__sticker--apple { bottom: 0; left: -3%; rotate: -8deg; }
 .collage__sticker--fish { top: 0; right: -6%; rotate: 14deg; }
@@ -1564,7 +1564,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   }
 
   .collage__sticker { width: 56px; }
-  .collage__sticker--moon { left: -2%; }
+  .collage__sticker--sun { left: -2%; }
   .collage__sticker--fire { right: -2%; }
   .collage__sticker--apple { left: 0; }
   .collage__sticker--fish { right: -2%; }
@@ -2166,7 +2166,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 .food__sticker--croissant,
 .shape__banana { --drift-phase: -1.9s; }
 
-.collage__sticker--moon,
+.collage__sticker--sun,
 .collage__sticker--fish,
 .privacy__app--akari,
 .food__row:nth-child(3),
