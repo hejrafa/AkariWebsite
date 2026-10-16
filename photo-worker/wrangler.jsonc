@@ -10,8 +10,8 @@
     "host": "localhost"
   },
   // The feedback worker owns api.joinakari.com as a custom domain and serves
-  // other paths there, so these path routes run in front of it only for /photo
-  // and /meal; a catch-all api.joinakari.com/* would swallow the feedback API.
+  // other paths there, so these path routes run in front of it only for /photo,
+  // /meal and /compose; a catch-all api.joinakari.com/* would swallow the feedback API.
   "routes": [
     {
       "pattern": "api.joinakari.com/photo*",
@@ -19,6 +19,10 @@
     },
     {
       "pattern": "api.joinakari.com/meal",
+      "zone_name": "joinakari.com"
+    },
+    {
+      "pattern": "api.joinakari.com/compose",
       "zone_name": "joinakari.com"
     }
   ],

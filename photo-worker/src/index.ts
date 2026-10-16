@@ -1,11 +1,29 @@
 import Anthropic, { APIConnectionError, APIConnectionTimeoutError, APIError } from "@anthropic-ai/sdk";
-import { ANSWER_SCHEMA, MEAL_SCHEMA, PROMPT_VERSION, ROLES, mealSystemText, mealUserText, sanitiseHint, systemText, userText } from "./prompt.ts";
-import type { Language, MealCandidate, MealFood } from "./prompt.ts";
+import {
+  ANSWER_SCHEMA,
+  COMPOSE_ROLES,
+  COMPOSE_SCHEMA,
+  MEAL_SCHEMA,
+  PROMPT_VERSION,
+  ROLES,
+  composeContextText,
+  composeRulesText,
+  composeUserText,
+  mealSystemText,
+  mealUserText,
+  sanitiseHint,
+  systemText,
+  userText,
+} from "./prompt.ts";
+import type { ComposeTemplate, Language, MealCandidate, MealFood, VocabularyEntry } from "./prompt.ts";
+import vocabulary from "./vocabulary.json" with { type: "json" };
 
 // POST /photo: one meal photo in, three short fields out. POST /meal: the meal line,
 // the phone's catalogue candidates and optionally the same photo in, Haiku's picks
-// out. A meal counts against the same daily allowance as a photo, once, with or
-// without its photo. Nothing is stored; the daily counters in the COUNTERS D1
+// out. POST /compose: the meal line, optionally the photo and a few catalogue
+// dishes in, the meal built from Akari's verified foods out. A meal or a compose
+// counts against the same daily allowance as a photo, once, with or without its
+// photo. Nothing is stored; the daily counters in the COUNTERS D1
 // database are the only state, and the cron deletes them once they are two days old.
 // The device and address counters are keyed by a hash with a salt that lives for
 // one UTC day, so D1 never holds an IP address or a device id, and once the day's
@@ -30,6 +48,15 @@ const MAX_PHOTO_BASE64 = Math.ceil(MAX_BYTES / 3) * 4;
 const MAX_FOODS = 12;
 const MAX_CANDIDATES = 8;
 const KINDS = new Set(["dish", "ingredient", "branded", "drink"]);
+const MAX_TEMPLATES = 5;
+const MAX_COMPOSED = 12;
+const MAX_INGREDIENTS = 15;
+const MIN_GRAMS = 1;
+const MAX_GRAMS = 2000;
+const VOCABULARY: VocabularyEntry[] = vocabulary.entries;
+const VERIFIED = new Set(VOCABULARY.map((entry) => entry.id));
+// Built once per isolate: the rules and the whole vocabulary, the cached prefix.
+const COMPOSE_RULES = composeRulesText(VOCABULARY);
 const BUDGET_MS = 20_000;
 const RETRY_DELAY_MS = 1_000;
 const DEVICE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -75,6 +102,30 @@ interface MealAnswer {
   merged: { foods: string[]; as: string }[];
 }
 
+interface ComposeRequest {
+  text: string;
+  language: Language | null;
+  templates: ComposeTemplate[];
+}
+
+interface ComposedPart {
+  name: string;
+  reference: string | null;
+  grams: number;
+  missing?: true;
+}
+
+interface ComposedFood extends ComposedPart {
+  role: (typeof COMPOSE_ROLES)[number];
+  ingredients?: ComposedPart[];
+}
+
+interface ComposeAnswer {
+  foods: ComposedFood[];
+  missing: string[];
+  confidence: number;
+}
+
 class UpstreamFailure extends Error {}
 
 export default {
@@ -94,7 +145,7 @@ export default {
 
 async function handle(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
-  const endpoint = request.method === "POST" && (url.pathname === "/photo" || url.pathname === "/meal") ? url.pathname : null;
+  const endpoint = request.method === "POST" && ["/photo", "/meal", "/compose"].includes(url.pathname) ? url.pathname : null;
   if (!endpoint) return json(404, { reason: "not_found" });
   // The app is not a browser; anything sending an Origin is.
   if (request.headers.has("origin")) return json(403, { reason: "origin" });
@@ -102,7 +153,8 @@ async function handle(request: Request, env: Env): Promise<Response> {
   const device = request.headers.get("x-akari-device")?.trim().toLowerCase() ?? "";
   if (!DEVICE_ID.test(device)) return json(400, { reason: "device" });
 
-  return endpoint === "/photo" ? photo(request, env, device) : meal(request, env, device);
+  if (endpoint === "/photo") return photo(request, env, device);
+  return endpoint === "/meal" ? meal(request, env, device) : compose(request, env, device);
 }
 
 function isScoreboard(env: Env, device: string): boolean {
@@ -161,7 +213,9 @@ async function photo(request: Request, env: Env, device: string): Promise<Respon
   }
 }
 
-async function meal(request: Request, env: Env, device: string): Promise<Response> {
+// The JSON body /meal and /compose share: at most 32 KB plus an optional base64
+// photo, checked before anything is counted. A Response is the refusal.
+async function readMealBody(request: Request): Promise<{ body: unknown; photo: MealPhoto | null } | Response> {
   const declared = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (declared !== "application/json") return json(415, { reason: "type" });
   if (Number(request.headers.get("content-length") ?? 0) > MAX_MEAL_BYTES + MAX_PHOTO_BASE64) return json(413, { reason: "size" });
@@ -180,6 +234,13 @@ async function meal(request: Request, env: Env, device: string): Promise<Respons
   const photo = readMealPhoto(photoField);
   if (photo === "size" || photo === "type") return json(photo === "size" ? 413 : 415, { reason: photo });
   if (photo === "malformed") return json(400, { reason: "malformed" });
+  return { body, photo };
+}
+
+async function meal(request: Request, env: Env, device: string): Promise<Response> {
+  const read = await readMealBody(request);
+  if (read instanceof Response) return read;
+  const { body, photo } = read;
   const input = readMealRequest(body);
   if (!input) return json(400, { reason: "malformed" });
 
@@ -234,6 +295,71 @@ async function meal(request: Request, env: Env, device: string): Promise<Respons
     return json(200, answer);
   } catch (error) {
     console.log(JSON.stringify({ meal: "upstream", ms: Date.now() - started, ...scoreboardLog(env, device), status: error instanceof APIError ? error.status ?? "network" : "answer" }));
+    return json(503, { reason: "upstream" });
+  }
+}
+
+async function compose(request: Request, env: Env, device: string): Promise<Response> {
+  const read = await readMealBody(request);
+  if (read instanceof Response) return read;
+  const { body, photo } = read;
+  const input = readComposeRequest(body);
+  if (!input) return json(400, { reason: "malformed" });
+
+  if (!env.ANTHROPIC_API_KEY) return json(503, { reason: "unconfigured" });
+  const refused = await spend(request, env, device);
+  if (refused) return refused;
+
+  const language = input.language ?? languageOf(request);
+  const build = buildOf(request);
+
+  const started = Date.now();
+  try {
+    const message = await ask(env.ANTHROPIC_API_KEY, {
+      model: MODEL,
+      max_tokens: 3000,
+      thinking: { type: "disabled" },
+      // The rules and the vocabulary are the same bytes for every request, so they
+      // are paid once per cache window; the language and photo lines come after.
+      system: [
+        { type: "text", text: COMPOSE_RULES, cache_control: { type: "ephemeral" } },
+        { type: "text", text: composeContextText(language, photo !== null) },
+      ],
+      messages: [
+        {
+          role: "user",
+          content: [
+            ...(photo ? [{ type: "image" as const, source: { type: "base64" as const, media_type: photo.mediaType, data: photo.data } }] : []),
+            { type: "text", text: composeUserText(input.text, input.templates) },
+          ],
+        },
+      ],
+      output_config: { format: { type: "json_schema", schema: COMPOSE_SCHEMA } },
+    });
+    const { answer, dropped } = readCompose(message, input);
+    // Counts only: never the meal text, the names, the ids or the device id.
+    console.log(
+      JSON.stringify({
+        compose: "ok",
+        ms: Date.now() - started,
+        prompt: PROMPT_VERSION,
+        build,
+        templates: input.templates.length,
+        foods: answer.foods.length,
+        ingredients: answer.foods.reduce((sum, food) => sum + (food.ingredients?.length ?? 0), 0),
+        missing: answer.missing.length,
+        dropped,
+        photo: photo !== null,
+        confidence: Math.round(answer.confidence * 10) / 10,
+        ...scoreboardLog(env, device),
+        ...usage(message),
+        cache_read_input_tokens: message.usage.cache_read_input_tokens ?? 0,
+        cache_creation_input_tokens: message.usage.cache_creation_input_tokens ?? 0,
+      }),
+    );
+    return json(200, answer);
+  } catch (error) {
+    console.log(JSON.stringify({ compose: "upstream", ms: Date.now() - started, ...scoreboardLog(env, device), status: error instanceof APIError ? error.status ?? "network" : "answer" }));
     return json(503, { reason: "upstream" });
   }
 }
@@ -436,6 +562,117 @@ function readMeal(message: Anthropic.Message, input: MealRequest): { answer: Mea
     else dropped++;
   }
   return { answer: { foods, merged }, dropped };
+}
+
+// The compose request as the phone must send it, or null for a 400. Templates are
+// optional; each has its id, name, serving and the ingredient ids with grams.
+function readComposeRequest(body: unknown): ComposeRequest | null {
+  if (!isRecord(body)) return null;
+  const text = boundedString(body.text, 2000);
+  if (!text) return null;
+  let language: Language | null = null;
+  if (body.language !== undefined && body.language !== null) {
+    if (typeof body.language !== "string") return null;
+    language = body.language.trim().toLowerCase().startsWith("de") ? "de" : "en";
+  }
+  const rawTemplates = body.templates ?? [];
+  if (!Array.isArray(rawTemplates) || rawTemplates.length > MAX_TEMPLATES) return null;
+  const templates: ComposeTemplate[] = [];
+  for (const raw of rawTemplates) {
+    if (!isRecord(raw)) return null;
+    const id = boundedString(raw.id, 200);
+    const name = boundedString(raw.name, 200);
+    const serving = raw.serving === null || raw.serving === undefined ? null : boundedString(raw.serving, 120);
+    if (!id || !name || serving === undefined || templates.some((t) => t.id === id)) return null;
+    if (!Array.isArray(raw.ingredients) || raw.ingredients.length > MAX_INGREDIENTS) return null;
+    const ingredients: ComposeTemplate["ingredients"] = [];
+    for (const part of raw.ingredients) {
+      if (!isRecord(part)) return null;
+      const reference = boundedString(part.reference, 200);
+      const grams = part.grams;
+      if (!reference || typeof grams !== "number" || !Number.isFinite(grams) || grams <= 0 || grams > MAX_GRAMS * 10) return null;
+      ingredients.push({ reference, grams });
+    }
+    templates.push({ id, name, serving: serving || null, ingredients });
+  }
+  return { text, language, templates };
+}
+
+// Haiku's meal, held to the vocabulary and the sent templates: a food may name a
+// verified food or a template, an ingredient a verified food or a template's
+// ingredient; anything else becomes null and missing. Grams are clamped to 1 to
+// 2000, and the missing list is rebuilt from what is flagged. Dropped and
+// corrected fields are counted for the log.
+function readCompose(message: Anthropic.Message, input: ComposeRequest): { answer: ComposeAnswer; dropped: number } {
+  const parsed = readJson(message);
+  if (!Array.isArray(parsed.foods)) throw new UpstreamFailure("shape");
+  let dropped = 0;
+
+  const templateIds = new Set(input.templates.map((t) => t.id));
+  const templateParts = new Set(input.templates.flatMap((t) => t.ingredients.map((part) => part.reference)));
+  const foodReference = (id: string) => VERIFIED.has(id) || templateIds.has(id);
+  const partReference = (id: string) => VERIFIED.has(id) || templateParts.has(id);
+
+  const part = (raw: unknown, known: (id: string) => boolean): ComposedPart | null => {
+    const name = isRecord(raw) ? boundedString(raw.name, 120) : undefined;
+    if (!isRecord(raw) || !name) {
+      dropped++;
+      return null;
+    }
+    let reference = typeof raw.reference === "string" ? raw.reference.trim() : null;
+    if (reference !== null && !known(reference)) {
+      reference = null;
+      dropped++;
+    }
+    const stated = typeof raw.grams === "number" && Number.isFinite(raw.grams) ? raw.grams : MIN_GRAMS;
+    const grams = Math.round(Math.min(MAX_GRAMS, Math.max(MIN_GRAMS, stated)) * 10) / 10;
+    if (stated !== raw.grams || stated < MIN_GRAMS || stated > MAX_GRAMS) dropped++;
+    const out: ComposedPart = { name, reference, grams };
+    if (reference === null) out.missing = true;
+    return out;
+  };
+
+  const foods: ComposedFood[] = [];
+  for (const raw of parsed.foods) {
+    if (foods.length === MAX_COMPOSED) {
+      dropped++;
+      continue;
+    }
+    const role = isRecord(raw) ? COMPOSE_ROLES.find((r) => r === raw.role) : undefined;
+    const rawParts = isRecord(raw) && Array.isArray(raw.ingredients) ? raw.ingredients : [];
+    // Only a dish has parts; a side or a drink stands alone.
+    const ingredients: ComposedPart[] = [];
+    if (role === "dish") {
+      for (const rawPart of rawParts) {
+        if (ingredients.length === MAX_INGREDIENTS) {
+          dropped++;
+          continue;
+        }
+        const composed = part(rawPart, partReference);
+        if (composed) ingredients.push(composed);
+      }
+    } else if (rawParts.length) dropped++;
+    // A dish with parts is composed here, so its own reference is null and its parts
+    // say what is missing; a template used whole carries no parts.
+    const food = part(ingredients.length && isRecord(raw) ? { ...raw, reference: null } : raw, foodReference);
+    if (!food) continue;
+    if (!role) dropped++;
+    const composed: ComposedFood = { name: food.name, role: role ?? "side", reference: food.reference, grams: food.grams };
+    if (ingredients.length) composed.ingredients = ingredients;
+    else if (food.missing) composed.missing = true;
+    foods.push(composed);
+  }
+
+  const missing: string[] = [];
+  for (const food of foods) {
+    for (const item of [food, ...(food.ingredients ?? [])]) {
+      if (item.missing && !missing.includes(item.name)) missing.push(item.name);
+    }
+  }
+  let confidence = 0.5;
+  if (typeof parsed.confidence === "number" && parsed.confidence >= 0 && parsed.confidence <= 1) confidence = Math.round(parsed.confidence * 100) / 100;
+  else dropped++;
+  return { answer: { foods, missing, confidence }, dropped };
 }
 
 // A gram range with low <= estimate <= high, all positive, or null when the model
