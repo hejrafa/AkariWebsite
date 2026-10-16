@@ -7,6 +7,7 @@ Akari reads Apple Health on the iPhone and keeps what it works out there. Each m
 ## Key facts
 
 - Platform: iPhone with iOS 26 or later
+- Fitness tracker: optional; one that writes to Apple Health, such as an Apple Watch or a Fitbit Air, adds sleep, heart rate and more, and without one the user can switch off what needs it and use Akari for the iPhone's own step count and food logging
 - Data source: Apple Health
 - Languages: English and German
 - Privacy: the user's data stays private. No account is required, and health data stays on the user's iPhone; only a food report the user chooses to send reaches Akari's server, and a meal photo the user chooses to log is read by an AI service through Akari's server and not stored by Akari

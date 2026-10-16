@@ -59,7 +59,7 @@ The subscription can be tried free for 14 days, with no commitment. What is free
 
 ## Requirements
 
-An iPhone with iOS 26 or later and Apple Health. Akari is available in English and German.
+An iPhone with iOS 26 or later and Apple Health. Akari is available in English and German. A fitness tracker that writes to Apple Health, like an Apple Watch or a Fitbit Air, is optional and adds sleep, heart rate and more.
 
 ## Availability
 
@@ -81,7 +81,7 @@ Most of Akari is free. Food logging, readiness and Health Age need a subscriptio
 
 ### What do I need?
 
-An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German.
+An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German. A fitness tracker is optional: one that writes to Apple Health, like an Apple Watch or a Fitbit Air, adds sleep, heart rate and more. Without one, you can switch off what needs it and use Akari for the steps your iPhone counts and the food you log.
 
 ### Is Akari medical advice?
 
