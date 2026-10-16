@@ -1,6 +1,6 @@
 # Akari product information
 
-Last updated: 2026-10-15
+Last updated: 2026-10-16
 
 ## Summary
 
@@ -42,7 +42,7 @@ Akari also offers a Health Age, which is part of the subscription.
 - Akari needs no account.
 - Akari reads Apple Health on the iPhone and keeps the user's health data there.
 - A food report leaves the iPhone on purpose, and only when the user taps Send. A food report helps Akari correct a food it matched wrongly or could not find. It contains the rating and reasons, an optional comment, what was typed or said, the matched foods with amounts and nutrients, anything unmatched, a scanned barcode if there was one, and the app's language, region and version. It does not include a name, an account, Apple Health data or location.
-- A meal photo the user chooses to log is read by an AI service through Akari's server and not stored by Akari. The server passes the photo to Anthropic's Claude API, which returns a short description of the meal; Akari keeps nothing of the photo or the description, only daily counters that limit how many photos can be sent and expire after two days. Under Anthropic's commercial terms the photo is not used to train models. The photo carries no Apple Health data and no account. Packages and nutrition labels are still read on the iPhone, and users can turn photo meals off in the app (Profile, Photo meals).
+- A meal the user types, says or photographs is read by an AI service through Akari's server and not stored by Akari. The server passes the words, the photo if there is one, and the catalogue foods the app found as possible matches to Anthropic's Claude API, which returns what is in the meal; Akari keeps nothing of what was sent or of the answer, only daily counters that limit how many meals can be sent and expire after two days. Under Anthropic's commercial terms none of it is used to train models. A meal carries no Apple Health data and no account. Packages and nutrition labels are still read on the iPhone.
 - The website counts visits without cookies: it records the page, referring site and country, and tells visitors apart only with a one-way hash that changes daily. No IP address is stored.
 - Full details are in the privacy policy: https://joinakari.com/privacy/
 
@@ -89,7 +89,7 @@ No. Akari explains your own data and patterns. It does not diagnose or treat any
 
 ### Does my health data leave my iPhone?
 
-Your data stays private. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches Akari's server, so the team can fix the match. A meal photo you choose to log is read by an AI service through Akari's server and not stored by Akari; details: https://joinakari.com/privacy/#meal-photos
+Your data stays private. Akari needs no account and keeps your health data on your iPhone. Only a food report you choose to send reaches Akari's server, so the team can fix the match. A meal you type, say or photograph is read by an AI service through Akari's server and not stored by Akari; details: https://joinakari.com/privacy/#meal-photos
 
 ### How can I try Akari?
 
