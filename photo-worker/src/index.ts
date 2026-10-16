@@ -17,6 +17,9 @@ export interface Env {
   DEVICE_DAILY_CAP?: string;
   ADDRESS_DAILY_CAP?: string;
   GLOBAL_DAILY_CAP?: string;
+  // The scoreboard Mac's device id, a secret. Its calls skip the device and address
+  // caps so the App's readings script can run a few hundred meals in one day.
+  SCOREBOARD_DEVICE?: string;
 }
 
 const MODEL = "claude-haiku-5-5";
@@ -98,6 +101,16 @@ async function handle(request: Request, env: Env, ctx: ExecutionContext): Promis
   return endpoint === "/photo" ? photo(request, env, ctx, device) : meal(request, env, ctx, device);
 }
 
+function isScoreboard(env: Env, device: string): boolean {
+  const scoreboard = env.SCOREBOARD_DEVICE?.trim().toLowerCase();
+  return !!scoreboard && scoreboard === device;
+}
+
+// Only the scoreboard's calls say so in the log; everyone else's lines are unchanged.
+function scoreboardLog(env: Env, device: string): { scoreboard?: true } {
+  return isScoreboard(env, device) ? { scoreboard: true } : {};
+}
+
 async function photo(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
   const declared = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (declared !== "image/jpeg" && declared !== "image/png") return json(415, { reason: "type" });
@@ -136,10 +149,10 @@ async function photo(request: Request, env: Env, ctx: ExecutionContext, device: 
     });
     const answer = readAnswer(message);
     // Counts only: never the photo, the answer or the device id.
-    console.log(JSON.stringify({ photo: "ok", ms: Date.now() - started, prompt: PROMPT_VERSION, build, ...usage(message) }));
+    console.log(JSON.stringify({ photo: "ok", ms: Date.now() - started, prompt: PROMPT_VERSION, build, ...scoreboardLog(env, device), ...usage(message) }));
     return json(200, answer);
   } catch (error) {
-    console.log(JSON.stringify({ photo: "upstream", ms: Date.now() - started, status: error instanceof APIError ? error.status ?? "network" : "answer" }));
+    console.log(JSON.stringify({ photo: "upstream", ms: Date.now() - started, ...scoreboardLog(env, device), status: error instanceof APIError ? error.status ?? "network" : "answer" }));
     return json(503, { reason: "upstream" });
   }
 }
@@ -210,27 +223,33 @@ async function meal(request: Request, env: Env, ctx: ExecutionContext, device: s
         dropped,
         photo: photo !== null,
         confidence,
+        ...scoreboardLog(env, device),
         ...usage(message),
       }),
     );
     return json(200, answer);
   } catch (error) {
-    console.log(JSON.stringify({ meal: "upstream", ms: Date.now() - started, status: error instanceof APIError ? error.status ?? "network" : "answer" }));
+    console.log(JSON.stringify({ meal: "upstream", ms: Date.now() - started, ...scoreboardLog(env, device), status: error instanceof APIError ? error.status ?? "network" : "answer" }));
     return json(503, { reason: "upstream" });
   }
 }
 
 // Checks the device, address and global allowance and spends one from each, or
-// answers the 429 that says which ran out.
+// answers the 429 that says which ran out. The scoreboard device spends only the
+// global allowance.
 async function spend(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response | null> {
   const day = new Date().toISOString().slice(0, 10);
-  const address = request.headers.get("cf-connecting-ip") ?? "unknown";
-  const salt = await dailySalt(env, day);
-  const counters = [
-    { key: `device:${await hashed(salt, "device", device)}:${day}`, cap: cap(env.DEVICE_DAILY_CAP, 80), reason: "device" },
-    { key: `address:${await hashed(salt, "address", address)}:${day}`, cap: cap(env.ADDRESS_DAILY_CAP, 240), reason: "device" },
-    { key: `global:${day}`, cap: cap(env.GLOBAL_DAILY_CAP, 6000), reason: "global" },
-  ];
+  const global = { key: `global:${day}`, cap: cap(env.GLOBAL_DAILY_CAP, 6000), reason: "global" };
+  let counters = [global];
+  if (!isScoreboard(env, device)) {
+    const address = request.headers.get("cf-connecting-ip") ?? "unknown";
+    const salt = await dailySalt(env, day);
+    counters = [
+      { key: `device:${await hashed(salt, "device", device)}:${day}`, cap: cap(env.DEVICE_DAILY_CAP, 80), reason: "device" },
+      { key: `address:${await hashed(salt, "address", address)}:${day}`, cap: cap(env.ADDRESS_DAILY_CAP, 240), reason: "device" },
+      global,
+    ];
+  }
   const counts = await Promise.all(counters.map(async (c) => Number(await env.PHOTO_COUNTERS.get(c.key)) || 0));
   const hit = counters.find((c, i) => counts[i] >= c.cap);
   if (hit) return json(429, { reason: hit.reason });
