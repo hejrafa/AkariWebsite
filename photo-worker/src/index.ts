@@ -59,6 +59,38 @@ const DRINKS: DrinkEntry[] = (vocabulary as { drinks?: DrinkEntry[] }).drinks ??
 const VERIFIED = new Set([...VOCABULARY, ...DRINKS].map((entry) => entry.id));
 // Built once per isolate: the rules and the whole vocabulary, the cached prefix.
 const COMPOSE_RULES = composeRulesText(VOCABULARY, DRINKS);
+
+// A name folded for comparison: lower-case ASCII words of three letters or more,
+// without the words that say how a food is prepared or join two names.
+const STOP_WORDS = new Set(["raw", "cooked", "boiled", "fried", "fresh", "whole", "plain", "type", "regular", "nfs", "the", "and", "with", "of", "mit", "und"]);
+function nameWords(name: string): string[] {
+  return name
+    .normalize("NFKD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/ß/g, "ss")
+    .split(/[^a-z]+/)
+    .filter((word) => word.length >= 3 && !STOP_WORDS.has(word));
+}
+
+// Two word lists name the same food when they share a word, or when a word of five
+// letters or more starts the other (leeks and leek, Sojabohnen and Sojabohne).
+function namesAgree(a: string[], b: string[]): boolean {
+  const prefix = (short: string, long: string) => short.length >= 5 && long.startsWith(short);
+  return a.some((x) => b.some((y) => x === y || prefix(x, y) || prefix(y, x)));
+}
+
+// Each verified food's and whole drink's words, and whether it has a German name
+// to check a German answer against: displayNameDE, or an alias that shares no word
+// with the English names (Mandeln on Almond, not green bell pepper on Pepper, green).
+const ROW_NAMES = new Map<string, { words: string[]; german: boolean }>();
+for (const row of [...VOCABULARY, ...DRINKS]) {
+  const english = "name" in row ? [row.name] : [row.ingredient, row.displayName ?? ""];
+  const englishWords = english.flatMap(nameWords);
+  const aliases = row.searchAliases ?? [];
+  const german = Boolean(row.displayNameDE) || aliases.some((alias) => !namesAgree(nameWords(alias), englishWords));
+  ROW_NAMES.set(row.id, { words: [...englishWords, ...[row.displayNameDE ?? "", ...aliases].flatMap(nameWords)], german });
+}
 const BUDGET_MS = 20_000;
 const RETRY_DELAY_MS = 1_000;
 const DEVICE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -338,7 +370,7 @@ async function compose(request: Request, env: Env, device: string): Promise<Resp
       ],
       output_config: { format: { type: "json_schema", schema: COMPOSE_SCHEMA } },
     });
-    const { answer, dropped } = readCompose(message, input);
+    const { answer, dropped } = readCompose(message, input, language);
     // Counts only: never the meal text, the names, the ids or the device id.
     console.log(
       JSON.stringify({
@@ -604,8 +636,12 @@ function readComposeRequest(body: unknown): ComposeRequest | null {
 // verified food, a whole drink or a template, an ingredient a verified food or a
 // template's ingredient; anything else becomes null and missing. Grams are clamped
 // to 1 to 2000, and the missing list is rebuilt from what is flagged, never with a
-// composed dish's own name. Dropped and corrected fields are counted for the log.
-function readCompose(message: Anthropic.Message, input: ComposeRequest): { answer: ComposeAnswer; dropped: number } {
+// composed dish's own name. A verified food's or a whole drink's reference stands
+// only when the answer's name agrees with that row's names, so a neighbouring id
+// copied by mistake (Leek on fennel seed) becomes missing too; a German name is not
+// checked against a row with no German name. Dropped and corrected fields are
+// counted for the log.
+function readCompose(message: Anthropic.Message, input: ComposeRequest, language: Language): { answer: ComposeAnswer; dropped: number } {
   const parsed = readJson(message);
   if (!Array.isArray(parsed.foods)) throw new UpstreamFailure("shape");
   let dropped = 0;
@@ -614,6 +650,13 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest): { answe
   const templateParts = new Set(input.templates.flatMap((t) => t.ingredients.map((part) => part.reference)));
   const foodReference = (id: string) => VERIFIED.has(id) || templateIds.has(id);
   const partReference = (id: string) => VERIFIED.has(id) || templateParts.has(id);
+  // A sent template and its ingredients carry no names to compare with.
+  const namedWrongly = (name: string, id: string) => {
+    const row = ROW_NAMES.get(id);
+    if (!row || templateIds.has(id) || templateParts.has(id)) return false;
+    if (language === "de" && !row.german) return false;
+    return !namesAgree(nameWords(name), row.words);
+  };
 
   const part = (raw: unknown, known: (id: string) => boolean): ComposedPart | null => {
     const name = isRecord(raw) ? boundedString(raw.name, 120) : undefined;
@@ -622,7 +665,7 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest): { answe
       return null;
     }
     let reference = typeof raw.reference === "string" ? raw.reference.trim() : null;
-    if (reference !== null && !known(reference)) {
+    if (reference !== null && (!known(reference) || namedWrongly(name, reference))) {
       reference = null;
       dropped++;
     }

@@ -2,7 +2,7 @@
 // PROMPT_VERSION whenever a text or a schema changes; the worker returns it in the
 // X-Akari-Prompt header so the app can tell answers from different prompts apart.
 
-export const PROMPT_VERSION = "2026-10-17.1";
+export const PROMPT_VERSION = "2026-10-17.2";
 
 export type Language = "en" | "de";
 
@@ -356,6 +356,8 @@ Rules:
 - Grams are for one person. Bring a platter, a family dish or a cookbook recipe
   down to one serving. Typical amounts: a main dish 250 to 600 g, a side 50 to
   250 g, a drink 150 to 500 ml. Keep the person's own amounts when they gave any.
+  Grams are never the count of glasses, cups or pieces: a glass or a cup of a drink
+  is its millilitres, 250 when the person gives no size.
 - Never state calories or nutrients. Never add a food, a side or a drink that is
   neither in the text nor visible in the photo.
 - Packaged products are not composed. When the text names only a branded product,

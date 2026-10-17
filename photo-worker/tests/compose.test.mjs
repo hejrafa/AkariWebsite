@@ -491,3 +491,50 @@ test("a composed dish's own name never appears in missing", async () => {
   assert.equal("missing" in body.foods[0], false);
   assert.deepEqual(body.missing, ["Sushi rice", "Fries"]);
 });
+
+test("a verified reference whose row names another food becomes null and missing", async () => {
+  const answer = {
+    foods: [
+      {
+        name: "Leek and potato soup",
+        role: "dish",
+        reference: null,
+        grams: 350,
+        ingredients: [
+          // ciqual:11066 is fennel seed, the id next to the one Haiku meant.
+          { name: "Leek", reference: "ciqual:11066", grams: 80 },
+          { name: "Potato", reference: "bls:K120134", grams: 150 },
+        ],
+      },
+      // An alias names the row: edamame are the cooked soybeans.
+      { name: "Edamame", role: "side", reference: "bls:G750432", grams: 80, ingredients: [] },
+      { name: "Flat white", role: "drink", reference: "cafe:generic:flat-white-with-whole-milk", grams: 175, ingredients: [] },
+    ],
+    confidence: 0.8,
+  };
+  const { result: response, lines } = await logged(async () => (await run(compose({ text: "leek and potato soup, edamame, a flat white", language: "en" }), {}, message(answer))).response);
+  const body = await response.json();
+  assert.deepEqual(body.foods[0].ingredients[0], { name: "Leek", reference: null, grams: 80, missing: true });
+  assert.equal(body.foods[0].ingredients[1].reference, "bls:K120134");
+  assert.deepEqual(body.foods[1], { name: "Edamame", role: "side", reference: "bls:G750432", grams: 80 });
+  assert.deepEqual(body.foods[2], { name: "Flat white", role: "drink", reference: "cafe:generic:flat-white-with-whole-milk", grams: 175 });
+  assert.deepEqual(body.missing, ["Leek"]);
+  assert.equal(JSON.parse(lines.find((line) => line.includes('"compose":"ok"'))).dropped, 1);
+});
+
+test("a German name on a row with no German name keeps its reference", async () => {
+  // bls:G480100 is Onion, with no German name or alias to compare Zwiebel with.
+  const answer = { foods: [{ name: "Zwiebel", role: "side", reference: "bls:G480100", grams: 50, ingredients: [] }], confidence: 0.9 };
+  const { response } = await run(compose({ text: "eine Zwiebel", language: "de" }), {}, message(answer));
+  const body = await response.json();
+  assert.deepEqual(body.foods[0], { name: "Zwiebel", role: "side", reference: "bls:G480100", grams: 50 });
+  assert.deepEqual(body.missing, []);
+  // The same name on a row that has a German name is checked: Lauch is not fennel seed.
+  const wrong = { foods: [{ name: "Lauch", role: "side", reference: "ciqual:11066", grams: 50, ingredients: [] }], confidence: 0.9 };
+  const checked = await (await run(compose({ text: "Lauch", language: "de" }), {}, message(wrong))).response.json();
+  assert.equal(checked.foods[0].reference, null);
+});
+
+test("the rules say a glass is millilitres, not a count", () => {
+  assert.match(composeRulesText(vocabulary.entries), /Grams are never the count of glasses, cups or pieces: a glass or a cup of a drink\n  is its millilitres, 250 when the person gives no size\./);
+});
