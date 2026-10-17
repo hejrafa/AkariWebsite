@@ -538,3 +538,22 @@ test("a German name on a row with no German name keeps its reference", async () 
 test("the rules say a glass is millilitres, not a count", () => {
   assert.match(composeRulesText(vocabulary.entries), /Grams are never the count of glasses, cups or pieces: a glass or a cup of a drink\n  is its millilitres, 250 when the person gives no size\./);
 });
+
+test("a short name or a German compound keeps its reference", async () => {
+  // "Ei" has no word of three letters to compare; "Sahne" ends "Schlagsahne" and
+  // "Brot" ends "Weizenbrot", the way German compounds name a food.
+  const answer = {
+    foods: [
+      { name: "Ei", role: "side", reference: "usda:2707152", grams: 60, ingredients: [] },
+      { name: "Sahne", role: "side", reference: "bls:M173800", grams: 30, ingredients: [] },
+      { name: "Brot", role: "side", reference: "bls:B311000", grams: 60, ingredients: [] },
+      { name: "Mehl", role: "side", reference: "ciqual:11066", grams: 10, ingredients: [] },
+    ],
+    confidence: 0.9,
+  };
+  const body = await (await run(compose({ text: "Ei, Sahne, Brot und Mehl", language: "de" }), {}, message(answer))).response.json();
+  assert.equal(body.foods[0].reference, "usda:2707152");
+  assert.equal(body.foods[1].reference, "bls:M173800");
+  assert.equal(body.foods[2].reference, "bls:B311000");
+  assert.equal(body.foods[3].reference, null, "flour is not fennel seed");
+});

@@ -73,11 +73,14 @@ function nameWords(name: string): string[] {
     .filter((word) => word.length >= 3 && !STOP_WORDS.has(word));
 }
 
-// Two word lists name the same food when they share a word, or when a word of five
-// letters or more starts the other (leeks and leek, Sojabohnen and Sojabohne).
+// Two word lists name the same food when they share a word, when a word of five
+// letters or more starts the other (leeks and leek, Sojabohnen and Sojabohne), or
+// when a word of four letters or more ends the other, as German compounds do
+// (Sahne in Schlagsahne, Brot in Weizenbrot, Mehl in Weizenmehl).
 function namesAgree(a: string[], b: string[]): boolean {
   const prefix = (short: string, long: string) => short.length >= 5 && long.startsWith(short);
-  return a.some((x) => b.some((y) => x === y || prefix(x, y) || prefix(y, x)));
+  const suffix = (short: string, long: string) => short.length >= 4 && long.length > short.length && long.endsWith(short);
+  return a.some((x) => b.some((y) => x === y || prefix(x, y) || prefix(y, x) || suffix(x, y) || suffix(y, x)));
 }
 
 // Each verified food's and whole drink's words, and whether it has a German name
@@ -655,7 +658,9 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
     const row = ROW_NAMES.get(id);
     if (!row || templateIds.has(id) || templateParts.has(id)) return false;
     if (language === "de" && !row.german) return false;
-    return !namesAgree(nameWords(name), row.words);
+    // A name of only short words ("Ei", "Öl") has nothing to compare; the id stands.
+    const words = nameWords(name);
+    return words.length > 0 && !namesAgree(words, row.words);
   };
 
   const part = (raw: unknown, known: (id: string) => boolean): ComposedPart | null => {
