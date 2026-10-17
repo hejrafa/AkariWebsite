@@ -557,3 +557,17 @@ test("a short name or a German compound keeps its reference", async () => {
   assert.equal(body.foods[2].reference, "bls:B311000");
   assert.equal(body.foods[3].reference, null, "flour is not fennel seed");
 });
+
+test("a plural keeps its reference, a different food with the same first letters does not", async () => {
+  // Blueberries share their first six letters with Blueberry; chicken and chickpea share five.
+  const answer = {
+    foods: [
+      { name: "Blueberries", role: "side", reference: "bls:F304100", grams: 80, ingredients: [] },
+      { name: "Chicken", role: "side", reference: "bls:G770432", grams: 100, ingredients: [] },
+    ],
+    confidence: 0.9,
+  };
+  const body = await (await run(compose({ text: "Blueberries and chicken", language: "en" }), {}, message(answer))).response.json();
+  assert.equal(body.foods[0].reference, "bls:F304100");
+  assert.equal(body.foods[1].reference, null, "chicken is not chickpeas");
+});

@@ -80,7 +80,9 @@ function nameWords(name: string): string[] {
 function namesAgree(a: string[], b: string[]): boolean {
   const prefix = (short: string, long: string) => short.length >= 5 && long.startsWith(short);
   const suffix = (short: string, long: string) => short.length >= 4 && long.length > short.length && long.endsWith(short);
-  return a.some((x) => b.some((y) => x === y || prefix(x, y) || prefix(y, x) || suffix(x, y) || suffix(y, x)));
+  // Plurals and inflections share a stem: blueberries and blueberry, Tomaten and Tomate.
+  const stem = (x: string, y: string) => x.length >= 6 && y.length >= 6 && x.slice(0, 6) === y.slice(0, 6);
+  return a.some((x) => b.some((y) => x === y || prefix(x, y) || prefix(y, x) || suffix(x, y) || suffix(y, x) || stem(x, y)));
 }
 
 // Each verified food's and whole drink's words, and whether it has a German name
