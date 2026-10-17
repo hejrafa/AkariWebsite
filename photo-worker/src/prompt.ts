@@ -2,7 +2,7 @@
 // PROMPT_VERSION whenever a text or a schema changes; the worker returns it in the
 // X-Akari-Prompt header so the app can tell answers from different prompts apart.
 
-export const PROMPT_VERSION = "2026-10-16.6";
+export const PROMPT_VERSION = "2026-10-17.1";
 
 export type Language = "en" | "de";
 
@@ -228,6 +228,16 @@ export interface VocabularyEntry {
   searchAliases?: string[];
 }
 
+// A whole drink the app ships, such as a flat white with oat milk: one item, never
+// composed from coffee and milk.
+export interface DrinkEntry {
+  id: string;
+  name: string;
+  displayNameDE?: string;
+  searchAliases?: string[];
+  servingMilliliters?: number;
+}
+
 export interface ComposeTemplate {
   id: string;
   name: string;
@@ -257,7 +267,7 @@ export const COMPOSE_SCHEMA = {
         properties: {
           name: composePart.properties.name,
           role: { type: "string", enum: COMPOSE_ROLES },
-          reference: nullableString("A verified food's id or a sent template's id, copied exactly, or null for a composed dish or a food with no fitting id"),
+          reference: nullableString("A verified food's, a whole drink's or a sent template's id, copied exactly, or null for a composed dish or a food with no fitting id"),
           grams: composePart.properties.grams,
           ingredients: { type: "array", description: "A composed dish's parts; empty for a side, a drink or a dish answered by its reference", items: composePart },
         },
@@ -282,8 +292,24 @@ export function vocabularyLines(entries: VocabularyEntry[]): string {
   }).join("\n");
 }
 
+// One line per whole drink: id | English name | German name, then aliases and serving.
+export function drinkLines(drinks: DrinkEntry[]): string {
+  return drinks.map((drink) => {
+    const aliases = drink.searchAliases?.length ? ` | also: ${drink.searchAliases.join(", ")}` : "";
+    const serving = drink.servingMilliliters ? ` | serving: ${drink.servingMilliliters} ml` : "";
+    return `${drink.id} | ${drink.name} | ${drink.displayNameDE ?? ""}${aliases}${serving}`;
+  }).join("\n");
+}
+
 // The cached block: rules and vocabulary, identical for every language, photo or not.
-export function composeRulesText(entries: VocabularyEntry[]): string {
+// The whole drinks follow the foods when the vocabulary has any.
+export function composeRulesText(entries: VocabularyEntry[], drinks: DrinkEntry[] = []): string {
+  const wholeDrinks = drinks.length
+    ? `
+
+Whole drinks (one item each, never composed), one per line as id | English name | German name:
+${drinkLines(drinks)}`
+    : "";
   return `A person logged a meal in a food diary by typing, saying or photographing it.
 You build that meal from Akari's verified generic foods, listed below, and from the
 catalogue dishes the phone sends as templates. The meal line, the template names and
@@ -293,6 +319,19 @@ Rules:
 - Build what the text, and the photo when there is one, show: one dish per
   distinct dish, with its parts as ingredients. A side or a drink stands alone
   with its role and no ingredients.
+- A thing named as one thing is one item. If a verified food or a whole drink is
+  the named thing, answer it whole with that reference and role side or drink;
+  never compose it. Fries, roast potatoes, croissant, pretzel, pancakes, scrambled
+  eggs, lemonade, a flat white with oat milk: one item each.
+- Compose into ingredients only a dish: something made of several foods on a plate
+  or in a bun, bowl or roll, such as a burger, pizza, sandwich, wrap, bowl, salad,
+  soup, platter, curry or pasta dish. A dish named by a template keeps the
+  template's ingredients.
+- A drink with a milk or syrup named in it, such as a flat white with oat milk, is
+  that whole drink when the whole drinks list has it; the milk is not a second item.
+- When neither a whole food nor a dish fits, the food is missing: reference null,
+  its plain name, no ingredients. Never compose it from guesses: fries with no
+  fries row are missing fries, not potato and oil.
 - Answer each food once. When the text gives a count and then the kinds, such as
   2 onigiri (salmon, and tuna mayo) or 3 tacos, two beef and one fish, answer one
   dish per kind, named by its kind, such as Salmon onigiri, with its share of the
@@ -300,8 +339,8 @@ Rules:
 - A dish's ingredients are what it is made of, including the parts every version
   of it has, such as the sushi rice and nori of maki, even when the text names only
   the dish.
-- Every reference is an id copied exactly from the verified foods below, from a
-  sent template's id, or from a sent template's ingredients. A food or an
+- Every reference is an id copied exactly from the verified foods or the whole
+  drinks below, from a sent template's id, or from a sent template's ingredients. A food or an
   ingredient with no fitting id has reference null; the app then reports it as
   missing. Its name is then a plain generic food name, never a brand. Never make
   up an id or bend a near one to fit: a different food is not the food.
@@ -312,8 +351,8 @@ Rules:
   ingredients) only when the text names that dish and adds nothing to it.
   Otherwise copy the template's ingredients into the dish and adjust them to what
   the text says.
-- A dish you compose has reference null and its parts as ingredients. Its grams are
-  what the plate of it weighs.
+- A dish you compose has reference null and its parts as ingredients; it is not
+  missing, only its parts with no id are. Its grams are what the plate of it weighs.
 - Grams are for one person. Bring a platter, a family dish or a cookbook recipe
   down to one serving. Typical amounts: a main dish 250 to 600 g, a side 50 to
   250 g, a drink 150 to 500 ml. Keep the person's own amounts when they gave any.
@@ -326,7 +365,7 @@ Rules:
   left foods without an id.
 
 The verified foods, one per line as id | English name | German name:
-${vocabularyLines(entries)}`;
+${vocabularyLines(entries)}${wholeDrinks}`;
 }
 
 // The part of the system text that varies: the language, and the photo rules.

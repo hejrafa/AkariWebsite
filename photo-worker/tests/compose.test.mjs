@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { COMPOSE_SCHEMA, PROMPT_VERSION, composeContextText, composeRulesText } from "../src/prompt.ts";
+import { fetchVocabulary } from "../scripts/vocab.mjs";
+import { COMPOSE_SCHEMA, PROMPT_VERSION, composeContextText, composeRulesText, drinkLines } from "../src/prompt.ts";
 import { counterKey, device, message, run, today } from "./helpers.mjs";
 
 const vocabulary = JSON.parse(readFileSync(new URL("../src/vocabulary.json", import.meta.url), "utf8"));
@@ -380,4 +381,113 @@ test("the schema is strict all the way down", () => {
   }
   assert.deepEqual(food.properties.role.enum, ["dish", "side", "drink"]);
   assert.deepEqual(food.properties.reference.anyOf, [{ type: "string" }, { type: "null" }]);
+});
+
+// GitHub as pnpm vocab reads it: main's commit, then the file at that commit.
+function github(file) {
+  const commit = "a".repeat(40);
+  const urls = [];
+  const get = async (url) => {
+    urls.push(url);
+    if (url.startsWith("https://api.github.com/")) return new Response(commit);
+    if (url.endsWith(`/${commit}/verified-foods.json`)) return Response.json(file);
+    return new Response("not found", { status: 404 });
+  };
+  return { get, urls };
+}
+
+const flatWhite = {
+  id: "cafe:generic:flat-white-with-oat-milk",
+  name: "Flat white with oat milk",
+  displayNameDE: "Flat White mit Haferdrink",
+  searchAliases: ["oat flat white", "Hafer Flat White"],
+  servingMilliliters: 220,
+};
+
+test("the drinks section loads beside the foods and is listed after them", async () => {
+  const references = vocabulary.entries.map(({ id, ingredient }) => ({ id, ingredient }));
+  const { get, urls } = github({ policy: "test", references, drinks: [{ ...flatWhite, extra: "dropped" }] });
+  const loaded = await fetchVocabulary(get);
+  assert.equal(urls.length, 2);
+  assert.deepEqual(loaded.drinks, [flatWhite]);
+  assert.equal(loaded.entries.length, references.length);
+
+  const rules = composeRulesText(loaded.entries, loaded.drinks);
+  const heading = rules.indexOf("Whole drinks (one item each, never composed)");
+  const lastFood = rules.indexOf(loaded.entries.at(-1).id);
+  assert.ok(heading > lastFood, "the drinks come after the foods");
+  assert.ok(rules.endsWith(drinkLines(loaded.drinks)));
+  assert.match(rules, /cafe:generic:flat-white-with-oat-milk \| Flat white with oat milk \| Flat White mit Haferdrink \| also: oat flat white, Hafer Flat White \| serving: 220 ml$/);
+});
+
+test("without a drinks section nothing changes", async () => {
+  const references = vocabulary.entries.map(({ id, ingredient }) => ({ id, ingredient }));
+  const loaded = await fetchVocabulary(github({ references }).get);
+  assert.equal("drinks" in loaded, false);
+  assert.equal(composeRulesText(loaded.entries), composeRulesText(loaded.entries, []));
+  assert.doesNotMatch(composeRulesText(vocabulary.entries), /Whole drinks/);
+  // A malformed drinks section fails loudly rather than shipping a broken vocabulary.
+  await assert.rejects(fetchVocabulary(github({ references, drinks: [{ id: "flat white", name: "Flat white" }] }).get), /drink 0/);
+});
+
+test("the rules carry the one-item rule", () => {
+  const rules = composeRulesText(vocabulary.entries);
+  for (const sentence of [
+    "A thing named as one thing is one item.",
+    "never compose it. Fries, roast potatoes, croissant, pretzel, pancakes, scrambled\n  eggs, lemonade, a flat white with oat milk: one item each.",
+    "Compose into ingredients only a dish",
+    "the milk is not a second item.",
+    "fries with no\n  fries row are missing fries, not potato and oil.",
+  ]) assert.ok(rules.includes(sentence), sentence);
+});
+
+test("a whole food answered composed is passed on as the model gave it", async () => {
+  // The croissant is a verified food; the worker does not rewrite the answer.
+  const answer = {
+    foods: [
+      {
+        name: "Croissant",
+        role: "dish",
+        reference: null,
+        grams: 60,
+        ingredients: [
+          { name: "Wheat flour", reference: null, grams: 30 },
+          { name: "Butter", reference: null, grams: 20 },
+        ],
+      },
+    ],
+    confidence: 0.6,
+  };
+  const { response } = await run(compose({ text: "croissant", language: "en" }), {}, message(answer));
+  const body = await response.json();
+  assert.equal(body.foods.length, 1);
+  assert.equal(body.foods[0].reference, null);
+  assert.deepEqual(body.foods[0].ingredients.map((part) => part.name), ["Wheat flour", "Butter"]);
+  assert.deepEqual(body.missing, ["Wheat flour", "Butter"]);
+});
+
+test("a composed dish's own name never appears in missing", async () => {
+  const answer = {
+    foods: [
+      {
+        name: "Salmon nigiri",
+        role: "dish",
+        reference: null,
+        grams: 120,
+        ingredients: [
+          { name: "Salmon, raw", reference: "bls:T410100", grams: 40 },
+          { name: "salmon nigiri", reference: null, grams: 80 },
+          { name: "Sushi rice", reference: null, grams: 80 },
+        ],
+      },
+      // The same dish again as a missing side is still not missing.
+      { name: "Salmon Nigiri", role: "side", reference: null, grams: 120, ingredients: [] },
+      { name: "Fries", role: "side", reference: null, grams: 150, ingredients: [] },
+    ],
+    confidence: 0.6,
+  };
+  const { response } = await run(compose({ text: "2 salmon nigiri and fries", language: "en" }), {}, message(answer));
+  const body = await response.json();
+  assert.equal("missing" in body.foods[0], false);
+  assert.deepEqual(body.missing, ["Sushi rice", "Fries"]);
 });

@@ -8,7 +8,7 @@ The Cloudflare worker behind `api.joinakari.com/photo`, `/meal` and `/compose`. 
 
 ## Vocabulary
 
-`/compose` may answer only with ids from `src/vocabulary.json` or from the templates the phone sent. The file is generated from `verified-foods.json` on the main branch of the public [AkariFoodIndex](https://github.com/hejrafa/AkariFoodIndex) repo, which mirrors the app, and records the commit it came from. The whole list goes into the system prompt as `id | English name | German name`, cached, so it is paid for once per cache window.
+`/compose` may answer only with ids from `src/vocabulary.json` or from the templates the phone sent. The file is generated from `verified-foods.json` on the main branch of the public [AkariFoodIndex](https://github.com/hejrafa/AkariFoodIndex) repo, which mirrors the app, and records the commit it came from. The whole list goes into the system prompt as `id | English name | German name`, cached, so it is paid for once per cache window. When the file also has a `drinks` list (whole drinks such as `cafe:generic:flat-white-with-oat-milk`), those are written too and listed after the foods as one item each, never composed.
 
 ## Deploy
 

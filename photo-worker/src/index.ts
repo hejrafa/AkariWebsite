@@ -15,7 +15,7 @@ import {
   systemText,
   userText,
 } from "./prompt.ts";
-import type { ComposeTemplate, Language, MealCandidate, MealFood, VocabularyEntry } from "./prompt.ts";
+import type { ComposeTemplate, DrinkEntry, Language, MealCandidate, MealFood, VocabularyEntry } from "./prompt.ts";
 import vocabulary from "./vocabulary.json" with { type: "json" };
 
 // POST /photo: one meal photo in, three short fields out. POST /meal: the meal line,
@@ -54,9 +54,11 @@ const MAX_INGREDIENTS = 15;
 const MIN_GRAMS = 1;
 const MAX_GRAMS = 2000;
 const VOCABULARY: VocabularyEntry[] = vocabulary.entries;
-const VERIFIED = new Set(VOCABULARY.map((entry) => entry.id));
+// Whole drinks are optional: the file has them once the app publishes some.
+const DRINKS: DrinkEntry[] = (vocabulary as { drinks?: DrinkEntry[] }).drinks ?? [];
+const VERIFIED = new Set([...VOCABULARY, ...DRINKS].map((entry) => entry.id));
 // Built once per isolate: the rules and the whole vocabulary, the cached prefix.
-const COMPOSE_RULES = composeRulesText(VOCABULARY);
+const COMPOSE_RULES = composeRulesText(VOCABULARY, DRINKS);
 const BUDGET_MS = 20_000;
 const RETRY_DELAY_MS = 1_000;
 const DEVICE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -599,10 +601,10 @@ function readComposeRequest(body: unknown): ComposeRequest | null {
 }
 
 // Haiku's meal, held to the vocabulary and the sent templates: a food may name a
-// verified food or a template, an ingredient a verified food or a template's
-// ingredient; anything else becomes null and missing. Grams are clamped to 1 to
-// 2000, and the missing list is rebuilt from what is flagged. Dropped and
-// corrected fields are counted for the log.
+// verified food, a whole drink or a template, an ingredient a verified food or a
+// template's ingredient; anything else becomes null and missing. Grams are clamped
+// to 1 to 2000, and the missing list is rebuilt from what is flagged, never with a
+// composed dish's own name. Dropped and corrected fields are counted for the log.
 function readCompose(message: Anthropic.Message, input: ComposeRequest): { answer: ComposeAnswer; dropped: number } {
   const parsed = readJson(message);
   if (!Array.isArray(parsed.foods)) throw new UpstreamFailure("shape");
@@ -663,10 +665,12 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest): { answe
     foods.push(composed);
   }
 
+  // A composed dish is there, not missing, even when a part or another food repeats its name.
+  const dishes = new Set(foods.filter((food) => food.ingredients).map((food) => food.name.toLowerCase()));
   const missing: string[] = [];
   for (const food of foods) {
     for (const item of [food, ...(food.ingredients ?? [])]) {
-      if (item.missing && !missing.includes(item.name)) missing.push(item.name);
+      if (item.missing && !missing.includes(item.name) && !dishes.has(item.name.toLowerCase())) missing.push(item.name);
     }
   }
   let confidence = 0.5;
