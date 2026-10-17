@@ -123,7 +123,7 @@ test("the body sent to Anthropic caches the rules and vocabulary and keeps the l
   assert.equal(body.model, "claude-haiku-5-5");
   assert.deepEqual(body.thinking, { type: "disabled" });
   const [rules, context] = body.system;
-  assert.deepEqual(rules, { type: "text", text: composeRulesText(vocabulary.entries), cache_control: { type: "ephemeral" } });
+  assert.deepEqual(rules, { type: "text", text: composeRulesText(vocabulary.entries, vocabulary.drinks ?? []), cache_control: { type: "ephemeral" } });
   assert.deepEqual(context, { type: "text", text: composeContextText("de", false) });
   assert.match(context.text, /German/);
   assert.equal(body.system.length, 2);
