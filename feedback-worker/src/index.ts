@@ -109,11 +109,6 @@ export default {
       return createFeedback(request, env);
     }
 
-    if (request.method === "POST" && url.pathname === "/v1/missing-food") {
-      if (!isConfiguredAPIHost && !isWorkersDev && !isLocal) return notFound();
-      return countMissingFoods(request, env);
-    }
-
     if (request.method === "POST" && url.pathname === "/v1/visit") {
       if (!isConfiguredAPIHost && !isWorkersDev && !isLocal) return notFound();
       return recordVisit(request, env, isLocal);
@@ -147,12 +142,6 @@ export default {
       }
       if (request.method === "POST" && url.pathname === "/admin-api/testflight/refresh") {
         return refreshTestFlightNow(env);
-      }
-      if (request.method === "GET" && url.pathname === "/admin-api/missing-foods") {
-        return listMissingFoods(env);
-      }
-      if (request.method === "POST" && url.pathname === "/admin-api/missing-foods/resolve") {
-        return resolveMissingFood(request, env);
       }
       const match = url.pathname.match(/^\/admin-api\/reports\/([^/]+)$/);
       if (request.method === "PATCH" && match) {
@@ -194,12 +183,8 @@ export default {
     return notFound();
   },
 
-  // Daily at 06:00 UTC (wrangler.jsonc): today's TestFlight numbers, and the
-  // missing-food rate rows that no longer count.
+  // Daily at 06:00 UTC (wrangler.jsonc): today's TestFlight numbers.
   async scheduled(_controller: ScheduledController, env: Env, context: ExecutionContext): Promise<void> {
-    context.waitUntil(purgeMissingFoodPosts(env).catch(
-      (error: unknown) => console.error("Missing-food purge failed:", error instanceof Error ? error.message : "unknown error"),
-    ));
     context.waitUntil(refreshTestFlight(env).then(
       (result) => { if (result.status === "key_missing") console.log("TestFlight refresh skipped: no App Store Connect key"); },
       (error: unknown) => console.error("TestFlight refresh failed:", error instanceof Error ? error.message : "unknown error"),
@@ -481,114 +466,6 @@ async function updateReport(request: Request, env: Env, id: string): Promise<Res
   const result = await statement.run();
   if (result.meta.changes === 0) return notFound();
   return json({ updated: true });
-}
-
-// Food names the app could not match to one of Akari's verified foods, such as
-// the missing list /compose answers. Only the folded name, its language, a count
-// and when it was first and last seen are kept; the device id is only hashed for
-// the rate limit, the same hash and the same 50 a day as food reports.
-const missingFoodLanguages = new Set(["en", "de"]);
-const maxMissingNames = 20;
-const maxMissingNameLength = 60;
-const missingPostsPerDay = 50;
-
-interface MissingFoodRow {
-  name: string;
-  language: string;
-  count: number;
-  first_seen: string;
-  last_seen: string;
-  resolved: number;
-}
-
-async function countMissingFoods(request: Request, env: Env): Promise<Response> {
-  const device = request.headers.get("x-akari-device")?.trim() ?? "";
-  if (device.length < 16 || device.length > 100) return json({ error: "invalid_device" }, 400);
-  const contentLength = Number(request.headers.get("content-length") ?? "0");
-  if (contentLength > 8_000) return json({ error: "payload_too_large" }, 413);
-
-  let input: unknown;
-  try {
-    input = await request.json();
-  } catch {
-    return json({ error: "invalid_json" }, 400);
-  }
-  if (!isRecord(input) || typeof input.language !== "string" || !missingFoodLanguages.has(input.language)) {
-    return json({ error: "invalid_missing_food" }, 400);
-  }
-  const language = input.language;
-  if (!Array.isArray(input.names) || input.names.length === 0 || input.names.length > maxMissingNames
-      || input.names.some((name) => typeof name !== "string" || name.length > maxMissingNameLength)) {
-    return json({ error: "invalid_missing_food" }, 400);
-  }
-  const names = [...new Set((input.names as string[]).map(foldFoodName).filter((name) => name.length > 0))];
-  if (!names.length) return json({ error: "invalid_missing_food" }, 400);
-
-  const installationHash = await sha256(device);
-  const now = new Date();
-  const since = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-  const recent = await env.DB.prepare(
-    "SELECT COUNT(*) AS count FROM missing_food_posts WHERE installation_hash = ? AND created_at >= ?"
-  ).bind(installationHash, since).first<{ count: number }>();
-  if ((recent?.count ?? 0) >= missingPostsPerDay) return json({ error: "rate_limited" }, 429);
-
-  const seen = now.toISOString();
-  await env.DB.batch([
-    env.DB.prepare("INSERT INTO missing_food_posts (installation_hash, created_at) VALUES (?, ?)").bind(installationHash, seen),
-    ...names.map((name) => env.DB.prepare(`
-      INSERT INTO missing_foods (name, language, count, first_seen, last_seen) VALUES (?, ?, 1, ?, ?)
-      ON CONFLICT (name, language) DO UPDATE SET count = count + 1, last_seen = excluded.last_seen
-    `).bind(name, language, seen, seen)),
-  ]);
-  return json({ counted: names.length });
-}
-
-// Lower case, trimmed, inner whitespace collapsed; accents and umlauts stay, so
-// "Käse" and "Kase" are different names.
-function foldFoodName(name: string): string {
-  return name.normalize("NFC").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
-}
-
-async function listMissingFoods(env: Env): Promise<Response> {
-  const result = await env.DB.prepare(`
-    SELECT name, language, count, first_seen, last_seen, resolved
-    FROM missing_foods
-    ORDER BY count DESC, last_seen DESC
-    LIMIT 500
-  `).all<MissingFoodRow>();
-  return json({
-    foods: (result.results ?? []).map((row) => ({
-      name: row.name,
-      language: row.language,
-      count: row.count,
-      firstSeen: row.first_seen,
-      lastSeen: row.last_seen,
-      resolved: row.resolved === 1,
-    })),
-  });
-}
-
-async function resolveMissingFood(request: Request, env: Env): Promise<Response> {
-  let input: unknown;
-  try {
-    input = await request.json();
-  } catch {
-    return json({ error: "invalid_json" }, 400);
-  }
-  if (!isRecord(input) || typeof input.name !== "string" || typeof input.language !== "string"
-      || typeof input.resolved !== "boolean") {
-    return json({ error: "invalid_update" }, 400);
-  }
-  const result = await env.DB.prepare("UPDATE missing_foods SET resolved = ? WHERE name = ? AND language = ?")
-    .bind(input.resolved ? 1 : 0, input.name, input.language)
-    .run();
-  if (result.meta.changes === 0) return notFound();
-  return json({ updated: true });
-}
-
-async function purgeMissingFoodPosts(env: Env): Promise<void> {
-  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  await env.DB.prepare("DELETE FROM missing_food_posts WHERE created_at < ?").bind(since).run();
 }
 
 // Website visits are counted without cookies or anything stored in the
