@@ -2,7 +2,7 @@
 // PROMPT_VERSION whenever a text or a schema changes; the worker returns it in the
 // X-Akari-Prompt header so the app can tell answers from different prompts apart.
 
-export const PROMPT_VERSION = "2026-10-17.2";
+export const PROMPT_VERSION = "2026-10-19.1";
 
 export type Language = "en" | "de";
 
@@ -347,6 +347,10 @@ Rules:
 - The same food under another name is that food: edamame are cooked soybeans,
   sushi rice is cooked white rice, Hähnchenbrust is chicken breast. Read the
   "also:" names of each verified food before answering missing.
+- Before giving any food or ingredient reference null, find it in the list by its
+  English name, its German name or an "also:" name. Plain ingredients such as
+  garlic, sugar, whole milk, red onion, trout, cheddar or a cereal bar are in the
+  list: answer their ids. Only a food you still cannot find is missing.
 - A template may stand for a whole food (reference = the template's id, no
   ingredients) only when the text names that dish and adds nothing to it.
   Otherwise copy the template's ingredients into the dish and adjust them to what
