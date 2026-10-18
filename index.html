@@ -238,7 +238,7 @@
       })();
     </script>
     <link rel="stylesheet" href="styles.css?v=20261016-02" />
-    <script src="script.js?v=20261016-02" defer></script>
+    <script src="script.js?v=20261018-01" defer></script>
     <script src="visit.js?v=20261010-01" defer></script>
   </head>
   <body>
@@ -490,14 +490,14 @@
       </section>
     </main>
     <script>
-      // The app's pieces come per theme, language and light/dark rendering, and the stickers and icons per
-      // theme, as 2x and 3x WebP with the theme's die-cut edge baked in (tools/bake_die_cuts.py). Choose the
+      // The app's pieces come per theme, language and light/dark rendering, the icons per theme and
+      // light/dark, and the stickers per theme, as 2x and 3x WebP with the theme's die-cut edge baked in (tools/bake_die_cuts.py). Choose the
       // right files before the browser starts loading, so nobody downloads a variant they will not see.
       // script.js keeps them in step with the theme, mode and language switches (cutImageBase there).
       // A sticker is baked at several widths; each takes the one nearest the width its box is shown at.
       (() => {
         const { theme, language, mode } = document.documentElement.dataset;
-        const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
+        const iconMode = mode === "dark" ? "dark" : "light";
         const stickerWidths = [56, 72, 92, 120, 160];
         const nearest = (width) => stickerWidths.reduce((best, size) => (Math.abs(Math.log(width / size)) < Math.abs(Math.log(width / best)) ? size : best));
         const base = (image, boxWidth) => {

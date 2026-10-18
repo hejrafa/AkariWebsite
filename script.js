@@ -686,14 +686,15 @@ function nearestStickerWidth(boxWidth) {
 }
 
 // Where an image's files are, without the @2x/@3x.webp. The app's pieces are per theme, language and
-// mode; the icons and stickers per theme, since the die-cut edge baked into them (tools/bake_die_cuts.py)
-// takes the theme's cream. The same rules choose the first files in index.html, before this script loads.
+// mode; the icons per theme and mode; the stickers per theme. The die-cut edge baked into them
+// (tools/bake_die_cuts.py) takes the theme's cream. The same rules choose the first files in index.html,
+// before this script loads.
 function cutImageBase(image, stickerWidth) {
   const { theme, language, mode } = root.dataset;
   const cut = image.classList.contains("cut__image") ? "-cut" : "";
   if (image.dataset.piece) return `assets/welcome/${theme}/${language}/${mode}/${image.dataset.piece}${cut}`;
   if ("themeIcon" in image.dataset) {
-    const iconMode = theme === "plain" && mode === "dark" ? "dark" : "light";
+    const iconMode = mode === "dark" ? "dark" : "light";
     return `assets/welcome/${theme}/app-icon-${iconMode}-cut`;
   }
   if ("themeHealth" in image.dataset) return `assets/welcome/${theme}/apple-health-cut`;

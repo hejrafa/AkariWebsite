@@ -9,7 +9,7 @@ Writes into assets/icons/:
 - icon-maskable-512.png: an opaque square whose mark stays inside the central 80 % circle;
 and assets/social.png, the 1200x630 sharing card: the icon and the plain wordmark on black.
 
-Each size is rendered by Icon Composer's ictool from the app's AppIconPlain.icon, Dark rendition, exactly
+Each size is rendered by Icon Composer's ictool from the app's AppIcon.icon, Dark rendition, exactly
 as the app's Scripts/export_welcome_assets.sh renders icons, then matched to sRGB with sips. The card is
 drawn by headless Chrome from the icon and the wordmark in assets/logo/akari-logo-plain-dark.svg.
 
@@ -121,7 +121,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--app", type=Path, default=ROOT.parent / "App", help="the app repository (default: ../App)")
     args = parser.parse_args()
-    document = args.app / "Akari" / "AppIconPlain.icon"
+    document = args.app / "Akari" / "AppIcon.icon"
     if not document.exists():
         print(f"No {document}", file=sys.stderr)
         return 1
