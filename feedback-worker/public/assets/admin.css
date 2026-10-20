@@ -97,7 +97,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   background: var(--band);
   color: var(--band-ink);
 }
-.brand, .login-brand { position: relative; z-index: 2; display: block; grid-column: 2; grid-row: 1; width: 89px; height: 50px; justify-self: center; }
+.brand, .login-brand { position: relative; z-index: 2; display: block; grid-column: 2; grid-row: 1; width: 112px; height: 63px; justify-self: center; }
 .brand img, .login-brand img { display: block; width: 100%; height: 100%; }
 .brand:focus-visible, .login-brand:focus-visible { outline: 3px solid var(--band-ink); outline-offset: 4px; border-radius: 8px; }
 
@@ -1088,7 +1088,7 @@ h1 {
   .site-header .language-switch, .login-header .language-switch { margin-left: 12px; }
   .admin-nav { gap: 6px; margin-right: 12px; }
   .admin-tabs { gap: 5px; }
-  .brand, .login-brand { width: 64px; height: auto; }
+  .brand, .login-brand { width: 80px; height: auto; }
   .admin-nav-item { width: 36px; height: 36px; }
   .admin-nav-icon { width: 15px; height: 15px; }
   .admin-logout { width: 36px; height: 36px; }
