@@ -7,3 +7,5 @@ assets/welcome/stickers/*/
 assets/stickers/*/
 # Written by tools/export_logos.py for local preview; the deploy zips its own.
 brand/akari-brand.zip
+# Written by tools/language_pages.py build; the deploy makes its own, and the local server makes them as asked.
+/de/

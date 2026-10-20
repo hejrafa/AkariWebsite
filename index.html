@@ -13,18 +13,7 @@
     <meta name="author" content="Akari" />
     <meta name="application-name" content="Akari" />
     <meta name="apple-mobile-web-app-title" content="Akari" />
-    <script>
-      // The canonical URL follows the address: ?lang=de is the German page, anything else the English one.
-      // Both are this one file, so a canonical written into the HTML would point the German address at the
-      // English page for crawlers that read only the HTML, against the hreflang pair below. Written here
-      // instead, it is right either way; the language switch keeps it in step (script.js).
-      (() => {
-        const link = document.createElement("link");
-        link.rel = "canonical";
-        link.href = new URLSearchParams(window.location.search).get("lang") === "de" ? "https://joinakari.com/?lang=de" : "https://joinakari.com/";
-        document.head.append(link);
-      })();
-    </script>
+    <link rel="canonical" href="https://joinakari.com/" />
 
     <meta property="og:title" content="Akari: Your whole day in one place" />
     <meta
@@ -53,13 +42,13 @@
 
     <title>Akari: Understand your health data</title>
     <link rel="alternate" hreflang="en" href="https://joinakari.com/" />
-    <link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
+    <link rel="alternate" hreflang="de" href="https://joinakari.com/de/" />
     <link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
-    <link rel="icon" href="assets/favicon.svg?v=2" type="image/svg+xml" />
-    <link rel="icon" href="assets/icons/icon-48.png?v=2" sizes="48x48" type="image/png" />
-    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon-180.png?v=2" />
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="preload" href="assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/assets/favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="icon" href="/assets/icons/icon-48.png?v=2" sizes="48x48" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-180.png?v=2" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preload" href="/assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin />
     <script id="structured-data" type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -212,34 +201,47 @@
           }, 4000);
         }
 
+        // Each language has its own address (tools/language_pages.py), so the page's <html lang> is its
+        // language. An old ?lang= link, and a visitor who reads German (by choice, or by the browser's
+        // language) arriving at an English address, go on to the page's other address, its hreflang link.
+        const pageLanguage = document.documentElement.lang === "de" ? "de" : "en";
+        const requestedLanguage = params.get("lang");
+        let savedLanguage = null;
+        try {
+          savedLanguage = localStorage.getItem("akari-language");
+        } catch (error) {}
+        const systemLanguage = (navigator.languages?.[0] || navigator.language || "en").split("-")[0].toLowerCase();
+        const preferredLanguage = [savedLanguage, systemLanguage].find((language) => languages.includes(language)) || "en";
+        const language = languages.includes(requestedLanguage)
+          ? requestedLanguage
+          : pageLanguage === "en" ? preferredLanguage : pageLanguage;
+        const address = new URL(window.location.href);
+        address.searchParams.delete("lang");
+        const otherPage = document.querySelector(`link[rel="alternate"][hreflang="${language}"]`);
+        if (language !== pageLanguage && otherPage) {
+          address.pathname = new URL(otherPage.href).pathname;
+          window.location.replace(address);
+        } else if (requestedLanguage !== null) {
+          window.history.replaceState(null, "", address);
+        }
+        document.documentElement.dataset.language = pageLanguage;
+
         try {
           const savedTheme = localStorage.getItem("akari-theme");
           const savedMode = localStorage.getItem("akari-mode");
-          const savedLanguage = localStorage.getItem("akari-language");
           const theme = params.get("theme") || savedTheme || "forest";
           const mode = params.get("mode") || savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-          const requestedLanguage = params.get("lang");
-          const systemLanguage = (navigator.languages?.[0] || navigator.language || "en").split("-")[0].toLowerCase();
-          const language = languages.includes(requestedLanguage)
-            ? requestedLanguage
-            : languages.includes(savedLanguage)
-              ? savedLanguage
-              : languages.includes(systemLanguage) ? systemLanguage : "en";
           document.documentElement.dataset.theme = themes.includes(theme) ? theme : "forest";
           document.documentElement.dataset.mode = modes.includes(mode) ? mode : "dark";
-          document.documentElement.dataset.language = languages.includes(language) ? language : "en";
-          document.documentElement.lang = document.documentElement.dataset.language;
         } catch (error) {
           document.documentElement.dataset.theme = "forest";
           document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-          document.documentElement.dataset.language = navigator.language?.toLowerCase().startsWith("de") ? "de" : "en";
-          document.documentElement.lang = document.documentElement.dataset.language;
         }
       })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=20261020-01" />
-    <script src="script.js?v=20261020-03" defer></script>
-    <script src="visit.js?v=20261010-01" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=20261020-02" />
+    <script src="/script.js?v=20261020-05" defer></script>
+    <script src="/visit.js?v=20261010-01" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main" data-i18n="skipLink">Skip to content</a>
@@ -274,8 +276,8 @@
           </div>
         </div>
 
-        <a class="brand" href="./" aria-label="Akari home" data-i18n-aria-label="homeLabel">
-          <img src="assets/logo/akari-logo-forest-dark.svg?v=3" alt="Akari" width="89" height="50" />
+        <a class="brand" href="/" aria-label="Akari home" data-i18n-aria-label="homeLabel">
+          <img src="/assets/logo/akari-logo-forest-dark.svg?v=3" alt="Akari" width="89" height="50" />
         </a>
         <button class="mobile-menu-toggle" type="button" aria-controls="header-controls-panel" aria-expanded="false" aria-label="Language and appearance settings" data-i18n-aria-label="mobileMenuLabel">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -502,15 +504,15 @@
         const nearest = (width) => stickerWidths.reduce((best, size) => (Math.abs(Math.log(width / size)) < Math.abs(Math.log(width / best)) ? size : best));
         const base = (image, boxWidth) => {
           const cut = image.classList.contains("cut__image") ? "-cut" : "";
-          if (image.dataset.piece) return `assets/welcome/${theme}/${language}/${mode}/${image.dataset.piece}${cut}`;
-          if ("themeIcon" in image.dataset) return `assets/welcome/${theme}/app-icon-${iconMode}-cut`;
-          if ("themeHealth" in image.dataset) return `assets/welcome/${theme}/apple-health-cut`;
+          if (image.dataset.piece) return `/assets/welcome/${theme}/${language}/${mode}/${image.dataset.piece}${cut}`;
+          if ("themeIcon" in image.dataset) return `/assets/welcome/${theme}/app-icon-${iconMode}-cut`;
+          if ("themeHealth" in image.dataset) return `/assets/welcome/${theme}/apple-health-cut`;
           const width = nearest(boxWidth || 80);
           image.parentElement.style.setProperty("--w", width);
           image.parentElement.style.setProperty("--h", width);
           const sticker = image.dataset.sticker.split("/");
           const name = sticker.pop();
-          return `assets/${sticker.join("/")}/${theme}/${name}-${width}`;
+          return `/assets/${sticker.join("/")}/${theme}/${name}-${width}`;
         };
         const images = [...document.querySelectorAll("img[data-piece], img[data-theme-icon], img[data-theme-health], img[data-sticker]")];
         // Read every box's width before changing anything, so the page is laid out once.
@@ -536,7 +538,7 @@
       <div class="site-footer__inner">
         <div class="footer-brand">
           <a class="footer-logo" href="#top" aria-label="Akari home" data-i18n-aria-label="homeLabel">
-            <img src="assets/logo/akari-logo-forest-dark.svg?v=3" alt="Akari" width="89" height="50" loading="lazy" />
+            <img src="/assets/logo/akari-logo-forest-dark.svg?v=3" alt="Akari" width="89" height="50" loading="lazy" />
           </a>
           <p class="footer-made"><span data-i18n="madePrefix">Made with </span><span class="credits-heart" role="img" aria-label="love" data-i18n-aria-label="heartLabel">♥</span><span data-i18n="madeSuffix"> in Germany</span></p>
           <p class="footer-copyright">© 2026 Akari</p>

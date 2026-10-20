@@ -4,7 +4,7 @@
   "short_name": "Akari",
   "description": "Eine private iPhone-App, die Schlaf, Bewegung und Essen zusammenbringt und in einfachen Worten erklärt.",
   "lang": "de",
-  "start_url": "/?lang=de",
+  "start_url": "/de/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0c271c",

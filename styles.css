@@ -172,8 +172,8 @@ main:focus {
   display: block;
   grid-column: 2;
   grid-row: 1;
-  width: 89px;
-  height: 50px;
+  width: 112px;
+  height: 63px;
   justify-self: center;
 }
 
@@ -762,7 +762,7 @@ main:focus {
     grid-column: 2;
     grid-row: 1;
     justify-self: center;
-    width: 76px;
+    width: 92px;
     height: auto;
   }
 

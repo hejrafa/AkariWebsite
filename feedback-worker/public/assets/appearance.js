@@ -38,13 +38,14 @@
     const appearance = selectedAppearance();
     url.searchParams.set("theme", appearance.theme);
     url.searchParams.set("mode", appearance.mode);
-    url.searchParams.set("lang", appearance.language);
     return url;
   }
 
+  // The website gives each language its own address, so the German landing page is /de/.
   function landingURL() {
     const local = location.hostname === "127.0.0.1" || location.hostname === "localhost";
-    return withAppearance(new URL(local ? "http://127.0.0.1:8080/" : "https://joinakari.com/")).href;
+    const path = selectedAppearance().language === "de" ? "/de/" : "/";
+    return withAppearance(new URL(path, local ? "http://127.0.0.1:8080/" : "https://joinakari.com/")).href;
   }
 
   function syncPageChrome() {
@@ -66,12 +67,14 @@
     const theme = themes.includes(requestedTheme) ? requestedTheme : stored("akari-theme");
     const mode = modes.includes(requestedMode) ? requestedMode : stored("akari-mode");
     const language = languages.includes(requestedLanguage) ? requestedLanguage : stored("akari-language");
+    // Without a saved choice, the browser's language decides, as on the website.
+    const systemLanguage = (navigator.languages?.[0] || navigator.language || "en").split("-")[0].toLowerCase();
 
     root.dataset.theme = themes.includes(theme) ? theme : "forest";
     root.dataset.mode = modes.includes(mode)
       ? mode
       : matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    root.dataset.language = languages.includes(language) ? language : "en";
+    root.dataset.language = languages.includes(language) ? language : languages.includes(systemLanguage) ? systemLanguage : "en";
     root.lang = root.dataset.language;
 
     if (themes.includes(requestedTheme)) persist("akari-theme", root.dataset.theme);
