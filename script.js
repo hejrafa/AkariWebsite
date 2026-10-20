@@ -777,17 +777,12 @@ function updateThemeColor() {
     logo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-dark.svg?v=3`, siteRoot).href;
   });
   updateAllImageSources();
-  if (adminLink) {
-    const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
-    const adminURL = new URL(localPreview
-      ? "http://127.0.0.1:8791/login"
-      : "https://admin.joinakari.com/login");
-    adminURL.searchParams.set("theme", root.dataset.theme);
-    adminURL.searchParams.set("mode", root.dataset.mode);
-    adminURL.searchParams.set("lang", root.dataset.language);
-    adminLink.href = adminURL.href;
-  }
+}
 
+// The admin site reads the theme, mode and language from the cookies this page saves (persistSitePreference),
+// so its link carries none. Locally the dashboard runs on port 8791 of the same host, where those cookies apply.
+if (adminLink && ["127.0.0.1", "localhost"].includes(window.location.hostname)) {
+  adminLink.href = `http://${window.location.hostname}:8791/login`;
 }
 
 // The mobile menu names the current theme next to its appearance label, from the dot's translated label.

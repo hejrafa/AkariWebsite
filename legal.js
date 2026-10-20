@@ -569,14 +569,12 @@ function updateAppearance() {
   modeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.modeTarget === mode)));
   brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-dark.svg?v=3`; });
   updateStickers();
-  if (adminLink) {
-    const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
-    const adminURL = new URL(localPreview ? "http://127.0.0.1:8791/login" : "https://admin.joinakari.com/login");
-    adminURL.searchParams.set("theme", theme);
-    adminURL.searchParams.set("mode", mode);
-    adminURL.searchParams.set("lang", root.dataset.language || "en");
-    adminLink.href = adminURL.href;
-  }
+}
+
+// The admin site reads the theme, mode and language from the cookies this page saves (persistSitePreference),
+// so its link carries none. Locally the dashboard runs on port 8791 of the same host, where those cookies apply.
+if (adminLink && ["127.0.0.1", "localhost"].includes(window.location.hostname)) {
+  adminLink.href = `http://${window.location.hostname}:8791/login`;
 }
 
 function selectLanguage(language, persist = true, updateUrl = true) {
