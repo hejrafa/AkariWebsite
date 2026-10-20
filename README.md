@@ -12,6 +12,7 @@
 <p align="center">
   <a href="https://joinakari.com/">joinakari.com</a> ·
   <a href="https://testflight.apple.com/join/wrv4aFVQ">Join the free beta</a> ·
+  <a href="https://joinakari.com/brand/">Brand kit</a> ·
   <a href="https://joinakari.com/?lang=de">Auf Deutsch</a>
 </p>
 
@@ -36,6 +37,10 @@ Akari is in a free public beta on [TestFlight](https://testflight.apple.com/join
 You'll need an iPhone with iOS 26 or later. A fitness tracker that writes to Apple Health, like an Apple Watch, adds sleep and heart rate, but it's optional: without one, Akari still works with your iPhone's steps and the food you log. Akari speaks English and German.
 
 Akari explains your own data and patterns. It isn't medical advice, so please talk to your doctor about health concerns.
+
+## Writing about Akari?
+
+The [brand page](https://joinakari.com/brand/) has our logos, the mark, the app icons and colours for every theme, ready to download.
 
 ## Made by two people
 
