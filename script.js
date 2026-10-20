@@ -48,6 +48,9 @@ const goalStickers = {
   Lose: "stickers/goal-lose",
 };
 const siteRoot = new URL(".", document.currentScript?.src || window.location.href);
+// Each page's address in English and German. tools/language_pages.py makes the German pages from the English
+// ones, and legal.js keeps the same table.
+const languagePaths = { "/": "/de/", "/privacy/": "/de/datenschutz/", "/terms/": "/de/nutzungsbedingungen/", "/brand/": "/de/marke/" };
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 let followsSystemMode = false;
 
@@ -374,7 +377,7 @@ const pageMetadata = {
 function structuredDataFor(language) {
   const isGerman = language === "de";
   const copy = translations[language];
-  const url = isGerman ? "https://joinakari.com/?lang=de" : "https://joinakari.com/";
+  const url = `https://joinakari.com${pathFor("/", language)}`;
   const piece = (name) => `https://joinakari.com/assets/welcome/forest/${language}/light/${name}@3x.webp`;
   const faq = [
     ["faqWhatQuestion", copy.faqWhatAnswer],
@@ -483,7 +486,7 @@ function setMetaContent(selector, content) {
 
 function updatePageMetadata(language) {
   const metadata = pageMetadata[language];
-  const canonicalUrl = language === "de" ? "https://joinakari.com/?lang=de" : "https://joinakari.com/";
+  const canonicalUrl = `https://joinakari.com${pathFor("/", language)}`;
   document.title = metadata.title;
   setMetaContent('meta[name="description"]', metadata.description);
   setMetaContent('meta[property="og:title"]', metadata.socialTitle);
@@ -500,17 +503,34 @@ function updatePageMetadata(language) {
   if (canonical) canonical.href = canonicalUrl;
 
   const manifest = document.querySelector('link[rel="manifest"]');
-  if (manifest) manifest.href = language === "de" ? "manifest-de.webmanifest" : "manifest.webmanifest";
+  if (manifest) manifest.href = language === "de" ? "/manifest-de.webmanifest" : "/manifest.webmanifest";
 
   const structuredData = document.querySelector("#structured-data");
   if (structuredData) structuredData.textContent = JSON.stringify(structuredDataFor(language));
 }
 
+// A page's address in a language; any other address is returned as it is.
+function pathFor(path, language) {
+  const englishPath = Object.keys(languagePaths).find((english) => english === path || languagePaths[english] === path);
+  if (!englishPath) return path;
+  return language === "de" ? languagePaths[englishPath] : englishPath;
+}
+
 function updateLanguageUrl(language) {
   const url = new URL(window.location.href);
-  if (language === "de") url.searchParams.set("lang", "de");
-  else url.searchParams.delete("lang");
+  url.pathname = pathFor(url.pathname, language);
+  url.searchParams.delete("lang");
   window.history.replaceState({}, "", url);
+}
+
+function updateInternalLinks(language) {
+  document.querySelectorAll('a[href^="/"]').forEach((link) => {
+    const url = new URL(link.getAttribute("href"), window.location.origin);
+    const path = pathFor(url.pathname, language);
+    if (path === url.pathname) return;
+    url.pathname = path;
+    link.setAttribute("href", `${url.pathname}${url.search}${url.hash}`);
+  });
 }
 
 function selectLanguage(language, persist = true, updateUrl = true, updateAppearance = true) {
@@ -534,12 +554,7 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
     button.setAttribute("aria-pressed", String(button.dataset.languageTarget === language));
   });
   updateThemeName();
-  document.querySelectorAll('.footer-sitemap a[href^="/privacy/"], .footer-sitemap a[href^="/terms/"], .footer-sitemap a[href^="/brand/"], .privacy__link').forEach((link) => {
-    const url = new URL(link.getAttribute("href"), window.location.origin);
-    if (language === "de") url.searchParams.set("lang", "de");
-    else url.searchParams.delete("lang");
-    link.href = `${url.pathname}${url.search}`;
-  });
+  updateInternalLinks(language);
 
   if (persist) {
     persistSitePreference("akari-language", language);

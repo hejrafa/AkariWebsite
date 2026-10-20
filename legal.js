@@ -10,6 +10,9 @@ const adminLink = document.querySelector(".footer-admin-link");
 const themeColor = document.querySelector('meta[name="theme-color"]');
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 const playfulEmojis = document.querySelectorAll(".legal-headline-emoji");
+// Each page's address in English and German. tools/language_pages.py makes the German pages from the English
+// ones, and script.js keeps the same table.
+const languagePaths = { "/": "/de/", "/privacy/": "/de/datenschutz/", "/terms/": "/de/nutzungsbedingungen/", "/brand/": "/de/marke/" };
 
 const commonTranslations = {
   en: {
@@ -492,19 +495,27 @@ function persistSitePreference(name, value) {
   } catch (error) {}
 }
 
+// A page's address in a language; any other address is returned as it is.
+function pathFor(path, language) {
+  const englishPath = Object.keys(languagePaths).find((english) => english === path || languagePaths[english] === path);
+  if (!englishPath) return path;
+  return language === "de" ? languagePaths[englishPath] : englishPath;
+}
+
 function updateLanguageUrl(language) {
   const url = new URL(window.location.href);
-  if (language === "de") url.searchParams.set("lang", "de");
-  else url.searchParams.delete("lang");
+  url.pathname = pathFor(url.pathname, language);
+  url.searchParams.delete("lang");
   window.history.replaceState({}, "", url);
 }
 
 function updateInternalLinks(language) {
-  document.querySelectorAll('.footer-sitemap a[href^="/"], .footer-logo, .legal-brand, a[href^="/privacy/"], a[href^="/terms/"], a[href="/brand/"]').forEach((link) => {
+  document.querySelectorAll('a[href^="/"]').forEach((link) => {
     const url = new URL(link.getAttribute("href"), window.location.origin);
-    if (language === "de") url.searchParams.set("lang", "de");
-    else url.searchParams.delete("lang");
-    link.href = `${url.pathname}${url.search}${url.hash}`;
+    const path = pathFor(url.pathname, language);
+    if (path === url.pathname) return;
+    url.pathname = path;
+    link.setAttribute("href", `${url.pathname}${url.search}${url.hash}`);
   });
 }
 
@@ -595,7 +606,7 @@ function selectLanguage(language, persist = true, updateUrl = true) {
   if (page === "brand") labelBrandKit(copy);
 
   const metadata = pageMetadata[page][language];
-  const pageUrl = language === "de" ? `https://joinakari.com/${page}/?lang=de` : `https://joinakari.com/${page}/`;
+  const pageUrl = `https://joinakari.com${pathFor(`/${page}/`, language)}`;
   document.title = metadata.title;
   const setMeta = (selector, value) => {
     const element = document.querySelector(selector);

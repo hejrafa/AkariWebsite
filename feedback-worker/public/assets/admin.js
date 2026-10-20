@@ -40,7 +40,7 @@ const translations = {
     chartSummary: "Visitors per day over the last {days} days, {total} in total.", loadingVisits: "Loading visits…", noVisits: "No visits yet. They’ll show up here as people find the website.",
     tooltipVisitors: "{count} visitors", tooltipVisitor: "1 visitor", tooltipViews: "{count} page views", tooltipView: "1 page view", tableDay: "Day",
     breakdownPages: "Pages", breakdownSources: "Came from", breakdownCountries: "Countries", breakdownEmpty: "Nothing yet",
-    pageHome: "Home", pagePrivacy: "Privacy", pageTerms: "Terms", sourceDirect: "Direct", unknown: "Unknown",
+    pageHome: "Home", pagePrivacy: "Privacy", pageTerms: "Terms", pageBrand: "Brand", sourceDirect: "Direct", unknown: "Unknown",
     testersTitle: "App testers", refresh: "Refresh", refreshing: "Refreshing…", loadingTesters: "Loading testers…",
     noTesterData: "No data yet. Add the App Store Connect key and press Refresh.", keyMissing: "Key missing",
     statTesters: "Testers", statInstalled: "Installed", statSessions: "Sessions, last 30 days", statCrashes: "Crashes, last 30 days",
@@ -72,7 +72,7 @@ const translations = {
     chartSummary: "Besucher pro Tag in den letzten {days} Tagen, insgesamt {total}.", loadingVisits: "Besuche werden geladen…", noVisits: "Noch keine Besuche. Sie erscheinen hier, sobald Leute die Website finden.",
     tooltipVisitors: "{count} Besucher", tooltipVisitor: "1 Besucher", tooltipViews: "{count} Seitenaufrufe", tooltipView: "1 Seitenaufruf", tableDay: "Tag",
     breakdownPages: "Seiten", breakdownSources: "Gekommen von", breakdownCountries: "Länder", breakdownEmpty: "Noch nichts",
-    pageHome: "Startseite", pagePrivacy: "Datenschutz", pageTerms: "Nutzungsbedingungen", sourceDirect: "Direkt", unknown: "Unbekannt",
+    pageHome: "Startseite", pagePrivacy: "Datenschutz", pageTerms: "Nutzungsbedingungen", pageBrand: "Marke", sourceDirect: "Direkt", unknown: "Unbekannt",
     testersTitle: "App-Tester", refresh: "Aktualisieren", refreshing: "Wird aktualisiert…", loadingTesters: "Tester werden geladen…",
     noTesterData: "Noch keine Daten. App-Store-Connect-Schlüssel hinterlegen und auf Aktualisieren klicken.", keyMissing: "Schlüssel fehlt",
     statTesters: "Tester", statInstalled: "Installiert", statSessions: "Sitzungen, letzte 30 Tage", statCrashes: "Abstürze, letzte 30 Tage",
@@ -522,8 +522,13 @@ function breakdownList(title, rows, labelFor) {
   return section;
 }
 
+// The website's German pages have their own addresses (/de/…), named here like their English ones.
 function pageLabel(path) {
-  return ({ "/": t("pageHome"), "/privacy/": t("pagePrivacy"), "/terms/": t("pageTerms") })[path] ?? path;
+  const pages = { "/": "pageHome", "/privacy/": "pagePrivacy", "/terms/": "pageTerms", "/brand/": "pageBrand" };
+  const german = { "/de/": "/", "/de/datenschutz/": "/privacy/", "/de/nutzungsbedingungen/": "/terms/", "/de/marke/": "/brand/" };
+  if (pages[path]) return t(pages[path]);
+  if (german[path]) return `${t(pages[german[path]])} · DE`;
+  return path;
 }
 
 function countryLabel(code) {

@@ -6,9 +6,9 @@
 >
   <url>
     <loc>https://joinakari.com/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
     <image:image>
       <image:loc>https://joinakari.com/assets/welcome/forest/en/light/tile-sleep@3x.webp</image:loc>
@@ -28,10 +28,10 @@
     </image:image>
   </url>
   <url>
-    <loc>https://joinakari.com/?lang=de</loc>
-    <lastmod>2026-10-15</lastmod>
+    <loc>https://joinakari.com/de/</loc>
+    <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/" />
     <image:image>
       <image:loc>https://joinakari.com/assets/welcome/forest/de/light/tile-sleep@3x.webp</image:loc>
@@ -52,37 +52,37 @@
   </url>
   <url>
     <loc>https://joinakari.com/privacy/</loc>
-    <lastmod>2026-10-15</lastmod>
+    <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/privacy/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/privacy/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/datenschutz/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/privacy/" />
   </url>
   <url>
-    <loc>https://joinakari.com/privacy/?lang=de</loc>
-    <lastmod>2026-10-15</lastmod>
+    <loc>https://joinakari.com/de/datenschutz/</loc>
+    <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/privacy/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/privacy/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/datenschutz/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/privacy/" />
   </url>
   <url>
     <loc>https://joinakari.com/terms/</loc>
     <lastmod>2026-09-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/terms/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/terms/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/nutzungsbedingungen/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/terms/" />
   </url>
   <url>
-    <loc>https://joinakari.com/terms/?lang=de</loc>
+    <loc>https://joinakari.com/de/nutzungsbedingungen/</loc>
     <lastmod>2026-09-21</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/terms/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/terms/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/nutzungsbedingungen/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/terms/" />
   </url>
   <url>
     <loc>https://joinakari.com/brand/</loc>
     <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/brand/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/brand/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/marke/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/brand/" />
     <image:image>
       <image:loc>https://joinakari.com/assets/brand/akari-logo-shiratani-on-dark.png</image:loc>
@@ -90,10 +90,10 @@
     </image:image>
   </url>
   <url>
-    <loc>https://joinakari.com/brand/?lang=de</loc>
+    <loc>https://joinakari.com/de/marke/</loc>
     <lastmod>2026-10-20</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/brand/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/brand/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/marke/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/brand/" />
     <image:image>
       <image:loc>https://joinakari.com/assets/brand/akari-logo-shiratani-on-dark.png</image:loc>

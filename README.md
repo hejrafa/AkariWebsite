@@ -13,7 +13,7 @@
   <a href="https://joinakari.com/">joinakari.com</a> ·
   <a href="https://testflight.apple.com/join/wrv4aFVQ">Join the free beta</a> ·
   <a href="https://joinakari.com/brand/">Brand kit</a> ·
-  <a href="https://joinakari.com/?lang=de">Auf Deutsch</a>
+  <a href="https://joinakari.com/de/">Auf Deutsch</a>
 </p>
 
 ---

@@ -23,20 +23,9 @@
     <meta name="twitter:description" content="Akari privacy policy: how Akari handles Apple Health data, food reports and the meals you log." />
     <meta name="twitter:image" content="https://joinakari.com/assets/social.png?v=4" />
     <meta name="twitter:image:alt" content="The Akari logo on white" />
-    <script>
-      // The canonical URL follows the address: ?lang=de is the German page, anything else the English one.
-      // Both are this one file, so a canonical written into the HTML would point the German address at the
-      // English page for crawlers that read only the HTML, against the hreflang pair below. Written here
-      // instead, it is right either way; the language switch keeps it in step (legal.js).
-      (() => {
-        const link = document.createElement("link");
-        link.rel = "canonical";
-        link.href = new URLSearchParams(window.location.search).get("lang") === "de" ? "https://joinakari.com/privacy/?lang=de" : "https://joinakari.com/privacy/";
-        document.head.append(link);
-      })();
-    </script>
+    <link rel="canonical" href="https://joinakari.com/privacy/" />
     <link rel="alternate" hreflang="en" href="https://joinakari.com/privacy/" />
-    <link rel="alternate" hreflang="de" href="https://joinakari.com/privacy/?lang=de" />
+    <link rel="alternate" hreflang="de" href="https://joinakari.com/de/datenschutz/" />
     <link rel="alternate" hreflang="x-default" href="https://joinakari.com/privacy/" />
     <link rel="icon" href="/assets/favicon.svg?v=2" type="image/svg+xml" />
     <link rel="icon" href="/assets/icons/icon-48.png?v=2" sizes="48x48" type="image/png" />
@@ -47,25 +36,45 @@
         const modes = ["light", "dark"];
         const languages = ["en", "de"];
         const params = new URLSearchParams(window.location.search);
+        // Each language has its own address (tools/language_pages.py), so the page's <html lang> is its
+        // language. An old ?lang= link, and a visitor who reads German (by choice, or by the browser's
+        // language) arriving at an English address, go on to the page's other address, its hreflang link.
+        const pageLanguage = document.documentElement.lang === "de" ? "de" : "en";
+        const requestedLanguage = params.get("lang");
+        let savedLanguage = null;
+        try {
+          savedLanguage = localStorage.getItem("akari-language");
+        } catch (error) {}
+        const systemLanguage = (navigator.languages?.[0] || navigator.language || "en").split("-")[0].toLowerCase();
+        const preferredLanguage = [savedLanguage, systemLanguage].find((language) => languages.includes(language)) || "en";
+        const language = languages.includes(requestedLanguage)
+          ? requestedLanguage
+          : pageLanguage === "en" ? preferredLanguage : pageLanguage;
+        const address = new URL(window.location.href);
+        address.searchParams.delete("lang");
+        const otherPage = document.querySelector(`link[rel="alternate"][hreflang="${language}"]`);
+        if (language !== pageLanguage && otherPage) {
+          address.pathname = new URL(otherPage.href).pathname;
+          window.location.replace(address);
+        } else if (requestedLanguage !== null) {
+          window.history.replaceState(null, "", address);
+        }
+        document.documentElement.dataset.language = pageLanguage;
+
         try {
           const savedTheme = localStorage.getItem("akari-theme");
           const savedMode = localStorage.getItem("akari-mode");
-          const savedLanguage = localStorage.getItem("akari-language");
-          const systemLanguage = (navigator.languages?.[0] || navigator.language || "en").split("-")[0].toLowerCase();
           const theme = params.get("theme") || savedTheme || "forest";
           const mode = params.get("mode") || savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-          const language = params.get("lang") || savedLanguage || (languages.includes(systemLanguage) ? systemLanguage : "en");
           document.documentElement.dataset.theme = themes.includes(theme) ? theme : "forest";
           document.documentElement.dataset.mode = modes.includes(mode) ? mode : "dark";
-          document.documentElement.dataset.language = languages.includes(language) ? language : "en";
-          document.documentElement.lang = document.documentElement.dataset.language;
         } catch (error) {
           document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         }
       })();
     </script>
     <link rel="stylesheet" href="/legal.css?v=20261020-03" />
-    <script src="/legal.js?v=20261020-04" defer></script>
+    <script src="/legal.js?v=20261020-05" defer></script>
     <script src="/visit.js?v=20261010-01" defer></script>
     <title>Akari: Privacy Policy</title>
   </head>

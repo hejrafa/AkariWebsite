@@ -45,12 +45,16 @@ Each baked file is its source on a transparent margin (20px at the sides, 10 abo
 
 ### Languages
 
-The landing page supports English and German without a runtime dependency. An explicit `?lang=en` or `?lang=de` choice wins, followed by the saved preference and then the browser's primary language; all other languages fall back to English. The language switch updates the page copy, accessibility labels, social metadata, structured data, canonical URL, credits page, and web app manifest.
+Every page has an English and a German address. English stays at `/`, `/privacy/`, `/terms/` and `/brand/`, which the app links to; German is `/de/`, `/de/datenschutz/`, `/de/nutzungsbedingungen/` and `/de/marke/`. The table is `PAGES` in `tools/language_pages.py`, and `languagePaths` in `script.js` and `legal.js` keeps the same one; change all three together, along with the hreflang links in the pages and `sitemap.xml`.
+
+Only the English pages are in the repository. `python3 tools/language_pages.py build --root site` makes each German page from its English one in the deploy's staged site: the same file, with `<html lang="de">`, the German title, description and sharing cards (read from `pageMetadata` in `script.js` and `legal.js`, and `commonTranslations` for the image text), its own canonical address, and links to the other German pages. The page's script writes the German words on load, as the switch does. A German string the build can't find stops the deploy rather than shipping an English card on a German page. The landing page uses root-relative addresses (`/assets/…`, `/script.js`) so its copy at `/de/` finds the same files.
+
+A page's `<html lang>` is its language. On an English address, the saved preference and then the browser's primary language decide: a German reader goes on to the German address before the page draws. A German address always shows German. Old `?lang=de` and `?lang=en` links still work: they go to that language's address, and the parameter is dropped. The language switch changes the words in place and the address with them, along with the accessibility labels, social metadata, structured data, canonical URL, credits page, and web app manifest.
 
 ### Search, sharing and AI discovery
 
 - `robots.txt` allows search and AI search crawlers and references the sitemap. `admin.joinakari.com` and `api.joinakari.com` answer `/robots.txt` from the Worker with `Disallow: /`: the dashboard and its login carry `noindex` anyway, and the API is for the app, but Search Console's domain property lists both hosts. The footer's Admin link goes straight to `/login` with `rel="nofollow"`, since `/` redirects there when signed out.
-- `sitemap.xml` lists the landing page and the privacy and terms pages in English and German, with the app's pieces from `assets/welcome` as the landing page's images.
+- `sitemap.xml` lists the landing, privacy, terms and brand pages at their English and German addresses, with the app's pieces from `assets/welcome` as the landing page's images.
 - `llms.txt` and `llms-full.txt` provide concise machine-readable product information.
 - `manifest.webmanifest` describes the website for browsers and installed shortcuts.
 - The icons for search, sharing and home screens are the plain app icon (the logo on black), in `assets/icons/`: `icon-1024.png`, `icon-512.png` and `icon-192.png` as iOS draws it, rounded; `apple-touch-icon-180.png`, `icon-48.png` (the favicon size Google asks for) and `icon-maskable-512.png` as opaque squares. `assets/social.png` is the sharing card that links show in messages and on social sites: the Plain logo for light backgrounds (the mark above the wordmark) centred on white, drawn by `tools/export_logos.py`; bump its `?v=` in `index.html` and `script.js` when it changes. `python3 tools/export_plain_icons.py` renders the icons from the app's `AppIcon.icon` (macOS with Xcode and Pillow); bump their `?v=` in the pages and manifests when they change. `favicon.svg` is the plain mark itself.
@@ -83,10 +87,10 @@ git clone https://github.com/hejrafa/AkariWebsite.git
 cd AkariWebsite
 pip install pillow  # once
 python3 tools/bake_die_cuts.py
-python3 -m http.server 8000 --bind 127.0.0.1
+python3 tools/language_pages.py serve 8000
 ```
 
-Open http://127.0.0.1:8000 for the public website. The bake writes the page's die-cut pieces and stickers next to their sources (see [Die-cut edges](#die-cut-edges)).
+Open http://127.0.0.1:8000 for the public website. The bake writes the page's die-cut pieces and stickers next to their sources (see [Die-cut edges](#die-cut-edges)). The server is a plain static server that also answers the German addresses, making each German page from its English one as it's asked for (see [Languages](#languages)); a plain `python3 -m http.server` would show only the English pages.
 
 In a second terminal, from the repository:
 
