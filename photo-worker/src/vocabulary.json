@@ -2,7 +2,7 @@
  "source": {
   "repo": "hejrafa/AkariFoodIndex",
   "path": "verified-foods.json",
-  "commit": "eb10854c60b7699922bd3c609fe523a4924ebcdc",
+  "commit": "9e2f63f3eed26b6ca6c21b592aa0487d5e6519b2",
   "policy": "curated-reference-foods-v7"
  },
  "entries": [
@@ -1037,7 +1037,11 @@
     "linguine",
     "tagliatelle",
     "fettuccine",
-    "macaroni"
+    "macaroni",
+    "lasagne sheets",
+    "lasagna sheets",
+    "Lasagneplatten",
+    "Nudelplatten"
    ]
   },
   {
@@ -5302,6 +5306,64 @@
     "rum",
     "white rum",
     "dark rum"
+   ]
+  },
+  {
+   "id": "cofid:13-829",
+   "ingredient": "Garam masala",
+   "displayName": "Garam masala",
+   "displayNameDE": "Garam Masala",
+   "searchAliases": [
+    "garam masala",
+    "Garam Masala"
+   ]
+  },
+  {
+   "id": "cofid:19-114",
+   "ingredient": "Black pudding",
+   "displayName": "Black pudding",
+   "displayNameDE": "Blutwurst",
+   "searchAliases": [
+    "black pudding",
+    "blood sausage",
+    "Blutwurst"
+   ]
+  },
+  {
+   "id": "bls:X537063",
+   "ingredient": "Red cabbage with apple",
+   "displayName": "Red cabbage with apple",
+   "displayNameDE": "Rotkohl mit Apfel",
+   "searchAliases": [
+    "red cabbage with apple",
+    "braised red cabbage",
+    "Apfelrotkohl",
+    "Rotkohl mit Apfel",
+    "Blaukraut"
+   ]
+  },
+  {
+   "id": "usda:2710212",
+   "ingredient": "Ranch dressing",
+   "displayName": "Ranch dressing",
+   "displayNameDE": "Ranch-Dressing",
+   "searchAliases": [
+    "ranch dressing",
+    "ranch dip",
+    "ranch",
+    "Ranch-Dressing"
+   ]
+  },
+  {
+   "id": "usda:2710633",
+   "ingredient": "Gin and tonic",
+   "displayName": "Gin and tonic",
+   "displayNameDE": "Gin Tonic",
+   "searchAliases": [
+    "gin and tonic",
+    "gin tonic",
+    "G&T",
+    "Gin Tonic"
    ]
   }
  ],
