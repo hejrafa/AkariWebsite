@@ -78,4 +78,26 @@
     <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/terms/?lang=de" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/terms/" />
   </url>
+  <url>
+    <loc>https://joinakari.com/brand/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/brand/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/brand/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/brand/" />
+    <image:image>
+      <image:loc>https://joinakari.com/assets/brand/akari-logo-shiratani-on-dark.png</image:loc>
+      <image:title>The Akari logo</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://joinakari.com/brand/?lang=de</loc>
+    <lastmod>2026-10-20</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/brand/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/brand/?lang=de" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/brand/" />
+    <image:image>
+      <image:loc>https://joinakari.com/assets/brand/akari-logo-shiratani-on-dark.png</image:loc>
+      <image:title>Das Akari-Logo</image:title>
+    </image:image>
+  </url>
 </urlset>

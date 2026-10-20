@@ -50,6 +50,7 @@ const commonTranslations = {
     privacyLabel: "Privacy Policy",
     termsLabel: "Terms of Service",
     contactLabel: "Contact us",
+    brandLabel: "Brand",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
@@ -90,6 +91,7 @@ const commonTranslations = {
     privacyLabel: "Datenschutzerklärung",
     termsLabel: "Nutzungsbedingungen",
     contactLabel: "Kontakt",
+    brandLabel: "Marke",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
   },
 };
@@ -255,6 +257,94 @@ const pageTranslations = {
       questionsBody: "Fragen kannst du an <a href=\"mailto:contact@hejrafa.com\">contact@hejrafa.com</a> senden.",
     },
   },
+  brand: {
+    en: {
+      title: "Akari, ready to share.",
+      emojiLabel: "Play with the app icon",
+      intro: "Logos, the mark, app icons and colours, for anyone writing or talking about Akari.",
+      downloadAll: "Download everything",
+      downloadAllNote: "ZIP with SVG and PNG",
+      aboutTitle: "A word about Akari",
+      aboutPromise: "Akari turns private health data into a calm, human reading, then lets you get on with your day. It brings your sleep, movement and food together on your iPhone and explains in plain words what they mean, measured against your own usual days rather than anyone else’s.",
+      aboutMirror: "Akari is a mirror and a translator, not a scoreboard. Health should feel understandable without feeling clinical, competitive or urgent, and it stays private: there is no account, and health data stays on the iPhone.",
+      aboutUs: "Akari is made by just the two of us, in Germany.",
+      nameTitle: "The name",
+      nameBody: "Akari is one word with a capital A: Akari, never AKARI or akari. Where it helps, say “the Akari app” or “Akari for iPhone”.",
+      logoTitle: "Logo",
+      logoBody: "The mark from the app icon above the wordmark. Each of Akari’s five themes has its own colours and its own touches: bolts, leaves, bubbles or drops, and none for Sun. Take the version made for the background it sits on.",
+      onDark: "On dark",
+      onLight: "On light",
+      markTitle: "The mark",
+      markBody: "The mark alone, as the app icon draws it, for small spaces and square crops.",
+      markName: "mark",
+      iconTitle: "App icon",
+      iconBody: "The icon as it sits on the Home Screen, on white in light mode and on black in dark mode. Please use it as it is, without changing its colours or corners.",
+      iconLight: "Light",
+      iconDark: "Dark",
+      iconName: "app icon",
+      coloursTitle: "Colours",
+      coloursBody: "Four themes are named after the landscape painted for them, and Sun has no painting. Each mark runs from its light colour to its dark one, the deep colour is the theme’s band, and the cream sets the wordmark on it. Tap a colour to copy it.",
+      colourLight: "Light",
+      colourDark: "Dark",
+      colourDeep: "Deep",
+      colourCream: "Cream",
+      copyColour: "Copy",
+      copied: "Copied",
+      typeTitle: "Type",
+      typeBody: "Akari speaks in New York, Apple’s serif, in the app and on this site: its heaviest weight for headlines and the wordmark, the regular one for reading.",
+      typeSample: "Your whole day in one place",
+      usageTitle: "Using the logo",
+      usageRoom: "Give it room. Big or small, it should never feel cramped.",
+      usageAsIs: "Keep it as it is: no new colours, outlines or shadows, and no stretching.",
+      usageGround: "Put the version made for dark backgrounds on dark ones, and the one for light backgrounds on light ones.",
+      usageEndorse: "Please don’t use it in a way that suggests Akari endorses you or works with you.",
+      pressTitle: "Press",
+      pressBody: "Writing about Akari, or missing something here? Write to <a href=\"mailto:contact@hejrafa.com\">contact@hejrafa.com</a> and we’ll get back to you.",
+    },
+    de: {
+      title: "Akari zum Mitnehmen.",
+      emojiLabel: "Mit dem App-Icon spielen",
+      intro: "Logos, Bildmarke, App-Icons und Farben für alle, die über Akari schreiben oder sprechen.",
+      downloadAll: "Alles herunterladen",
+      downloadAllNote: "ZIP mit SVG und PNG",
+      aboutTitle: "Ein paar Worte zu Akari",
+      aboutPromise: "Akari macht aus privaten Gesundheitsdaten eine ruhige, menschliche Einordnung und lässt dich dann deinen Tag leben. Die App bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie bedeuten, gemessen an deinen eigenen gewohnten Tagen statt an denen anderer.",
+      aboutMirror: "Akari ist Spiegel und Übersetzer, keine Anzeigetafel. Gesundheit soll verständlich sein, ohne sich nach Klinik, Wettkampf oder Eile anzufühlen, und sie bleibt privat: Es gibt kein Konto, und Gesundheitsdaten bleiben auf dem iPhone.",
+      aboutUs: "Akari machen nur wir zwei, in Deutschland.",
+      nameTitle: "Der Name",
+      nameBody: "Akari ist ein Wort mit großem A: Akari, nie AKARI oder akari. Wo es hilft, schreib „die App Akari“ oder „Akari für das iPhone“.",
+      logoTitle: "Logo",
+      logoBody: "Die Bildmarke aus dem App-Icon über dem Schriftzug. Jedes der fünf Themen von Akari hat eigene Farben und eigene Details: Blitze, Blätter, Blasen oder Tropfen, und keine bei Sonne. Nimm die Version, die für den Hintergrund gemacht ist.",
+      onDark: "Auf dunkel",
+      onLight: "Auf hell",
+      markTitle: "Die Bildmarke",
+      markBody: "Die Bildmarke allein, so wie das App-Icon sie zeigt, für kleine Flächen und quadratische Ausschnitte.",
+      markName: "Bildmarke",
+      iconTitle: "App-Icon",
+      iconBody: "Das Icon, wie es auf dem Home-Bildschirm liegt: auf Weiß im hellen und auf Schwarz im dunklen Modus. Bitte verwende es unverändert, ohne Farben oder Ecken anzupassen.",
+      iconLight: "Hell",
+      iconDark: "Dunkel",
+      iconName: "App-Icon",
+      coloursTitle: "Farben",
+      coloursBody: "Vier Themen tragen den Namen der Landschaft, die für sie gemalt wurde; Sonne hat kein Gemälde. Jede Bildmarke verläuft von ihrer hellen zu ihrer dunklen Farbe, die tiefe Farbe ist das Band des Themas, und in Creme steht der Schriftzug darauf. Tippe auf eine Farbe, um sie zu kopieren.",
+      colourLight: "Hell",
+      colourDark: "Dunkel",
+      colourDeep: "Tief",
+      colourCream: "Creme",
+      copyColour: "Kopieren",
+      copied: "Kopiert",
+      typeTitle: "Schrift",
+      typeBody: "Akari spricht in New York, der Serifenschrift von Apple, in der App wie auf dieser Website: im kräftigsten Schnitt für Überschriften und den Schriftzug, im normalen zum Lesen.",
+      typeSample: "Dein ganzer Tag an einem Ort",
+      usageTitle: "Das Logo verwenden",
+      usageRoom: "Gib ihm Raum. Groß oder klein, es soll nie eingeengt wirken.",
+      usageAsIs: "Lass es, wie es ist: keine neuen Farben, Konturen oder Schatten und kein Verzerren.",
+      usageGround: "Setz die Version für dunklen Grund auf dunkle Flächen und die für hellen Grund auf helle.",
+      usageEndorse: "Bitte verwende es nicht so, dass es nach einer Empfehlung oder Zusammenarbeit durch Akari aussieht.",
+      pressTitle: "Presse",
+      pressBody: "Du schreibst über Akari oder vermisst hier etwas? Schreib an <a href=\"mailto:contact@hejrafa.com\">contact@hejrafa.com</a>, und wir melden uns.",
+    },
+  },
 };
 
 const pageMetadata = {
@@ -266,6 +356,10 @@ const pageMetadata = {
     en: { title: "Akari: Terms of Use", description: "Terms of use for the Akari iPhone health app." },
     de: { title: "Akari: Nutzungsbedingungen", description: "Nutzungsbedingungen für die Akari Gesundheits-App auf dem iPhone." },
   },
+  brand: {
+    en: { title: "Akari: Brand", description: "Akari’s logos, mark, app icons and colours to download, and a word about the brand." },
+    de: { title: "Akari: Marke", description: "Logos, Bildmarke, App-Icons und Farben von Akari zum Herunterladen, und ein paar Worte zur Marke." },
+  },
 };
 
 const pageColors = {
@@ -276,6 +370,103 @@ const pageColors = {
 // The header and footer sit on each theme's deep band in both schemes, so the browser chrome takes
 // the band colour and the logos use the variant drawn for a dark ground.
 const bandColors = { meadow: "#0a4252", forest: "#0c271c", coast: "#083756", canyon: "#482219", plain: "#141414" };
+
+// The brand page's downloads, written by tools/export_logos.py into assets/brand/ under the themes' names.
+// Each mark runs from `light` to `dark`, the stops of the app icon's gradient; `cream` is the wordmark on
+// the deep band, `paper` and `ink` the theme's light page and text, which the light tiles show.
+const brandThemes = [
+  { theme: "meadow", file: "wasserkuppe", label: "themeMeadowLabel", light: "#FFE680", dark: "#C98A0B", cream: "#F1EAC6", paper: "#f1eaca", ink: "#262211" },
+  { theme: "forest", file: "shiratani", label: "themeForestLabel", light: "#C9EE5E", dark: "#2E8B3A", cream: "#E6F4D1", paper: "#e1f1ca", ink: "#1e2611" },
+  { theme: "coast", file: "loch-tay", label: "themeCoastLabel", light: "#6FE6FF", dark: "#0A5FD6", cream: "#D7EDF8", paper: "#cae2f1", ink: "#111e26" },
+  { theme: "canyon", file: "green-river-overlook", label: "themeCanyonLabel", light: "#FFC24A", dark: "#D9361A", cream: "#F4DDD1", paper: "#f1d7ca", ink: "#261811" },
+  { theme: "plain", file: "sun", label: "themePlainLabel", light: "#FFD600", dark: "#FF6B00", cream: "#FFFFFF", paper: "#f5f5f5", ink: "#000000" },
+];
+
+function brandFile(path, label, name) {
+  return `<a class="brand-file" href="/assets/brand/${path}" download aria-label="${name}: ${label}">${label}</a>`;
+}
+
+function brandSwatch(colour, label, copy) {
+  return `<button class="brand-swatch" type="button" data-colour="${colour}" style="--swatch: ${colour}" aria-label="${copy.copyColour} ${label} ${colour}">
+    <span class="brand-swatch__chip" aria-hidden="true"></span>
+    <span class="brand-swatch__label">${label}</span>
+    <span class="brand-swatch__value">${colour}</span>
+  </button>`;
+}
+
+// The tiles show each theme in its own colours, whatever the page's theme, and are written again in the
+// chosen language. The files keep their English names.
+function renderBrandKit(copy) {
+  const logos = document.querySelector("[data-brand-logos]");
+  if (!logos) return;
+  const tiles = { logos: [], marks: [], icons: [], colours: [] };
+  brandThemes.forEach((item) => {
+    const name = copy[item.label];
+    const deep = bandColors[item.theme];
+    [["dark", copy.onDark, deep, item.cream], ["light", copy.onLight, item.paper, item.ink]].forEach(([mode, ground, tile, ink]) => {
+      const file = `akari-logo-${item.file}-on-${mode}`;
+      const label = `${name}, ${ground}`;
+      tiles.logos.push(`<figure class="brand-tile" style="--tile: ${tile}; --tile-ink: ${ink}">
+        <img class="brand-tile__logo" src="/assets/brand/${file}.svg" alt="Akari" width="89" height="50" loading="lazy" />
+        <figcaption><span class="brand-tile__name">${name} <span>${ground}</span></span><span class="brand-files">${brandFile(`${file}.svg`, "SVG", label)}${brandFile(`${file}.png`, "PNG", label)}</span></figcaption>
+      </figure>`);
+    });
+    const mark = `${name}, ${copy.markName}`;
+    tiles.marks.push(`<figure class="brand-tile brand-tile--mark" style="--tile: ${deep}; --tile-ink: ${item.cream}">
+      <img class="brand-tile__mark" src="/assets/brand/akari-mark-${item.file}.svg" alt="" loading="lazy" />
+      <figcaption><span class="brand-tile__name">${name}</span><span class="brand-files">${brandFile(`akari-mark-${item.file}.svg`, "SVG", mark)}${brandFile(`akari-mark-${item.file}.png`, "PNG", mark)}</span></figcaption>
+    </figure>`);
+    // The tile shows the landing page's small renditions; the buttons fetch the 1024 px PNGs.
+    const icon = `${name}, ${copy.iconName}`;
+    const preview = (mode) => `/assets/welcome/${item.theme}/app-icon-${mode}`;
+    tiles.icons.push(`<figure class="brand-tile brand-tile--icon">
+      <span class="brand-tile__icons">
+        <img src="${preview("light")}@2x.webp" srcset="${preview("light")}@2x.webp 2x, ${preview("light")}@3x.webp 3x" alt="" width="104" height="104" loading="lazy" />
+        <img src="${preview("dark")}@2x.webp" srcset="${preview("dark")}@2x.webp 2x, ${preview("dark")}@3x.webp 3x" alt="" width="104" height="104" loading="lazy" />
+      </span>
+      <figcaption><span class="brand-tile__name">${name}</span><span class="brand-files">${brandFile(`akari-app-icon-${item.file}-light.png`, copy.iconLight, `${icon} PNG`)}${brandFile(`akari-app-icon-${item.file}-dark.png`, copy.iconDark, `${icon} PNG`)}</span></figcaption>
+    </figure>`);
+    tiles.colours.push(`<div class="brand-colours" style="--from: ${item.light}; --to: ${item.dark}">
+      <span class="brand-tile__name">${name}</span>
+      <span class="brand-colours__gradient" aria-hidden="true"></span>
+      <div class="brand-colours__swatches">
+        ${brandSwatch(item.light, copy.colourLight, copy)}${brandSwatch(item.dark, copy.colourDark, copy)}${brandSwatch(deep.toUpperCase(), copy.colourDeep, copy)}${brandSwatch(item.cream, copy.colourCream, copy)}
+      </div>
+    </div>`);
+  });
+  logos.innerHTML = tiles.logos.join("");
+  document.querySelector("[data-brand-marks]").innerHTML = tiles.marks.join("");
+  document.querySelector("[data-brand-icons]").innerHTML = tiles.icons.join("");
+  document.querySelector("[data-brand-colours]").innerHTML = tiles.colours.join("");
+}
+
+document.addEventListener("click", async (event) => {
+  const swatch = event.target.closest(".brand-swatch");
+  if (!swatch) return;
+  try {
+    await navigator.clipboard.writeText(swatch.dataset.colour);
+  } catch (error) {
+    // Older browsers and some embedded ones refuse the async clipboard; copy through a selection instead.
+    const field = Object.assign(document.createElement("textarea"), { value: swatch.dataset.colour });
+    field.setAttribute("readonly", "");
+    field.style.cssText = "position: fixed; opacity: 0;";
+    document.body.append(field);
+    field.select();
+    const copied = document.execCommand("copy");
+    field.remove();
+    swatch.focus();
+    if (!copied) return;
+  }
+  const value = swatch.querySelector(".brand-swatch__value");
+  const copy = pageTranslations.brand[root.dataset.language] ?? pageTranslations.brand.en;
+  value.textContent = copy.copied;
+  swatch.classList.add("is-copied");
+  clearTimeout(swatch.copiedTimer);
+  swatch.copiedTimer = setTimeout(() => {
+    value.textContent = swatch.dataset.colour;
+    swatch.classList.remove("is-copied");
+  }, 1400);
+});
 
 function persistSitePreference(name, value) {
   try { localStorage.setItem(name, value); } catch (error) {}
@@ -295,7 +486,7 @@ function updateLanguageUrl(language) {
 }
 
 function updateInternalLinks(language) {
-  document.querySelectorAll('.footer-sitemap a[href^="/"], .footer-logo, .legal-brand, a[href^="/privacy/"], a[href^="/terms/"]').forEach((link) => {
+  document.querySelectorAll('.footer-sitemap a[href^="/"], .footer-logo, .legal-brand, a[href^="/privacy/"], a[href^="/terms/"], a[href="/brand/"]').forEach((link) => {
     const url = new URL(link.getAttribute("href"), window.location.origin);
     if (language === "de") url.searchParams.set("lang", "de");
     else url.searchParams.delete("lang");
@@ -322,6 +513,14 @@ function updateStickers() {
     image.srcset = `${base}@2x.webp 2x, ${base}@3x.webp 3x`;
     image.src = `${base}@2x.webp`;
   });
+  // The brand page's headline holds the theme's app icon, die-cut like the landing page's, in the
+  // rendition that matches the page.
+  document.querySelectorAll("img[data-theme-icon]").forEach((image) => {
+    const base = `/assets/welcome/${root.dataset.theme}/app-icon-${root.dataset.mode === "dark" ? "dark" : "light"}-cut`;
+    if (image.getAttribute("src") === `${base}@2x.webp`) return;
+    image.srcset = `${base}@2x.webp 2x, ${base}@3x.webp 3x`;
+    image.src = `${base}@2x.webp`;
+  });
 }
 
 let lastViewportWidth = window.innerWidth;
@@ -343,7 +542,7 @@ function updateAppearance() {
   const themeName = document.querySelector('.theme-dot[aria-pressed="true"]')?.getAttribute("aria-label") ?? "";
   document.querySelectorAll(".mobile-theme-name").forEach((element) => { element.textContent = themeName; });
   modeButtons.forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.modeTarget === mode)));
-  brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-dark.svg?v=2`; });
+  brandLogos.forEach((logo) => { logo.src = `/assets/logo/akari-logo-${theme}-dark.svg?v=3`; });
   updateStickers();
   if (adminLink) {
     const localPreview = ["127.0.0.1", "localhost"].includes(window.location.hostname);
@@ -378,6 +577,7 @@ function selectLanguage(language, persist = true, updateUrl = true) {
   languageButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.languageTarget === language));
   });
+  if (page === "brand") renderBrandKit(copy);
 
   const metadata = pageMetadata[page][language];
   document.title = metadata.title;

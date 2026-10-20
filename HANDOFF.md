@@ -6,7 +6,7 @@ Both applications are in [hejrafa/AkariWebsite](https://github.com/hejrafa/Akari
 
 | Service | Code | Production | Deployment |
 | --- | --- | --- | --- |
-| Public website, privacy and terms | Repository root, `privacy/`, `terms/` | https://joinakari.com | GitHub Pages; every push to `main` |
+| Public website, privacy, terms and brand | Repository root, `privacy/`, `terms/`, `brand/` | https://joinakari.com | GitHub Pages; every push to `main` |
 | Food-feedback dashboard | `feedback-worker/public/` | https://admin.joinakari.com | Cloudflare Worker; separate deployment |
 | Login and food-feedback API | `feedback-worker/src/index.ts` | https://api.joinakari.com | Same Worker as the admin dashboard |
 | Feedback database | `feedback-worker/migrations/` | Cloudflare D1, `akari-food-feedback` | Apply pending migrations separately |
@@ -20,7 +20,15 @@ The site is intentionally dependency-free and can run locally or on any static h
 
 ### Themes and images
 
-The site's type and colours follow the app: New York, and the per-theme page, card, ink, accent and launch-screen colours from the iOS project's `AppTheme.swift`. Five themes are offered: Wasserkuppe (`meadow`), Shiratani (`forest`, the default), Loch Tay (`coast`), Green River Overlook (`canyon`) and Sun (`plain`; the app called it Plain until it was renamed, and the keys, folders and colour tables keep that name). Sun has no painting, so its deep band is the app's dark card colour and its logo mark uses the app's yellow-to-orange launch gradient (`assets/logo/akari-logo-plain-*.svg`).
+The site's type and colours follow the app: New York, and the per-theme page, card, ink, accent and launch-screen colours from the iOS project's `AppTheme.swift`. Five themes are offered: Wasserkuppe (`meadow`), Shiratani (`forest`, the default), Loch Tay (`coast`), Green River Overlook (`canyon`) and Sun (`plain`; the app called it Plain until it was renamed, and the keys, folders and colour tables keep that name). Sun has no painting, so its deep band is the app's dark card colour.
+
+The header and footer logos, `assets/logo/akari-logo-<theme>-<dark|light>.svg`, are the mark from each theme's app icon (its arcs in the theme's gradient and its touches: bolts, leaves, bubbles or drops; Sun has none) above the wordmark. The admin dashboard and its login load the same files at the same 89 × 50 size, so the box must stay that size.
+
+### Brand page
+
+`brand/` is the brand page: a word about Akari, the naming rule, and every logo, the mark alone, the app icons and the colours to download, for each of the five website themes (the app's Wisteria icon is left out). It shares `legal.css` and `legal.js` with the privacy and terms pages; `legal.js` writes its tiles from `brandThemes`. The downloads are in `assets/brand/`, named after the themes as the site shows them (`shiratani`, `loch-tay`, …): the logos as SVG and 2000 px PNG, the mark as SVG and 1024 px PNG, and each app icon on its white and its black tile as a 1024 px PNG. The deploy zips that folder into `brand/akari-brand.zip` for the page's Download everything button.
+
+`python3 tools/export_logos.py` writes the header logos and all of `assets/brand/` from the app's `AppIcon<Theme>.icon` documents (`AppIcon.icon` for Sun), and a local `brand/akari-brand.zip` for preview (git-ignored). It needs macOS with Xcode and Google Chrome for the PNGs; `--svg-only` skips them. Run it when the app's icons change, then bump the logos' `?v=` in the pages, `script.js` and `legal.js`. If a theme's colours change, update `brandThemes` in `legal.js` too.
 
 The app exports everything the landing page shows into `assets/welcome/`: each piece per theme, language and light/dark rendering (`<theme>/<en|de>/<dark|light>/<piece>@2x.webp`, `@3x.webp` and a `@3x.png` source), the app icon per theme in a light and a dark rendition (`<theme>/app-icon-<light|dark>`; the page shows the one matching the mode), the Apple Health icon and the food stickers in `stickers/`. The page shows each piece at its 1x size, picks 2x or 3x by screen density, and swaps with the theme, language and light/dark switches.
 

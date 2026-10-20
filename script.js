@@ -202,6 +202,7 @@ const translations = {
     privacyLabel: "Privacy Policy",
     termsLabel: "Terms of Service",
     contactLabel: "Contact us",
+    brandLabel: "Brand",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
@@ -344,6 +345,7 @@ const translations = {
     privacyLabel: "Datenschutzerklärung",
     termsLabel: "Nutzungsbedingungen",
     contactLabel: "Kontakt",
+    brandLabel: "Marke",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
   },
 };
@@ -532,7 +534,7 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
     button.setAttribute("aria-pressed", String(button.dataset.languageTarget === language));
   });
   updateThemeName();
-  document.querySelectorAll('.footer-sitemap a[href^="/privacy/"], .footer-sitemap a[href^="/terms/"], .privacy__link').forEach((link) => {
+  document.querySelectorAll('.footer-sitemap a[href^="/privacy/"], .footer-sitemap a[href^="/terms/"], .footer-sitemap a[href^="/brand/"], .privacy__link').forEach((link) => {
     const url = new URL(link.getAttribute("href"), window.location.origin);
     if (language === "de") url.searchParams.set("lang", "de");
     else url.searchParams.delete("lang");
@@ -757,7 +759,7 @@ function updateThemeColor() {
   const color = bandColors[root.dataset.theme];
   if (color && themeColor) themeColor.content = color;
   brandLogos.forEach((logo) => {
-    logo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-dark.svg?v=2`, siteRoot).href;
+    logo.src = new URL(`assets/logo/akari-logo-${root.dataset.theme}-dark.svg?v=3`, siteRoot).href;
   });
   updateAllImageSources();
   if (adminLink) {

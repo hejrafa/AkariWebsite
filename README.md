@@ -43,4 +43,4 @@ Akari is made by just the two of us, not by a big company that's after your data
 
 ---
 
-<sub>Helping to maintain the site? The [maintainer guide](HANDOFF.md) covers running it locally, deploying and the admin dashboard. · [Privacy](https://joinakari.com/privacy/) · [Terms](https://joinakari.com/terms/)</sub>
+<sub>Helping to maintain the site? The [maintainer guide](HANDOFF.md) covers running it locally, deploying and the admin dashboard. · [Brand](https://joinakari.com/brand/) · [Privacy](https://joinakari.com/privacy/) · [Terms](https://joinakari.com/terms/)</sub>

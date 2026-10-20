@@ -722,6 +722,265 @@ p, li { font-family: var(--serif); }
   color: var(--vivid);
 }
 
+/* Brand page: the same cards, wider, holding tiles of downloads. Each tile shows its theme in that
+   theme's own colours (--tile and --tile-ink, set by legal.js), whatever theme the page is in. ---- */
+
+body[data-legal-page="brand"] .legal-content {
+  width: min(100% - 40px, 1040px);
+}
+
+.brand-download {
+  display: inline-flex;
+  margin-top: clamp(26px, 3vw, 40px);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.brand-download > span {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px 10px;
+  min-height: 54px;
+  padding: 18px 30px;
+  color: var(--band);
+  background: var(--band-ink);
+  border-radius: 999px;
+  transition: transform 180ms var(--ease), background-color 500ms var(--ease), color 500ms var(--ease);
+}
+
+.brand-download small {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.62;
+}
+
+.brand-download:hover > span { transform: translateY(-2px) rotate(-1.5deg); }
+.brand-download:active > span { transform: scale(0.97); }
+
+.brand-download:focus-visible {
+  outline: 3px solid var(--band-ink);
+  outline-offset: 4px;
+}
+
+.brand-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.brand-grid--logos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.brand-grid--marks,
+.brand-grid--icons { grid-template-columns: repeat(auto-fill, minmax(min(100%, 176px), 1fr)); }
+.brand-grid--colours { grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); }
+
+.brand-tile {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 22px;
+  min-width: 0;
+  margin: 0;
+  padding: clamp(26px, 3.4vw, 40px) 16px 16px;
+  color: var(--tile-ink, var(--ink));
+  background: var(--tile, rgba(var(--ink-rgb), 0.05));
+  border-radius: 18px;
+  transition: background-color 500ms var(--ease);
+}
+
+.brand-tile__logo {
+  place-self: center;
+  width: min(100%, 176px);
+  height: auto;
+  aspect-ratio: 89.2823 / 50;
+}
+
+.brand-tile__mark {
+  place-self: center;
+  width: min(100%, 92px);
+  height: auto;
+}
+
+.brand-tile__icons {
+  display: flex;
+  place-self: center;
+  gap: 10px;
+}
+
+.brand-tile__icons img {
+  display: block;
+  width: 64px;
+  height: 64px;
+}
+
+.brand-tile figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 10px;
+}
+
+/* The narrow tiles keep their name above the buttons, so a long name never sets them out of line. */
+.brand-tile--mark figcaption,
+.brand-tile--icon figcaption {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.brand-tile__name {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.brand-tile__name span {
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.brand-tile__name span::before { content: "· "; }
+
+.brand-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.legal-section .brand-file {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  color: inherit;
+  border: 1.5px solid color-mix(in srgb, currentColor 38%, transparent);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  transition: background-color 180ms var(--ease), border-color 180ms var(--ease);
+}
+
+.legal-section .brand-file:hover {
+  color: inherit;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  border-color: currentColor;
+}
+
+.legal-section .brand-file:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.brand-colours {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: rgba(var(--ink-rgb), 0.05);
+  border-radius: 18px;
+}
+
+/* The mark's own gradient: light at the top right, dark at the foot, as the app icon draws it. */
+.brand-colours__gradient {
+  height: 64px;
+  background: radial-gradient(circle at 78% 10%, var(--from), var(--to) 95%);
+  border-radius: 12px;
+}
+
+.brand-colours__swatches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.brand-swatch {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid rgba(var(--ink-rgb), 0.12);
+  border-radius: 12px;
+  cursor: copy;
+  font-family: var(--sans);
+  text-align: left;
+  transition: border-color 180ms var(--ease), background-color 500ms var(--ease);
+}
+
+.brand-swatch:hover { border-color: rgba(var(--ink-rgb), 0.35); }
+
+.brand-swatch:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.brand-swatch__chip {
+  grid-row: 1 / 3;
+  width: 28px;
+  height: 28px;
+  background: var(--swatch);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(var(--ink-rgb), 0.18);
+}
+
+.brand-swatch__label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.2;
+  opacity: 0.65;
+}
+
+.brand-swatch__value {
+  font-size: 0.84rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.brand-swatch.is-copied .brand-swatch__value { color: var(--accent); }
+
+.brand-type {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 28px;
+  margin-top: 28px;
+  padding: clamp(24px, 4vw, 40px);
+  color: var(--ink);
+  background: rgba(var(--ink-rgb), 0.05);
+  border-radius: 18px;
+  font-family: var(--serif);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+}
+
+.brand-type__glyphs {
+  font-size: clamp(4.5rem, 10vw, 7.5rem);
+  line-height: 0.9;
+}
+
+.brand-type__line {
+  max-width: 11em;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.02;
+}
+
+@media (max-width: 600px) {
+  .brand-grid--logos { grid-template-columns: minmax(0, 1fr); }
+}
+
 /* Footer: the page ends on the deep band it started with, torn at the top. ------------------ */
 
 .site-footer {

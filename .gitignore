@@ -5,3 +5,5 @@ node_modules/
 assets/welcome/**/*-cut@*.webp
 assets/welcome/stickers/*/
 assets/stickers/*/
+# Written by tools/export_logos.py for local preview; the deploy zips its own.
+brand/akari-brand.zip

@@ -34,7 +34,13 @@ jobs:
         run: |
           mkdir site
           cp index.html script.js visit.js styles.css legal.css legal.js CNAME robots.txt sitemap.xml llms.txt llms-full.txt manifest.webmanifest manifest-de.webmanifest site/
-          cp -R assets privacy terms site/
+          cp -R assets privacy terms brand site/
+          # The brand page's "Download everything" is every file in assets/brand/ (tools/export_logos.py),
+          # zipped here so the repository keeps each file once. A zip left by a local preview is replaced.
+          mkdir -p "$RUNNER_TEMP/kit"
+          cp -R assets/brand "$RUNNER_TEMP/kit/akari-brand"
+          rm -f site/brand/akari-brand.zip
+          (cd "$RUNNER_TEMP/kit" && zip -q -r -X "$GITHUB_WORKSPACE/site/brand/akari-brand.zip" akari-brand -x '*.DS_Store')
           # The app's export keeps a @3x PNG source next to each WebP; the page only loads the WebP.
           find site/assets/welcome -name '*@3x.png' -delete
           # The page shows copies of the pieces, icons and stickers with the die-cut edge and shadow baked

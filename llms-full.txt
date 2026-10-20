@@ -101,3 +101,4 @@ Join the free beta through Apple TestFlight. The App Store version is coming soo
 - Public beta: https://testflight.apple.com/join/wrv4aFVQ
 - Privacy policy: https://joinakari.com/privacy/
 - Terms of use: https://joinakari.com/terms/
+- Brand assets (logos, mark, app icons, colours): https://joinakari.com/brand/
