@@ -344,7 +344,8 @@ a:hover { color: var(--accent); }
 
   /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it. */
   .theme-dot::after,
-  .mode-button::after {
+  .mode-button::after,
+  .language-button::after {
     position: absolute;
     z-index: 20;
     top: calc(100% + 10px);
@@ -368,7 +369,9 @@ a:hover { color: var(--accent); }
   .theme-dot:hover::after,
   .theme-dot:focus-visible::after,
   .mode-button:hover::after,
-  .mode-button:focus-visible::after {
+  .mode-button:focus-visible::after,
+  .language-button:hover::after,
+  .language-button:focus-visible::after {
     opacity: 1;
     transform: translate(-50%, 0);
   }
@@ -382,6 +385,18 @@ a:hover { color: var(--accent); }
 
   .mode-button[data-mode-target="dark"]:hover::after,
   .mode-button[data-mode-target="dark"]:focus-visible::after {
+    transform: translateY(0);
+  }
+
+  /* The language buttons sit near the left edge, so their labels line up with their left side. */
+  .language-button::after {
+    left: 0;
+    letter-spacing: 0;
+    transform: translateY(-4px);
+  }
+
+  .language-button:hover::after,
+  .language-button:focus-visible::after {
     transform: translateY(0);
   }
 }
@@ -840,12 +855,12 @@ body[data-legal-page="brand"] .legal-content {
   line-height: 1.25;
 }
 
-.brand-tile__name span {
+.brand-tile__variant {
   font-weight: 500;
   opacity: 0.7;
 }
 
-.brand-tile__name span::before { content: "· "; }
+.brand-tile__variant::before { content: "· "; }
 
 .brand-files {
   display: flex;
@@ -1383,4 +1398,53 @@ body[data-legal-page="brand"] .legal-content {
   .legal-header h1,
   .legal-intro,
   .legal-updated { animation: none; }
+}
+
+/* A language switch crossfades only the words, as on the landing page (styles.css): legal.js names
+   each visible block of copy for the view transition and takes the name off the page itself. */
+@media (prefers-reduced-motion: no-preference) {
+  :root.language-view-transition {
+    view-transition-name: none;
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 240ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  ::view-transition-image-pair(*) {
+    isolation: auto;
+  }
+
+  ::view-transition-old(*) {
+    animation: language-copy-out 150ms ease-out both;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(*) {
+    animation: language-copy-in 210ms 30ms ease-out both;
+    mix-blend-mode: normal;
+  }
+}
+
+@keyframes language-copy-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes language-copy-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.language-copy-fallback {
+  transition: opacity 90ms ease-out !important;
+}
+
+.language-copy-fallback.language-copy-fallback--enter {
+  transition-duration: 150ms !important;
+}
+
+.language-copy-fallback.is-language-hidden {
+  opacity: 0 !important;
 }

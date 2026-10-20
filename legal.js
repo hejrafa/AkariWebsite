@@ -382,55 +382,56 @@ const brandThemes = [
   { theme: "plain", file: "sun", label: "themePlainLabel", light: "#FFD600", dark: "#FF6B00", cream: "#FFFFFF", paper: "#f5f5f5", ink: "#000000" },
 ];
 
-function brandFile(path, label, name) {
-  return `<a class="brand-file" href="/assets/brand/${path}" download aria-label="${name}: ${label}">${label}</a>`;
+// A download's accessible name says which theme and variant it is. labelBrandKit writes it from these
+// keys, so it follows the language like the visible labels.
+function brandFile(path, format, nameKey, variantKey) {
+  const formatKey = /^(SVG|PNG)$/.test(format) ? "" : format;
+  return `<a class="brand-file" href="/assets/brand/${path}" download data-name-key="${nameKey}" data-variant-key="${variantKey}" data-format="${formatKey ? "PNG" : format}"${formatKey ? ` data-format-key="${formatKey}"` : ""}>${formatKey ? `<span data-i18n="${formatKey}"></span>` : format}</a>`;
 }
 
-function brandSwatch(colour, label, copy) {
-  return `<button class="brand-swatch" type="button" data-colour="${colour}" style="--swatch: ${colour}" aria-label="${copy.copyColour} ${label} ${colour}">
+function brandSwatch(colour, labelKey) {
+  return `<button class="brand-swatch" type="button" data-colour="${colour}" data-label-key="${labelKey}" style="--swatch: ${colour}">
     <span class="brand-swatch__chip" aria-hidden="true"></span>
-    <span class="brand-swatch__label">${label}</span>
+    <span class="brand-swatch__label" data-i18n="${labelKey}"></span>
     <span class="brand-swatch__value">${colour}</span>
   </button>`;
 }
 
-// The tiles show each theme in its own colours, whatever the page's theme, and are written again in the
-// chosen language. The files keep their English names.
-function renderBrandKit(copy) {
+// The tiles show each theme in its own colours, whatever the page's theme. They are written once, with
+// their words as data-i18n keys, so a language switch changes only the words and no image reloads. The
+// files keep their English names.
+function renderBrandKit() {
   const logos = document.querySelector("[data-brand-logos]");
-  if (!logos) return;
+  if (!logos || logos.childElementCount) return;
   const tiles = { logos: [], marks: [], icons: [], colours: [] };
   brandThemes.forEach((item) => {
-    const name = copy[item.label];
+    const name = `<span data-i18n="${item.label}"></span>`;
     const deep = bandColors[item.theme];
-    [["dark", copy.onDark, deep, item.cream], ["light", copy.onLight, item.paper, item.ink]].forEach(([mode, ground, tile, ink]) => {
+    [["dark", "onDark", deep, item.cream], ["light", "onLight", item.paper, item.ink]].forEach(([mode, ground, tile, ink]) => {
       const file = `akari-logo-${item.file}-on-${mode}`;
-      const label = `${name}, ${ground}`;
       tiles.logos.push(`<figure class="brand-tile" style="--tile: ${tile}; --tile-ink: ${ink}">
         <img class="brand-tile__logo" src="/assets/brand/${file}.svg" alt="Akari" width="89" height="50" loading="lazy" />
-        <figcaption><span class="brand-tile__name">${name} <span>${ground}</span></span><span class="brand-files">${brandFile(`${file}.svg`, "SVG", label)}${brandFile(`${file}.png`, "PNG", label)}</span></figcaption>
+        <figcaption><span class="brand-tile__name">${name} <span class="brand-tile__variant" data-i18n="${ground}"></span></span><span class="brand-files">${brandFile(`${file}.svg`, "SVG", item.label, ground)}${brandFile(`${file}.png`, "PNG", item.label, ground)}</span></figcaption>
       </figure>`);
     });
-    const mark = `${name}, ${copy.markName}`;
     tiles.marks.push(`<figure class="brand-tile brand-tile--mark" style="--tile: ${deep}; --tile-ink: ${item.cream}">
       <img class="brand-tile__mark" src="/assets/brand/akari-mark-${item.file}.svg" alt="" loading="lazy" />
-      <figcaption><span class="brand-tile__name">${name}</span><span class="brand-files">${brandFile(`akari-mark-${item.file}.svg`, "SVG", mark)}${brandFile(`akari-mark-${item.file}.png`, "PNG", mark)}</span></figcaption>
+      <figcaption><span class="brand-tile__name">${name}</span><span class="brand-files">${brandFile(`akari-mark-${item.file}.svg`, "SVG", item.label, "markName")}${brandFile(`akari-mark-${item.file}.png`, "PNG", item.label, "markName")}</span></figcaption>
     </figure>`);
     // The tile shows the landing page's small renditions; the buttons fetch the 1024 px PNGs.
-    const icon = `${name}, ${copy.iconName}`;
     const preview = (mode) => `/assets/welcome/${item.theme}/app-icon-${mode}`;
     tiles.icons.push(`<figure class="brand-tile brand-tile--icon">
       <span class="brand-tile__icons">
         <img src="${preview("light")}@2x.webp" srcset="${preview("light")}@2x.webp 2x, ${preview("light")}@3x.webp 3x" alt="" width="104" height="104" loading="lazy" />
         <img src="${preview("dark")}@2x.webp" srcset="${preview("dark")}@2x.webp 2x, ${preview("dark")}@3x.webp 3x" alt="" width="104" height="104" loading="lazy" />
       </span>
-      <figcaption><span class="brand-tile__name">${name}</span><span class="brand-files">${brandFile(`akari-app-icon-${item.file}-light.png`, copy.iconLight, `${icon} PNG`)}${brandFile(`akari-app-icon-${item.file}-dark.png`, copy.iconDark, `${icon} PNG`)}</span></figcaption>
+      <figcaption><span class="brand-tile__name">${name}</span><span class="brand-files">${brandFile(`akari-app-icon-${item.file}-light.png`, "iconLight", item.label, "iconName")}${brandFile(`akari-app-icon-${item.file}-dark.png`, "iconDark", item.label, "iconName")}</span></figcaption>
     </figure>`);
     tiles.colours.push(`<div class="brand-colours" style="--from: ${item.light}; --to: ${item.dark}">
       <span class="brand-tile__name">${name}</span>
       <span class="brand-colours__gradient" aria-hidden="true"></span>
       <div class="brand-colours__swatches">
-        ${brandSwatch(item.light, copy.colourLight, copy)}${brandSwatch(item.dark, copy.colourDark, copy)}${brandSwatch(deep.toUpperCase(), copy.colourDeep, copy)}${brandSwatch(item.cream, copy.colourCream, copy)}
+        ${brandSwatch(item.light, "colourLight")}${brandSwatch(item.dark, "colourDark")}${brandSwatch(deep.toUpperCase(), "colourDeep")}${brandSwatch(item.cream, "colourCream")}
       </div>
     </div>`);
   });
@@ -438,6 +439,17 @@ function renderBrandKit(copy) {
   document.querySelector("[data-brand-marks]").innerHTML = tiles.marks.join("");
   document.querySelector("[data-brand-icons]").innerHTML = tiles.icons.join("");
   document.querySelector("[data-brand-colours]").innerHTML = tiles.colours.join("");
+}
+
+function labelBrandKit(copy) {
+  document.querySelectorAll(".brand-file").forEach((link) => {
+    const format = link.dataset.formatKey ? `${copy[link.dataset.formatKey]} ${link.dataset.format}` : link.dataset.format;
+    link.setAttribute("aria-label", `${copy[link.dataset.nameKey]}, ${copy[link.dataset.variantKey]}: ${format}`);
+  });
+  document.querySelectorAll(".brand-swatch").forEach((swatch) => {
+    swatch.setAttribute("aria-label", `${copy.copyColour} ${copy[swatch.dataset.labelKey]} ${swatch.dataset.colour}`);
+    if (swatch.classList.contains("is-copied")) swatch.querySelector(".brand-swatch__value").textContent = copy.copied;
+  });
 }
 
 document.addEventListener("click", async (event) => {
@@ -562,6 +574,7 @@ function selectLanguage(language, persist = true, updateUrl = true) {
 
   root.dataset.language = language;
   root.lang = language;
+  if (page === "brand") renderBrandKit();
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const value = copy[element.dataset.i18n];
     if (value !== undefined) element.textContent = value;
@@ -577,7 +590,7 @@ function selectLanguage(language, persist = true, updateUrl = true) {
   languageButtons.forEach((button) => {
     button.setAttribute("aria-pressed", String(button.dataset.languageTarget === language));
   });
-  if (page === "brand") renderBrandKit(copy);
+  if (page === "brand") labelBrandKit(copy);
 
   const metadata = pageMetadata[page][language];
   document.title = metadata.title;
@@ -592,13 +605,122 @@ function selectLanguage(language, persist = true, updateUrl = true) {
   updateAppearance();
 }
 
-function transitionLanguage(language) {
-  if (language === root.dataset.language) return;
-  if (typeof document.startViewTransition === "function" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    document.startViewTransition(() => selectLanguage(language));
-  } else {
+// A language switch crossfades only the words on screen, as on the landing page (script.js): each
+// visible block of copy gets its own view-transition name and the page itself none, so the header,
+// its sliding language pill and the images stay live. A switch made mid-fade waits for the fade.
+let activeLanguageTransition;
+let queuedLanguage;
+
+function languageTransitionItems() {
+  const contentGroups = document.querySelectorAll([
+    ".legal-eyebrow",
+    ".legal-header h1",
+    ".legal-intro",
+    ".legal-updated",
+    ".brand-download > span",
+    ".legal-section h2",
+    ".legal-section > p",
+    ".legal-section li",
+    ".brand-tile figcaption",
+    ".brand-colours > .brand-tile__name",
+    ".brand-swatch__label",
+    ".brand-type__line",
+    ".footer-made",
+    ".footer-sitemap",
+    ".footer-disclaimer",
+  ].join(", "));
+
+  return [...contentGroups].filter((element) => {
+    const bounds = element.getBoundingClientRect();
+    return bounds.bottom > -24 && bounds.top < window.innerHeight + 24;
+  });
+}
+
+function finishLanguageTransition(transitionToken) {
+  if (activeLanguageTransition !== transitionToken) return;
+  activeLanguageTransition = undefined;
+
+  const nextLanguage = queuedLanguage;
+  queuedLanguage = undefined;
+  if (nextLanguage && nextLanguage !== root.dataset.language) transitionLanguage(nextLanguage);
+}
+
+function fallbackLanguageTransition(language, transitionItems) {
+  const transitionToken = {};
+  activeLanguageTransition = transitionToken;
+
+  transitionItems.forEach((element) => element.classList.add("language-copy-fallback"));
+  void document.body.offsetWidth;
+  transitionItems.forEach((element) => element.classList.add("is-language-hidden"));
+
+  window.setTimeout(() => {
     selectLanguage(language);
+    transitionItems.forEach((element) => element.classList.add("language-copy-fallback--enter"));
+    void document.body.offsetWidth;
+    transitionItems.forEach((element) => element.classList.remove("is-language-hidden"));
+
+    window.setTimeout(() => {
+      transitionItems.forEach((element) => {
+        element.classList.remove("language-copy-fallback", "language-copy-fallback--enter", "is-language-hidden");
+      });
+      finishLanguageTransition(transitionToken);
+    }, 170);
+  }, 100);
+}
+
+function transitionLanguage(language) {
+  if (!commonTranslations[language]) return;
+
+  if (activeLanguageTransition) {
+    queuedLanguage = language;
+    return;
   }
+
+  if (language === root.dataset.language) return;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    selectLanguage(language);
+    return;
+  }
+
+  const transitionItems = languageTransitionItems();
+
+  if (!transitionItems.length) {
+    selectLanguage(language);
+    return;
+  }
+
+  if (typeof document.startViewTransition !== "function") {
+    fallbackLanguageTransition(language, transitionItems);
+    return;
+  }
+
+  transitionItems.forEach((element, index) => {
+    element.style.viewTransitionName = `language-copy-${index + 1}`;
+  });
+  root.classList.add("language-view-transition");
+
+  let transition;
+  try {
+    transition = document.startViewTransition(() => selectLanguage(language));
+  } catch (error) {
+    transitionItems.forEach((element) => element.style.removeProperty("view-transition-name"));
+    root.classList.remove("language-view-transition");
+    fallbackLanguageTransition(language, transitionItems);
+    return;
+  }
+
+  activeLanguageTransition = transition;
+
+  transition.finished
+    .catch(() => {})
+    .finally(() => {
+      transitionItems.forEach((element) => {
+        element.style.removeProperty("view-transition-name");
+      });
+      root.classList.remove("language-view-transition");
+      finishLanguageTransition(transition);
+    });
 }
 
 languageButtons.forEach((button) => {
