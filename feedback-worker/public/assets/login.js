@@ -5,6 +5,8 @@ const languageButtons = [...document.querySelectorAll("[data-language-target]")]
 
 const translations = {
   en: {
+    mobileMenuLabel: "Language settings",
+    mobileLanguageLabel: "Language",
     languageGroupLabel: "Choose a language",
     languageEnglishLabel: "View in English",
     languageGermanLabel: "View in German",
@@ -18,6 +20,8 @@ const translations = {
     pageTitle: "Akari: Sign in",
   },
   de: {
+    mobileMenuLabel: "Spracheinstellungen",
+    mobileLanguageLabel: "Sprache",
     languageGroupLabel: "Sprache wählen",
     languageEnglishLabel: "Seite auf Englisch anzeigen",
     languageGermanLabel: "Seite auf Deutsch anzeigen",

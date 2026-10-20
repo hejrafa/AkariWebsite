@@ -32,6 +32,7 @@ let currentLanguage = root.dataset.language === "de" ? "de" : "en";
 const translations = {
   en: {
     languageGroupLabel: "Choose a language", languageEnglishLabel: "View in English", languageGermanLabel: "View in German",
+    mobileMenuLabel: "Language and admin pages", mobileLanguageLabel: "Language", mobilePagesLabel: "Pages",
     homeLabel: "Akari home", adminPagesLabel: "Admin pages", dashboardNavLabel: "Dashboard", foodReviewNavLabel: "Food inbox", logoutLabel: "Log out",
     dashboardTitle: "Dashboard", dashboardLede: "Who’s peeking at the website, where they wandered in from, and who’s brave enough to poke at the beta.", dashboardEmojiLabel: "Play with the dashboard sticker",
     visitsTitle: "Website visits", rangeLabel: "Time range", range7: "7 days", range30: "30 days", range90: "90 days",
@@ -63,6 +64,7 @@ const translations = {
   },
   de: {
     languageGroupLabel: "Sprache wählen", languageEnglishLabel: "Seite auf Englisch anzeigen", languageGermanLabel: "Seite auf Deutsch anzeigen",
+    mobileMenuLabel: "Sprache und Admin-Seiten", mobileLanguageLabel: "Sprache", mobilePagesLabel: "Seiten",
     homeLabel: "Akari Startseite", adminPagesLabel: "Admin-Seiten", dashboardNavLabel: "Übersicht", foodReviewNavLabel: "Meldungen", logoutLabel: "Abmelden",
     dashboardTitle: "Übersicht", dashboardLede: "Wer auf der Website vorbeischaut, woher die Leute hereinspaziert sind und wer sich mutig durch die Beta klickt.", dashboardEmojiLabel: "Mit dem Übersichts-Sticker spielen",
     visitsTitle: "Website-Besuche", rangeLabel: "Zeitraum", range7: "7 Tage", range30: "30 Tage", range90: "90 Tage",

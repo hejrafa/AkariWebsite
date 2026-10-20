@@ -281,6 +281,12 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .admin-logout:hover::after, .admin-logout:focus-visible::after { opacity: 1; transform: translateY(0); }
 .admin-nav-item:focus-visible, .admin-logout:focus-visible { outline: 3px solid var(--band-ink); outline-offset: 3px; }
 
+/* On phones the header's controls (the language switch, and on the admin pages the page tabs and log out)
+   move into a menu under it, as on the website (the mobile header in the site's styles.css). Wider, the
+   wrappers step aside and each control keeps its own place in the header's grid. */
+.header-controls, .header-control-section { display: contents; }
+.mobile-control-label, .admin-logout-label, .mobile-menu-toggle { display: none; }
+
 /* Page ------------------------------------------------------------------------------------------ */
 
 .page-shell { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: clamp(40px, 5vw, 72px) 0 144px; }
@@ -1063,7 +1069,7 @@ h1 {
   .action-cell { grid-column: 3; grid-row: 1 / span 4; align-items: flex-start; }
 }
 
-@media (max-width: 860px) {
+@media (min-width: 761px) and (max-width: 860px) {
   .admin-nav-item { width: 42px; padding: 0; justify-content: center; }
   .admin-nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 }
@@ -1071,8 +1077,90 @@ h1 {
 @media (max-width: 760px) {
   :root { --header-h: 82px; }
   .page-shell { width: calc(100% - 32px); padding: 36px 0 96px; }
-  .site-header .language-switch, .login-header .language-switch { margin-left: 16px; }
-  .admin-nav { margin-right: 16px; }
+  .brand, .login-brand { width: 92px; height: auto; }
+
+  .header-controls {
+    position: absolute;
+    z-index: 40;
+    top: calc(var(--header-h) - 2px);
+    right: 16px;
+    display: flex;
+    visibility: hidden;
+    width: min(360px, calc(100% - 32px));
+    padding: 18px;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid color-mix(in srgb, var(--band-ink) 20%, transparent);
+    border-radius: 18px;
+    background: var(--band);
+    box-shadow: 0 20px 54px rgba(0, 0, 0, 0.24);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, -8px, 0) scale(0.98);
+    transform-origin: top right;
+    transition: visibility 0s linear 180ms, opacity 150ms ease-out, transform 220ms var(--ease);
+  }
+  .mobile-menu-is-open .header-controls {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0) scale(1);
+    transition-delay: 0s;
+  }
+  /* Each section is a label over full-width pills, so every control in the menu shares both of its edges. */
+  .header-control-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .mobile-control-label { display: block; font-family: var(--sans); font-size: 0.86rem; font-weight: 600; line-height: 1; opacity: 0.66; }
+  .language-switch, .admin-nav { grid-column: 1; grid-row: auto; justify-self: stretch; margin: 0; }
+  .language-switch { --language-h: 44px; }
+  .language-switch::before { width: calc(50% - 3px); }
+  :root[data-language="de"] .language-switch::before { transform: translateX(100%); }
+  .language-button { flex: 1 1 0; width: auto; }
+  .language-button::after, .admin-logout::after { display: none; }
+  .admin-nav { flex-direction: column; align-items: stretch; }
+  .admin-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(136px, 1fr)); gap: 10px; }
+  .admin-nav-item { height: 44px; justify-content: center; }
+  .admin-logout {
+    display: flex;
+    width: auto;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 650;
+    line-height: 1;
+    text-decoration: none;
+  }
+  .admin-logout-label { display: block; }
+
+  .mobile-menu-toggle {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-column: 3;
+    grid-row: 1;
+    width: 44px;
+    height: 44px;
+    margin-right: 16px;
+    padding: 0;
+    place-items: center;
+    justify-self: end;
+    border: 1px solid color-mix(in srgb, var(--band-ink) 20%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--band-ink) 5.5%, transparent);
+    color: var(--ink);
+    transition: background-color 180ms var(--ease), transform 220ms var(--ease);
+  }
+  .mobile-menu-toggle:hover { background: color-mix(in srgb, var(--band-ink) 10%, transparent); }
+  .mobile-menu-toggle:active { transform: scale(0.94); }
+  .mobile-menu-toggle:focus-visible { outline: 3px solid var(--band-ink); outline-offset: 3px; }
+  .mobile-menu-toggle svg { width: 22px; height: 22px; overflow: visible; fill: none; stroke: currentColor; stroke-linecap: round; stroke-width: 2; }
+  .mobile-menu-toggle path { transform-origin: 12px 12px; transition: transform 300ms var(--ease), opacity 180ms var(--ease); }
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(1) { transform: rotate(45deg) translateY(5px); }
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(2) { opacity: 0; }
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(3) { transform: rotate(-45deg) translateY(-5px); }
   .visits-card { grid-template-columns: 1fr; }
   .visit-stats { grid-template-columns: 1fr 1fr; }
   .testers-stats { grid-template-columns: 1fr 1fr; }
@@ -1083,15 +1171,6 @@ h1 {
 }
 
 @media (max-width: 480px) {
-  .site-header { grid-template-columns: auto 1fr auto; }
-  .language-switch { --language-w: 38px; --language-h: 32px; }
-  .site-header .language-switch, .login-header .language-switch { margin-left: 12px; }
-  .admin-nav { gap: 6px; margin-right: 12px; }
-  .admin-tabs { gap: 5px; }
-  .brand, .login-brand { width: 80px; height: auto; }
-  .admin-nav-item { width: 36px; height: 36px; }
-  .admin-nav-icon { width: 15px; height: 15px; }
-  .admin-logout { width: 36px; height: 36px; }
   .visits-card { padding: 18px; }
   .summary-card { min-height: 48px; padding-left: 18px; font-size: 1.05rem; }
   .empty-state { align-items: center; flex-direction: column; text-align: center; }
@@ -1110,6 +1189,10 @@ h1 {
   .micro-row:nth-child(odd) { border-right: 0; }
   .micro-row:nth-last-child(2) { border-bottom: 1px solid var(--faint); }
   .panel-footer { padding-inline: 16px; }
+}
+
+@media (max-width: 350px) {
+  .header-controls { padding: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
