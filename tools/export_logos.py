@@ -3,7 +3,7 @@
 
 The header and footer logos, assets/logo/akari-logo-<theme>-<dark|light>.svg, are the mark from the theme's
 app icon above the Akari wordmark. The mark is the icon's own layers from the app's AppIcon<Theme>.icon
-(AppIcon.icon for Sun, whose keys are still `plain`): the outline and inside arcs in the theme's gradient,
+(AppIcon.icon for Plain): the outline and inside arcs in the theme's gradient,
 and the theme's touches (bolts, leaves, bubbles or drops). Each layer also carries a lavender copy of every
 shape underneath the gradient one, for Icon Composer's other renditions; the logo keeps only the gradient
 shapes. The wordmark comes from assets/akari-logo.svg, in the theme's cream on dark and its ink on light.
@@ -50,7 +50,7 @@ THEMES = {
     "forest": ("shiratani", "AppIconForest.icon", "#E6F4D1", "#151A0C"),
     "coast": ("loch-tay", "AppIconCoast.icon", "#D7EDF8", "#0D1920"),
     "canyon": ("green-river-overlook", "AppIconCanyon.icon", "#F4DDD1", "#1A100C"),
-    "plain": ("sun", "AppIcon.icon", "#FFFFFF", "#000000"),
+    "plain": ("plain", "AppIcon.icon", "#FFFFFF", "#000000"),
 }
 # Stops of the lavender copies, which the logo leaves out.
 LAVENDER = {"#F1EBFF", "#E3E6FF"}
