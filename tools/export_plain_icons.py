@@ -6,23 +6,20 @@ Writes into assets/icons/:
   (the web app manifest's "any" icons; the 512 is also the logo in the page's structured data);
 - apple-touch-icon-180.png and icon-48.png: opaque squares, for iOS to round itself and for Google's
   result favicon, which it crops on its own;
-- icon-maskable-512.png: an opaque square whose mark stays inside the central 80 % circle;
-and assets/social.png, the 1200x630 sharing card: the icon and the plain wordmark on black.
+- icon-maskable-512.png: an opaque square whose mark stays inside the central 80 % circle.
+The sharing card, assets/social.png, is drawn by tools/export_logos.py from the logo.
 
 Each size is rendered by Icon Composer's ictool from the app's AppIcon.icon, Dark rendition, exactly
-as the app's Scripts/export_welcome_assets.sh renders icons, then matched to sRGB with sips. The card is
-drawn by headless Chrome from the icon and the wordmark in assets/logo/akari-logo-plain-dark.svg.
+as the app's Scripts/export_welcome_assets.sh renders icons, then matched to sRGB with sips.
 
 Usage: python3 tools/export_plain_icons.py [--app ../App]
-Needs macOS with Xcode, Google Chrome and Pillow.
+Needs macOS with Xcode and Pillow.
 """
 
 from __future__ import annotations
 
 import argparse
-import base64
 import math
-import re
 import subprocess
 import sys
 import tempfile
@@ -32,7 +29,6 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 ICTOOL = "/Applications/Xcode.app/Contents/Applications/Icon Composer.app/Contents/Executables/ictool"
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 SRGB = "/System/Library/ColorSync/Profiles/sRGB Profile.icc"
 
 
@@ -87,36 +83,6 @@ def mark_radius(icon: Image.Image) -> float:
     return furthest / width
 
 
-def social_card(icon_path: Path, out: Path, work: Path) -> None:
-    logo = (ROOT / "assets/logo/akari-logo-plain-dark.svg").read_text()
-    # Only the wordmark: the mark above it is the icon's job here.
-    logo = re.sub(r'<svg [^>]*>', '<svg id="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 89.2823 50">', logo, count=1)
-    icon = base64.b64encode(icon_path.read_bytes()).decode()
-    page = work / "card.html"
-    page.write_text(f"""<!doctype html><meta charset="utf-8">
-<style>
-  html, body {{ margin: 0; width: 1200px; height: 630px; background: #000; overflow: hidden; }}
-  .card {{ display: flex; align-items: center; justify-content: center; gap: 56px; height: 100%; }}
-  .card img {{ width: 330px; height: 330px; display: block; }}
-  #logo {{ display: block; height: 196px; width: auto; }}
-  #akari-print {{ display: none; }}
-</style>
-<div class="card"><img src="data:image/png;base64,{icon}" alt="">{logo}</div>
-<script>
-  // Crop the logo's box to the wordmark, so it sits centred beside the icon.
-  const svg = document.getElementById("logo");
-  const box = document.getElementById("akari-wordmark").getBBox();
-  svg.setAttribute("viewBox", `${{box.x}} ${{box.y}} ${{box.width}} ${{box.height}}`);
-  svg.style.height = "128px";
-</script>""")
-    subprocess.run(
-        [CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
-         "--window-size=1200,630", f"--screenshot={out}", "--virtual-time-budget=2000", page.as_uri()],
-        check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-    )
-    Image.open(out).convert("RGB").save(out, optimize=True)
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--app", type=Path, default=ROOT.parent / "App", help="the app repository (default: ../App)")
@@ -139,8 +105,7 @@ def main() -> int:
             print(f"The mark reaches {radius:.0%} from the centre, outside the maskable safe zone (40 %).", file=sys.stderr)
             return 1
         square(maskable).save(icons / "icon-maskable-512.png", optimize=True)
-        social_card(icons / "icon-1024.png", ROOT / "assets" / "social.png", work)
-    print(f"Wrote 6 icons to {icons} (mark within {radius:.0%} of the centre) and assets/social.png")
+    print(f"Wrote 6 icons to {icons} (mark within {radius:.0%} of the centre)")
     return 0
 
 

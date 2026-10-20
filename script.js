@@ -357,7 +357,7 @@ const pageMetadata = {
     socialTitle: "Akari: Your whole day in one place",
     socialDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
     twitterDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
-    imageAlt: "Akari app icon and logo on black",
+    imageAlt: "The Akari logo on white",
   },
   de: {
     title: "Akari: Verstehe deine Gesundheitsdaten",
@@ -365,7 +365,7 @@ const pageMetadata = {
     socialTitle: "Akari: Dein ganzer Tag an einem Ort",
     socialDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
     twitterDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
-    imageAlt: "App-Symbol und Logo von Akari auf Schwarz",
+    imageAlt: "Das Akari-Logo auf Weiß",
   },
 };
 
@@ -413,7 +413,7 @@ function structuredDataFor(language) {
         isPartOf: { "@id": "https://joinakari.com/#website" },
         publisher: { "@id": "https://joinakari.com/#organization" },
         mainEntity: { "@id": "https://joinakari.com/#app" },
-        primaryImageOfPage: "https://joinakari.com/assets/social.png?v=3",
+        primaryImageOfPage: "https://joinakari.com/assets/social.png?v=4",
         inLanguage: language,
       },
       {

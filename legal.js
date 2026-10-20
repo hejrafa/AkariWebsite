@@ -51,6 +51,7 @@ const commonTranslations = {
     termsLabel: "Terms of Service",
     contactLabel: "Contact us",
     brandLabel: "Brand",
+    imageAlt: "The Akari logo on white",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
@@ -92,6 +93,7 @@ const commonTranslations = {
     termsLabel: "Nutzungsbedingungen",
     contactLabel: "Kontakt",
     brandLabel: "Marke",
+    imageAlt: "Das Akari-Logo auf Weiß",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
   },
 };
@@ -593,11 +595,24 @@ function selectLanguage(language, persist = true, updateUrl = true) {
   if (page === "brand") labelBrandKit(copy);
 
   const metadata = pageMetadata[page][language];
+  const pageUrl = language === "de" ? `https://joinakari.com/${page}/?lang=de` : `https://joinakari.com/${page}/`;
   document.title = metadata.title;
-  const description = document.querySelector('meta[name="description"]');
-  if (description) description.content = metadata.description;
+  const setMeta = (selector, value) => {
+    const element = document.querySelector(selector);
+    if (element) element.content = value;
+  };
+  setMeta('meta[name="description"]', metadata.description);
+  setMeta('meta[property="og:title"]', metadata.title);
+  setMeta('meta[property="og:description"]', metadata.description);
+  setMeta('meta[property="og:url"]', pageUrl);
+  setMeta('meta[property="og:locale"]', language === "de" ? "de_DE" : "en_US");
+  setMeta('meta[property="og:locale:alternate"]', language === "de" ? "en_US" : "de_DE");
+  setMeta('meta[property="og:image:alt"]', copy.imageAlt);
+  setMeta('meta[name="twitter:title"]', metadata.title);
+  setMeta('meta[name="twitter:description"]', metadata.description);
+  setMeta('meta[name="twitter:image:alt"]', copy.imageAlt);
   const canonical = document.querySelector('link[rel="canonical"]');
-  if (canonical) canonical.href = language === "de" ? `https://joinakari.com/${page}/?lang=de` : `https://joinakari.com/${page}/`;
+  if (canonical) canonical.href = pageUrl;
 
   if (persist) persistSitePreference("akari-language", language);
   if (updateUrl) updateLanguageUrl(language);

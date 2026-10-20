@@ -18,7 +18,9 @@ The brand page's downloads go to assets/brand/, named after the themes as the si
 - akari-mark-<theme>.svg and .png (1024 px wide), the mark alone;
 - akari-app-icon-<theme>-<light|dark>.png, the app icon at 1024 px as iOS draws it, white or black tile,
   rendered by Icon Composer's ictool exactly as the app's Scripts/export_welcome_assets.sh does.
-Last, it zips assets/brand/ into brand/akari-brand.zip for a local preview; the deploy makes its own.
+It also draws assets/social.png, the 1200 x 630 card that links show when shared, in messages and on
+social sites: the Plain logo for light backgrounds, centred on white. Last, it zips assets/brand/ into
+brand/akari-brand.zip for a local preview; the deploy makes its own.
 
 Usage: python3 tools/export_logos.py [--app ../App] [--svg-only]
 The PNGs need macOS with Xcode and Google Chrome; --svg-only writes just the SVGs.
@@ -62,6 +64,9 @@ CENTRE_X = WIDTH / 2
 LOGO_PNG_WIDTH = 2000
 MARK_PNG_WIDTH = 1024
 ICON_PNG_SIZE = 1024
+# The sharing card. The logo stays inside the central square, which some apps crop the card to.
+CARD_WIDTH, CARD_HEIGHT = 1200, 630
+CARD_LOGO_HEIGHT = 330
 
 
 def tag(element: ET.Element) -> str:
@@ -199,6 +204,24 @@ def render_svg(text: str, width: int, height: int, out: Path, work: Path) -> Non
     print(f"Wrote {out.relative_to(ROOT)}")
 
 
+def social_card(text: str, out: Path, work: Path) -> None:
+    """The light logo centred on a white card, drawn by headless Chrome."""
+    page = work / "card.html"
+    page.write_text(f"""<!doctype html><meta charset="utf-8">
+<style>
+  html, body {{ margin: 0; width: {CARD_WIDTH}px; height: {CARD_HEIGHT}px; background: #ffffff; overflow: hidden; }}
+  body {{ display: grid; place-items: center; }}
+  svg {{ display: block; height: {CARD_LOGO_HEIGHT}px; width: {CARD_LOGO_HEIGHT * WIDTH / HEIGHT:.1f}px; }}
+</style>
+{text}""")
+    subprocess.run(
+        [CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
+         f"--window-size={CARD_WIDTH},{CARD_HEIGHT}", f"--screenshot={out}", "--virtual-time-budget=2000", page.as_uri()],
+        check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+    )
+    print(f"Wrote {out.relative_to(ROOT)}")
+
+
 def render_icon(document: Path, rendition: str, out: Path) -> None:
     """The app icon as iOS draws it, rounded, 8-bit sRGB."""
     subprocess.run(
@@ -267,6 +290,8 @@ def main() -> int:
                 print(f"Wrote {download.with_suffix('.svg').relative_to(ROOT)}")
                 if not arguments.svg_only:
                     render_svg(text, LOGO_PNG_WIDTH, round(LOGO_PNG_WIDTH * HEIGHT / WIDTH), download.with_suffix(".png"), work)
+                    if theme == "plain" and mode == "light":
+                        social_card(text, ROOT / "assets/social.png", work)
 
             left, right, top = reaches[theme]
             left, right, top = min(left, arcs_left), max(right, arcs_right), min(top, arcs_top)
