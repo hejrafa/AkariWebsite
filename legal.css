@@ -1112,7 +1112,7 @@ body[data-legal-page="about-us"] .legal-content {
 .about-photo.is-missing img { display: none; }
 
 .about-value__sticker {
-  width: 64px;
+  width: 72px;
   margin: -4px 0 16px -4px;
   rotate: -8deg;
 }

@@ -57,7 +57,7 @@ SHADOW_SIGMA = 7  # a 14px blur radius is a Gaussian with half that standard dev
 SHADOW_ALPHA = 0.24
 SIDE, TOP, BOTTOM = 20, 10, 30  # room for ring and shadow: the blur fades out within 17px
 
-STICKER_SIZES = (56, 72, 92, 120, 160)  # each about 1.29 times the last; keep in step with script.js
+STICKER_SIZES = (34, 43, 56, 72, 92, 120, 160)  # each about 1.29 times the last; keep in step with script.js
 NO_EDGE = {"readiness-bar"}
 SCRIPT = Path(__file__).resolve()
 

@@ -240,7 +240,7 @@
       })();
     </script>
     <link rel="stylesheet" href="/styles.css?v=20261021-03" />
-    <script src="/script.js?v=20261021-04" defer></script>
+    <script src="/script.js?v=20261021-05" defer></script>
     <script src="/visit.js?v=20261010-01" defer></script>
   </head>
   <body>
@@ -500,7 +500,7 @@
       (() => {
         const { theme, language, mode } = document.documentElement.dataset;
         const iconMode = mode === "dark" ? "dark" : "light";
-        const stickerWidths = [56, 72, 92, 120, 160];
+        const stickerWidths = [34, 43, 56, 72, 92, 120, 160];
         const nearest = (width) => stickerWidths.reduce((best, size) => (Math.abs(Math.log(width / size)) < Math.abs(Math.log(width / best)) ? size : best));
         const base = (image, boxWidth) => {
           const cut = image.classList.contains("cut__image") ? "-cut" : "";
@@ -568,7 +568,7 @@
             <ul>
               <li><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer" data-i18n="footerJoinLabel">Join the beta</a></li>
               <li><a href="#faq" data-i18n="footerFaqLabel">FAQ</a></li>
-              <li><a href="mailto:contact@hejrafa.com" data-i18n="contactLabel">Contact us</a></li>
+              <li><a href="mailto:support@joinakari.com" data-i18n="contactLabel">Contact us</a></li>
             </ul>
           </div>
           <div class="footer-column">

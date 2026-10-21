@@ -704,7 +704,7 @@ const modes = ["light", "dark"];
 
 // A sticker is shown anywhere from about 50 to 180px wide, so tools/bake_die_cuts.py bakes it at each of
 // these widths and each sticker takes the nearest to its box, which keeps its edge close to 3px.
-const stickerWidths = [56, 72, 92, 120, 160];
+const stickerWidths = [34, 43, 56, 72, 92, 120, 160];
 
 function nearestStickerWidth(boxWidth) {
   const width = boxWidth || 80;
