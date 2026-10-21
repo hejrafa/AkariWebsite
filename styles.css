@@ -1763,6 +1763,12 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   line-height: 1.35;
 }
 
+.pricing__indie a {
+  color: inherit;
+  font-weight: 700;
+  text-underline-offset: 0.18em;
+}
+
 .pricing__indie-sticker {
   flex: none;
   width: 52px;

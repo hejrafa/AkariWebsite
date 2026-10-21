@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Gives every page its own German address: /de/ for the landing page, /de/datenschutz/, /de/nutzungsbedingungen/
-and /de/marke/ for privacy, terms and brand, while the English pages stay at /, /privacy/, /terms/ and /brand/.
+"""Gives every page its own German address: /de/ for the landing page, /de/datenschutz/, /de/nutzungsbedingungen/,
+/de/marke/ and /de/ueber-uns/ for privacy, terms, brand and about, while the English pages stay at /, /privacy/,
+/terms/, /brand/ and /about/.
 
 GitHub Pages only serves files, so each German address is a copy of its English page that says it is German:
 its <html lang>, the canonical address, the title, description and sharing cards, and the links between pages.
@@ -37,6 +38,7 @@ PAGES = {
     "/privacy/": "/de/datenschutz/",
     "/terms/": "/de/nutzungsbedingungen/",
     "/brand/": "/de/marke/",
+    "/about/": "/de/ueber-uns/",
 }
 
 

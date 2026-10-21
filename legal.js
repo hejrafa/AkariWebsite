@@ -12,7 +12,7 @@ const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 const playfulEmojis = document.querySelectorAll(".legal-headline-emoji");
 // Each page's address in English and German. tools/language_pages.py makes the German pages from the English
 // ones, and script.js keeps the same table.
-const languagePaths = { "/": "/de/", "/privacy/": "/de/datenschutz/", "/terms/": "/de/nutzungsbedingungen/", "/brand/": "/de/marke/" };
+const languagePaths = { "/": "/de/", "/privacy/": "/de/datenschutz/", "/terms/": "/de/nutzungsbedingungen/", "/brand/": "/de/marke/", "/about/": "/de/ueber-uns/" };
 
 const commonTranslations = {
   en: {
@@ -54,6 +54,7 @@ const commonTranslations = {
     termsLabel: "Terms of Service",
     contactLabel: "Contact us",
     brandLabel: "Brand",
+    aboutLabel: "About",
     imageAlt: "The Akari logo on white",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
@@ -96,6 +97,7 @@ const commonTranslations = {
     termsLabel: "Nutzungsbedingungen",
     contactLabel: "Kontakt",
     brandLabel: "Marke",
+    aboutLabel: "Über uns",
     imageAlt: "Das Akari-Logo auf Weiß",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
   },
@@ -282,7 +284,7 @@ const pageTranslations = {
       aboutTitle: "A word about Akari",
       aboutPromise: "Akari turns private health data into a calm, human reading, then lets you get on with your day. It brings your sleep, movement and food together on your iPhone and explains in plain words what they mean, measured against your own usual days rather than anyone else’s.",
       aboutMirror: "Akari is a mirror and a translator, not a scoreboard. Health should feel understandable without feeling clinical, competitive or urgent, and it stays private: there is no account, and health data stays on the iPhone.",
-      aboutUs: "Akari is made by just the two of us, in Germany.",
+      aboutUs: "Akari is made by <a href=\"/about/\">a young German company</a> that cares about your health, not about your data.",
       nameTitle: "The name",
       nameBody: "Akari is one word with a capital A: Akari, never AKARI or akari. Where it helps, say “the Akari app” or “Akari for iPhone”.",
       logoTitle: "Logo",
@@ -325,7 +327,7 @@ const pageTranslations = {
       aboutTitle: "Ein paar Worte zu Akari",
       aboutPromise: "Akari macht aus privaten Gesundheitsdaten eine ruhige, menschliche Einordnung und lässt dich dann deinen Tag leben. Die App bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie bedeuten, gemessen an deinen eigenen gewohnten Tagen statt an denen anderer.",
       aboutMirror: "Akari ist Spiegel und Übersetzer, keine Anzeigetafel. Gesundheit soll verständlich sein, ohne sich nach Klinik, Wettkampf oder Eile anzufühlen, und sie bleibt privat: Es gibt kein Konto, und Gesundheitsdaten bleiben auf dem iPhone.",
-      aboutUs: "Akari machen nur wir zwei, in Deutschland.",
+      aboutUs: "Hinter Akari steht <a href=\"/about/\">ein junges deutsches Unternehmen</a>, das sich für deine Gesundheit interessiert, nicht für deine Daten.",
       nameTitle: "Der Name",
       nameBody: "Akari ist ein Wort mit großem A: Akari, nie AKARI oder akari. Wo es hilft, schreib „die App Akari“ oder „Akari für das iPhone“.",
       logoTitle: "Logo",
@@ -360,6 +362,55 @@ const pageTranslations = {
       pressBody: "Du schreibst über Akari oder vermisst hier etwas? Schreib an <a href=\"mailto:contact@hejrafa.com\">contact@hejrafa.com</a>, und wir melden uns.",
     },
   },
+  // The About page's copy in square brackets is a placeholder for the founders to replace.
+  about: {
+    en: {
+      title: "Why Akari exists",
+      emojiLabel: "Play with the app icon",
+      whyStarted: "[Why we started: health apps that hoard your data and bury you in numbers.]",
+      whyInstead: "[What Akari does instead.]",
+      teamEyebrow: "Who we are",
+      teamTitle: "A young German company",
+      rafaelName: "[Rafael]",
+      rafaelRole: "[Role, and one sentence about Rafael.]",
+      janName: "[Jan]",
+      janRole: "[Role, and one sentence about Jan.]",
+      beliefsEyebrow: "What we believe",
+      beliefsTitle: "Three things we hold to",
+      valueDataTitle: "Your data stays yours",
+      valueDataBody: "[One sentence on privacy.]",
+      valueHealthTitle: "Health before numbers",
+      valueHealthBody: "[One sentence on putting health first.]",
+      valueTogetherTitle: "Built with the people who use it",
+      valueTogetherBody: "[One sentence on building Akari with its users.]",
+      closingTitle: "[A closing line.]",
+      joinBeta: "Join the beta",
+      closingContact: "Or write to us at <a href=\"mailto:contact@hejrafa.com\">contact@hejrafa.com</a>.",
+    },
+    de: {
+      title: "Warum es Akari gibt",
+      emojiLabel: "Mit dem App-Icon spielen",
+      whyStarted: "[Warum wir angefangen haben: Gesundheits-Apps, die deine Daten horten und dich mit Zahlen überhäufen.]",
+      whyInstead: "[Was Akari stattdessen macht.]",
+      teamEyebrow: "Wer wir sind",
+      teamTitle: "Ein junges deutsches Unternehmen",
+      rafaelName: "[Rafael]",
+      rafaelRole: "[Rolle und ein Satz über Rafael.]",
+      janName: "[Jan]",
+      janRole: "[Rolle und ein Satz über Jan.]",
+      beliefsEyebrow: "Woran wir glauben",
+      beliefsTitle: "Drei Dinge, an die wir uns halten",
+      valueDataTitle: "Deine Daten bleiben deine",
+      valueDataBody: "[Ein Satz zum Datenschutz.]",
+      valueHealthTitle: "Gesundheit vor Zahlen",
+      valueHealthBody: "[Ein Satz dazu, dass Gesundheit zuerst kommt.]",
+      valueTogetherTitle: "Gebaut mit denen, die Akari nutzen",
+      valueTogetherBody: "[Ein Satz dazu, wie wir Akari mit den Menschen bauen, die es nutzen.]",
+      closingTitle: "[Ein Satz zum Schluss.]",
+      joinBeta: "Beta testen",
+      closingContact: "Oder schreib uns an <a href=\"mailto:contact@hejrafa.com\">contact@hejrafa.com</a>.",
+    },
+  },
 };
 
 const pageMetadata = {
@@ -374,6 +425,10 @@ const pageMetadata = {
   brand: {
     en: { title: "Akari: Brand", description: "Akari’s logos, mark, app icons and colours to download, and a word about the brand." },
     de: { title: "Akari: Marke", description: "Logos, Bildmarke, App-Icons und Farben von Akari zum Herunterladen, und ein paar Worte zur Marke." },
+  },
+  about: {
+    en: { title: "Akari: About", description: "Why Akari exists, who makes it and what we believe: a young German company that cares about your health, not about your data." },
+    de: { title: "Akari: Über uns", description: "Warum es Akari gibt, wer dahintersteht und woran wir glauben: ein junges deutsches Unternehmen, das sich für deine Gesundheit interessiert, nicht für deine Daten." },
   },
 };
 
@@ -558,6 +613,14 @@ function updateStickers() {
   });
 }
 
+// The About page's founder photos are assets/about/<name>.webp. Until a photo is there, its frame shows the
+// neutral silhouette behind it rather than a broken image.
+document.querySelectorAll(".about-photo img").forEach((image) => {
+  const missing = () => image.parentElement.classList.add("is-missing");
+  if (image.complete && !image.naturalWidth) missing();
+  else image.addEventListener("error", missing);
+});
+
 let lastViewportWidth = window.innerWidth;
 window.addEventListener("resize", () => {
   if (window.innerWidth === lastViewportWidth) return;
@@ -659,6 +722,13 @@ function languageTransitionItems() {
     ".brand-colours > .brand-tile__name",
     ".brand-swatch__label",
     ".brand-type__line",
+    ".about-person h3",
+    ".about-person p",
+    ".about-value h3",
+    ".about-value p",
+    ".about-closing h2",
+    ".band-cta > span",
+    ".about-closing__contact",
     ".footer-made",
     ".footer-sitemap",
     ".footer-disclaimer",

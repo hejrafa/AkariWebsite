@@ -6,7 +6,7 @@ Both applications are in [hejrafa/AkariWebsite](https://github.com/hejrafa/Akari
 
 | Service | Code | Production | Deployment |
 | --- | --- | --- | --- |
-| Public website, privacy, terms and brand | Repository root, `privacy/`, `terms/`, `brand/` | https://joinakari.com | GitHub Pages; every push to `main` |
+| Public website, privacy, terms, brand and about | Repository root, `privacy/`, `terms/`, `brand/`, `about/` | https://joinakari.com | GitHub Pages; every push to `main` |
 | Food-feedback dashboard | `feedback-worker/public/` | https://admin.joinakari.com | Cloudflare Worker; separate deployment |
 | Login and food-feedback API | `feedback-worker/src/index.ts` | https://api.joinakari.com | Same Worker as the admin dashboard |
 | Feedback database | `feedback-worker/migrations/` | Cloudflare D1, `akari-food-feedback` | Apply pending migrations separately |
@@ -23,6 +23,10 @@ The site is intentionally dependency-free and can run locally or on any static h
 The site's type and colours follow the app: New York, and the per-theme page, card, ink, accent and launch-screen colours from the iOS project's `AppTheme.swift`. Five themes are offered: Wasserkuppe (`meadow`), Shiratani (`forest`, the default), Loch Tay (`coast`), Green River Overlook (`canyon`) and Plain (`plain`, Schlicht in German). Plain has no painting, so its deep band is the app's dark card colour.
 
 The header and footer logos, `assets/logo/akari-logo-<theme>-<dark|light>.svg`, are the mark from each theme's app icon (its arcs in the theme's gradient and its touches: bolts, leaves, bubbles or drops; Plain has none) above the wordmark. The admin dashboard and its login load the same files at the same 89 × 50 size, so the box must stay that size.
+
+### About page
+
+`about/` says why Akari exists, who makes it and what we believe, built from the legal pages' header, footer and `legal.css`, with its words in `pageTranslations.about` in `legal.js`. Copy in square brackets is a placeholder to replace, in English and German, in both `legal.js` and the page itself. The founders' photos are `assets/about/rafael.webp` and `assets/about/jan.webp`, shown at 160 px (so 480 px square covers 3x screens); until a file is there, its frame shows a neutral silhouette.
 
 ### Brand page
 
@@ -45,7 +49,7 @@ Each baked file is its source on a transparent margin (20px at the sides, 10 abo
 
 ### Languages
 
-Every page has an English and a German address. English stays at `/`, `/privacy/`, `/terms/` and `/brand/`, which the app links to; German is `/de/`, `/de/datenschutz/`, `/de/nutzungsbedingungen/` and `/de/marke/`. The table is `PAGES` in `tools/language_pages.py`, and `languagePaths` in `script.js` and `legal.js` keeps the same one; change all three together, along with the hreflang links in the pages and `sitemap.xml`.
+Every page has an English and a German address. English stays at `/`, `/privacy/`, `/terms/` and `/brand/`, which the app links to, and `/about/`; German is `/de/`, `/de/datenschutz/`, `/de/nutzungsbedingungen/`, `/de/marke/` and `/de/ueber-uns/`. The table is `PAGES` in `tools/language_pages.py`, and `languagePaths` in `script.js` and `legal.js` keeps the same one; change all three together, along with the hreflang links in the pages and `sitemap.xml`.
 
 Only the English pages are in the repository. `python3 tools/language_pages.py build --root site` makes each German page from its English one in the deploy's staged site: the same file, with `<html lang="de">`, the German title, description and sharing cards (read from `pageMetadata` in `script.js` and `legal.js`, and `commonTranslations` for the image text), its own canonical address, and links to the other German pages. The page's script writes the German words on load, as the switch does. A German string the build can't find stops the deploy rather than shipping an English card on a German page. The landing page uses root-relative addresses (`/assets/…`, `/script.js`) so its copy at `/de/` finds the same files.
 
@@ -54,7 +58,7 @@ A page's `<html lang>` is its language. On an English address, the saved prefere
 ### Search, sharing and AI discovery
 
 - `robots.txt` allows search and AI search crawlers and references the sitemap. `admin.joinakari.com` and `api.joinakari.com` answer `/robots.txt` from the Worker with `Disallow: /`: the dashboard and its login carry `noindex` anyway, and the API is for the app, but Search Console's domain property lists both hosts. The footer's Admin link goes straight to `/login` with `rel="nofollow"`, since `/` redirects there when signed out.
-- `sitemap.xml` lists the landing, privacy, terms and brand pages at their English and German addresses, with the app's pieces from `assets/welcome` as the landing page's images.
+- `sitemap.xml` lists the landing, privacy, terms, brand and about pages at their English and German addresses, with the app's pieces from `assets/welcome` as the landing page's images.
 - `llms.txt` and `llms-full.txt` provide concise machine-readable product information.
 - `manifest.webmanifest` describes the website for browsers and installed shortcuts.
 - The icons for search, sharing and home screens are the plain app icon (the logo on black), in `assets/icons/`: `icon-1024.png`, `icon-512.png` and `icon-192.png` as iOS draws it, rounded; `apple-touch-icon-180.png`, `icon-48.png` (the favicon size Google asks for) and `icon-maskable-512.png` as opaque squares. `assets/social.png` is the sharing card that links show in messages and on social sites: the Plain logo for light backgrounds (the mark above the wordmark) centred on white, drawn by `tools/export_logos.py`; bump its `?v=` in `index.html` and `script.js` when it changes. `python3 tools/export_plain_icons.py` renders the icons from the app's `AppIcon.icon` (macOS with Xcode and Pillow); bump their `?v=` in the pages and manifests when they change. `favicon.svg` is the plain mark itself.
@@ -62,7 +66,7 @@ A page's `<html lang>` is its language. On an English address, the saved prefere
 
 ## Website visits
 
-Every public page loads `visit.js`, which sends one beacon per page load to `https://api.joinakari.com/v1/visit`: the path and the referring host or `utm_source`/`ref` tag. It sets no cookies and stores nothing in the browser, and it does nothing on localhost. The Worker drops requests from other origins and obvious bots, adds Cloudflare's country code, and stores a 16-character hash of the IP address and user agent with a random salt kept in `site_visit_salts` for the current UTC day only. The IP address and user agent are never stored; the first visit of a new day deletes older salts, so earlier hashes can't be linked to anyone. Visitors over a range are therefore the sum of daily visitors. The privacy policy's "Visiting this website" section describes this; update it if the beacon collects anything new. The landing, privacy and terms pages load `visit.js`, so add it to any new public page.
+Every public page loads `visit.js`, which sends one beacon per page load to `https://api.joinakari.com/v1/visit`: the path and the referring host or `utm_source`/`ref` tag. It sets no cookies and stores nothing in the browser, and it does nothing on localhost. The Worker drops requests from other origins and obvious bots, adds Cloudflare's country code, and stores a 16-character hash of the IP address and user agent with a random salt kept in `site_visit_salts` for the current UTC day only. The IP address and user agent are never stored; the first visit of a new day deletes older salts, so earlier hashes can't be linked to anyone. Visitors over a range are therefore the sum of daily visitors. The privacy policy's "Visiting this website" section describes this; update it if the beacon collects anything new. Every public page loads `visit.js`, so add it to any new one.
 
 The dashboard reads `/admin-api/visits?days=7|30|90`. Locally, with no visits recorded, it shows labelled sample data.
 

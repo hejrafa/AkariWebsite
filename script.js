@@ -50,7 +50,7 @@ const goalStickers = {
 const siteRoot = new URL(".", document.currentScript?.src || window.location.href);
 // Each page's address in English and German. tools/language_pages.py makes the German pages from the English
 // ones, and legal.js keeps the same table.
-const languagePaths = { "/": "/de/", "/privacy/": "/de/datenschutz/", "/terms/": "/de/nutzungsbedingungen/", "/brand/": "/de/marke/" };
+const languagePaths = { "/": "/de/", "/privacy/": "/de/datenschutz/", "/terms/": "/de/nutzungsbedingungen/", "/brand/": "/de/marke/", "/about/": "/de/ueber-uns/" };
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 let followsSystemMode = false;
 
@@ -197,7 +197,7 @@ const translations = {
     planPerYear: "/ year",
     planSave: "Save 33%",
     planYearlyMonthly: "€3.33 a month",
-    pricingIndie: "Akari is made by a young German company that cares about your health, not about your data. Your subscription supports us.",
+    pricingIndie: "Akari is made by a young German company that cares about your health, not about your data. Your subscription <a href=\"/about/\">supports us</a>.",
     pricingFine: "What’s free and what’s in the subscription may still change before launch. During the beta everything is free.",
     footerSupportTitle: "Support",
     footerFaqLabel: "FAQ",
@@ -206,6 +206,7 @@ const translations = {
     termsLabel: "Terms of Service",
     contactLabel: "Contact us",
     brandLabel: "Brand",
+    aboutLabel: "About",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
@@ -340,7 +341,7 @@ const translations = {
     planPerYear: "/ Jahr",
     planSave: "33 % sparen",
     planYearlyMonthly: "3,33 € im Monat",
-    pricingIndie: "Hinter Akari steht ein junges deutsches Unternehmen, das sich für deine Gesundheit interessiert, nicht für deine Daten. Unterstütze uns gern mit einem Abo.",
+    pricingIndie: "Hinter Akari steht ein junges deutsches Unternehmen, das sich für deine Gesundheit interessiert, nicht für deine Daten. <a href=\"/about/\">Unterstütze uns</a> gern mit einem Abo.",
     pricingFine: "Was kostenlos ist und was im Abo steckt, kann sich bis zum Start noch ändern. Während der Beta ist alles kostenlos.",
     footerSupportTitle: "Hilfe",
     footerFaqLabel: "FAQ",
@@ -349,6 +350,7 @@ const translations = {
     termsLabel: "Nutzungsbedingungen",
     contactLabel: "Kontakt",
     brandLabel: "Marke",
+    aboutLabel: "Über uns",
     disclaimer: "Akari ist kein Ersatz für eine professionelle medizinische Beratung. Wende dich immer zuerst an deine Ärztin oder deinen Arzt.",
   },
 };
@@ -541,6 +543,10 @@ function selectLanguage(language, persist = true, updateUrl = true, updateAppear
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const value = translations[language][element.dataset.i18n];
     if (value !== undefined) element.textContent = value;
+  });
+  document.querySelectorAll("[data-i18n-html]").forEach((element) => {
+    const value = translations[language][element.dataset.i18nHtml];
+    if (value !== undefined) element.innerHTML = value;
   });
   document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
     const value = translations[language][element.dataset.i18nAriaLabel];
