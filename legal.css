@@ -999,7 +999,7 @@ body[data-legal-page="brand"] .legal-content {
 /* About page: the same cards, each opened by an eyebrow pill instead of a number, holding a row of
    founders and a row of beliefs. It closes like the landing page, with its call to join the beta. ---- */
 
-body[data-legal-page="about"] .legal-content {
+body[data-legal-page="about-us"] .legal-content {
   width: min(100% - 40px, 920px);
 }
 
@@ -1069,6 +1069,16 @@ body[data-legal-page="about"] .legal-content {
 .legal-section .about-value p {
   font-size: 1.02rem;
   line-height: 1.55;
+}
+
+.legal-section .about-person .about-person__role {
+  margin-bottom: 8px;
+  color: rgba(var(--ink-rgb), 0.56);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
 }
 
 /* A founder's photo, 160 px with rounded corners. A missing file leaves the silhouette behind it (legal.js). */
@@ -1227,10 +1237,20 @@ body[data-legal-page="about"] .legal-content {
   margin-top: 18px;
 }
 
+/* Four columns, each at least as wide as its longest link ("Nutzungsbedingungen" alone is 186 px). They fit
+   beside the logo only on a wide screen; below that the logo sits above them, and on a phone they go two by
+   two, where the long German ones break at their soft hyphens (privacyLabel, termsLabel). */
 .footer-sitemap {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(max-content, 1fr));
   gap: 32px;
+}
+
+@media (max-width: 1080px) {
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
 }
 
 .footer-column h2 {

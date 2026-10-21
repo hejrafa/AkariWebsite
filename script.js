@@ -50,7 +50,7 @@ const goalStickers = {
 const siteRoot = new URL(".", document.currentScript?.src || window.location.href);
 // Each page's address in English and German. tools/language_pages.py makes the German pages from the English
 // ones, and legal.js keeps the same table.
-const languagePaths = { "/": "/de/", "/privacy/": "/de/datenschutz/", "/terms/": "/de/nutzungsbedingungen/", "/brand/": "/de/marke/", "/about/": "/de/ueber-uns/" };
+const languagePaths = { "/": "/de/", "/privacy/": "/de/datenschutz/", "/terms/": "/de/nutzungsbedingungen/", "/brand/": "/de/marke/", "/about-us/": "/de/ueber-uns/" };
 const systemModePreference = window.matchMedia("(prefers-color-scheme: dark)");
 let followsSystemMode = false;
 
@@ -197,8 +197,9 @@ const translations = {
     planPerYear: "/ year",
     planSave: "Save 33%",
     planYearlyMonthly: "€3.33 a month",
-    pricingIndie: "Akari is made by a young German company that cares about your health, not about your data. Your subscription <a href=\"/about/\">supports us</a>.",
+    pricingIndie: "Akari is made by a young German company that cares about your health, not about your data. Your subscription <a href=\"/about-us/\">supports us</a>.",
     pricingFine: "What’s free and what’s in the subscription may still change before launch. During the beta everything is free.",
+    footerCompanyTitle: "Company",
     footerSupportTitle: "Support",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Legal",
@@ -206,7 +207,7 @@ const translations = {
     termsLabel: "Terms of Service",
     contactLabel: "Contact us",
     brandLabel: "Brand",
-    aboutLabel: "About",
+    aboutLabel: "About us",
     disclaimer: "Akari is not a substitute for professional medical advice. Always consult your physician first.",
   },
   de: {
@@ -341,13 +342,15 @@ const translations = {
     planPerYear: "/ Jahr",
     planSave: "33 % sparen",
     planYearlyMonthly: "3,33 € im Monat",
-    pricingIndie: "Hinter Akari steht ein junges deutsches Unternehmen, das sich für deine Gesundheit interessiert, nicht für deine Daten. <a href=\"/about/\">Unterstütze uns</a> gern mit einem Abo.",
+    pricingIndie: "Hinter Akari steht ein junges deutsches Unternehmen, das sich für deine Gesundheit interessiert, nicht für deine Daten. <a href=\"/about-us/\">Unterstütze uns</a> gern mit einem Abo.",
     pricingFine: "Was kostenlos ist und was im Abo steckt, kann sich bis zum Start noch ändern. Während der Beta ist alles kostenlos.",
+    footerCompanyTitle: "Unternehmen",
     footerSupportTitle: "Hilfe",
     footerFaqLabel: "FAQ",
     footerLegalTitle: "Rechtliches",
-    privacyLabel: "Datenschutzerklärung",
-    termsLabel: "Nutzungsbedingungen",
+    // Soft hyphens at the word joins, so a narrow footer column breaks them there.
+    privacyLabel: "Datenschutz\u00ADerklärung",
+    termsLabel: "Nutzungs\u00ADbedingungen",
     contactLabel: "Kontakt",
     brandLabel: "Marke",
     aboutLabel: "Über uns",

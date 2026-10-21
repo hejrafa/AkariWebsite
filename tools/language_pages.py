@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Gives every page its own German address: /de/ for the landing page, /de/datenschutz/, /de/nutzungsbedingungen/,
-/de/marke/ and /de/ueber-uns/ for privacy, terms, brand and about, while the English pages stay at /, /privacy/,
-/terms/, /brand/ and /about/.
+/de/marke/ and /de/ueber-uns/ for privacy, terms, brand and about us, while the English pages stay at /, /privacy/,
+/terms/, /brand/ and /about-us/.
 
 GitHub Pages only serves files, so each German address is a copy of its English page that says it is German:
 its <html lang>, the canonical address, the title, description and sharing cards, and the links between pages.
@@ -38,7 +38,7 @@ PAGES = {
     "/privacy/": "/de/datenschutz/",
     "/terms/": "/de/nutzungsbedingungen/",
     "/brand/": "/de/marke/",
-    "/about/": "/de/ueber-uns/",
+    "/about-us/": "/de/ueber-uns/",
 }
 
 
@@ -49,9 +49,9 @@ def page_file(root, path):
 # Reading strings out of the scripts ----------------------------------------------------------------------
 
 def object_after(source, name):
-    """The text of the {...} object literal given to name (`name: {` or `const name = {`), skipping over
-    strings, template literals and comments."""
-    match = re.search(rf"(?<![\w$]){re.escape(name)}\s*[:=]\s*\{{", source)
+    """The text of the {...} object literal given to name (`name: {`, `"name": {` or `const name = {`),
+    skipping over strings, template literals and comments."""
+    match = re.search(rf"(?:\"{re.escape(name)}\"|(?<![\w$]){re.escape(name)})\s*[:=]\s*\{{", source)
     if not match:
         raise SystemExit(f"language_pages: can't find {name}")
     start = match.end() - 1

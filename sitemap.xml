@@ -101,17 +101,17 @@
     </image:image>
   </url>
   <url>
-    <loc>https://joinakari.com/about/</loc>
+    <loc>https://joinakari.com/about-us/</loc>
     <lastmod>2026-10-21</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/about/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/about-us/" />
     <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/ueber-uns/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/about-us/" />
   </url>
   <url>
     <loc>https://joinakari.com/de/ueber-uns/</loc>
     <lastmod>2026-10-21</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/about/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://joinakari.com/about-us/" />
     <xhtml:link rel="alternate" hreflang="de" href="https://joinakari.com/de/ueber-uns/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/about/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://joinakari.com/about-us/" />
   </url>
 </urlset>

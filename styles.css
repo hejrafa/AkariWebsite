@@ -544,10 +544,20 @@ main:focus {
   margin-top: 18px;
 }
 
+/* Four columns, each at least as wide as its longest link ("Nutzungsbedingungen" alone is 186 px). They fit
+   beside the logo only on a wide screen; below that the logo sits above them, and on a phone they go two by
+   two, where the long German ones break at their soft hyphens (privacyLabel, termsLabel). */
 .footer-sitemap {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(max-content, 1fr));
   gap: 32px;
+}
+
+@media (max-width: 1080px) {
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
 }
 
 .footer-column h2 {

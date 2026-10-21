@@ -22,5 +22,5 @@ Akari reads Apple Health on the iPhone and keeps what it works out there. Each m
 - [Privacy policy](https://joinakari.com/privacy/)
 - [Terms of use](https://joinakari.com/terms/)
 - [Brand assets: logos, mark, app icons and colours](https://joinakari.com/brand/)
-- [About: why Akari exists and the young German company behind it](https://joinakari.com/about/)
+- [About: why Akari exists and the young German company behind it](https://joinakari.com/about-us/)
 - [Full product information](https://joinakari.com/llms-full.txt)
