@@ -96,6 +96,59 @@ for (const row of [...VOCABULARY, ...DRINKS]) {
   const german = Boolean(row.displayNameDE) || aliases.some((alias) => !namesAgree(nameWords(alias), englishWords));
   ROW_NAMES.set(row.id, { words: [...englishWords, ...[row.displayNameDE ?? "", ...aliases].flatMap(nameWords)], german });
 }
+
+// The second look at a name the answer left without an id. Names are folded as
+// nameWords folds them, but every word and number stays ("sour cream 24 %" is not
+// sour cream), and match only whole: a name or alias equal to the folded name, or
+// equal to it once one plural ending is gone from either side. Never a prefix, a
+// suffix or anything fuzzier. German "-er" is not an ending here: with the umlaut
+// folded away, Kräuter would become Kraut.
+const FILLERS = new Set(["mixed", "fresh", "plain", "some", "a", "an", "ein", "eine", "etwas", "frische", "frischer"]);
+const PLURALS: [ending: string, stem: string][] = [["ies", "y"], ["es", ""], ["s", ""], ["en", ""], ["n", ""], ["e", ""]];
+function lookupWords(name: string): string[] {
+  return name
+    .normalize("NFKD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/ß/g, "ss")
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+function singulars(name: string): string[] {
+  return PLURALS.filter(([ending]) => name.length >= ending.length + 2 && name.endsWith(ending)).map(([ending, stem]) => name.slice(0, -ending.length) + stem);
+}
+
+// Each folded name and alias of the verified foods and whole drinks, and each of them
+// without a plural ending, with the rows that carry it.
+const ROWS_BY_NAME = new Map<string, Set<string>>();
+const ROWS_BY_SINGULAR = new Map<string, Set<string>>();
+const addRow = (index: Map<string, Set<string>>, key: string, id: string) => index.set(key, (index.get(key) ?? new Set()).add(id));
+for (const row of [...VOCABULARY, ...DRINKS]) {
+  const english = "name" in row ? [row.name] : [row.ingredient, row.displayName ?? ""];
+  for (const name of [...english, row.displayNameDE ?? "", ...(row.searchAliases ?? [])]) {
+    const folded = lookupWords(name).join(" ");
+    if (!folded) continue;
+    addRow(ROWS_BY_NAME, folded, row.id);
+    for (const singular of singulars(folded)) addRow(ROWS_BY_SINGULAR, singular, row.id);
+  }
+}
+
+// The one row a name is the name of, or null when none or several are. The name is
+// tried whole and without its leading fillers, so "mixed olives" finds Olives and a
+// row whose own alias starts with a filler ("plain bread roll") still finds itself.
+function lookUp(name: string): string | null {
+  const words = lookupWords(name);
+  let first = 0;
+  while (first < words.length && FILLERS.has(words[first])) first++;
+  const rows = new Set<string>();
+  for (const folded of new Set([words.join(" "), words.slice(first).join(" ")])) {
+    if (!folded) continue;
+    for (const key of [folded, ...singulars(folded)]) ROWS_BY_NAME.get(key)?.forEach((id) => rows.add(id));
+    ROWS_BY_SINGULAR.get(folded)?.forEach((id) => rows.add(id));
+  }
+  return rows.size === 1 ? [...rows][0] : null;
+}
+
 const BUDGET_MS = 20_000;
 const RETRY_DELAY_MS = 1_000;
 const DEVICE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -375,7 +428,7 @@ async function compose(request: Request, env: Env, device: string): Promise<Resp
       ],
       output_config: { format: { type: "json_schema", schema: COMPOSE_SCHEMA } },
     });
-    const { answer, dropped } = readCompose(message, input, language);
+    const { answer, dropped, resolved } = readCompose(message, input, language);
     // Counts only: never the meal text, the names, the ids or the device id.
     console.log(
       JSON.stringify({
@@ -388,6 +441,7 @@ async function compose(request: Request, env: Env, device: string): Promise<Resp
         ingredients: answer.foods.reduce((sum, food) => sum + (food.ingredients?.length ?? 0), 0),
         missing: answer.missing.length,
         dropped,
+        resolved,
         photo: photo !== null,
         confidence: Math.round(answer.confidence * 10) / 10,
         ...scoreboardLog(env, device),
@@ -644,9 +698,11 @@ function readComposeRequest(body: unknown): ComposeRequest | null {
 // composed dish's own name. A verified food's or a whole drink's reference stands
 // only when the answer's name agrees with that row's names, so a neighbouring id
 // copied by mistake (Leek on fennel seed) becomes missing too; a German name is not
-// checked against a row with no German name. Dropped and corrected fields are
-// counted for the log.
-function readCompose(message: Anthropic.Message, input: ComposeRequest, language: Language): { answer: ComposeAnswer; dropped: number } {
+// checked against a row with no German name. Before the missing list is built, a
+// food or part left without an id has a second look: when its name is exactly one
+// row's name or alias it takes that row's id and keeps its own name. Dropped and
+// corrected fields and the names the second look found are counted for the log.
+function readCompose(message: Anthropic.Message, input: ComposeRequest, language: Language): { answer: ComposeAnswer; dropped: number; resolved: number } {
   const parsed = readJson(message);
   if (!Array.isArray(parsed.foods)) throw new UpstreamFailure("shape");
   let dropped = 0;
@@ -715,6 +771,16 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
     foods.push(composed);
   }
 
+  // A composed dish carries no missing flag, so only a food or a part is looked up.
+  let resolved = 0;
+  for (const item of foods.flatMap((food) => [food, ...(food.ingredients ?? [])])) {
+    const reference = item.missing ? lookUp(item.name) : null;
+    if (!reference) continue;
+    item.reference = reference;
+    delete item.missing;
+    resolved++;
+  }
+
   // A composed dish is there, not missing, even when a part or another food repeats its name.
   const dishes = new Set(foods.filter((food) => food.ingredients).map((food) => food.name.toLowerCase()));
   const missing: string[] = [];
@@ -726,7 +792,7 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
   let confidence = 0.5;
   if (typeof parsed.confidence === "number" && parsed.confidence >= 0 && parsed.confidence <= 1) confidence = Math.round(parsed.confidence * 100) / 100;
   else dropped++;
-  return { answer: { foods, missing, confidence }, dropped };
+  return { answer: { foods, missing, confidence }, dropped, resolved };
 }
 
 // A gram range with low <= estimate <= high, all positive, or null when the model

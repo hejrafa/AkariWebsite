@@ -4,7 +4,7 @@ The Cloudflare worker behind `api.joinakari.com/photo`, `/meal` and `/compose`. 
 
 - `POST /photo`: a JPEG or PNG in, the main food and a meal line out.
 - `POST /meal`: the meal line, the phone's catalogue candidates and optionally the photo in, Haiku's picks out. Kept for the builds that still use it.
-- `POST /compose`: the meal line, optionally the photo and up to five catalogue dishes (templates) in; the meal built from Akari's verified generic foods out, as dishes with their ingredients, sides and drinks, with grams for one person. A food with no fitting id comes back with `reference: null` and `missing: true` and is listed in `missing`. The worker checks every reference against the vocabulary and the sent templates.
+- `POST /compose`: the meal line, optionally the photo and up to five catalogue dishes (templates) in; the meal built from Akari's verified generic foods out, as dishes with their ingredients, sides and drinks, with grams for one person. A food with no fitting id comes back with `reference: null` and `missing: true` and is listed in `missing`. The worker checks every reference against the vocabulary and the sent templates, and gives a food or part left without an id a second look: when its name, folded for case, accents and one plural ending and without a leading "mixed" or "fresh", is exactly one row's name or alias, it takes that row's id and keeps its own name. The log line counts these as `resolved`.
 
 ## Vocabulary
 

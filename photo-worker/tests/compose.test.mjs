@@ -35,8 +35,9 @@ const goodSushi = {
       ingredients: [
         { name: "Salmon, raw", reference: "bls:T410100", grams: 60 },
         { name: "Tuna, raw", reference: "bls:T121100", grams: 60 },
-        { name: "Sushi rice", reference: null, grams: 150 },
-        { name: "Nori", reference: null, grams: 5 },
+        // No row carries either name, so both stay missing.
+        { name: "Tamago", reference: null, grams: 150 },
+        { name: "Tobiko", reference: null, grams: 5 },
         // A sent template's ingredient is an allowed reference.
         { name: "Imitation crab", reference: "bls:C110100", grams: 20 },
       ],
@@ -59,8 +60,8 @@ const expectedSushi = {
       ingredients: [
         { name: "Salmon, raw", reference: "bls:T410100", grams: 60 },
         { name: "Tuna, raw", reference: "bls:T121100", grams: 60 },
-        { name: "Sushi rice", reference: null, grams: 150, missing: true },
-        { name: "Nori", reference: null, grams: 5, missing: true },
+        { name: "Tamago", reference: null, grams: 150, missing: true },
+        { name: "Tobiko", reference: null, grams: 5, missing: true },
         { name: "Imitation crab", reference: "bls:C110100", grams: 20 },
       ],
     },
@@ -68,7 +69,7 @@ const expectedSushi = {
     { name: "Miso soup", role: "side", reference: "akari:recipe:miso-soup:v1", grams: 250 },
     { name: "Green tea", role: "drink", reference: "usda:2710490", grams: 250 },
   ],
-  missing: ["Sushi rice", "Nori"],
+  missing: ["Tamago", "Tobiko"],
   confidence: 0.8,
 };
 
@@ -169,7 +170,7 @@ test("the language comes from the body, else from the header", async () => {
   assert.equal(fromBody.calls[0].body.system[1].text, composeContextText("en", false));
 });
 
-test("an unknown reference becomes null and missing", async () => {
+test("an unknown reference becomes null, and missing unless its name is a row's own", async () => {
   const answer = structuredClone(goodSushi);
   answer.foods[0].ingredients[0].reference = "bls:T410199";
   answer.foods[1].reference = "usda:invented";
@@ -179,20 +180,23 @@ test("an unknown reference becomes null and missing", async () => {
   answer.foods[3].reference = "bls:C110100";
   const { response } = await run(compose(), {}, message(answer));
   const body = await response.json();
-  assert.deepEqual(body.foods[0].ingredients[0], { name: "Salmon, raw", reference: null, grams: 60, missing: true });
-  assert.deepEqual(body.foods[0].ingredients[1], { name: "Tuna, raw", reference: null, grams: 60, missing: true });
-  assert.deepEqual(body.foods[1], { name: "Edamame", role: "side", reference: null, grams: 80, missing: true });
+  // Salmon, raw, Tuna, raw and Edamame are rows' names, so the second look finds them;
+  // no row is called Green tea.
+  assert.deepEqual(body.foods[0].ingredients[0], { name: "Salmon, raw", reference: "bls:T410100", grams: 60 });
+  assert.deepEqual(body.foods[0].ingredients[1], { name: "Tuna, raw", reference: "bls:T121100", grams: 60 });
+  assert.deepEqual(body.foods[1], { name: "Edamame", role: "side", reference: "bls:G750432", grams: 80 });
   assert.deepEqual(body.foods[3], { name: "Green tea", role: "drink", reference: null, grams: 250, missing: true });
-  assert.deepEqual(body.missing, ["Salmon, raw", "Tuna, raw", "Sushi rice", "Nori", "Edamame", "Green tea"]);
+  assert.deepEqual(body.missing, ["Tamago", "Tobiko", "Green tea"]);
 });
 
 test("a reference from a template that was not sent is unknown", async () => {
   const answer = structuredClone(goodSushi);
   const { response } = await run(compose({ ...sushi, templates: [] }), {}, message(answer));
   const body = await response.json();
-  assert.equal(body.foods[2].reference, null);
-  assert.equal(body.foods[2].missing, true);
-  assert.equal(body.foods[0].ingredients[4].reference, null);
+  // The template's ids are dropped; the second look finds the verified rows by name.
+  assert.equal(body.foods[2].reference, "bls:X4A8060", "the verified miso soup, not the template");
+  assert.equal("missing" in body.foods[2], false);
+  assert.equal(body.foods[0].ingredients[4].reference, "usda:2706568", "the verified imitation crab, not the template's part");
 });
 
 test("a template id is accepted as a whole reference, and a dish with parts is composed", async () => {
@@ -240,7 +244,7 @@ test("at most 12 foods and 15 ingredients each; a side or a drink has no parts",
   const answer = {
     foods: [
       { name: "Big dish", role: "dish", reference: null, grams: 400, ingredients: Array.from({ length: 20 }, (_, i) => part(i)) },
-      { name: "Salad", role: "side", reference: null, grams: 100, ingredients: [part(0)] },
+      { name: "House salad", role: "side", reference: null, grams: 100, ingredients: [part(0)] },
       ...Array.from({ length: 14 }, (_, i) => ({ name: `Side ${i}`, role: "side", reference: "bls:F110100", grams: 50, ingredients: [] })),
     ],
     confidence: 0.4,
@@ -249,7 +253,7 @@ test("at most 12 foods and 15 ingredients each; a side or a drink has no parts",
   const body = await response.json();
   assert.equal(body.foods.length, 12);
   assert.equal(body.foods[0].ingredients.length, 15);
-  assert.deepEqual(body.foods[1], { name: "Salad", role: "side", reference: null, grams: 100, missing: true });
+  assert.deepEqual(body.foods[1], { name: "House salad", role: "side", reference: null, grams: 100, missing: true });
 });
 
 test("a nameless food or part is dropped and a bad confidence falls back", async () => {
@@ -368,9 +372,10 @@ test("the log line carries counts and timing, never the meal", async () => {
   assert.equal(line.foods, 4);
   assert.equal(line.ingredients, 5);
   assert.equal(line.missing, 2);
+  assert.equal(line.resolved, 0);
   assert.equal(line.photo, false);
   assert.equal(line.cache_read_input_tokens, 5200);
-  assert.doesNotMatch(lines[0], /sushi|salmon|nori|tea|akari:recipe|bls:|usda:/i);
+  assert.doesNotMatch(lines[0], /sushi|salmon|tamago|tobiko|tea|akari:recipe|bls:|usda:/i);
 });
 
 test("the schema is strict all the way down", () => {
@@ -442,7 +447,8 @@ test("the rules carry the one-item rule", () => {
 });
 
 test("a whole food answered composed is passed on as the model gave it", async () => {
-  // The croissant is a verified food; the worker does not rewrite the answer.
+  // The croissant is a verified food; the worker does not rewrite the answer into it,
+  // though the second look finds its parts by name.
   const answer = {
     foods: [
       {
@@ -462,8 +468,11 @@ test("a whole food answered composed is passed on as the model gave it", async (
   const body = await response.json();
   assert.equal(body.foods.length, 1);
   assert.equal(body.foods[0].reference, null);
-  assert.deepEqual(body.foods[0].ingredients.map((part) => part.name), ["Wheat flour", "Butter"]);
-  assert.deepEqual(body.missing, ["Wheat flour", "Butter"]);
+  assert.deepEqual(body.foods[0].ingredients, [
+    { name: "Wheat flour", reference: "bls:C214100", grams: 30 },
+    { name: "Butter", reference: "bls:Q611000", grams: 20 },
+  ]);
+  assert.deepEqual(body.missing, []);
 });
 
 test("a composed dish's own name never appears in missing", async () => {
@@ -477,22 +486,22 @@ test("a composed dish's own name never appears in missing", async () => {
         ingredients: [
           { name: "Salmon, raw", reference: "bls:T410100", grams: 40 },
           { name: "salmon nigiri", reference: null, grams: 80 },
-          { name: "Sushi rice", reference: null, grams: 80 },
+          { name: "Sushi vinegar", reference: null, grams: 80 },
         ],
       },
       // The same dish again as a missing side is still not missing.
       { name: "Salmon Nigiri", role: "side", reference: null, grams: 120, ingredients: [] },
-      { name: "Fries", role: "side", reference: null, grams: 150, ingredients: [] },
+      { name: "Seaweed salad", role: "side", reference: null, grams: 150, ingredients: [] },
     ],
     confidence: 0.6,
   };
-  const { response } = await run(compose({ text: "2 salmon nigiri and fries", language: "en" }), {}, message(answer));
+  const { response } = await run(compose({ text: "2 salmon nigiri and a seaweed salad", language: "en" }), {}, message(answer));
   const body = await response.json();
   assert.equal("missing" in body.foods[0], false);
-  assert.deepEqual(body.missing, ["Sushi rice", "Fries"]);
+  assert.deepEqual(body.missing, ["Sushi vinegar", "Seaweed salad"]);
 });
 
-test("a verified reference whose row names another food becomes null and missing", async () => {
+test("a verified reference whose row names another food is dropped, and the name looked up again", async () => {
   const answer = {
     foods: [
       {
@@ -514,12 +523,15 @@ test("a verified reference whose row names another food becomes null and missing
   };
   const { result: response, lines } = await logged(async () => (await run(compose({ text: "leek and potato soup, edamame, a flat white", language: "en" }), {}, message(answer))).response);
   const body = await response.json();
-  assert.deepEqual(body.foods[0].ingredients[0], { name: "Leek", reference: null, grams: 80, missing: true });
+  // Fennel seed is dropped, and Leek is the name of the leek row.
+  assert.deepEqual(body.foods[0].ingredients[0], { name: "Leek", reference: "ciqual:20039", grams: 80 });
   assert.equal(body.foods[0].ingredients[1].reference, "bls:K120134");
   assert.deepEqual(body.foods[1], { name: "Edamame", role: "side", reference: "bls:G750432", grams: 80 });
   assert.deepEqual(body.foods[2], { name: "Flat white", role: "drink", reference: "cafe:generic:flat-white-with-whole-milk", grams: 175 });
-  assert.deepEqual(body.missing, ["Leek"]);
-  assert.equal(JSON.parse(lines.find((line) => line.includes('"compose":"ok"'))).dropped, 1);
+  assert.deepEqual(body.missing, []);
+  const line = JSON.parse(lines.find((line) => line.includes('"compose":"ok"')));
+  assert.equal(line.dropped, 1);
+  assert.equal(line.resolved, 1);
 });
 
 test("a German name on a row with no German name keeps its reference", async () => {
@@ -529,10 +541,11 @@ test("a German name on a row with no German name keeps its reference", async () 
   const body = await response.json();
   assert.deepEqual(body.foods[0], { name: "Zwiebel", role: "side", reference: "bls:G480100", grams: 50 });
   assert.deepEqual(body.missing, []);
-  // The same name on a row that has a German name is checked: Lauch is not fennel seed.
+  // The same name on a row that has a German name is checked: Lauch is not fennel
+  // seed, and the second look finds the leek row, whose German name it is.
   const wrong = { foods: [{ name: "Lauch", role: "side", reference: "ciqual:11066", grams: 50, ingredients: [] }], confidence: 0.9 };
   const checked = await (await run(compose({ text: "Lauch", language: "de" }), {}, message(wrong))).response.json();
-  assert.equal(checked.foods[0].reference, null);
+  assert.equal(checked.foods[0].reference, "ciqual:20039");
 });
 
 test("the rules say a glass is millilitres, not a count", () => {
@@ -570,4 +583,61 @@ test("a plural keeps its reference, a different food with the same first letters
   const body = await (await run(compose({ text: "Blueberries and chicken", language: "en" }), {}, message(answer))).response.json();
   assert.equal(body.foods[0].reference, "bls:F304100");
   assert.equal(body.foods[1].reference, null, "chicken is not chickpeas");
+});
+
+test("a name left missing that is one row's name or alias takes that row and keeps its own name", async () => {
+  const answer = {
+    foods: [
+      {
+        name: "Chicken wrap",
+        role: "dish",
+        reference: null,
+        grams: 350,
+        ingredients: [
+          // An alias of chapati, an alias of tzatziki, and Olives once "mixed" is gone.
+          { name: "roti", reference: null, grams: 80 },
+          { name: "yogurt sauce", reference: null, grams: 40 },
+          { name: "mixed olives", reference: null, grams: 30 },
+        ],
+      },
+      { name: "Brot", role: "side", reference: null, grams: 60, ingredients: [] },
+      { name: "cereal bar", role: "side", reference: null, grams: 25, ingredients: [] },
+      { name: "Müsliriegel", role: "side", reference: null, grams: 25, ingredients: [] },
+      // A dish, not an alias; too generic; too generic; only the end of Zartbitterschokolade.
+      { name: "protein shake", role: "drink", reference: null, grams: 300, ingredients: [] },
+      { name: "Gemüse", role: "side", reference: null, grams: 150, ingredients: [] },
+      { name: "Obst", role: "side", reference: null, grams: 120, ingredients: [] },
+      { name: "Schokolade", role: "side", reference: null, grams: 20, ingredients: [] },
+    ],
+    confidence: 0.7,
+  };
+  const { result: response, lines } = await logged(async () => (await run(compose({ text: "chicken wrap, Brot, cereal bar, protein shake", language: "en" }), {}, message(answer))).response);
+  const body = await response.json();
+  assert.equal(body.foods[0].reference, null, "a composed dish is not looked up");
+  assert.deepEqual(body.foods[0].ingredients, [
+    { name: "roti", reference: "cofid:11-459", grams: 80 },
+    { name: "yogurt sauce", reference: "cofid:12-547", grams: 40 },
+    { name: "mixed olives", reference: "bls:H520800", grams: 30 },
+  ]);
+  assert.deepEqual(body.foods[1], { name: "Brot", role: "side", reference: "bls:B251000", grams: 60 });
+  assert.deepEqual(body.foods[2], { name: "cereal bar", role: "side", reference: "cofid:11-819", grams: 25 });
+  assert.deepEqual(body.foods[3], { name: "Müsliriegel", role: "side", reference: "cofid:11-819", grams: 25 });
+  for (const food of body.foods.slice(4)) assert.equal(food.reference, null, food.name);
+  assert.deepEqual(body.missing, ["protein shake", "Gemüse", "Obst", "Schokolade"]);
+  const line = JSON.parse(lines.find((line) => line.includes('"compose":"ok"')));
+  assert.equal(line.resolved, 6);
+  assert.equal(line.missing, 4);
+  assert.equal(line.dropped, 0);
+});
+
+test("a name on two rows stays missing", async () => {
+  // Filterkaffee is an alias of brewed coffee and of the black coffee drink.
+  const rows = [...vocabulary.entries, ...vocabulary.drinks].filter((row) => row.searchAliases?.includes("Filterkaffee"));
+  assert.equal(rows.length, 2);
+  const answer = { foods: [{ name: "Filterkaffee", role: "drink", reference: null, grams: 250, ingredients: [] }], confidence: 0.8 };
+  const { result: response, lines } = await logged(async () => (await run(compose({ text: "ein Filterkaffee", language: "de" }), {}, message(answer))).response);
+  const body = await response.json();
+  assert.deepEqual(body.foods[0], { name: "Filterkaffee", role: "drink", reference: null, grams: 250, missing: true });
+  assert.deepEqual(body.missing, ["Filterkaffee"]);
+  assert.equal(JSON.parse(lines[0]).resolved, 0);
 });
