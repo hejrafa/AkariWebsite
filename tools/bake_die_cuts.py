@@ -58,6 +58,7 @@ SHADOW_ALPHA = 0.24
 SIDE, TOP, BOTTOM = 20, 10, 30  # room for ring and shadow: the blur fades out within 17px
 
 STICKER_SIZES = (34, 43, 56, 72, 92, 120, 160)  # each about 1.29 times the last; keep in step with script.js
+ICON_SIZES = tuple(size for size in STICKER_SIZES if size < 104)  # the app icon below its own 104px piece (legal.js)
 NO_EDGE = {"readiness-bar"}
 SCRIPT = Path(__file__).resolve()
 
@@ -130,6 +131,14 @@ def jobs(root: Path):
             health = welcome / f"apple-health@{scale}x.webp"
             if health.exists():
                 yield health, theme_dir / f"apple-health-cut@{scale}x.webp", theme, scale, None
+        # The app icon smaller than its piece, for the brand page's headline, which is only as tall as the
+        # headline's capitals: at its 104px piece the edge would shrink to under 2px there.
+        for mode in ("light", "dark"):
+            source = theme_dir / f"app-icon-{mode}@3x.webp"
+            if source.exists():
+                for size in ICON_SIZES:
+                    for scale in SCALES:
+                        yield source, theme_dir / f"app-icon-{mode}-{size}-cut@{scale}x.webp", theme, scale, size
         for folder, pattern in ((welcome / "stickers", "*.webp"), (root / "assets" / "stickers", "*.png")):
             for source in sorted(folder.glob(pattern)):
                 for size in STICKER_SIZES:

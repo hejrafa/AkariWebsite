@@ -26,6 +26,14 @@
   initial-value: #ebcc4b;
 }
 
+/* Every page shares the landing page's two widths (HANDOFF.md, "Layout"): the header spans the chrome width,
+   the content and the footer the content width, each with a 24px gutter, 16px on phones. styles.css,
+   legal.css and the admin's admin.css define the same two; keep them equal. */
+:root {
+  --chrome-width: 1280px;
+  --content-width: 1180px;
+}
+
 :root {
   color-scheme: dark;
   --page: #1d1b07;
@@ -151,7 +159,7 @@ main:focus {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  width: min(1280px, calc(100% - 48px));
+  width: min(var(--chrome-width), calc(100% - 48px));
   height: 100%;
   margin: 0 auto;
 }
@@ -500,7 +508,7 @@ main:focus {
 
 
 .site-footer {
-  width: min(1280px, calc(100% - 48px));
+  width: min(var(--chrome-width), calc(100% - 48px));
   margin: 0 auto;
   padding: 64px 0 48px;
   color: var(--ink);
@@ -646,7 +654,7 @@ main:focus {
   .site-header__inner {
     grid-template-columns: 1fr auto 1fr;
     grid-template-rows: 74px;
-    width: min(100% - 32px, 1280px);
+    width: min(100% - 32px, var(--chrome-width));
     min-height: 0;
   }
 
@@ -1077,7 +1085,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
 /* Vitals, laid out like a product page: eyebrow, big line, small grey copy, then one loud panel ---- */
 
 .spotlight {
-  width: min(1180px, calc(100% - 48px));
+  width: min(var(--content-width), calc(100% - 48px));
   margin: 0 auto;
   padding: clamp(64px, 8vw, 120px) 0 clamp(40px, 6vw, 80px);
   text-align: center;
@@ -1195,7 +1203,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
   gap: clamp(40px, 6vw, 96px);
   align-items: center;
-  width: min(1180px, calc(100% - 48px));
+  width: min(var(--content-width), calc(100% - 48px));
   margin: 0 auto;
   padding: clamp(80px, 10vw, 150px) 0;
 }
@@ -1897,7 +1905,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   gap: clamp(36px, 6vw, 96px);
   align-items: start;
-  width: min(1180px, calc(100% - 48px));
+  width: min(var(--content-width), calc(100% - 48px));
   margin: 0 auto;
   padding: clamp(40px, 6vw, 80px) 0 clamp(60px, 8vw, 110px);
 }
@@ -1990,7 +1998,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   width: 100%;
   max-width: none;
   margin: clamp(40px, 6vw, 80px) 0 0;
-  padding: clamp(110px, 12vw, 170px) max(24px, calc((100% - 1180px) / 2)) 40px;
+  padding: clamp(110px, 12vw, 170px) max(24px, calc((100% - var(--content-width)) / 2)) 40px;
   color: var(--band-ink);
   background: var(--band);
 }
@@ -2028,7 +2036,7 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   }
 
   .site-footer {
-    padding: 100px 20px 36px;
+    padding: 100px 16px 36px;
   }
 }
 

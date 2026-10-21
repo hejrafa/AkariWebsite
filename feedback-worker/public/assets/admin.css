@@ -16,6 +16,7 @@
 :root[data-theme="canyon"] { --band: #482219; --band-rgb: 72, 34, 25; --band-ink: #ffecd4; --vivid: #eb804b; }
 :root[data-theme="plain"] { --band: #141414; --band-rgb: 20, 20, 20; --band-ink: #ffffff; --vivid: #ffd60a; }
 
+:root { --chrome-width: 1280px; --content-width: 1180px; } /* the website's two widths, as in styles.css and legal.css */
 :root { --page: #161a12; --page-rgb: 22, 26, 18; --card: #262a21; --ink: #e6f4d1; --ink-rgb: 230, 244, 209; --accent: #a9eb4b; }
 html:root[data-mode="light"][data-theme="forest"] { --page: #e1f1ca; --page-rgb: 225, 241, 202; --card: #f6feec; --ink: #1e2611; --ink-rgb: 30, 38, 17; --accent: #7dbd22; }
 html:root[data-mode="light"][data-theme="meadow"] { --page: #f1eaca; --page-rgb: 241, 234, 202; --card: #fefaec; --ink: #262211; --ink-rgb: 38, 34, 17; --accent: #bd9f22; }
@@ -93,7 +94,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: var(--header-h);
   align-items: center;
-  padding: 0 max(0px, calc((100% - 1280px) / 2)) var(--tear-h);
+  padding: 0 max(0px, calc((100% - var(--chrome-width)) / 2)) var(--tear-h);
   background: var(--band);
   color: var(--band-ink);
 }
@@ -289,7 +290,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 /* Page ------------------------------------------------------------------------------------------ */
 
-.page-shell { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: clamp(40px, 5vw, 72px) 0 144px; }
+.page-shell { width: min(var(--content-width), calc(100% - 48px)); margin: 0 auto; padding: clamp(40px, 5vw, 72px) 0 144px; }
 .page-view { animation: page-view-in 360ms var(--ease) both; }
 .page-header { display: flex; justify-content: center; text-align: center; }
 .page-heading { width: min(860px, 100%); }

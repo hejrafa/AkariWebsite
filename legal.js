@@ -369,58 +369,39 @@ const pageTranslations = {
     en: {
       title: "Why Akari exists",
       emojiLabel: "Play with the sun sticker",
-      intro: "How Akari came about, and who is behind it.",
-      storyEyebrow: "Our story",
-      storyTitle: "A clearer view, not a higher score",
-      whyStarted: "Most health apps want an account and your data on their servers, then hand you a wall of numbers, scores and streaks to keep up with. You learn a lot of figures and very little about how you’re actually doing.",
-      whyInstead: "Akari does it the other way round. It reads Apple Health on your iPhone, keeps your health data there, and explains in plain words what your sleep, movement and food mean for your day, measured against your own usual days. One calm reading, then the day is yours.",
-      teamEyebrow: "Who we are",
-      teamTitle: "A young German company",
-      rafaelName: "Rafael",
-      rafaelRole: "Co-founder · Design and code",
-      rafaelBody: "Designs and builds Akari, from the first sketch to the code on your iPhone.",
-      janName: "Jan",
-      janRole: "Co-founder · Concept and research",
-      janBody: "A lawyer who shapes Akari’s concept and ideas with Rafael, researched the health data and the science behind it, and fact-checks and proofreads what we write.",
-      beliefsEyebrow: "What we believe",
-      beliefsTitle: "Three things we hold to",
+      letterProblem: "Your iPhone already knows a lot about how you sleep, move and eat. Most health apps turn that into scores and streaks to keep up with, and want an account and your data in return.",
+      letterAnswer: "We wanted an app that simply tells you what it all means for your day, in plain words, and then lets you get on with it. So we made Akari.",
+      letterTeam: "We’re two people in Germany. We work out every idea for Akari together and then split the rest: Rafael designs and builds the app, and Jan, a lawyer, researches the science behind it and checks the facts and the words.",
+      letterCare: "You’ll notice that in how Akari talks to you. Its explanations rest on research, and they’re written so anyone can follow them, without jargon and without alarm.",
+      valuesTitle: "What we hold to",
       valueDataTitle: "Your data stays yours",
-      valueDataBody: "There’s no account to create, and your health data stays on your iPhone, not on our servers.",
+      valueDataBody: "No account, and your health data stays on your iPhone.",
       valueHealthTitle: "Health before numbers",
-      valueHealthBody: "A number only matters if it tells you something, so Akari explains what it means for you instead of handing you a score to chase.",
-      valueTogetherTitle: "Built with the people who use it",
-      valueTogetherBody: "Akari takes shape in the open beta: your feedback and every food report you send decide what we fix and build next.",
-      closingTitle: "Shape Akari with us.",
+      valueHealthBody: "A number only matters when it tells you something.",
+      valueTogetherTitle: "Built with you",
+      valueTogetherBody: "What beta testers tell us decides what we build next.",
+      // The landing page's closing section, word for word (launchTitle, launchBody and joinBeta in script.js).
+      launchTitle: "Akari is almost here.",
+      launchBody: "We’re getting ready for the App Store. Until then, the beta is open: try Akari now and tell us what you think.",
       joinBeta: "Join the beta",
-      closingContact: "Questions or ideas? Write to us at <a href=\"mailto:support@joinakari.com\">support@joinakari.com</a>.",
     },
     de: {
       title: "Warum es Akari gibt",
       emojiLabel: "Mit dem Sonnen-Sticker spielen",
-      intro: "Wie Akari entstanden ist und wer dahintersteht.",
-      storyEyebrow: "Unsere Geschichte",
-      storyTitle: "Klarheit statt Punktejagd",
-      whyStarted: "Die meisten Gesundheits-Apps wollen ein Konto und deine Daten auf ihren Servern und überhäufen dich dann mit Zahlen, Scores und Serien, die du halten sollst. Du lernst viele Werte kennen und erfährst wenig darüber, wie es dir eigentlich geht.",
-      whyInstead: "Akari macht es andersherum. Die App liest Apple Health auf deinem iPhone, lässt deine Gesundheitsdaten dort und erklärt in einfachen Worten, was Schlaf, Bewegung und Essen für deinen Tag bedeuten, gemessen an deinen eigenen gewohnten Tagen. Eine ruhige Einordnung, dann gehört der Tag dir.",
-      teamEyebrow: "Wer wir sind",
-      teamTitle: "Ein junges deutsches Unternehmen",
-      rafaelName: "Rafael",
-      rafaelRole: "Mitgründer · Design und Code",
-      rafaelBody: "Gestaltet und baut Akari, von der ersten Skizze bis zum Code auf deinem iPhone.",
-      janName: "Jan",
-      janRole: "Mitgründer · Konzept und Recherche",
-      janBody: "Ist Jurist, entwickelt mit Rafael Konzept und Ideen von Akari, hat die Gesundheitsdaten und die Wissenschaft dahinter recherchiert und prüft und lektoriert, was wir schreiben.",
-      beliefsEyebrow: "Woran wir glauben",
-      beliefsTitle: "Drei Dinge, an die wir uns halten",
+      letterProblem: "Dein iPhone weiß schon eine Menge darüber, wie du schläfst, dich bewegst und isst. Die meisten Gesundheits-Apps machen daraus Scores und Serien, die du halten sollst, und wollen dafür ein Konto und deine Daten.",
+      letterAnswer: "Wir wollten eine App, die dir einfach sagt, was das alles für deinen Tag bedeutet, in klaren Worten, und dich dann deinen Tag leben lässt. Also haben wir Akari gebaut.",
+      letterTeam: "Wir sind zwei Menschen in Deutschland. Jede Idee für Akari entwickeln wir gemeinsam, den Rest teilen wir uns: Rafael gestaltet und baut die App, und Jan, von Beruf Jurist, recherchiert die Wissenschaft dahinter und prüft Fakten und Texte.",
+      letterCare: "Das merkst du daran, wie Akari mit dir spricht: Die Erklärungen stützen sich auf Forschung und sind so geschrieben, dass jeder sie versteht, ohne Fachchinesisch und ohne Alarm.",
+      valuesTitle: "Woran wir uns halten",
       valueDataTitle: "Deine Daten bleiben deine",
-      valueDataBody: "Du brauchst kein Konto, und deine Gesundheitsdaten bleiben auf deinem iPhone statt auf unseren Servern.",
+      valueDataBody: "Kein Konto, und deine Gesundheitsdaten bleiben auf deinem iPhone.",
       valueHealthTitle: "Gesundheit vor Zahlen",
-      valueHealthBody: "Eine Zahl zählt nur, wenn sie dir etwas sagt. Deshalb erklärt Akari, was sie für dich bedeutet, statt dir einen Wert vorzusetzen, dem du hinterherjagst.",
-      valueTogetherTitle: "Gebaut mit denen, die Akari nutzen",
-      valueTogetherBody: "Akari entsteht in der offenen Beta: Dein Feedback und jede Essensmeldung entscheiden mit, was wir als Nächstes verbessern und bauen.",
-      closingTitle: "Gestalte Akari mit uns.",
+      valueHealthBody: "Eine Zahl zählt nur, wenn sie dir etwas sagt.",
+      valueTogetherTitle: "Mit dir gebaut",
+      valueTogetherBody: "Was uns Beta-Tester sagen, entscheidet, was wir als Nächstes bauen.",
+      launchTitle: "Akari ist fast da.",
+      launchBody: "Wir bereiten den Start im App Store vor. Bis dahin ist die Beta offen: Teste Akari jetzt und sag uns, was du denkst.",
       joinBeta: "Beta testen",
-      closingContact: "Fragen oder Ideen? Schreib uns an <a href=\"mailto:support@joinakari.com\">support@joinakari.com</a>.",
     },
   },
 };
@@ -439,8 +420,8 @@ const pageMetadata = {
     de: { title: "Akari: Marke", description: "Logos, Bildmarke, App-Icons und Farben von Akari zum Herunterladen, und ein paar Worte zur Marke." },
   },
   "about-us": {
-    en: { title: "Akari: About us", description: "Why Akari exists, who makes it and what we believe: a young German company that cares about your health, not about your data." },
-    de: { title: "Akari: Über uns", description: "Warum es Akari gibt, wer dahintersteht und woran wir glauben: ein junges deutsches Unternehmen, das sich für deine Gesundheit interessiert, nicht für deine Daten." },
+    en: { title: "Akari: About us", description: "Why Akari exists, and the two people in Germany who make it: a calm, private health app for your iPhone." },
+    de: { title: "Akari: Über uns", description: "Warum es Akari gibt, und die zwei Menschen in Deutschland, die es machen: eine ruhige, private Gesundheits-App für dein iPhone." },
   },
 };
 
@@ -600,12 +581,22 @@ function updateInternalLinks(language) {
 // of widths (tools/bake_die_cuts.py); it takes the width nearest its box, as on the landing page (cutImageBase
 // in script.js). The box follows the headline's size, so a resize can call for another width.
 const stickerWidths = [34, 43, 56, 72, 92, 120, 160];
+// The app icon comes at the same widths below its own 104px die-cut piece (tools/bake_die_cuts.py).
+const iconWidths = [34, 43, 56, 72, 92, 104];
+
+// The baked edge is 3px at a file's own width and scales with it. These pages take the width about a tenth
+// under the box, so every edge comes out near 3.3px and never under the landing page's: the nearest width
+// alone left a headline sticker at 2.8px and the brand page's app icon at under 2px.
+function bakedWidth(boxWidth, widths) {
+  const target = boxWidth / 1.1;
+  return widths.reduce((best, size) => (Math.abs(Math.log(target / size)) < Math.abs(Math.log(target / best)) ? size : best));
+}
 
 function updateStickers() {
   const images = [...document.querySelectorAll("img[data-sticker]")];
   const boxWidths = images.map((image) => image.parentElement.offsetWidth || 80);
   images.forEach((image, index) => {
-    const width = stickerWidths.reduce((best, size) => (Math.abs(Math.log(boxWidths[index] / size)) < Math.abs(Math.log(boxWidths[index] / best)) ? size : best));
+    const width = bakedWidth(boxWidths[index], stickerWidths);
     image.parentElement.style.setProperty("--w", width);
     image.parentElement.style.setProperty("--h", width);
     const sticker = image.dataset.sticker.split("/");
@@ -615,23 +606,21 @@ function updateStickers() {
     image.srcset = `${base}@2x.webp 2x, ${base}@3x.webp 3x`;
     image.src = `${base}@2x.webp`;
   });
-  // The brand page's headline holds the theme's app icon, die-cut like the landing page's, in the
-  // rendition that matches the page.
-  document.querySelectorAll("img[data-theme-icon]").forEach((image) => {
-    const base = `/assets/welcome/${root.dataset.theme}/app-icon-${root.dataset.mode === "dark" ? "dark" : "light"}-cut`;
+  // The theme's app icon, die-cut like the landing page's, in the rendition that matches the page: small in
+  // the brand page's headline, its own 104px piece in the About us page's closing call, as on the landing page.
+  const icons = [...document.querySelectorAll("img[data-theme-icon]")];
+  const iconBoxes = icons.map((image) => image.parentElement.offsetWidth || 104);
+  icons.forEach((image, index) => {
+    const width = bakedWidth(iconBoxes[index], iconWidths);
+    const mode = root.dataset.mode === "dark" ? "dark" : "light";
+    const base = `/assets/welcome/${root.dataset.theme}/app-icon-${mode}${width === 104 ? "" : `-${width}`}-cut`;
+    image.parentElement.style.setProperty("--w", width);
+    image.parentElement.style.setProperty("--h", width);
     if (image.getAttribute("src") === `${base}@2x.webp`) return;
     image.srcset = `${base}@2x.webp 2x, ${base}@3x.webp 3x`;
     image.src = `${base}@2x.webp`;
   });
 }
-
-// The About page's founder photos are assets/about/<name>.webp. Until a photo is there, its frame shows the
-// neutral silhouette behind it rather than a broken image.
-document.querySelectorAll(".about-photo img").forEach((image) => {
-  const missing = () => image.parentElement.classList.add("is-missing");
-  if (image.complete && !image.naturalWidth) missing();
-  else image.addEventListener("error", missing);
-});
 
 let lastViewportWidth = window.innerWidth;
 window.addEventListener("resize", () => {
@@ -734,13 +723,13 @@ function languageTransitionItems() {
     ".brand-colours > .brand-tile__name",
     ".brand-swatch__label",
     ".brand-type__line",
-    ".about-person h3",
-    ".about-person p",
+    ".about-letter > p",
+    ".about-values h2",
     ".about-value h3",
     ".about-value p",
-    ".about-closing h2",
+    ".shape h2",
+    ".shape .muted-copy",
     ".band-cta > span",
-    ".about-closing__contact",
     ".footer-made",
     ".footer-sitemap",
     ".footer-disclaimer",

@@ -18,6 +18,12 @@ The Worker is named `akari-food-feedback`. Its domains and database binding are 
 
 The site is intentionally dependency-free and can run locally or on any static host. Only the public files are deployed; the allowlist is in `.github/workflows/pages.yml`. The public TestFlight URL is referenced directly in `index.html`, `llms.txt`, and `llms-full.txt`.
 
+### Layout
+
+Every page, the admin dashboard included, shares the landing page's two widths: the header spans `--chrome-width` (1280 px), the content and the footer `--content-width` (1180 px), each with a 24 px gutter on either side, 16 px on phones (760 px and narrower). `styles.css`, `legal.css` and `feedback-worker/public/assets/admin.css` each define both at the top; change all three together.
+
+A new page puts its content in `width: min(var(--content-width), calc(100% - 48px))` (`calc(100% - 32px)` on phones), as the landing page's sections, `.legal-content` and the dashboard's `.page-shell` do. Inside it a block may be narrower and centred where that reads better (the landing page's pricing and goals, the About us letter), but the page's edges stay where the landing page's are. Running text keeps a measure of about 34em, so on wide screens the privacy, terms and brand cards put their heading on the left and their words on the right, like the landing page's FAQ.
+
 ### Themes and images
 
 The site's type and colours follow the app: New York, and the per-theme page, card, ink, accent and launch-screen colours from the iOS project's `AppTheme.swift`. Five themes are offered: Wasserkuppe (`meadow`), Shiratani (`forest`, the default), Loch Tay (`coast`), Green River Overlook (`canyon`) and Plain (`plain`, Schlicht in German). Plain has no painting, so its deep band is the app's dark card colour.
@@ -26,7 +32,7 @@ The header and footer logos, `assets/logo/akari-logo-<theme>-<dark|light>.svg`, 
 
 ### About us page
 
-`about-us/` says why Akari exists, who makes it and what we believe, built from the legal pages' header, footer and `legal.css`, with its words in `pageTranslations["about-us"]` in `legal.js`. The founders' photos are `assets/about/rafael.webp` and `assets/about/jan.webp`, shown at 160 px (so 480 px square covers 3x screens); until a file is there, its frame shows a neutral silhouette.
+`about-us/` is a short letter from the two founders, signed by hand, then what we hold to on the deep band, then the landing page's closing call ("Akari is almost here.", the `.shape` section, with its words copied from `script.js`). It uses the legal pages' header, footer and `legal.css`, with its words in `pageTranslations["about-us"]` in `legal.js`. The signature is set in Mrs Saint Delafield, self-hosted as `assets/fonts/MrsSaintDelafield-latin.woff2` (its Latin subset from Google Fonts, SIL Open Font License alongside); load no font from Google's servers.
 
 ### Brand page
 
@@ -43,7 +49,7 @@ The other stickers in `assets/stickers/` (lock, the goal and focus stickers chos
 Every piece, icon and sticker on the landing page has a cream edge in the theme's `--band-ink` and a soft shadow, as if cut out and stuck on. They are baked into copies of the images rather than drawn by the browser: a runtime filter had to be rasterised per image and on iPhone filled in visibly while scrolling. `tools/bake_die_cuts.py` (Pillow only) writes, for each theme:
 
 - `<piece>-cut@2x|3x.webp` beside each piece, and `app-icon-<mode>-cut` and `apple-health-cut` in `assets/welcome/<theme>/`;
-- each food sticker at `assets/welcome/stickers/<theme>/<name>-<width>@2x|3x.webp` and each Fluent sticker at `assets/stickers/<theme>/…`, at widths 34, 43, 56, 72, 92, 120 and 160. A sticker is shown anywhere from about 34 (a legal page's headline on a phone) to 180px wide, so the page takes the width nearest its box (`cutImageBase` in `script.js`, and the first pick in `index.html`) and the edge stays close to 3px.
+- each food sticker at `assets/welcome/stickers/<theme>/<name>-<width>@2x|3x.webp` and each Fluent sticker at `assets/stickers/<theme>/…`, at widths 34, 43, 56, 72, 92, 120 and 160. A sticker is shown anywhere from about 34 (a legal page's headline on a phone) to 180px wide, so the page takes the width nearest its box (`cutImageBase` in `script.js`, and the first pick in `index.html`) and the edge stays close to 3px. The privacy, terms, brand and about pages (`updateStickers` in `legal.js`) take the width about a tenth under the box instead, an edge near 3.3px, so a headline sticker is never thinner than the landing page's; the brand page's headline also takes the app icon at these widths, baked as `assets/welcome/<theme>/app-icon-<mode>-<width>-cut@2x|3x.webp`.
 
 Each baked file is its source on a transparent margin (20px at the sides, 10 above, 30 below at 1x) that holds the edge and shadow. In the page, each image sits in a `.cut` box shaped like the unbaked piece (`--w`/`--h`), and the image spills out of it by that margin, so pieces stay exactly where they were. The readiness bar keeps its own glow and has no edge. The repository keeps only the sources: the deploy bakes into its staged copy of the site, and local bakes are git-ignored. The bake skips anything already up to date, so run it again after the app exports new pieces.
 
