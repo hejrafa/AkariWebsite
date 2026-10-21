@@ -376,15 +376,16 @@ a:hover { color: var(--accent); }
     transform: translate(-50%, 0);
   }
 
-  /* The last button sits near the page edge, so its label lines up with its right side instead. */
-  .mode-button[data-mode-target="dark"]::after {
+  /* The mode buttons sit near the page edge, so their labels line up with their right side instead: centred,
+     the German "Helles Erscheinungsbild verwenden" ran past the edge and the page scrolled sideways. */
+  .mode-button::after {
     left: auto;
     right: 0;
     transform: translateY(-4px);
   }
 
-  .mode-button[data-mode-target="dark"]:hover::after,
-  .mode-button[data-mode-target="dark"]:focus-visible::after {
+  .mode-button:hover::after,
+  .mode-button:focus-visible::after {
     transform: translateY(0);
   }
 
