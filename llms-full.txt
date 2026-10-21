@@ -18,7 +18,7 @@ Each morning Akari reads last night against the user's own usual nights. Yesterd
 
 Every nutrient gets a row of its own, with its own symbol. Where there is a limit, Akari marks it.
 
-### Write, say or snap what you ate
+### Snap, write or say what you ate
 
 Users log food by typing or saying it the way they would tell someone, for example "Oats with banana and a flat white", or by taking a photo of the meal. Akari finds each food, its portion and what is in it. A barcode can be scanned as well.
 
