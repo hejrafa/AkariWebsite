@@ -353,7 +353,7 @@ h1 {
   pointer-events: none;
   animation: emoji-pop 1180ms both var(--ease);
 }
-.lede { width: min(30em, 100%); margin: 26px auto 0; color: var(--muted); font-size: clamp(1.1rem, 1.5vw, 1.3rem); line-height: 1.45; }
+.lede { width: min(30em, 100%); margin: 26px auto 0; color: var(--muted); font-size: clamp(1.1rem, 1.5vw, 1.3rem); line-height: 1.45; text-wrap: pretty; }
 
 /* Dashboard: website visits -------------------------------------------------------------------- */
 

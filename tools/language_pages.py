@@ -8,6 +8,10 @@ its <html lang>, the canonical address, the title, description and sharing cards
 The page's script then writes the German words, as the language switch does. Only the English pages are kept
 in the repository; the copies are made from them every time, so the two can't drift apart.
 
+404.html is not one of these pages. GitHub Pages serves the root 404.html for every missing address, under
+/de/ too, so there is one file and no /de/404/; its own script picks the language from the address. build
+leaves it where it is, and serve answers a missing address with it, as GitHub Pages does.
+
 The German title, description and image text are read from the scripts that hold them already: pageMetadata in
 script.js for the landing page, and pageMetadata and commonTranslations in legal.js for the others. A string
 that can't be found stops the build rather than leaving an English card on a German page.
@@ -231,6 +235,21 @@ class PreviewHandler(http.server.SimpleHTTPRequestHandler):
     def do_HEAD(self):
         if not self.send_german(False):
             super().do_HEAD()
+
+    def send_error(self, code, message=None, explain=None):
+        # A missing address gets the site's own 404.html with a 404, as on GitHub Pages.
+        not_found = REPOSITORY / "404.html"
+        if code != 404 or not not_found.is_file():
+            super().send_error(code, message, explain)
+            return
+        body = not_found.read_bytes()
+        self.send_response(404, message)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        if self.command != "HEAD":
+            self.wfile.write(body)
 
 
 def serve(port):

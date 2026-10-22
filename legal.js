@@ -371,6 +371,7 @@ const pageTranslations = {
       emojiLabel: "Play with the sun sticker",
       letterProblem: "Your iPhone already knows a lot about how you sleep, move and eat. Most health apps turn that into scores and streaks to keep up with, and want an account and your data in return.",
       letterAnswer: "We wanted an app that simply tells you what it all means for your day, in plain words, and then lets you get on with it. So we made Akari.",
+      letterFood: "Food is part of your day too, and logging it is usually the most annoying thing about any health app: weighing everything, searching long lists, picking portions. We wanted the easiest way there is. Take a picture, or say what you ate in your own words, and Akari works out the rest.",
       letterTeam: "We’re two people in Germany, and we make Akari together, from the first idea to the last word. We take our time with the science behind it, and with how we put it into words.",
       letterCare: "You’ll notice that in how Akari talks to you. Its explanations rest on research, and they’re written so anyone can follow them, without jargon and without alarm.",
       valuesTitle: "What we hold to",
@@ -390,6 +391,7 @@ const pageTranslations = {
       emojiLabel: "Mit dem Sonnen-Sticker spielen",
       letterProblem: "Dein iPhone weiß schon eine Menge darüber, wie du schläfst, dich bewegst und isst. Die meisten Gesundheits-Apps machen daraus Scores und Serien, die du halten sollst, und wollen dafür ein Konto und deine Daten.",
       letterAnswer: "Wir wollten eine App, die dir einfach sagt, was das alles für deinen Tag bedeutet, in klaren Worten, und dich dann deinen Tag leben lässt. Also haben wir Akari gebaut.",
+      letterFood: "Auch Essen gehört zu deinem Tag, und es einzutragen ist meist das Lästigste an jeder Gesundheits-App: Du wiegst ab, suchst dich durch lange Listen und wählst Portionen aus. Wir wollten den einfachsten Weg, den es gibt. Mach ein Foto oder sag in deinen eigenen Worten, was du gegessen hast, und Akari kümmert sich um den Rest.",
       letterTeam: "Wir sind zwei Menschen in Deutschland und machen Akari gemeinsam, von der ersten Idee bis zum letzten Wort. Wir nehmen uns Zeit für die Wissenschaft dahinter und dafür, sie in Worte zu fassen.",
       letterCare: "Das merkst du daran, wie Akari mit dir spricht: Die Erklärungen stützen sich auf Forschung und sind so geschrieben, dass jeder sie versteht, ohne Fachchinesisch und ohne Alarm.",
       valuesTitle: "Woran wir uns halten",
@@ -402,6 +404,23 @@ const pageTranslations = {
       launchTitle: "Akari ist fast da.",
       launchBody: "Wir bereiten den Start im App Store vor. Bis dahin ist die Beta offen: Teste Akari jetzt und sag uns, was du denkst.",
       joinBeta: "Beta testen",
+    },
+  },
+  // 404.html, which GitHub Pages serves for every missing address. Its language comes from the address.
+  "not-found": {
+    en: {
+      notFoundLabel: "Page not found",
+      title: "This page wandered off",
+      emojiLabel: "Play with the runner sticker",
+      intro: "It happens to the best of pages.",
+      backHome: "Back to the start",
+    },
+    de: {
+      notFoundLabel: "Seite nicht gefunden",
+      title: "Diese Seite ist ausgebüxt",
+      emojiLabel: "Mit dem Läufer-Sticker spielen",
+      intro: "Das passiert den besten Seiten.",
+      backHome: "Zurück zur Startseite",
     },
   },
 };
@@ -422,6 +441,11 @@ const pageMetadata = {
   "about-us": {
     en: { title: "Akari: About us", description: "Why Akari exists, and the two people in Germany who make it: a calm, private health app for your iPhone." },
     de: { title: "Akari: Über uns", description: "Warum es Akari gibt, und die zwei Menschen in Deutschland, die es machen: eine ruhige, private Gesundheits-App für dein iPhone." },
+  },
+  // Not indexed, so it has no description or sharing card.
+  "not-found": {
+    en: { title: "Akari: Page not found" },
+    de: { title: "Akari: Seite nicht gefunden" },
   },
 };
 
