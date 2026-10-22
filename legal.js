@@ -369,7 +369,7 @@ const pageTranslations = {
     en: {
       title: "Why Akari exists",
       emojiLabel: "Play with the sun sticker",
-      letterProblem: "Your iPhone already knows a lot about how you sleep, move and eat. Most health apps turn that into scores and streaks to keep up with, and want an account and your data in return.",
+      letterProblem: "A fitness tracker like an Apple Watch or a Fitbit Air already knows a lot about your sleep, your heart and how much you move. Most health apps turn that into scores and streaks to keep up with, and want an account and your data in return.",
       letterAnswer: "We wanted an app that simply tells you what it all means for your day, in plain words, and then lets you get on with it. So we made Akari.",
       letterFood: "Food is part of your day too, and logging it is usually the most annoying thing about any health app: weighing everything, searching long lists, picking portions. We wanted the easiest way there is. Take a picture, or say what you ate in your own words, and Akari works out the rest.",
       letterTeam: "We’re two people in Germany, and we make Akari together, from the first idea to the last word. We take our time with the science behind it, and with how we put it into words.",
@@ -389,7 +389,7 @@ const pageTranslations = {
     de: {
       title: "Warum es Akari gibt",
       emojiLabel: "Mit dem Sonnen-Sticker spielen",
-      letterProblem: "Dein iPhone weiß schon eine Menge darüber, wie du schläfst, dich bewegst und isst. Die meisten Gesundheits-Apps machen daraus Scores und Serien, die du halten sollst, und wollen dafür ein Konto und deine Daten.",
+      letterProblem: "Ein Fitness-Tracker wie eine Apple Watch oder ein Fitbit Air weiß schon eine Menge über deinen Schlaf, dein Herz und wie viel du dich bewegst. Die meisten Gesundheits-Apps machen daraus Scores und Serien, die du halten sollst, und wollen dafür ein Konto und deine Daten.",
       letterAnswer: "Wir wollten eine App, die dir einfach sagt, was das alles für deinen Tag bedeutet, in klaren Worten, und dich dann deinen Tag leben lässt. Also haben wir Akari gebaut.",
       letterFood: "Auch Essen gehört zu deinem Tag, und es einzutragen ist meist das Lästigste an jeder Gesundheits-App: Du wiegst ab, suchst dich durch lange Listen und wählst Portionen aus. Wir wollten den einfachsten Weg, den es gibt. Mach ein Foto oder sag in deinen eigenen Worten, was du gegessen hast, und Akari kümmert sich um den Rest.",
       letterTeam: "Wir sind zwei Menschen in Deutschland und machen Akari gemeinsam, von der ersten Idee bis zum letzten Wort. Wir nehmen uns Zeit für die Wissenschaft dahinter und dafür, sie in Worte zu fassen.",
