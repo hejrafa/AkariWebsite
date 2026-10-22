@@ -60,7 +60,8 @@ for (const [name, request, answer] of [
     assert.equal(result.counters.count(`global:${today()}`), 10);
     assert.equal(result.counters.count(await counterKey("device", scoreboard)), 80);
     assert.equal(result.counters.count(await counterKey("address", address)), 240);
-    assert.equal(result.counters.written, 1);
+    // The global counter, and the day's usage row.
+    assert.equal(result.counters.written, 2);
     assert.equal(lines.length, 1);
     assert.equal(lines[0].scoreboard, true);
   });

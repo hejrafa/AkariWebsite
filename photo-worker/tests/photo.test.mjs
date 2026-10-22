@@ -136,7 +136,10 @@ async function freshPhoto(counters) {
   const { default: fresh } = await import(`../src/index.ts?salt=${Math.random()}`);
   const anthropic = stubAnthropic(message({ food: true, main: "x", meal: "x" }));
   try {
-    return await fresh.fetch(photo(), { COUNTERS: counters, ANTHROPIC_API_KEY: "test-key" });
+    const pending = [];
+    const response = await fresh.fetch(photo(), { COUNTERS: counters, ANTHROPIC_API_KEY: "test-key" }, { waitUntil: (promise) => pending.push(promise) });
+    await Promise.all(pending);
+    return response;
   } finally {
     anthropic.restore();
   }
@@ -160,10 +163,12 @@ test("the first photo of a day makes a salt, and the day's later photos reuse it
 test("the three increments arrive in one batch with the read", async () => {
   const { counters } = await run(photo(), {}, message({ food: true, main: "x", meal: "x" }));
   assert.equal(counters.batches.length, 1);
-  const writes = counters.statements.filter((s) => /^\s*(WITH|INSERT|UPDATE|DELETE)/i.test(s.sql));
+  // The usage row is written on its own, after the answer.
+  const writes = counters.statements.filter((s) => /^\s*(WITH|INSERT|UPDATE|DELETE)/i.test(s.sql) && !s.sql.includes("usage_days"));
   assert.equal(writes.length, 1);
   assert.equal(writes[0].inBatch, true);
-  assert.equal(counters.written, 3);
+  // The three counters, and the day's usage row.
+  assert.equal(counters.written, 4);
   assert.deepEqual(counters.keys(), [await counterKey("address", "203.0.113.7"), await counterKey("device", device), `global:${today()}`].sort());
 });
 

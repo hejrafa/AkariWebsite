@@ -27,7 +27,9 @@ import vocabulary from "./vocabulary.json" with { type: "json" };
 // database are the only state, and the cron deletes them once they are two days old.
 // The device and address counters are keyed by a hash with a salt that lives for
 // one UTC day, so D1 never holds an IP address or a device id, and once the day's
-// salt is deleted the keys can't be linked to anyone or to each other.
+// salt is deleted the keys can't be linked to anyone or to each other. Beside them,
+// usage_days counts each day's calls to Anthropic per endpoint, their failures and
+// their tokens, for the admin dashboard's cost; the cron keeps those 400 days.
 
 export interface Env {
   COUNTERS: D1Database;
@@ -221,21 +223,21 @@ interface ComposeAnswer {
 class UpstreamFailure extends Error {}
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     try {
-      return await handle(request, env);
+      return await handle(request, env, ctx);
     } catch {
       return new Response(null, { status: 500, headers: baseHeaders() });
     }
   },
 
-  // Daily at 03:00 UTC (wrangler.jsonc): only today's and yesterday's rows stay.
+  // Daily at 03:00 UTC (wrangler.jsonc): only today's and yesterday's counter rows stay.
   async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
     ctx.waitUntil(purge(env));
   },
 } satisfies ExportedHandler<Env>;
 
-async function handle(request: Request, env: Env): Promise<Response> {
+async function handle(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
   const url = new URL(request.url);
   const endpoint = request.method === "POST" && ["/photo", "/meal", "/compose"].includes(url.pathname) ? url.pathname : null;
   if (!endpoint) return json(404, { reason: "not_found" });
@@ -245,8 +247,8 @@ async function handle(request: Request, env: Env): Promise<Response> {
   const device = request.headers.get("x-akari-device")?.trim().toLowerCase() ?? "";
   if (!DEVICE_ID.test(device)) return json(400, { reason: "device" });
 
-  if (endpoint === "/photo") return photo(request, env, device);
-  return endpoint === "/meal" ? meal(request, env, device) : compose(request, env, device);
+  if (endpoint === "/photo") return photo(request, env, ctx, device);
+  return endpoint === "/meal" ? meal(request, env, ctx, device) : compose(request, env, ctx, device);
 }
 
 function isScoreboard(env: Env, device: string): boolean {
@@ -259,7 +261,7 @@ function scoreboardLog(env: Env, device: string): { scoreboard?: true } {
   return isScoreboard(env, device) ? { scoreboard: true } : {};
 }
 
-async function photo(request: Request, env: Env, device: string): Promise<Response> {
+async function photo(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
   const declared = request.headers.get("content-type")?.split(";")[0].trim().toLowerCase();
   if (declared !== "image/jpeg" && declared !== "image/png") return json(415, { reason: "type" });
   if (Number(request.headers.get("content-length") ?? 0) > MAX_BYTES) return json(413, { reason: "size" });
@@ -278,8 +280,9 @@ async function photo(request: Request, env: Env, device: string): Promise<Respon
   const build = buildOf(request);
 
   const started = Date.now();
+  let message: Anthropic.Message | undefined;
   try {
-    const message = await ask(env.ANTHROPIC_API_KEY, {
+    message = await ask(env.ANTHROPIC_API_KEY, {
       model: MODEL,
       max_tokens: 400,
       thinking: { type: "disabled" },
@@ -298,9 +301,11 @@ async function photo(request: Request, env: Env, device: string): Promise<Respon
     const answer = readAnswer(message);
     // Counts only: never the photo, the answer or the device id.
     console.log(JSON.stringify({ photo: "ok", ms: Date.now() - started, prompt: PROMPT_VERSION, build, ...scoreboardLog(env, device), ...usage(message) }));
+    countUsage(env, ctx, "photo", message, false);
     return json(200, answer);
   } catch (error) {
     console.log(JSON.stringify({ photo: "upstream", ms: Date.now() - started, ...scoreboardLog(env, device), status: error instanceof APIError ? error.status ?? "network" : "answer" }));
+    countUsage(env, ctx, "photo", message, true);
     return json(503, { reason: "upstream" });
   }
 }
@@ -329,7 +334,7 @@ async function readMealBody(request: Request): Promise<{ body: unknown; photo: M
   return { body, photo };
 }
 
-async function meal(request: Request, env: Env, device: string): Promise<Response> {
+async function meal(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
   const read = await readMealBody(request);
   if (read instanceof Response) return read;
   const { body, photo } = read;
@@ -344,8 +349,9 @@ async function meal(request: Request, env: Env, device: string): Promise<Respons
   const build = buildOf(request);
 
   const started = Date.now();
+  let message: Anthropic.Message | undefined;
   try {
-    const message = await ask(env.ANTHROPIC_API_KEY, {
+    message = await ask(env.ANTHROPIC_API_KEY, {
       model: MODEL,
       max_tokens: 1500,
       thinking: { type: "disabled" },
@@ -384,14 +390,16 @@ async function meal(request: Request, env: Env, device: string): Promise<Respons
         ...usage(message),
       }),
     );
+    countUsage(env, ctx, "meal", message, false);
     return json(200, answer);
   } catch (error) {
     console.log(JSON.stringify({ meal: "upstream", ms: Date.now() - started, ...scoreboardLog(env, device), status: error instanceof APIError ? error.status ?? "network" : "answer" }));
+    countUsage(env, ctx, "meal", message, true);
     return json(503, { reason: "upstream" });
   }
 }
 
-async function compose(request: Request, env: Env, device: string): Promise<Response> {
+async function compose(request: Request, env: Env, ctx: ExecutionContext, device: string): Promise<Response> {
   const read = await readMealBody(request);
   if (read instanceof Response) return read;
   const { body, photo } = read;
@@ -406,8 +414,9 @@ async function compose(request: Request, env: Env, device: string): Promise<Resp
   const build = buildOf(request);
 
   const started = Date.now();
+  let message: Anthropic.Message | undefined;
   try {
-    const message = await ask(env.ANTHROPIC_API_KEY, {
+    message = await ask(env.ANTHROPIC_API_KEY, {
       model: MODEL,
       max_tokens: 3000,
       thinking: { type: "disabled" },
@@ -450,9 +459,11 @@ async function compose(request: Request, env: Env, device: string): Promise<Resp
         cache_creation_input_tokens: message.usage.cache_creation_input_tokens ?? 0,
       }),
     );
+    countUsage(env, ctx, "compose", message, false);
     return json(200, answer);
   } catch (error) {
     console.log(JSON.stringify({ compose: "upstream", ms: Date.now() - started, ...scoreboardLog(env, device), status: error instanceof APIError ? error.status ?? "network" : "answer" }));
+    countUsage(env, ctx, "compose", message, true);
     return json(503, { reason: "upstream" });
   }
 }
@@ -494,13 +505,43 @@ async function spend(request: Request, env: Env, device: string): Promise<Respon
   return hit ? json(429, { reason: hit.reason }) : null;
 }
 
+// One call to Anthropic added to today's row for its endpoint: one request, a
+// failure when Anthropic or its answer failed, and the tokens the response used
+// (none when there was no response). It writes after the answer is on its way.
+function countUsage(env: Env, ctx: ExecutionContext, endpoint: "photo" | "meal" | "compose", message: Anthropic.Message | undefined, failed: boolean): void {
+  const day = new Date().toISOString().slice(0, 10);
+  const tokens = message?.usage;
+  const write = env.COUNTERS.prepare(
+    `INSERT INTO usage_days (day, endpoint, requests, failures, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens)
+     VALUES (?1, ?2, 1, ?3, ?4, ?5, ?6, ?7)
+     ON CONFLICT (day, endpoint) DO UPDATE SET
+       requests = requests + 1,
+       failures = failures + ?3,
+       input_tokens = input_tokens + ?4,
+       output_tokens = output_tokens + ?5,
+       cache_read_tokens = cache_read_tokens + ?6,
+       cache_write_tokens = cache_write_tokens + ?7`,
+  ).bind(
+    day,
+    endpoint,
+    failed ? 1 : 0,
+    tokens?.input_tokens ?? 0,
+    tokens?.output_tokens ?? 0,
+    tokens?.cache_read_input_tokens ?? 0,
+    tokens?.cache_creation_input_tokens ?? 0,
+  );
+  ctx.waitUntil(write.run().then(() => undefined, () => console.log(JSON.stringify({ usage: "unrecorded", endpoint }))));
+}
+
 // Counter and salt rows from before yesterday. Yesterday's stay so a call that
-// started just before midnight still finds its rows.
+// started just before midnight still finds its rows. Usage rows stay 400 days.
 async function purge(env: Env): Promise<void> {
   const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  const usageKept = new Date(Date.now() - 400 * 86_400_000).toISOString().slice(0, 10);
   await env.COUNTERS.batch([
     env.COUNTERS.prepare("DELETE FROM counters WHERE day < ?").bind(yesterday),
     env.COUNTERS.prepare("DELETE FROM salts WHERE day < ?").bind(yesterday),
+    env.COUNTERS.prepare("DELETE FROM usage_days WHERE day < ?").bind(usageKept),
   ]);
 }
 

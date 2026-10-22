@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import worker from "../src/index.ts";
 
@@ -13,13 +13,14 @@ export async function counterKey(kind, value, day = today(), withSalt = salt) {
   return `${kind}:${hash}:${day}`;
 }
 
-// A D1 stand-in: SQLite in memory with the worker's migration, behind D1's
+// A D1 stand-in: SQLite in memory with the worker's migrations, behind D1's
 // prepare().bind() with run(), first(), all() and batch(). Seed counters by key,
 // as { key: count }; the day is the key's last ten characters. It keeps every
 // statement and batch, and `written` counts the rows each one changed.
 export function d1(seed = {}, salts = {}) {
   const db = new DatabaseSync(":memory:");
-  db.exec(readFileSync(new URL("../migrations/0001_counters.sql", import.meta.url), "utf8"));
+  const migrations = new URL("../migrations/", import.meta.url);
+  for (const file of readdirSync(migrations).sort()) db.exec(readFileSync(new URL(file, migrations), "utf8"));
   for (const [key, count] of Object.entries(seed)) db.prepare("INSERT INTO counters (key, day, count) VALUES (?, ?, ?)").run(key, key.slice(-10), count);
   for (const [day, salt] of Object.entries(salts)) db.prepare("INSERT INTO salts (day, salt) VALUES (?, ?)").run(day, salt);
 
@@ -31,6 +32,7 @@ export function d1(seed = {}, salts = {}) {
     count: (key) => db.prepare("SELECT count FROM counters WHERE key = ?").get(key)?.count,
     keys: () => db.prepare("SELECT key FROM counters ORDER BY key").all().map((row) => row.key),
     salts: () => db.prepare("SELECT day, salt FROM salts ORDER BY day").all().map((row) => ({ ...row })),
+    usage: () => db.prepare("SELECT * FROM usage_days ORDER BY day, endpoint").all().map((row) => ({ ...row })),
     prepare: (sql) => statement(sql, []),
     async batch(statements) {
       fake.batches.push(statements);
