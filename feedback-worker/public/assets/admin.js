@@ -52,18 +52,19 @@ const translations = {
     breakdownPages: "Pages", breakdownSources: "Came from", breakdownCountries: "Countries", breakdownEmpty: "Nothing yet",
     pageHome: "Home", pagePrivacy: "Privacy", pageTerms: "Terms", pageBrand: "Brand", sourceDirect: "Direct", unknown: "Unknown",
     testersTitle: "App testers", refresh: "Refresh", refreshing: "Refreshing…", loadingTesters: "Loading testers…",
-    noTesterData: "No data yet. Add the App Store Connect key and press Refresh.", keyMissing: "Key missing",
+    noTesterData: "No data yet. Add the App Store Connect key and press Refresh.",
     statTesters: "Testers", statInstalled: "Installed", statSessions: "Sessions, last 30 days", statCrashes: "Crashes, last 30 days",
-    testersUpdated: "Last updated {time}", refreshWait: "Refreshed a moment ago. Try again in {minutes} min.", refreshFailed: "Refresh failed: {detail}",
+    refreshWait: "Refreshed a moment ago. Try again in {minutes} min.", refreshFailed: "Refresh failed: {detail}",
     testersTrend: "Testers per day over the last 30 days.", tooltipTesters: "{count} testers", tooltipTester: "1 tester", tooltipInstalled: "{count} installed", tooltipNoData: "No data",
     usageTitle: "AI usage", loadingUsage: "Loading AI usage…", noUsage: "No AI requests in these days yet.", usageUnbound: "The photo worker’s usage database isn’t bound to this worker.",
-    statRequestsToday: "Requests today", statCostToday: "Cost today", statCostMonth: "Cost this month", comparedYesterday: "Yesterday: {value}", comparedLastMonth: "Last month: {value}",
-    legendCost: "Cost", usageChart: "AI requests per day over the last {days} days by endpoint, {total} in total, costing {cost}.",
+    statRequestsToday: "Requests today", statCostToday: "Cost today", statCostMonth: "Cost this month",
+    usageCompose: "Meal logging", usagePhoto: "Photo recognition", usageMeal: "Older app versions",
+    legendCost: "Cost", usageChart: "AI requests per day over the last {days} days by what they were for, {total} in total, costing {cost}.",
     tooltipRequests: "{count} requests", tooltipRequest: "1 request", tooltipFailures: "{count} failed", tooltipFailure: "1 failed", tooltipTokens: "{input} tokens in · {output} out", tooltipCost: "Cost {cost}",
     tableRequests: "Requests", tableFailures: "Failed", tableCost: "Cost",
-    cloudflareTitle: "Cloudflare", loadingCloudflare: "Loading Cloudflare usage…", noCloudflareData: "No data yet. Press Refresh.", cloudflareTokenHint: "No data yet. Add the CF_ANALYTICS_TOKEN secret and press Refresh.", tokenMissing: "Token missing",
+    cloudflareTitle: "Cloudflare", loadingCloudflare: "Loading Cloudflare usage…", noCloudflareData: "No data yet. Press Refresh.", cloudflareTokenHint: "No data yet. Add the CF_ANALYTICS_TOKEN secret and press Refresh.",
     limitsToday: "Today", limitWorkerRequests: "Workers requests", limitRowsRead: "D1 rows read", limitRowsWritten: "D1 rows written", limitStorage: "D1 storage", websiteRequests: "Website requests",
-    limitOf: "{value} of {limit}", nearLimit: "{share} · near the limit", limitsNote: "Free plan, limits as of {date}", cloudflareUpdated: "updated {time}",
+    limitOf: "{value} of {limit}", nearLimit: "{share} · near the limit", limitsNote: "Free plan, limits as of {date}",
     workerTrendTitle: "Workers requests, last 30 days", workerTrend: "Workers requests per day over the last 30 days.", tooltipErrors: "{count} errors", tooltipError: "1 error",
     foodReviewTitle: "Food inbox", foodReviewLede: "Mix-ups, mystery portions and nutrition that looks a little suspicious, sent in by sharp-eyed testers.", foodReviewEmojiLabel: "Play with the food inbox sticker",
     feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
@@ -93,18 +94,19 @@ const translations = {
     breakdownPages: "Seiten", breakdownSources: "Gekommen von", breakdownCountries: "Länder", breakdownEmpty: "Noch nichts",
     pageHome: "Startseite", pagePrivacy: "Datenschutz", pageTerms: "Nutzungsbedingungen", pageBrand: "Marke", sourceDirect: "Direkt", unknown: "Unbekannt",
     testersTitle: "App-Tester", refresh: "Aktualisieren", refreshing: "Wird aktualisiert…", loadingTesters: "Tester werden geladen…",
-    noTesterData: "Noch keine Daten. App-Store-Connect-Schlüssel hinterlegen und auf Aktualisieren klicken.", keyMissing: "Schlüssel fehlt",
+    noTesterData: "Noch keine Daten. App-Store-Connect-Schlüssel hinterlegen und auf Aktualisieren klicken.",
     statTesters: "Tester", statInstalled: "Installiert", statSessions: "Sitzungen, letzte 30 Tage", statCrashes: "Abstürze, letzte 30 Tage",
-    testersUpdated: "Zuletzt aktualisiert {time}", refreshWait: "Gerade erst aktualisiert. In {minutes} Min. erneut versuchen.", refreshFailed: "Aktualisierung fehlgeschlagen: {detail}",
+    refreshWait: "Gerade erst aktualisiert. In {minutes} Min. erneut versuchen.", refreshFailed: "Aktualisierung fehlgeschlagen: {detail}",
     testersTrend: "Tester pro Tag in den letzten 30 Tagen.", tooltipTesters: "{count} Tester", tooltipTester: "1 Tester", tooltipInstalled: "{count} installiert", tooltipNoData: "Keine Daten",
     usageTitle: "KI-Nutzung", loadingUsage: "KI-Nutzung wird geladen…", noUsage: "In diesen Tagen noch keine KI-Anfragen.", usageUnbound: "Die Nutzungsdatenbank des Foto-Workers ist hier nicht angebunden.",
-    statRequestsToday: "Anfragen heute", statCostToday: "Kosten heute", statCostMonth: "Kosten diesen Monat", comparedYesterday: "Gestern: {value}", comparedLastMonth: "Letzter Monat: {value}",
-    legendCost: "Kosten", usageChart: "KI-Anfragen pro Tag in den letzten {days} Tagen nach Endpunkt, insgesamt {total}, für {cost}.",
+    statRequestsToday: "Anfragen heute", statCostToday: "Kosten heute", statCostMonth: "Kosten diesen Monat",
+    usageCompose: "Mahlzeiten erfassen", usagePhoto: "Fotoerkennung", usageMeal: "Ältere App-Versionen",
+    legendCost: "Kosten", usageChart: "KI-Anfragen pro Tag in den letzten {days} Tagen nach Zweck, insgesamt {total}, für {cost}.",
     tooltipRequests: "{count} Anfragen", tooltipRequest: "1 Anfrage", tooltipFailures: "{count} fehlgeschlagen", tooltipFailure: "1 fehlgeschlagen", tooltipTokens: "{input} Tokens rein · {output} raus", tooltipCost: "Kosten {cost}",
     tableRequests: "Anfragen", tableFailures: "Fehlgeschlagen", tableCost: "Kosten",
-    cloudflareTitle: "Cloudflare", loadingCloudflare: "Cloudflare-Nutzung wird geladen…", noCloudflareData: "Noch keine Daten. Auf Aktualisieren klicken.", cloudflareTokenHint: "Noch keine Daten. Das Secret CF_ANALYTICS_TOKEN hinterlegen und auf Aktualisieren klicken.", tokenMissing: "Token fehlt",
+    cloudflareTitle: "Cloudflare", loadingCloudflare: "Cloudflare-Nutzung wird geladen…", noCloudflareData: "Noch keine Daten. Auf Aktualisieren klicken.", cloudflareTokenHint: "Noch keine Daten. Das Secret CF_ANALYTICS_TOKEN hinterlegen und auf Aktualisieren klicken.",
     limitsToday: "Heute", limitWorkerRequests: "Workers-Anfragen", limitRowsRead: "D1 gelesene Zeilen", limitRowsWritten: "D1 geschriebene Zeilen", limitStorage: "D1-Speicher", websiteRequests: "Website-Anfragen",
-    limitOf: "{value} von {limit}", nearLimit: "{share} · fast am Limit", limitsNote: "Free-Tarif, Limits Stand {date}", cloudflareUpdated: "aktualisiert {time}",
+    limitOf: "{value} von {limit}", nearLimit: "{share} · fast am Limit", limitsNote: "Free-Tarif, Limits Stand {date}",
     workerTrendTitle: "Workers-Anfragen, letzte 30 Tage", workerTrend: "Workers-Anfragen pro Tag in den letzten 30 Tagen.", tooltipErrors: "{count} Fehler", tooltipError: "1 Fehler",
     foodReviewTitle: "Meldungen", foodReviewLede: "Verwechslungen, rätselhafte Portionen und Nährwerte, die etwas verdächtig aussehen, eingeschickt von aufmerksamen Testern.", foodReviewEmojiLabel: "Mit dem Meldungen-Sticker spielen",
     feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
@@ -623,13 +625,11 @@ async function refreshTesters() {
 function renderTesters(data) {
   testersRefresh.textContent = t("refresh");
   const latest = data.latest;
-  const updated = latest ? t("testersUpdated", { time: formatDate(latest.takenAt) }) : "";
-  testersUpdated.textContent = [testerNotice || updated, data.configured === false ? t("keyMissing") : ""].filter(Boolean).join(" · ");
+  testersUpdated.textContent = testerNotice;
 
   if (!latest) {
     const empty = element("div", "visits-state testers-empty");
     empty.append(element("p", "", t("noTesterData")));
-    if (data.configured === false) empty.append(element("span", "testers-key", t("keyMissing")));
     testersCard.replaceChildren(empty);
     return;
   }
@@ -708,11 +708,13 @@ function dayBars(points, valueOf, summary, linesFor) {
 
 // AI usage --------------------------------------------------------------------------------------
 
-// Fixed per endpoint, never by rank: the stack's order and colours (admin.css --series-*).
+// What the AI was asked to do, one per photo-worker endpoint: logging a meal (/compose), reading
+// a meal photo (/photo), and the matching older app builds still use (/meal). Fixed, never by
+// rank: the stack's order and colours (admin.css --series-*).
 const usageSeries = [
-  { key: "compose", label: "/compose" },
-  { key: "photo", label: "/photo" },
-  { key: "meal", label: "/meal" },
+  { key: "compose", labelKey: "usageCompose" },
+  { key: "photo", labelKey: "usagePhoto" },
+  { key: "meal", labelKey: "usageMeal" },
 ];
 
 for (const button of usageRangeButtons) {
@@ -753,9 +755,9 @@ function renderUsage(data) {
   }
   const stats = element("dl", "visit-stats usage-stats");
   stats.append(
-    visitStat(t("statRequestsToday"), data.today.requests, t("comparedYesterday", { value: formatNumber(data.yesterday.requests) })),
-    visitStat(t("statCostToday"), formatCost(data.today.cost), t("comparedYesterday", { value: formatCost(data.yesterday.cost) })),
-    visitStat(t("statCostMonth"), formatCost(data.month.cost), t("comparedLastMonth", { value: formatCost(data.lastMonth.cost) })),
+    visitStat(t("statRequestsToday"), data.today.requests),
+    visitStat(t("statCostToday"), formatCost(data.today.cost)),
+    visitStat(t("statCostMonth"), formatCost(data.month.cost)),
   );
   const content = data.daily.some((point) => point.requests)
     ? [usageLegend(data), usageChart(data), usageTable(data)]
@@ -774,7 +776,7 @@ function usageLegend(data) {
     legend.append(entry);
   };
   for (const series of usageSeries) {
-    item(`usage-swatch is-${series.key}`, series.label, formatNumber(data.daily.reduce((sum, point) => sum + point.endpoints[series.key].requests, 0)));
+    item(`usage-swatch is-${series.key}`, t(series.labelKey), formatNumber(data.daily.reduce((sum, point) => sum + point.endpoints[series.key].requests, 0)));
   }
   item("usage-swatch is-cost", t("legendCost"), formatCost(data.daily.reduce((sum, point) => sum + point.cost, 0)));
   return legend;
@@ -855,7 +857,7 @@ function usageChart(data) {
     marker.style.top = `${(y(point.cost) / height) * 100}%`;
     const split = usageSeries
       .filter((series) => point.endpoints[series.key].requests)
-      .map((series) => `${series.label} ${formatNumber(point.endpoints[series.key].requests)}`)
+      .map((series) => `${t(series.labelKey)} ${formatNumber(point.endpoints[series.key].requests)}`)
       .join(" · ");
     const input = point.inputTokens + point.cacheReadTokens + point.cacheWriteTokens;
     tooltip.replaceChildren(
@@ -890,7 +892,7 @@ function usageChart(data) {
 function usageTable(data) {
   const table = element("table", "visually-hidden");
   const head = element("tr");
-  head.append(element("th", "", t("tableDay")), ...usageSeries.map((series) => element("th", "", series.label)), element("th", "", t("tableFailures")), element("th", "", t("tableCost")));
+  head.append(element("th", "", t("tableDay")), ...usageSeries.map((series) => element("th", "", t(series.labelKey))), element("th", "", t("tableFailures")), element("th", "", t("tableCost")));
   table.append(head);
   for (const point of data.daily) {
     const row = element("tr");
@@ -949,13 +951,12 @@ async function refreshCloudflare() {
 
 function renderCloudflare(data) {
   cloudflareRefresh.textContent = t("refresh");
-  cloudflareUpdated.textContent = [cloudflareNotice, data.configured === false ? t("tokenMissing") : ""].filter(Boolean).join(" · ");
+  cloudflareUpdated.textContent = cloudflareNotice;
 
   const latest = data.latest;
   if (!latest) {
     const empty = element("div", "visits-state testers-empty");
     empty.append(element("p", "", data.configured === false ? t("cloudflareTokenHint") : t("noCloudflareData")));
-    if (data.configured === false) empty.append(element("span", "testers-key", t("tokenMissing")));
     cloudflareCard.replaceChildren(empty);
     return;
   }
@@ -986,7 +987,7 @@ function renderCloudflare(data) {
       ...(point.errors !== null ? [point.errors === 1 ? t("tooltipError") : t("tooltipErrors", { count: formatNumber(point.errors) })] : []),
     ]),
   );
-  const note = element("p", "cloudflare-note", `${t("limitsNote", { date: formatDay(data.limitsAsOf, { dateStyle: "medium" }) })} · ${t("cloudflareUpdated", { time: formatDate(latest.takenAt) })}`);
+  const note = element("p", "cloudflare-note", t("limitsNote", { date: formatDay(data.limitsAsOf, { dateStyle: "medium" }) }));
   cloudflareCard.replaceChildren(day, limits, trend, note);
 }
 
@@ -1736,9 +1737,7 @@ function previewUsage(data) {
     ...data,
     daily,
     today: daily.at(-1),
-    yesterday: daily.at(-2),
     month: { ...data.month, cost: monthCost },
-    lastMonth: { ...data.lastMonth, cost: monthCost * 1.4 },
   };
 }
 

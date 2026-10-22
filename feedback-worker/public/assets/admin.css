@@ -452,7 +452,6 @@ h1 {
 .testers-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .testers-empty { min-height: 140px; gap: 10px; align-content: center; }
 .testers-empty p { margin: 0; }
-.testers-key { justify-self: center; padding: 4px 12px; border-radius: 999px; background: var(--tint); color: var(--ink); font-family: var(--sans); font-size: 0.82rem; font-weight: 650; }
 .testers-trend-wrap { position: relative; touch-action: pan-y; }
 .testers-trend { display: flex; align-items: flex-end; gap: 4px; height: 64px; }
 .testers-bar { flex: 1; min-width: 0; height: var(--bar, 4px); border-radius: 4px 4px 2px 2px; background: var(--accent); transition: opacity 120ms var(--ease); }

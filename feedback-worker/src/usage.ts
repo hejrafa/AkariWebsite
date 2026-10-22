@@ -88,27 +88,24 @@ function add(total: Tokens, row: Tokens): Tokens {
   };
 }
 
-/// Each day of the range with its endpoints, today and yesterday, this month so
-/// far and the whole of last month, every one with its cost.
+/// Each day of the range with its endpoints, today, and this month so far, every
+/// one with its cost.
 export async function readUsage(env: UsageEnv, requestedDays: number, now = new Date()) {
   const days = ranges.has(requestedDays) ? requestedDays : 30;
   const price = prices(env);
   const dayAt = (offset: number) => new Date(now.getTime() - offset * 86_400_000).toISOString().slice(0, 10);
   const monthStart = `${now.toISOString().slice(0, 7)}-01`;
-  const lastMonthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1)).toISOString().slice(0, 10);
 
   let rows: UsageRow[] = [];
   let month = none();
-  let lastMonth = none();
   if (env.USAGE) {
-    const since = [dayAt(days - 1), lastMonthStart].sort()[0];
+    const since = [dayAt(days - 1), monthStart].sort()[0];
     rows = (await env.USAGE.prepare(`
       SELECT day, endpoint, requests, failures, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens
       FROM usage_days WHERE day >= ? AND day <= ?
     `).bind(since, dayAt(0)).all<UsageRow>()).results ?? [];
     for (const row of rows) {
       if (row.day >= monthStart) month = add(month, row);
-      else if (row.day >= lastMonthStart) lastMonth = add(lastMonth, row);
     }
   }
 
@@ -130,8 +127,6 @@ export async function readUsage(env: UsageEnv, requestedDays: number, now = new 
     prices: price,
     daily,
     today: daily[daily.length - 1],
-    yesterday: daily[daily.length - 2],
     month: { since: monthStart, ...present(month, price) },
-    lastMonth: { since: lastMonthStart, ...present(lastMonth, price) },
   };
 }

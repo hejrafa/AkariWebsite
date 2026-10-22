@@ -37,7 +37,7 @@ function environment(extra = {}) {
   };
 }
 
-// A Wednesday late in October: yesterday is in the same month, last month is September.
+// A Thursday late in October, with rows from earlier this month, September and August.
 const now = new Date("2026-10-22T12:00:00Z");
 const fixture = [
   { day: "2026-10-22", endpoint: "compose", requests: 10, failures: 1, input: 12_000, output: 2_000, cacheRead: 150_000, cacheWrite: 15_000 },
@@ -61,7 +61,7 @@ test("cost is each token count times its price per million, at Haiku's prices un
   assert.equal(costOf({ input_tokens: 1_000_000, output_tokens: 1_000_000, cache_read_tokens: 0, cache_write_tokens: 0 }, set), 6);
 });
 
-test("the usage per day and endpoint, today, yesterday, this month and last month", async () => {
+test("the usage per day and endpoint, today and this month", async () => {
   const usage = await readUsage({ USAGE: counters(fixture) }, 7, now);
   assert.equal(usage.configured, true);
   assert.equal(usage.days, 7);
@@ -80,21 +80,20 @@ test("the usage per day and endpoint, today, yesterday, this month and last mont
   assert.deepEqual(usage.today, today);
 
   // 7,000 × 0.10 + 1,200 × 0.50 + 90,000 × 0.01 = 2,200 millionths.
-  assert.deepEqual({ requests: usage.yesterday.requests, cost: usage.yesterday.cost }, { requests: 6, cost: 0.0022 });
+  assert.deepEqual({ requests: usage.daily.at(-2).requests, cost: usage.daily.at(-2).cost }, { requests: 6, cost: 0.0022 });
   assert.equal(usage.daily.filter((day) => day.requests > 0).length, 2);
 
-  // The month so far: today, yesterday and the 2nd (3,000 × 0.10 + 400 × 0.50 = 500 millionths).
+  // The month so far: today, yesterday and the 2nd (3,000 × 0.10 + 400 × 0.50 = 500 millionths),
+  // though the 2nd is outside the 7 days; September and August stay out.
   assert.deepEqual({ since: usage.month.since, requests: usage.month.requests, cost: usage.month.cost }, { since: "2026-10-01", requests: 22, cost: 0.009075 });
-  // All of September: 300 + 300 + 450 + 1,875 and 180 + 20 millionths; August stays out.
-  assert.deepEqual({ since: usage.lastMonth.since, requests: usage.lastMonth.requests, cost: usage.lastMonth.cost }, { since: "2026-09-01", requests: 4, cost: 0.003125 });
 });
 
-test("a month's first day compares with the whole month before", async () => {
+test("a month's first day starts the month at nothing, though the range reaches back", async () => {
   const usage = await readUsage({ USAGE: counters(fixture) }, 30, new Date("2026-10-01T08:00:00Z"));
   assert.equal(usage.month.since, "2026-10-01");
   assert.equal(usage.month.requests, 0);
-  assert.equal(usage.yesterday.day, "2026-09-30");
-  assert.equal(usage.lastMonth.requests, 4);
+  assert.equal(usage.daily.at(-2).day, "2026-09-30");
+  assert.equal(usage.daily.at(-2).requests, 3);
 });
 
 test("the endpoint needs a session, keeps to 7, 30 or 90 days, and works without the binding", async () => {
