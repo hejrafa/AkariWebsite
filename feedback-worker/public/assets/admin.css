@@ -444,10 +444,9 @@ h1 {
 
 /* Dashboard: TestFlight testers ----------------------------------------------------------------- */
 
-.testers-refresh { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; }
+/* Says only when the numbers couldn't be brought up to date. */
 .testers-updated { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 0.88rem; }
-.testers-refresh .summary-card { min-height: 44px; padding: 0 18px; font-size: 1rem; }
-.testers-refresh .summary-card:disabled { opacity: 0.6; transform: none; }
+.testers-updated:empty { display: none; }
 .testers-card { grid-template-columns: minmax(0, 1fr); }
 .testers-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .testers-empty { min-height: 140px; gap: 10px; align-content: center; }
@@ -1232,7 +1231,6 @@ h1 {
   .visits-card { grid-template-columns: 1fr; }
   .visit-stats { grid-template-columns: 1fr 1fr; }
   .testers-stats { grid-template-columns: 1fr 1fr; }
-  .testers-refresh { justify-content: flex-start; }
   .visit-breakdowns { grid-template-columns: 1fr; }
   .empty-state { min-height: 220px; padding: 36px 28px; }
   .detail-panel { width: min(100%, 620px); }

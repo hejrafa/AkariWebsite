@@ -78,6 +78,8 @@ Every public page loads `visit.js`, which sends one beacon per page load to `htt
 
 The dashboard reads `/admin-api/visits?days=7|30|90`. Locally, with no visits recorded, it shows labelled sample data.
 
+The dashboard has no Refresh buttons: App testers and Cloudflare show their stored numbers at once and, when those are older than the server's wait between fetches (10 minutes for App Store Connect, 15 for Cloudflare), fetch new ones behind them. The heading says so only when that fails. The 06:00 cron keeps a row for every day either way, for the 30-day trends.
+
 ## AI usage
 
 The photo worker (`api.joinakari.com/photo`, `/meal`, `/compose`) adds every call that reaches Anthropic to its UTC day's row in `usage_days`, one row per endpoint: the request, a failure when Anthropic or its answer failed, and the input, output, cache-read and cache-write tokens. Nothing else is stored, and its 03:00 cron keeps 400 days. The table lives in the photo worker's `akari-photo-counters` database (`photo-worker/migrations/0002_usage.sql`); the dashboard Worker reads it through a second binding, `USAGE`, by convention read only.
@@ -86,7 +88,7 @@ The photo worker (`api.joinakari.com/photo`, `/meal`, `/compose`) adds every cal
 
 ## Cloudflare usage
 
-The 06:00 cron and the Cloudflare section's Refresh button (at most once every 15 minutes) ask Cloudflare's GraphQL Analytics API for yesterday and today, and store one row per day in `cloudflare_days`: Workers requests and errors over every script in the account, D1 rows read and written over every database, the largest database's size, and the zone's requests. Yesterday is fetched again because its numbers are only complete the morning after. The dashboard's "Cloudflare free plan" section shows the latest day in plain words (server calls beside their last 30 days, then database reads, writes and the biggest database) against the free plan's limits (vars `CF_LIMIT_WORKER_REQUESTS`, `CF_LIMIT_D1_ROWS_READ`, `CF_LIMIT_D1_ROWS_WRITTEN`, `CF_LIMIT_D1_DATABASE_BYTES`, as of 22 October 2026); a bar past 80 % turns red and says so. Storage is measured per database, against the free plan's 500 MB cap for each: a database reaches that before the account reaches its 5 GB in total.
+The 06:00 cron, and opening the dashboard when the stored numbers are older than 15 minutes (the server's wait between fetches), ask Cloudflare's GraphQL Analytics API for yesterday and today, and store one row per day in `cloudflare_days`: Workers requests and errors over every script in the account, D1 rows read and written over every database, the largest database's size, and the zone's requests. Yesterday is fetched again because its numbers are only complete the morning after. The dashboard's "Cloudflare free plan" section shows the latest day in plain words (server calls beside their last 30 days, then database reads, writes and the biggest database) against the free plan's limits (vars `CF_LIMIT_WORKER_REQUESTS`, `CF_LIMIT_D1_ROWS_READ`, `CF_LIMIT_D1_ROWS_WRITTEN`, `CF_LIMIT_D1_DATABASE_BYTES`, as of 22 October 2026); a bar past 80 % turns red and says so. Storage is measured per database, against the free plan's 500 MB cap for each: a database reaches that before the account reaches its 5 GB in total.
 
 It needs a Cloudflare API token with **Account Analytics: Read** for the account and **Zone Analytics: Read** for `joinakari.com`, stored as a secret from `feedback-worker/`:
 

@@ -13,7 +13,6 @@ const visitsPlot = document.querySelector(".visits-plot");
 const visitBreakdowns = document.querySelector("#visit-breakdowns");
 const testersCard = document.querySelector("#testers-card");
 const testersUpdated = document.querySelector("#testers-updated");
-const testersRefresh = document.querySelector("#testers-refresh");
 const usageRangeButtons = [...document.querySelectorAll("[data-usage-range]")];
 const usageStats = document.querySelector("#usage-stats");
 const usagePlot = document.querySelector("#usage-plot");
@@ -22,7 +21,6 @@ const cloudflareCard = document.querySelector("#cloudflare-card");
 const cloudflareBreakdowns = document.querySelector("#cloudflare-breakdowns");
 const cloudflareNote = document.querySelector("#cloudflare-note");
 const cloudflareUpdated = document.querySelector("#cloudflare-updated");
-const cloudflareRefresh = document.querySelector("#cloudflare-refresh");
 const root = document.documentElement;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const stickerWidths = [56, 72, 92, 120, 160];
@@ -55,10 +53,10 @@ const translations = {
     tooltipVisitors: "{count} visitors", tooltipVisitor: "1 visitor", tooltipViews: "{count} page views", tooltipView: "1 page view", tableDay: "Day",
     breakdownPages: "Pages", breakdownSources: "Came from", breakdownCountries: "Countries", breakdownEmpty: "Nothing yet",
     pageHome: "Home", pagePrivacy: "Privacy", pageTerms: "Terms", pageBrand: "Brand", sourceDirect: "Direct", unknown: "Unknown",
-    testersTitle: "App testers", refresh: "Refresh", refreshing: "Refreshing…", loadingTesters: "Loading testers…",
-    noTesterData: "No data yet. Add the App Store Connect key and press Refresh.",
+    testersTitle: "App testers", loadingTesters: "Loading testers…",
+    noTesterData: "No data yet. Add the App Store Connect key.",
     statTesters: "Testers", statInstalled: "Installed", statSessions: "Sessions, last 30 days", statCrashes: "Crashes, last 30 days",
-    refreshWait: "Refreshed a moment ago. Try again in {minutes} min.", refreshFailed: "Refresh failed: {detail}",
+    refreshFailed: "Couldn’t update: {detail}",
     testersTrend: "Testers per day over the last 30 days.", tooltipTesters: "{count} testers", tooltipTester: "1 tester", tooltipInstalled: "{count} installed", tooltipNoData: "No data",
     usageTitle: "AI usage", loadingUsage: "Loading AI usage…", noUsage: "The AI wasn’t used in these days.", usageUnbound: "The photo worker’s usage database isn’t connected to this dashboard.",
     statUsedToday: "Times used today", statCostToday: "Cost today", statCostMonth: "Cost this month",
@@ -67,7 +65,7 @@ const translations = {
     usageChart: "How often the AI was used each day over the last {days} days, {total} times in all, costing {cost}.",
     tooltipTimes: "{count} times", tooltipTime: "1 time", tooltipFailures: "{count} didn’t work", tooltipFailure: "1 didn’t work", tooltipTokens: "{input} tokens read · {output} written", tooltipCost: "Cost {cost}",
     tableFailures: "Didn’t work", tableCost: "Cost",
-    cloudflareTitle: "Cloudflare free plan", loadingCloudflare: "Loading Cloudflare usage…", noCloudflareData: "No numbers yet. Press Refresh.", cloudflareTokenHint: "No numbers yet. Add the CF_ANALYTICS_TOKEN secret and press Refresh.",
+    cloudflareTitle: "Cloudflare free plan", loadingCloudflare: "Loading Cloudflare usage…", noCloudflareData: "No numbers yet.", cloudflareTokenHint: "No numbers yet. Add the CF_ANALYTICS_TOKEN secret.",
     limitsToday: "Today", serverCalls: "Server calls", serverCallsHint: "Each time the app, the website or this dashboard asks our server for something: logging a meal, sending a food report, counting a visit.",
     serverCallsTrend: "Server calls, last 30 days", serverCallsChart: "Server calls per day over the last 30 days.", tooltipCalls: "{count} calls", tooltipCall: "1 call",
     databaseReads: "Database reads", readsHint: "Entries our database looked through to answer the app, the website and this dashboard.",
@@ -102,10 +100,10 @@ const translations = {
     tooltipVisitors: "{count} Besucher", tooltipVisitor: "1 Besucher", tooltipViews: "{count} Seitenaufrufe", tooltipView: "1 Seitenaufruf", tableDay: "Tag",
     breakdownPages: "Seiten", breakdownSources: "Gekommen von", breakdownCountries: "Länder", breakdownEmpty: "Noch nichts",
     pageHome: "Startseite", pagePrivacy: "Datenschutz", pageTerms: "Nutzungsbedingungen", pageBrand: "Marke", sourceDirect: "Direkt", unknown: "Unbekannt",
-    testersTitle: "App-Tester", refresh: "Aktualisieren", refreshing: "Wird aktualisiert…", loadingTesters: "Tester werden geladen…",
-    noTesterData: "Noch keine Daten. App-Store-Connect-Schlüssel hinterlegen und auf Aktualisieren klicken.",
+    testersTitle: "App-Tester", loadingTesters: "Tester werden geladen…",
+    noTesterData: "Noch keine Daten. App-Store-Connect-Schlüssel hinterlegen.",
     statTesters: "Tester", statInstalled: "Installiert", statSessions: "Sitzungen, letzte 30 Tage", statCrashes: "Abstürze, letzte 30 Tage",
-    refreshWait: "Gerade erst aktualisiert. In {minutes} Min. erneut versuchen.", refreshFailed: "Aktualisierung fehlgeschlagen: {detail}",
+    refreshFailed: "Konnte nicht aktualisieren: {detail}",
     testersTrend: "Tester pro Tag in den letzten 30 Tagen.", tooltipTesters: "{count} Tester", tooltipTester: "1 Tester", tooltipInstalled: "{count} installiert", tooltipNoData: "Keine Daten",
     usageTitle: "KI-Nutzung", loadingUsage: "KI-Nutzung wird geladen…", noUsage: "Die KI wurde in diesen Tagen nicht genutzt.", usageUnbound: "Die Nutzungsdatenbank des Foto-Workers ist mit dieser Übersicht nicht verbunden.",
     statUsedToday: "Heute genutzt", statCostToday: "Kosten heute", statCostMonth: "Kosten diesen Monat",
@@ -114,7 +112,7 @@ const translations = {
     usageChart: "Wie oft die KI pro Tag in den letzten {days} Tagen genutzt wurde, insgesamt {total}-mal, für {cost}.",
     tooltipTimes: "{count}-mal", tooltipTime: "1-mal", tooltipFailures: "{count} nicht geklappt", tooltipFailure: "1 nicht geklappt", tooltipTokens: "{input} Tokens gelesen · {output} geschrieben", tooltipCost: "Kosten {cost}",
     tableFailures: "Nicht geklappt", tableCost: "Kosten",
-    cloudflareTitle: "Cloudflare-Gratistarif", loadingCloudflare: "Cloudflare-Nutzung wird geladen…", noCloudflareData: "Noch keine Zahlen. Auf Aktualisieren klicken.", cloudflareTokenHint: "Noch keine Zahlen. Das Secret CF_ANALYTICS_TOKEN hinterlegen und auf Aktualisieren klicken.",
+    cloudflareTitle: "Cloudflare-Gratistarif", loadingCloudflare: "Cloudflare-Nutzung wird geladen…", noCloudflareData: "Noch keine Zahlen.", cloudflareTokenHint: "Noch keine Zahlen. Das Secret CF_ANALYTICS_TOKEN hinterlegen.",
     limitsToday: "Heute", serverCalls: "Serveraufrufe", serverCallsHint: "Jedes Mal, wenn die App, die Website oder diese Übersicht unseren Server etwas fragt: eine Mahlzeit erfassen, eine Meldung senden, einen Besuch zählen.",
     serverCallsTrend: "Serveraufrufe, letzte 30 Tage", serverCallsChart: "Serveraufrufe pro Tag in den letzten 30 Tagen.", tooltipCalls: "{count} Aufrufe", tooltipCall: "1 Aufruf",
     databaseReads: "Aus der Datenbank gelesen", readsHint: "Einträge, die unsere Datenbank durchgesehen hat, um App, Website und dieser Übersicht zu antworten.",
@@ -596,8 +594,9 @@ function formatDay(day, options) {
 
 // TestFlight testers ----------------------------------------------------------------------------
 
-testersRefresh.addEventListener("click", refreshTesters);
-
+// The stored numbers show at once; when they are older than the server's own wait between
+// fetches, it fetches new ones from App Store Connect behind them. The 06:00 cron still
+// stores a day for the trend when nobody opens the dashboard.
 async function loadTesters() {
   try {
     const response = await fetch("/admin-api/testflight");
@@ -608,36 +607,30 @@ async function loadTesters() {
     renderTesters(data);
   } catch (error) {
     testersCard.replaceChildren(element("p", "visits-state", error.message));
+    return;
   }
+  if (testerData.configured !== false && isStale(testerData.latest, 10)) updateTesters();
 }
 
-async function refreshTesters() {
-  testersRefresh.disabled = true;
-  testersRefresh.textContent = t("refreshing");
-  testerNotice = "";
+async function updateTesters() {
   try {
     const response = await fetch("/admin-api/testflight/refresh", { method: "POST" });
     const data = await response.json().catch(() => ({}));
-    if (response.ok) {
-      testerData = data;
-    } else if (data.error === "key_missing") {
-      testerData = { ...(testerData ?? { latest: null, trend: [] }), configured: false };
-    } else if (data.error === "rate_limited") {
-      testerNotice = t("refreshWait", { minutes: Math.max(1, Math.ceil((data.retryAfter ?? 60) / 60)) });
-    } else {
-      testerNotice = t("refreshFailed", { detail: data.detail ?? `Request failed (${response.status})` });
-    }
+    if (response.ok) testerData = data;
+    // Another viewer may have just fetched them; that's no failure.
+    else if (data.error !== "rate_limited") testerNotice = t("refreshFailed", { detail: data.detail ?? `Request failed (${response.status})` });
   } catch (error) {
     testerNotice = t("refreshFailed", { detail: error.message });
-  } finally {
-    testersRefresh.disabled = false;
-    if (testerData) renderTesters(testerData);
-    else testersUpdated.textContent = testerNotice;
   }
+  renderTesters(testerData);
+}
+
+// Whether stored numbers are missing or older than the server's wait between fetches.
+function isStale(latest, minutes) {
+  return !latest || Date.now() - Date.parse(latest.takenAt) > minutes * 60_000;
 }
 
 function renderTesters(data) {
-  testersRefresh.textContent = t("refresh");
   const latest = data.latest;
   testersUpdated.textContent = testerNotice;
 
@@ -957,8 +950,8 @@ function usageTable(data, used) {
 
 // Cloudflare ------------------------------------------------------------------------------------
 
-cloudflareRefresh.addEventListener("click", refreshCloudflare);
-
+// Like the testers: the stored numbers at once, and new ones behind them when they are older
+// than the server's 15 minutes between fetches.
 async function loadCloudflare() {
   try {
     const response = await fetch("/admin-api/cloudflare");
@@ -969,38 +962,26 @@ async function loadCloudflare() {
     renderCloudflare(data);
   } catch (error) {
     cloudflareCard.replaceChildren(element("p", "visits-state", error.message));
+    return;
   }
+  if (cloudflareData.configured !== false && isStale(cloudflareData.latest, 15)) updateCloudflare();
 }
 
-async function refreshCloudflare() {
-  cloudflareRefresh.disabled = true;
-  cloudflareRefresh.textContent = t("refreshing");
-  cloudflareNotice = "";
+async function updateCloudflare() {
   try {
     const response = await fetch("/admin-api/cloudflare/refresh", { method: "POST" });
     const data = await response.json().catch(() => ({}));
-    if (response.ok) {
-      cloudflareData = data;
-    } else if (data.error === "token_missing") {
-      cloudflareData = { ...(cloudflareData ?? { latest: null, trend: [] }), configured: false };
-    } else if (data.error === "rate_limited") {
-      cloudflareNotice = t("refreshWait", { minutes: Math.max(1, Math.ceil((data.retryAfter ?? 60) / 60)) });
-    } else {
-      cloudflareNotice = t("refreshFailed", { detail: data.detail ?? `Request failed (${response.status})` });
-    }
+    if (response.ok) cloudflareData = data;
+    else if (data.error !== "rate_limited") cloudflareNotice = t("refreshFailed", { detail: data.detail ?? `Request failed (${response.status})` });
   } catch (error) {
     cloudflareNotice = t("refreshFailed", { detail: error.message });
-  } finally {
-    cloudflareRefresh.disabled = false;
-    if (cloudflareData) renderCloudflare(cloudflareData);
-    else cloudflareUpdated.textContent = cloudflareNotice;
   }
+  renderCloudflare(cloudflareData);
 }
 
 // Like the visits: the server calls, the free plan's tightest daily amount, beside their last
 // 30 days, then a card each for the database's reads, writes and size, and what happens at a limit.
 function renderCloudflare(data) {
-  cloudflareRefresh.textContent = t("refresh");
   cloudflareUpdated.textContent = cloudflareNotice;
 
   const latest = data.latest;
