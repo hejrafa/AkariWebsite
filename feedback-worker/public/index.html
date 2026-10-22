@@ -9,7 +9,7 @@
   <link rel="icon" href="https://joinakari.com/assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="https://joinakari.com/assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin>
   <script src="/assets/appearance.js?v=20261020-02"></script>
-  <link rel="stylesheet" href="/assets/admin.css?v=20261022-02">
+  <link rel="stylesheet" href="/assets/admin.css?v=20261022-03">
 </head>
 <body>
   <header class="site-header">
@@ -100,36 +100,44 @@
         </div>
       </section>
 
-      <div class="usage-row">
-        <section class="visits usage" aria-labelledby="usage-title">
-          <div class="visits-head">
-            <h2 id="usage-title" data-i18n="usageTitle">AI usage</h2>
-            <div class="range-switch" role="group" aria-label="Time range" data-i18n-aria-label="rangeLabel">
-              <button class="summary-card" type="button" data-usage-range="7" aria-pressed="false" data-i18n="range7">7 days</button>
-              <button class="summary-card is-active" type="button" data-usage-range="30" aria-pressed="true" data-i18n="range30">30 days</button>
-              <button class="summary-card" type="button" data-usage-range="90" aria-pressed="false" data-i18n="range90">90 days</button>
-            </div>
+      <section class="visits usage" aria-labelledby="usage-title">
+        <div class="visits-head">
+          <h2 id="usage-title" data-i18n="usageTitle">AI usage</h2>
+          <div class="range-switch" role="group" aria-label="Time range" data-i18n-aria-label="rangeLabel">
+            <button class="summary-card" type="button" data-usage-range="7" aria-pressed="false" data-i18n="range7">7 days</button>
+            <button class="summary-card is-active" type="button" data-usage-range="30" aria-pressed="true" data-i18n="range30">30 days</button>
+            <button class="summary-card" type="button" data-usage-range="90" aria-pressed="false" data-i18n="range90">90 days</button>
           </div>
+        </div>
 
-          <div class="visits-card usage-card" id="usage-card" aria-live="polite">
-            <p class="visits-state" data-i18n="loadingUsage">Loading AI usage…</p>
-          </div>
-        </section>
+        <div class="visits-card usage-card">
+          <dl class="visit-stats" id="usage-stats" aria-live="polite">
+            <div class="visit-stat"><dt data-i18n="statUsedToday">Times used today</dt><dd>–</dd></div>
+            <div class="visit-stat"><dt data-i18n="statCostToday">Cost today</dt><dd>–</dd></div>
+            <div class="visit-stat"><dt data-i18n="statCostMonth">Cost this month</dt><dd>–</dd></div>
+          </dl>
+          <div class="visits-plot usage-plot" id="usage-plot"><p class="visits-state" data-i18n="loadingUsage">Loading AI usage…</p></div>
+        </div>
 
-        <section class="visits cloudflare" aria-labelledby="cloudflare-title">
-          <div class="visits-head">
-            <h2 id="cloudflare-title" data-i18n="cloudflareTitle">Cloudflare</h2>
-            <div class="testers-refresh">
-              <p class="testers-updated" id="cloudflare-updated" aria-live="polite"></p>
-              <button class="summary-card" type="button" id="cloudflare-refresh" data-i18n="refresh">Refresh</button>
-            </div>
-          </div>
+        <div class="visit-breakdowns" id="usage-breakdowns"></div>
+      </section>
 
-          <div class="visits-card cloudflare-card" id="cloudflare-card" aria-live="polite">
-            <p class="visits-state" data-i18n="loadingCloudflare">Loading Cloudflare usage…</p>
+      <section class="visits cloudflare" aria-labelledby="cloudflare-title">
+        <div class="visits-head">
+          <h2 id="cloudflare-title" data-i18n="cloudflareTitle">Cloudflare free plan</h2>
+          <div class="testers-refresh">
+            <p class="testers-updated" id="cloudflare-updated" aria-live="polite"></p>
+            <button class="summary-card" type="button" id="cloudflare-refresh" data-i18n="refresh">Refresh</button>
           </div>
-        </section>
-      </div>
+        </div>
+
+        <div class="visits-card cloudflare-card" id="cloudflare-card" aria-live="polite">
+          <p class="visits-state" data-i18n="loadingCloudflare">Loading Cloudflare usage…</p>
+        </div>
+
+        <div class="visit-breakdowns" id="cloudflare-breakdowns"></div>
+        <p class="cloudflare-note" id="cloudflare-note"></p>
+      </section>
     </section>
 
     <section class="page-view" data-page="feedback" hidden>
@@ -155,6 +163,6 @@
     </section>
   </main>
   <script type="module" src="/assets/mobile-menu.js?v=20261020-01"></script>
-  <script type="module" src="/assets/admin.js?v=20261022-03"></script>
+  <script type="module" src="/assets/admin.js?v=20261022-05"></script>
 </body>
 </html>

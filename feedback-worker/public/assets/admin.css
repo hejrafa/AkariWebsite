@@ -460,52 +460,37 @@ h1 {
 .testers-tooltip { top: auto; bottom: calc(100% + 8px); }
 .testers-trend-wrap.is-hovering .testers-tooltip { opacity: 1; }
 
-/* Dashboard: AI usage and Cloudflare, side by side ------------------------------------------------ */
+/* Dashboard: AI usage ------------------------------------------------------------------------- */
 
-/* Each section spans the row's two tracks, so the headings share one, however they wrap, and the
-   cards share the other, at one height. */
-.usage-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-  grid-template-rows: auto 1fr;
-  column-gap: 20px;
-  margin-top: clamp(48px, 6vw, 80px);
-}
-.usage-row > .visits { display: grid; min-width: 0; margin-top: 0; grid-row: span 2; grid-template-rows: subgrid; }
-.usage-row .visits-card { grid-template-columns: minmax(0, 1fr); align-content: start; }
-/* The chart takes the height the card has to spare when the Cloudflare card beside it is taller. */
-.usage-card { grid-template-rows: auto auto minmax(0, 1fr); }
-.usage-stats { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-.usage-stats .visit-stat strong { font-size: clamp(1.9rem, 2.8vw, 2.5rem); }
-.usage-empty { min-height: 160px; }
-
+.usage-plot { display: grid; gap: 14px; align-content: start; }
 .usage-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding: 0; color: var(--muted); font-family: var(--sans); font-size: 0.82rem; list-style: none; }
 .usage-legend li { display: inline-flex; align-items: center; gap: 7px; }
-.usage-legend strong { color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
-.usage-swatch { width: 10px; height: 10px; flex: 0 0 auto; border-radius: 3px; }
+.usage-swatch { display: inline-block; width: 10px; height: 10px; flex: 0 0 auto; border-radius: 3px; }
 .usage-swatch.is-cost { width: 14px; height: 2px; border-radius: 1px; background: var(--accent); }
 .is-compose { background: var(--series-1); }
 .is-photo { background: var(--series-2); }
 .is-meal { background: var(--series-3); }
+.breakdown-label .usage-swatch { margin-right: 9px; vertical-align: 0.05em; }
+.breakdown-row.is-total { font-weight: 650; }
 
-.usage-chart { position: relative; display: grid; grid-template-rows: minmax(clamp(120px, 13vw, 156px), 1fr) auto; gap: 22px; padding: 18px 0 22px; touch-action: pan-y; }
+.usage-chart { position: relative; display: grid; gap: 22px; padding: 18px 0 22px; touch-action: pan-y; }
 .usage-panel { position: relative; }
 .usage-panel .visits-scale { top: 0; }
 .usage-bars {
   display: flex;
-  height: 100%;
+  height: clamp(130px, 14vw, 170px);
   align-items: flex-end;
   gap: 2px;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(var(--faint), var(--faint)) top / 100% 1px no-repeat;
 }
 .usage-day { display: flex; height: 100%; min-width: 0; flex: 1; align-items: flex-end; justify-content: center; }
-/* Each day's endpoints, bottom up, a 2px gap of card between them; the top one has the rounded end. */
+/* Each day's uses, bottom up, a 2px gap of card between them; the top one has the rounded end. */
 .usage-stack { display: flex; width: min(100%, 24px); height: var(--bar); flex-direction: column-reverse; gap: 2px; transition: opacity 120ms var(--ease); }
 .usage-segment { min-height: 2px; flex: var(--n) 1 0; }
 .usage-segment:last-child { border-radius: 4px 4px 0 0; }
 .usage-chart.is-hovering .usage-stack:not(.is-active) { opacity: 0.4; }
-.usage-cost { height: 64px; border-bottom: 1px solid var(--line); background: linear-gradient(var(--faint), var(--faint)) top / 100% 1px no-repeat; }
+.usage-cost { height: 56px; border-bottom: 1px solid var(--line); background: linear-gradient(var(--faint), var(--faint)) top / 100% 1px no-repeat; }
 .usage-cost svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .usage-cost-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .usage-marker { width: 10px; height: 10px; border-width: 2px; }
@@ -513,30 +498,27 @@ h1 {
 .usage-chart .visits-tooltip { top: 22px; }
 .usage-chart.is-hovering :is(.usage-crosshair, .visits-marker, .visits-tooltip) { opacity: 1; }
 
-.cloudflare-card { gap: 22px; }
+/* Dashboard: Cloudflare free plan --------------------------------------------------------------- */
+
+.cloudflare-card { grid-template-columns: minmax(0, 260px) minmax(0, 1fr); }
+.cloudflare-calls { display: grid; gap: 10px; align-content: start; }
+.cloudflare-trend { display: grid; gap: 12px; align-content: end; min-width: 0; }
+.cloudflare-trend .testers-trend { height: clamp(130px, 14vw, 170px); }
 .limit-day { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 0.9rem; font-weight: 650; }
-.limit-list { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; }
-.limit-row { display: grid; gap: 7px; }
-.limit-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.limit-label { min-width: 0; font-size: 1.02rem; line-height: 1.25; }
-.limit-value { color: var(--muted); font-family: var(--sans); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.limit-title { margin: 0; font-size: 1.25rem; font-weight: 800; line-height: 1.2; }
+.limit-figure { display: grid; gap: 9px; }
+.limit-number { font-size: clamp(2.2rem, 3.6vw, 3rem); font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+.limit-card { display: grid; gap: 12px; align-content: start; }
+.limit-card h3 { margin: 0; }
+.limit-card .limit-number { font-size: clamp(1.7rem, 2.4vw, 2.1rem); }
 .limit-meter { height: 8px; overflow: hidden; border-radius: 999px; background: var(--tint); }
 .limit-fill { display: block; width: var(--share); height: 100%; border-radius: 999px; background: var(--accent); }
-.limit-share { color: var(--muted); font-family: var(--sans); font-size: 0.78rem; font-variant-numeric: tabular-nums; }
-.limit-row.is-warning .limit-fill { background: var(--danger); }
-.limit-row.is-warning .limit-share { color: var(--danger); font-weight: 650; }
-.limit-row.is-plain { padding-top: 14px; border-top: 1px solid var(--faint); }
-.cloudflare-trend { display: grid; gap: 12px; }
-.cloudflare-note { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 0.78rem; line-height: 1.4; }
-
-@media (min-width: 761px) {
-  .usage-row .testers-refresh { margin-left: auto; }
-}
-@media (max-width: 1100px) {
-  .usage-row { display: block; }
-  .usage-row > .visits { display: block; }
-  .usage-row > .visits + .visits { margin-top: clamp(48px, 6vw, 80px); }
-}
+.limit-share { color: var(--muted); font-family: var(--sans); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+.limit-figure.is-warning .limit-fill { background: var(--danger); }
+.limit-figure.is-warning .limit-share { color: var(--danger); font-weight: 650; }
+.limit-hint { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 0.82rem; line-height: 1.45; }
+.cloudflare-note { max-width: 46em; margin: 16px 0 0; color: var(--muted); font-family: var(--sans); font-size: 0.82rem; line-height: 1.45; }
+.cloudflare-note:empty { display: none; }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 
