@@ -2,7 +2,7 @@
  "source": {
   "repo": "hejrafa/AkariFoodIndex",
   "path": "verified-foods.json",
-  "commit": "9e2f63f3eed26b6ca6c21b592aa0487d5e6519b2",
+  "commit": "808c9b3fe74249208300de281ab91fd0118be212",
   "policy": "curated-reference-foods-v7"
  },
  "entries": [
@@ -499,7 +499,17 @@
    "id": "bls:G480100",
    "ingredient": "Onion",
    "displayName": "Onion",
-   "displayNameDE": "Zwiebel"
+   "displayNameDE": "Zwiebel",
+   "searchAliases": [
+    "onion",
+    "onions",
+    "red onion",
+    "red onions",
+    "rote Zwiebel",
+    "rote Zwiebeln",
+    "Zwiebeln",
+    "Gemüsezwiebel"
+   ]
   },
   {
    "id": "bls:F603100",
@@ -3356,7 +3366,9 @@
     "Bauchspeck",
     "Räucherspeck",
     "durchwachsener Speck",
-    "Speckwürfel"
+    "Speckwürfel",
+    "Schweinespeck",
+    "Speckstreifen"
    ]
   },
   {
@@ -5364,6 +5376,20 @@
     "gin tonic",
     "G&T",
     "Gin Tonic"
+   ]
+  },
+  {
+   "id": "bls:Y180512",
+   "ingredient": "Beef, boiled",
+   "displayName": "Beef, boiled",
+   "displayNameDE": "Rindfleisch, gekocht",
+   "searchAliases": [
+    "boiled beef",
+    "cooked beef",
+    "Rindfleisch gekocht",
+    "Rindfleisch, gekocht",
+    "gekochtes Rindfleisch",
+    "Suppenfleisch"
    ]
   }
  ],
