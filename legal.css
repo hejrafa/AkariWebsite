@@ -1235,7 +1235,8 @@ body[data-legal-page="about-us"] h1 { max-width: 7em; }
 
 /* The page GitHub Pages shows for a missing address (404.html). The band fills the screen and is a
    playground: a 404 whose zero is a bitten doughnut (each tap takes another bite), and the app's food
-   stickers, which not-found.js drops onto the torn edge behind the words, to be bounced around. Its
+   stickers, which not-found.js drops behind the words onto the bottom of the band, to be bounced around.
+   The band runs on into the footer with no torn paper between, so the food lies right above it. Its
    bottom padding leaves them room under the button. The sizes follow the screen's height as well as its
    width, so on a laptop the whole playground, pile included, fits above the fold. */
 .legal-hero.not-found {
@@ -1244,11 +1245,14 @@ body[data-legal-page="about-us"] h1 { max-width: 7em; }
   justify-content: center;
   min-height: max(560px, calc(100svh - 98px));
   padding-top: clamp(20px, 4svh, 48px);
-  padding-bottom: calc(clamp(34px, 6vw, 90px) + clamp(90px, 16svh, 170px));
+  padding-bottom: clamp(110px, 22svh, 240px);
   overflow: hidden;
 }
 
-body[data-legal-page="not-found"] .legal-main { padding-bottom: clamp(36px, 5vw, 64px); }
+body[data-legal-page="not-found"] .site-footer {
+  margin-top: 0;
+  padding-top: clamp(28px, 4vw, 56px);
+}
 
 .not-found__code {
   display: flex;

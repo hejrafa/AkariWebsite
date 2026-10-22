@@ -1,6 +1,6 @@
 // The 404 page (404.html) as a playground. Its zero is a bitten doughnut: each tap takes another bite and
 // throws crumbs, and once it's gone a fresh one arrives. The app's food stickers rain onto the band and pile
-// up on its torn edge, behind the words; the mouse bounces them around, and a click or tap kicks the ones
+// up at its bottom, behind the words; the mouse bounces them around, and a click or tap kicks the ones
 // nearby. legal.js does the words, themes and sticker files (updateStickers); this file only moves things,
 // and the page reads and works without it.
 (() => {
@@ -104,6 +104,13 @@
   const STEP = 1 / 120;
   const POINTER_RADIUS = 34;
   const KICK_RADIUS = 190;
+  // Stickers turn when they're hit or roll, but only a little, and settle quickly: they're flat, not balls.
+  const MAX_SPIN = 300; // degrees a second
+  const SPIN_DAMPING = 0.03; // what's left of a spin after a second
+  const ROLL = 0.15; // how much of a true roll a sticker sliding on the floor makes
+  const KNOCK = 220; // px/s: two stickers meeting faster than this bounce and turn; slower, they just touch
+  const REST_WINDOW = 0.4; // s
+  const REST_DISTANCE = 2.5; // px a sticker may jiggle within a window and still be at rest
 
   const layer = document.createElement("div");
   layer.className = "food-fall";
@@ -116,14 +123,14 @@
   let floor = 0;
   let frame = 0;
   let last = 0;
-  let calm = 0;
+  let calm = 0; // windows in a row in which nothing went anywhere
+  let restClock = 0; // seconds into the current window
   let visible = true;
 
   function measure() {
-    const torn = stage.querySelector(".torn-edge")?.getBoundingClientRect().height ?? 0;
     width = stage.clientWidth;
-    // The food lands on the torn paper's fringe, so the band's edge never cuts it off.
-    floor = stage.clientHeight - torn * 0.8;
+    // A little above the band's bottom, so the stickers' shadows fit inside it.
+    floor = stage.clientHeight - 22;
   }
 
   function addFood(sticker, size, x, y) {
@@ -140,21 +147,22 @@
     item.append(image);
     layer.append(item);
     bodies.push({
-      item, size, r: size * 0.4, x, y,
+      item, size, r: size * 0.4, x, y, lastX: x, lastY: y,
       vx: -60 + Math.random() * 120, vy: 0,
-      angle: -30 + Math.random() * 60, spin: -120 + Math.random() * 240,
+      angle: -30 + Math.random() * 60, spin: -40 + Math.random() * 80,
     });
   }
 
-  // As many as fill the room under the button, but at least a row from side to side: fewer and smaller on
-  // a phone.
+  // A good heap: rows of them from side to side, as many rows as fit under the button, two to three. Smaller
+  // and fewer on a phone.
   function fill() {
     measure();
     const words = stage.querySelector(".legal-header").getBoundingClientRect();
-    const room = Math.max(60, floor - (words.bottom - stage.getBoundingClientRect().top) - 12);
-    const size = Math.min(88, Math.max(50, width * 0.05 + 34));
-    const row = (width / size) * 1.15;
-    const count = Math.round(Math.min(44, Math.max(row, (width * room * 0.7) / (size * size))));
+    const room = Math.max(60, floor - (words.bottom - stage.getBoundingClientRect().top));
+    const size = Math.min(80, Math.max(46, width * 0.045 + 30));
+    const row = width / (size * 0.8);
+    const rows = Math.min(3, Math.max(2, (room + 40) / (size * 0.75)));
+    const count = Math.round(Math.min(80, row * rows));
     for (let index = 0; index < count; index++) {
       const sticker = index % 9 === 4 ? "stickers/doughnut" : foods[Math.floor(Math.random() * foods.length)];
       const itemSize = Math.round(size * (0.85 + Math.random() * 0.3));
@@ -181,15 +189,18 @@
     b.y += ny * overlap;
     const along = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
     if (along >= 0) return;
-    const impulse = (-(1 + BOUNCE) * along) / 2;
+    // Lying in a heap, gravity presses them together a little every step: those meet without a bounce.
+    const knock = along < -KNOCK;
+    const impulse = (-(1 + (knock ? BOUNCE : 0)) * along) / 2;
     a.vx -= impulse * nx;
     a.vy -= impulse * ny;
     b.vx += impulse * nx;
     b.vy += impulse * ny;
-    // Rubbing past each other sets them turning.
+    // A real knock sets them turning a little.
+    if (!knock) return;
     const across = (b.vx - a.vx) * -ny + (b.vy - a.vy) * nx;
-    a.spin -= across * 0.4;
-    b.spin += across * 0.4;
+    a.spin -= across * 0.08;
+    b.spin += across * 0.08;
   }
 
   function step(dt) {
@@ -199,12 +210,16 @@
       body.vx *= drag;
       body.x += body.vx * dt;
       body.y += body.vy * dt;
+      body.spin = Math.max(-MAX_SPIN, Math.min(MAX_SPIN, body.spin)) * Math.pow(SPIN_DAMPING, dt);
       body.angle += body.spin * dt;
-      body.spin *= Math.pow(0.4, dt);
     }
 
-    // The mouse is a ball that shoves whatever it touches, harder the faster it moves.
-    if (pointer.inside) {
+    // The moving mouse is a ball that shoves whatever it touches, harder the faster it goes. Its speed wears
+    // off within a moment of stopping, and a mouse at rest lets the heap settle around it.
+    const still = Math.pow(1e-8, dt);
+    pointer.vx *= still;
+    pointer.vy *= still;
+    if (pointer.inside && Math.hypot(pointer.vx, pointer.vy) > 60) {
       for (const body of bodies) {
         const dx = body.x - pointer.x;
         const dy = body.y - pointer.y;
@@ -215,10 +230,15 @@
         const ny = dy / distance;
         body.x = pointer.x + nx * reach;
         body.y = pointer.y + ny * reach;
-        const push = Math.max(0, pointer.vx * nx + pointer.vy * ny);
-        body.vx += nx * (push * 1.1 + 140);
-        body.vy += ny * (push * 1.1 + 140);
-        body.spin += (pointer.vx * -ny + pointer.vy * nx) * 0.5;
+        const into = body.vx * nx + body.vy * ny;
+        if (into < 0) {
+          body.vx -= into * nx;
+          body.vy -= into * ny;
+        }
+        const push = Math.max(0, pointer.vx * nx + pointer.vy * ny) * 1.2;
+        body.vx += nx * push;
+        body.vy += ny * push;
+        body.spin += (pointer.vx * -ny + pointer.vy * nx) * 0.05;
       }
     }
 
@@ -233,8 +253,8 @@
         body.y = floor - body.r;
         body.vy = body.vy > 120 ? -body.vy * BOUNCE : 0;
         body.vx *= Math.pow(0.05, dt);
-        // On the ground, a sticker rolls.
-        body.spin = ((body.vx / body.r) * 180) / Math.PI;
+        // On the ground, a sliding sticker turns a little the way it goes.
+        body.spin = ((body.vx / body.r) * 180 * ROLL) / Math.PI;
       }
       if (body.x - body.r < 0) {
         body.x = body.r;
@@ -259,14 +279,27 @@
     last = now;
     for (let remaining = elapsed; remaining > 1e-6; remaining -= STEP) step(Math.min(STEP, remaining));
     render();
-    const moving = bodies.some((body) => Math.abs(body.vx) + Math.abs(body.vy) > 14 || body.y < 0);
-    calm = moving ? 0 : calm + elapsed;
-    // Everything at rest for a moment: stop until something happens.
-    if (calm < 0.6 && visible) frame = requestAnimationFrame(tick);
+    // At rest is having gone nowhere over a little while: a heap jiggles in place forever, so neither speed
+    // nor a single frame will do. A sticker at rest stops turning, and once all are, so does the page.
+    restClock += elapsed;
+    if (restClock >= REST_WINDOW) {
+      let moving = false;
+      for (const body of bodies) {
+        const moved = Math.abs(body.x - body.lastX) + Math.abs(body.y - body.lastY);
+        if (moved > REST_DISTANCE || body.y < 0) moving = true;
+        else body.spin *= 0.2;
+        body.lastX = body.x;
+        body.lastY = body.y;
+      }
+      calm = moving ? 0 : calm + 1;
+      restClock = 0;
+    }
+    if (calm < 2 && visible) frame = requestAnimationFrame(tick);
   }
 
   function wake() {
     calm = 0;
+    restClock = 0;
     if (frame || !visible || reducedMotion) return;
     last = performance.now();
     frame = requestAnimationFrame(tick);
@@ -307,16 +340,27 @@
       const strength = 1 - distance / KICK_RADIUS;
       body.vx += (dx / distance) * 900 * strength;
       body.vy += (dy / distance) * 700 * strength - 1100 * strength;
-      body.spin += (-360 + Math.random() * 720) * strength;
+      body.spin += (-240 + Math.random() * 480) * strength;
     }
     wake();
   });
 
+  // With reduced motion nothing falls: the food is simply lying where it would have landed.
+  function settle() {
+    for (let index = 0; index < 900; index++) step(STEP);
+    render();
+  }
+
+  // A new size moves the floor and walls: the food falls or is pushed to where they now are.
   new ResizeObserver(() => {
     measure();
     for (const body of bodies) {
       body.x = Math.max(body.r, Math.min(width - body.r, body.x));
       body.y = Math.min(floor - body.r, body.y);
+    }
+    if (reducedMotion && bodies.length) {
+      settle();
+      return;
     }
     render();
     wake();
@@ -330,9 +374,7 @@
   function start() {
     fill();
     if (reducedMotion) {
-      // No rain: the food is already lying where it would have landed.
-      for (let index = 0; index < 900; index++) step(STEP);
-      render();
+      settle();
       return;
     }
     render();
