@@ -1,6 +1,10 @@
+import { readCloudflare, refreshCloudflare } from "./cloudflare.ts";
+import type { CloudflareEnv } from "./cloudflare.ts";
 import { readTestFlight, refreshTestFlight } from "./testflight.ts";
+import { readUsage } from "./usage.ts";
+import type { UsageEnv } from "./usage.ts";
 
-interface Env {
+interface Env extends UsageEnv, CloudflareEnv {
   DB: D1Database;
   ASSETS: Fetcher;
   ADMIN_HOST: string;
@@ -143,6 +147,15 @@ export default {
       if (request.method === "POST" && url.pathname === "/admin-api/testflight/refresh") {
         return refreshTestFlightNow(env);
       }
+      if (request.method === "GET" && url.pathname === "/admin-api/usage") {
+        return json(await readUsage(env, Number(url.searchParams.get("days") ?? 30)));
+      }
+      if (request.method === "GET" && url.pathname === "/admin-api/cloudflare") {
+        return json(await readCloudflare(env));
+      }
+      if (request.method === "POST" && url.pathname === "/admin-api/cloudflare/refresh") {
+        return refreshCloudflareNow(env);
+      }
       const match = url.pathname.match(/^\/admin-api\/reports\/([^/]+)$/);
       if (request.method === "PATCH" && match) {
         return updateReport(request, env, decodeURIComponent(match[1]));
@@ -183,14 +196,33 @@ export default {
     return notFound();
   },
 
-  // Daily at 06:00 UTC (wrangler.jsonc): today's TestFlight numbers.
+  // Daily at 06:00 UTC (wrangler.jsonc): today's TestFlight numbers, and
+  // yesterday's and today's Cloudflare usage.
   async scheduled(_controller: ScheduledController, env: Env, context: ExecutionContext): Promise<void> {
     context.waitUntil(refreshTestFlight(env).then(
       (result) => { if (result.status === "key_missing") console.log("TestFlight refresh skipped: no App Store Connect key"); },
       (error: unknown) => console.error("TestFlight refresh failed:", error instanceof Error ? error.message : "unknown error"),
     ));
+    context.waitUntil(refreshCloudflare(env).then(
+      (result) => { if (result.status === "token_missing") console.log("Cloudflare refresh skipped: no Analytics token"); },
+      (error: unknown) => console.error("Cloudflare refresh failed:", error instanceof Error ? error.message : "unknown error"),
+    ));
   },
 };
+
+async function refreshCloudflareNow(env: Env): Promise<Response> {
+  try {
+    const result = await refreshCloudflare(env, { limited: true });
+    if (result.status === "token_missing") return json({ error: "token_missing" }, 503);
+    if (result.status === "rate_limited") {
+      return json({ error: "rate_limited", retryAfter: result.retryAfter }, 429, { "retry-after": String(result.retryAfter) });
+    }
+    return json(await readCloudflare(env));
+  } catch (error) {
+    // The message names Cloudflare's status or error only, never the token.
+    return json({ error: "refresh_failed", detail: error instanceof Error ? error.message : "unknown error" }, 502);
+  }
+}
 
 async function refreshTestFlightNow(env: Env): Promise<Response> {
   try {

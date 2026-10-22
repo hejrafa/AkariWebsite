@@ -28,8 +28,24 @@
     "ADMIN_HOST": "admin.joinakari.com",
     "API_HOST": "api.joinakari.com",
     "SITE_HOST": "joinakari.com",
-    "ADMIN_EMAIL": "contact@hejrafa.com"
+    "ADMIN_EMAIL": "contact@hejrafa.com",
+    // Claude Haiku 5.5 in US dollars per million tokens (platform.claude.com, 2026-10-22).
+    "AI_PRICE_INPUT": "0.10",
+    "AI_PRICE_OUTPUT": "0.50",
+    "AI_PRICE_CACHE_READ": "0.01",
+    "AI_PRICE_CACHE_WRITE": "0.125",
+    // The Cloudflare account and the joinakari.com zone the dashboard reads usage for;
+    // the token is the CF_ANALYTICS_TOKEN secret. Without CF_ZONE_ID the website's
+    // requests stay empty.
+    "CF_ACCOUNT_ID": "ae9862a37aa598ed18d70ba9a478709d",
+    "CF_ZONE_ID": "",
+    // The free plan's limits (developers.cloudflare.com, 2026-10-22).
+    "CF_LIMIT_WORKER_REQUESTS": "100000",
+    "CF_LIMIT_D1_ROWS_READ": "5000000",
+    "CF_LIMIT_D1_ROWS_WRITTEN": "100000",
+    "CF_LIMIT_D1_STORAGE_BYTES": "5000000000"
   },
+  // Daily at 06:00 UTC: TestFlight numbers, and yesterday's and today's Cloudflare usage.
   "triggers": {
     "crons": ["0 6 * * *"]
   },
@@ -39,6 +55,15 @@
       "database_name": "akari-food-feedback",
       "database_id": "5603fc8b-bca6-4453-ba32-ab4375f21ab1",
       "migrations_dir": "migrations"
+    },
+    // The photo worker's counters database, for the dashboard's AI usage. Read only by
+    // convention: the photo worker writes it and owns its migrations, so a migrations
+    // command naming this database applies the photo worker's, from here too.
+    {
+      "binding": "USAGE",
+      "database_name": "akari-photo-counters",
+      "database_id": "fd804d03-9eba-44b7-b69d-8bdc0a2d5680",
+      "migrations_dir": "../photo-worker/migrations"
     }
   ]
 }

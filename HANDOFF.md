@@ -11,8 +11,10 @@ Both applications are in [hejrafa/AkariWebsite](https://github.com/hejrafa/Akari
 | Login and food-feedback API | `feedback-worker/src/index.ts` | https://api.joinakari.com | Same Worker as the admin dashboard |
 | Feedback database | `feedback-worker/migrations/` | Cloudflare D1, `akari-food-feedback` | Apply pending migrations separately |
 | Website visit counting | `visit.js` (site), `/v1/visit` and `/admin-api/visits` in `feedback-worker/src/index.ts` | Dashboard page of https://admin.joinakari.com | Site via GitHub Pages; endpoint and dashboard with the Worker |
+| AI usage and cost | Counted by `photo-worker/` into `usage_days`, read by `feedback-worker/src/usage.ts` | Dashboard page of https://admin.joinakari.com | Both Workers; the table is the photo worker's migration |
+| Cloudflare usage against the free plan | `feedback-worker/src/cloudflare.ts`, `cloudflare_days` | Dashboard page of https://admin.joinakari.com | With the Worker; needs the `CF_ANALYTICS_TOKEN` secret |
 
-The Worker is named `akari-food-feedback`. Its domains and database binding are recorded in `feedback-worker/wrangler.jsonc`.
+The Worker is named `akari-food-feedback`. Its domains and database bindings are recorded in `feedback-worker/wrangler.jsonc`.
 
 ## The public website
 
@@ -76,6 +78,24 @@ Every public page loads `visit.js`, which sends one beacon per page load to `htt
 
 The dashboard reads `/admin-api/visits?days=7|30|90`. Locally, with no visits recorded, it shows labelled sample data.
 
+## AI usage
+
+The photo worker (`api.joinakari.com/photo`, `/meal`, `/compose`) adds every call that reaches Anthropic to its UTC day's row in `usage_days`, one row per endpoint: the request, a failure when Anthropic or its answer failed, and the input, output, cache-read and cache-write tokens. Nothing else is stored, and its 03:00 cron keeps 400 days. The table lives in the photo worker's `akari-photo-counters` database (`photo-worker/migrations/0002_usage.sql`); the dashboard Worker reads it through a second binding, `USAGE`, by convention read only.
+
+`/admin-api/usage?days=7|30|90` prices the tokens with the vars `AI_PRICE_INPUT`, `AI_PRICE_OUTPUT`, `AI_PRICE_CACHE_READ` and `AI_PRICE_CACHE_WRITE` in `feedback-worker/wrangler.jsonc`, US dollars per million tokens. They are Claude Haiku 5.5's prices from platform.claude.com on 22 October 2026, for prompts up to 100,000 tokens; change them there when the model or its prices change. The dashboard's AI usage section shows requests and cost today, cost this month, requests per day stacked by endpoint and, in a panel below on its own scale, the cost per day.
+
+## Cloudflare usage
+
+The 06:00 cron and the Cloudflare section's Refresh button (at most once every 15 minutes) ask Cloudflare's GraphQL Analytics API for yesterday and today, and store one row per day in `cloudflare_days`: Workers requests and errors over every script in the account, D1 rows read and written over every database, the databases' total size, and the zone's requests. Yesterday is fetched again because its numbers are only complete the morning after. The dashboard shows the latest day against the free plan's limits (vars `CF_LIMIT_WORKER_REQUESTS`, `CF_LIMIT_D1_ROWS_READ`, `CF_LIMIT_D1_ROWS_WRITTEN`, `CF_LIMIT_D1_STORAGE_BYTES`, as of 22 October 2026); a bar past 80 % turns red and says so.
+
+It needs a Cloudflare API token with **Account Analytics: Read** for the account and **Zone Analytics: Read** for `joinakari.com`, stored as a secret from `feedback-worker/`:
+
+```sh
+pnpm exec wrangler secret put CF_ANALYTICS_TOKEN
+```
+
+`CF_ACCOUNT_ID` is in `wrangler.jsonc`. `CF_ZONE_ID` is empty until set: copy the zone ID from the `joinakari.com` overview in the Cloudflare dashboard. Without it the website's requests stay empty; without the token the section says so and nothing else changes.
+
 ## Access for a co-maintainer
 
 There are three independent kinds of access:
@@ -108,6 +128,7 @@ In a second terminal, from the repository:
 cd feedback-worker
 pnpm install --frozen-lockfile
 pnpm migrate:local
+pnpm exec wrangler d1 migrations apply akari-photo-counters --local
 pnpm dev --ip 127.0.0.1
 ```
 
@@ -141,6 +162,8 @@ After merging the change, pull the current `main`. If the change contains a data
 pnpm exec wrangler d1 migrations list akari-food-feedback --remote
 pnpm migrate:remote
 ```
+
+The `USAGE` binding is the photo worker's database, and its migrations are the photo worker's: apply them from `photo-worker/` as its README says, before deploying either Worker's code that needs them.
 
 Then deploy:
 
