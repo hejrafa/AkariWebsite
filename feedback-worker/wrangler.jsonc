@@ -39,11 +39,11 @@
     // requests stay empty.
     "CF_ACCOUNT_ID": "ae9862a37aa598ed18d70ba9a478709d",
     "CF_ZONE_ID": "",
-    // The free plan's limits (developers.cloudflare.com, 2026-10-22).
+    // The free plan's limits (developers.cloudflare.com, 2026-10-22). Storage is per database.
     "CF_LIMIT_WORKER_REQUESTS": "100000",
     "CF_LIMIT_D1_ROWS_READ": "5000000",
     "CF_LIMIT_D1_ROWS_WRITTEN": "100000",
-    "CF_LIMIT_D1_STORAGE_BYTES": "5000000000"
+    "CF_LIMIT_D1_DATABASE_BYTES": "500000000"
   },
   // Daily at 06:00 UTC: TestFlight numbers, and yesterday's and today's Cloudflare usage.
   "triggers": {

@@ -102,12 +102,12 @@ test("the query asks for yesterday and today, every script and database, and the
   assert.doesNotMatch(cloudflareQuery(account, null, ["2026-10-21", "2026-10-22"]), /zones|httpRequests1dGroups/);
 });
 
-test("the refresh parses the GraphQL answer and stores one row per day", async () => {
+test("the refresh parses the GraphQL answer and stores one row per day, with the largest database's size", async () => {
   const days = ["2026-10-21", "2026-10-22"];
   const parsed = parseCloudflare(answer(days), days, true);
   assert.deepEqual(parsed, [
-    { day: "2026-10-21", workerRequests: 41_250, workerErrors: 12, d1RowsRead: 2_310_000, d1RowsWritten: 61_000, d1Bytes: 106_954_752, pagesRequests: 9_120 },
-    { day: "2026-10-22", workerRequests: 18_400, workerErrors: 3, d1RowsRead: 880_000, d1RowsWritten: 21_500, d1Bytes: 108_003_328, pagesRequests: 3_045 },
+    { day: "2026-10-21", workerRequests: 41_250, workerErrors: 12, d1RowsRead: 2_310_000, d1RowsWritten: 61_000, d1LargestBytes: 104_857_600, pagesRequests: 9_120 },
+    { day: "2026-10-22", workerRequests: 18_400, workerErrors: 3, d1RowsRead: 880_000, d1RowsWritten: 21_500, d1LargestBytes: 105_906_176, pagesRequests: 3_045 },
   ]);
 
   const env = environment();
@@ -116,15 +116,15 @@ test("the refresh parses the GraphQL answer and stores one row per day", async (
   await storeCloudflare(env, [{ ...parsed[1], workerRequests: 30_000 }], "2026-10-22T09:30:00.000Z");
   const rows = env.DB.sqlite.prepare("SELECT * FROM cloudflare_days ORDER BY day").all().map((row) => ({ ...row }));
   assert.deepEqual(rows, [
-    { day: "2026-10-21", taken_at: "2026-10-22T06:00:00.000Z", worker_requests: 41_250, worker_errors: 12, d1_rows_read: 2_310_000, d1_rows_written: 61_000, d1_bytes: 106_954_752, pages_requests: 9_120 },
-    { day: "2026-10-22", taken_at: "2026-10-22T09:30:00.000Z", worker_requests: 30_000, worker_errors: 3, d1_rows_read: 880_000, d1_rows_written: 21_500, d1_bytes: 108_003_328, pages_requests: 3_045 },
+    { day: "2026-10-21", taken_at: "2026-10-22T06:00:00.000Z", worker_requests: 41_250, worker_errors: 12, d1_rows_read: 2_310_000, d1_rows_written: 61_000, d1_bytes: 104_857_600, pages_requests: 9_120 },
+    { day: "2026-10-22", taken_at: "2026-10-22T09:30:00.000Z", worker_requests: 30_000, worker_errors: 3, d1_rows_read: 880_000, d1_rows_written: 21_500, d1_bytes: 105_906_176, pages_requests: 3_045 },
   ]);
 });
 
 test("a day with no events counts 0, storage stays unknown, and errors are Cloudflare's words", () => {
   const days = ["2026-10-21", "2026-10-22"];
   const quiet = parseCloudflare({ data: { viewer: { accounts: [{ workers0: [], workers1: [], d1AnalyticsAdaptiveGroups: [], d1StorageAdaptiveGroups: [] }] } } }, days, false);
-  assert.deepEqual(quiet[0], { day: "2026-10-21", workerRequests: 0, workerErrors: 0, d1RowsRead: 0, d1RowsWritten: 0, d1Bytes: null, pagesRequests: null });
+  assert.deepEqual(quiet[0], { day: "2026-10-21", workerRequests: 0, workerErrors: 0, d1RowsRead: 0, d1RowsWritten: 0, d1LargestBytes: null, pagesRequests: null });
   assert.throws(() => parseCloudflare({ data: null, errors: [{ message: "not authorized for that account" }] }, days, false), {
     message: "Cloudflare answered: not authorized for that account",
   });
@@ -149,7 +149,7 @@ test("refreshing needs a session and the token, and waits 15 minutes between run
   const data = await first.json();
   assert.equal(data.configured, true);
   assert.deepEqual({ ...data.latest, takenAt: undefined }, {
-    day: dayAt(0), takenAt: undefined, workerRequests: 18_400, workerErrors: 3, d1RowsRead: 880_000, d1RowsWritten: 21_500, d1Bytes: 108_003_328, pagesRequests: 3_045,
+    day: dayAt(0), takenAt: undefined, workerRequests: 18_400, workerErrors: 3, d1RowsRead: 880_000, d1RowsWritten: 21_500, d1LargestBytes: 105_906_176, pagesRequests: 3_045,
   });
   assert.equal(requests.length, before + 1);
   assert.equal(requests.at(-1).authorization, "Bearer test-analytics-token");
@@ -172,10 +172,10 @@ test("the dashboard API returns the limits, the latest day and a 30-day trend", 
   const empty = await (await worker.fetch(new Request("http://localhost/admin-api/cloudflare"), env)).json();
   assert.equal(empty.configured, false);
   assert.equal(empty.latest, null);
-  assert.deepEqual(empty.limits, { workerRequests: 100_000, d1RowsRead: 5_000_000, d1RowsWritten: 100_000, d1StorageBytes: 5_000_000_000 });
+  assert.deepEqual(empty.limits, { workerRequests: 100_000, d1RowsRead: 5_000_000, d1RowsWritten: 100_000, d1DatabaseBytes: 500_000_000 });
   assert.match(empty.limitsAsOf, /^\d{4}-\d{2}-\d{2}$/);
 
-  const day = { workerRequests: 0, workerErrors: 0, d1RowsRead: 0, d1RowsWritten: 0, d1Bytes: null, pagesRequests: null };
+  const day = { workerRequests: 0, workerErrors: 0, d1RowsRead: 0, d1RowsWritten: 0, d1LargestBytes: null, pagesRequests: null };
   await storeCloudflare(env, [{ ...day, day: dayAt(40), workerRequests: 1 }, { ...day, day: dayAt(3), workerRequests: 2_000 }, { ...day, day: dayAt(0), workerRequests: 9_000, workerErrors: 4 }], new Date().toISOString());
   const data = await readCloudflare({ ...env, ...token, CF_LIMIT_WORKER_REQUESTS: "200000", CF_LIMIT_D1_ROWS_READ: "-1" });
   assert.equal(data.configured, true);

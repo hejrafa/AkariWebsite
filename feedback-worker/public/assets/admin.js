@@ -63,7 +63,7 @@ const translations = {
     tooltipRequests: "{count} requests", tooltipRequest: "1 request", tooltipFailures: "{count} failed", tooltipFailure: "1 failed", tooltipTokens: "{input} tokens in · {output} out", tooltipCost: "Cost {cost}",
     tableRequests: "Requests", tableFailures: "Failed", tableCost: "Cost",
     cloudflareTitle: "Cloudflare", loadingCloudflare: "Loading Cloudflare usage…", noCloudflareData: "No data yet. Press Refresh.", cloudflareTokenHint: "No data yet. Add the CF_ANALYTICS_TOKEN secret and press Refresh.",
-    limitsToday: "Today", limitWorkerRequests: "Workers requests", limitRowsRead: "D1 rows read", limitRowsWritten: "D1 rows written", limitStorage: "D1 storage", websiteRequests: "Website requests",
+    limitsToday: "Today", limitWorkerRequests: "Workers requests", limitRowsRead: "D1 rows read", limitRowsWritten: "D1 rows written", limitStorage: "D1, largest database", websiteRequests: "Website requests",
     limitOf: "{value} of {limit}", nearLimit: "{share} · near the limit", limitsNote: "Free plan, limits as of {date}",
     workerTrendTitle: "Workers requests, last 30 days", workerTrend: "Workers requests per day over the last 30 days.", tooltipErrors: "{count} errors", tooltipError: "1 error",
     foodReviewTitle: "Food inbox", foodReviewLede: "Mix-ups, mystery portions and nutrition that looks a little suspicious, sent in by sharp-eyed testers.", foodReviewEmojiLabel: "Play with the food inbox sticker",
@@ -105,7 +105,7 @@ const translations = {
     tooltipRequests: "{count} Anfragen", tooltipRequest: "1 Anfrage", tooltipFailures: "{count} fehlgeschlagen", tooltipFailure: "1 fehlgeschlagen", tooltipTokens: "{input} Tokens rein · {output} raus", tooltipCost: "Kosten {cost}",
     tableRequests: "Anfragen", tableFailures: "Fehlgeschlagen", tableCost: "Kosten",
     cloudflareTitle: "Cloudflare", loadingCloudflare: "Cloudflare-Nutzung wird geladen…", noCloudflareData: "Noch keine Daten. Auf Aktualisieren klicken.", cloudflareTokenHint: "Noch keine Daten. Das Secret CF_ANALYTICS_TOKEN hinterlegen und auf Aktualisieren klicken.",
-    limitsToday: "Heute", limitWorkerRequests: "Workers-Anfragen", limitRowsRead: "D1 gelesene Zeilen", limitRowsWritten: "D1 geschriebene Zeilen", limitStorage: "D1-Speicher", websiteRequests: "Website-Anfragen",
+    limitsToday: "Heute", limitWorkerRequests: "Workers-Anfragen", limitRowsRead: "D1 gelesene Zeilen", limitRowsWritten: "D1 geschriebene Zeilen", limitStorage: "D1, größte Datenbank", websiteRequests: "Website-Anfragen",
     limitOf: "{value} von {limit}", nearLimit: "{share} · fast am Limit", limitsNote: "Free-Tarif, Limits Stand {date}",
     workerTrendTitle: "Workers-Anfragen, letzte 30 Tage", workerTrend: "Workers-Anfragen pro Tag in den letzten 30 Tagen.", tooltipErrors: "{count} Fehler", tooltipError: "1 Fehler",
     foodReviewTitle: "Meldungen", foodReviewLede: "Verwechslungen, rätselhafte Portionen und Nährwerte, die etwas verdächtig aussehen, eingeschickt von aufmerksamen Testern.", foodReviewEmojiLabel: "Mit dem Meldungen-Sticker spielen",
@@ -968,7 +968,7 @@ function renderCloudflare(data) {
     limitRow(t("limitWorkerRequests"), latest.workerRequests, data.limits.workerRequests, formatNumber),
     limitRow(t("limitRowsRead"), latest.d1RowsRead, data.limits.d1RowsRead, formatNumber),
     limitRow(t("limitRowsWritten"), latest.d1RowsWritten, data.limits.d1RowsWritten, formatNumber),
-    limitRow(t("limitStorage"), latest.d1Bytes, data.limits.d1StorageBytes, formatBytes),
+    limitRow(t("limitStorage"), latest.d1LargestBytes, data.limits.d1DatabaseBytes, formatBytes),
   );
   // The website has no free-plan limit here; its requests are only counted.
   if (latest.pagesRequests !== null) {
@@ -1655,7 +1655,7 @@ function formatPercent(share) {
   return new Intl.NumberFormat(currentLanguage === "de" ? "de-DE" : "en-US", { style: "percent", maximumFractionDigits: 1 }).format(share);
 }
 
-// Decimal units, as Cloudflare states its limits (5 GB is 5,000,000,000 bytes).
+// Decimal units, as Cloudflare states its limits (500 MB is 500,000,000 bytes).
 function formatBytes(bytes) {
   const [unit, size] = bytes >= 1e9 ? ["gigabyte", 1e9] : bytes >= 1e6 ? ["megabyte", 1e6] : ["kilobyte", 1e3];
   return new Intl.NumberFormat(currentLanguage === "de" ? "de-DE" : "en-US", { style: "unit", unit, maximumFractionDigits: 1 }).format(bytes / size);
@@ -1745,7 +1745,7 @@ function previewUsage(data) {
 function previewCloudflare(data) {
   const now = Date.now();
   const day = (offset) => new Date(now - offset * 86_400_000).toISOString();
-  const latest = { day: day(0).slice(0, 10), takenAt: day(0), workerRequests: 41_250, workerErrors: 12, d1RowsRead: 4_310_000, d1RowsWritten: 21_500, d1Bytes: 108_003_328, pagesRequests: 3_045 };
+  const latest = { day: day(0).slice(0, 10), takenAt: day(0), workerRequests: 41_250, workerErrors: 12, d1RowsRead: 4_310_000, d1RowsWritten: 21_500, d1LargestBytes: 105_906_176, pagesRequests: 3_045 };
   const trend = Array.from({ length: 30 }, (_, index) => ({
     day: day(29 - index).slice(0, 10),
     requests: index < 3 ? null : Math.round(21_000 + index * 700 + Math.abs(Math.sin(index)) * 9_000),

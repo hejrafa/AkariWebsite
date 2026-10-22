@@ -10,7 +10,7 @@ export interface CloudflareEnv {
   CF_LIMIT_WORKER_REQUESTS?: string;
   CF_LIMIT_D1_ROWS_READ?: string;
   CF_LIMIT_D1_ROWS_WRITTEN?: string;
-  CF_LIMIT_D1_STORAGE_BYTES?: string;
+  CF_LIMIT_D1_DATABASE_BYTES?: string;
 }
 
 export interface CloudflareDay {
@@ -19,7 +19,7 @@ export interface CloudflareDay {
   workerErrors: number;
   d1RowsRead: number;
   d1RowsWritten: number;
-  d1Bytes: number | null;
+  d1LargestBytes: number | null;
   pagesRequests: number | null;
 }
 
@@ -40,10 +40,11 @@ const graphqlEndpoint = "https://api.cloudflare.com/client/v4/graphql";
 const tagPattern = /^[0-9a-f]{32}$/u;
 const refreshInterval = 15 * 60 * 1000;
 const trendDays = 30;
-// Workers Free and D1 Free, as developers.cloudflare.com/workers/platform/pricing
-// listed them on this day; each can be changed with its CF_LIMIT_ variable.
+// Workers Free and D1 Free, as developers.cloudflare.com listed them on this day (Workers
+// pricing, D1 limits); each can be changed with its CF_LIMIT_ variable. Storage is each
+// database's 500 MB cap, which a database meets before the account's 5 GB in total.
 export const limitsAsOf = "2026-10-22";
-const defaultLimits = { workerRequests: 100_000, d1RowsRead: 5_000_000, d1RowsWritten: 100_000, d1StorageBytes: 5_000_000_000 };
+const defaultLimits = { workerRequests: 100_000, d1RowsRead: 5_000_000, d1RowsWritten: 100_000, d1DatabaseBytes: 500_000_000 };
 // Covers refreshes that failed before a row was stored, within this isolate.
 let lastAttemptAt = 0;
 
@@ -60,14 +61,13 @@ export function cloudflareLimits(env: CloudflareEnv) {
     workerRequests: limit(env.CF_LIMIT_WORKER_REQUESTS, defaultLimits.workerRequests),
     d1RowsRead: limit(env.CF_LIMIT_D1_ROWS_READ, defaultLimits.d1RowsRead),
     d1RowsWritten: limit(env.CF_LIMIT_D1_ROWS_WRITTEN, defaultLimits.d1RowsWritten),
-    d1StorageBytes: limit(env.CF_LIMIT_D1_STORAGE_BYTES, defaultLimits.d1StorageBytes),
+    d1DatabaseBytes: limit(env.CF_LIMIT_D1_DATABASE_BYTES, defaultLimits.d1DatabaseBytes),
   };
 }
 
 /// One query for the given UTC days: Workers requests and errors summed over every
 /// script in the account (one alias per day), D1 rows read and written over every
-/// database, each database's largest size per day, and the zone's requests when a
-/// zone is set. The ids are checked hex and the days are ours, so they are inlined.
+/// database, each database's size per day, and the zone's requests when a zone is set. The ids are checked hex and the days are ours, so they are inlined.
 export function cloudflareQuery(account: string, zone: string | null, days: string[]): string {
   const since = JSON.stringify(days[0]);
   const until = JSON.stringify(days[days.length - 1]);
@@ -102,7 +102,8 @@ const number = (value: unknown): number => (typeof value === "number" && Number.
 const list = (value: unknown): Document[] => (Array.isArray(value) ? value : []);
 
 /// The answer as one row per asked day. A day with no events has no group, so its
-/// counts are 0; storage stays unknown without a size, the website without a zone.
+/// counts are 0. Storage is the largest database's size, unknown without one; the
+/// website stays unknown without a zone.
 export function parseCloudflare(body: Document, days: string[], withZone: boolean): CloudflareDay[] {
   const errors = list(body?.errors);
   if (errors.length) throw new Error(`Cloudflare answered: ${String(errors[0]?.message ?? "an error").slice(0, 300)}`);
@@ -121,7 +122,7 @@ export function parseCloudflare(body: Document, days: string[], withZone: boolea
       workerErrors: workers.reduce((sum, group) => sum + number(group?.sum?.errors), 0),
       d1RowsRead: d1.reduce((sum, group) => sum + number(group?.sum?.rowsRead), 0),
       d1RowsWritten: d1.reduce((sum, group) => sum + number(group?.sum?.rowsWritten), 0),
-      d1Bytes: storage.length ? storage.reduce((sum, group) => sum + number(group?.max?.databaseSizeBytes), 0) : null,
+      d1LargestBytes: storage.length ? Math.max(...storage.map((group) => number(group?.max?.databaseSizeBytes))) : null,
       pagesRequests: withZone && zone ? pages.reduce((sum, group) => sum + number(group?.sum?.requests), 0) : null,
     };
   });
@@ -145,7 +146,7 @@ export async function storeCloudflare(env: CloudflareEnv, days: CloudflareDay[],
     INSERT OR REPLACE INTO cloudflare_days (
       day, taken_at, worker_requests, worker_errors, d1_rows_read, d1_rows_written, d1_bytes, pages_requests
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `).bind(day.day, takenAt, day.workerRequests, day.workerErrors, day.d1RowsRead, day.d1RowsWritten, day.d1Bytes, day.pagesRequests)));
+  `).bind(day.day, takenAt, day.workerRequests, day.workerErrors, day.d1RowsRead, day.d1RowsWritten, day.d1LargestBytes, day.pagesRequests)));
 }
 
 export type RefreshResult = { status: "ok" } | { status: "token_missing" } | { status: "rate_limited"; retryAfter: number };
@@ -186,7 +187,7 @@ export async function readCloudflare(env: CloudflareEnv) {
       workerErrors: latest.worker_errors,
       d1RowsRead: latest.d1_rows_read,
       d1RowsWritten: latest.d1_rows_written,
-      d1Bytes: latest.d1_bytes,
+      d1LargestBytes: latest.d1_bytes,
       pagesRequests: latest.pages_requests,
     } : null,
     trend: Array.from({ length: trendDays }, (_, index) => {
