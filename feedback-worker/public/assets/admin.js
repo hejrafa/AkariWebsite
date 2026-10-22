@@ -14,12 +14,10 @@ const visitBreakdowns = document.querySelector("#visit-breakdowns");
 const testersCard = document.querySelector("#testers-card");
 const testersUpdated = document.querySelector("#testers-updated");
 const usageRangeButtons = [...document.querySelectorAll("[data-usage-range]")];
-const usageStats = document.querySelector("#usage-stats");
-const usagePlot = document.querySelector("#usage-plot");
-const usageBreakdowns = document.querySelector("#usage-breakdowns");
+const usageLogged = document.querySelector("#usage-logged");
+const usageCost = document.querySelector("#usage-cost");
 const cloudflareCard = document.querySelector("#cloudflare-card");
 const cloudflareBreakdowns = document.querySelector("#cloudflare-breakdowns");
-const cloudflareNote = document.querySelector("#cloudflare-note");
 const cloudflareUpdated = document.querySelector("#cloudflare-updated");
 const root = document.documentElement;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -58,21 +56,15 @@ const translations = {
     statTesters: "Testers", statInstalled: "Installed", statSessions: "Sessions, last 30 days", statCrashes: "Crashes, last 30 days",
     refreshFailed: "Couldn’t update: {detail}",
     testersTrend: "Testers per day over the last 30 days.", tooltipTesters: "{count} testers", tooltipTester: "1 tester", tooltipInstalled: "{count} installed", tooltipNoData: "No data",
-    usageTitle: "AI usage", loadingUsage: "Loading AI usage…", noUsage: "The AI wasn’t used in these days.", usageUnbound: "The photo worker’s usage database isn’t connected to this dashboard.",
-    statUsedToday: "Times used today", statCostToday: "Cost today", statCostMonth: "Cost this month",
-    usageCompose: "Meals logged", usagePhoto: "Photos read", usageMeal: "Old app (build 133)", legendCost: "Cost per day",
-    usageDid: "What the AI did", usageCostBy: "What it cost", usageTogether: "Together", usageWrong: "What didn’t work", usageNothingWrong: "Everything worked",
-    usageChart: "How often the AI was used each day over the last {days} days, {total} times in all, costing {cost}.",
-    tooltipTimes: "{count} times", tooltipTime: "1 time", tooltipFailures: "{count} didn’t work", tooltipFailure: "1 didn’t work", tooltipTokens: "{input} tokens read · {output} written", tooltipCost: "Cost {cost}",
-    tableFailures: "Didn’t work", tableCost: "Cost",
-    cloudflareTitle: "Cloudflare free plan", loadingCloudflare: "Loading Cloudflare usage…", noCloudflareData: "No numbers yet.", cloudflareTokenHint: "No numbers yet. Add the CF_ANALYTICS_TOKEN secret.",
-    limitsToday: "Today", serverCalls: "Server calls", serverCallsHint: "Each time the app, the website or this dashboard asks our server for something: logging a meal, sending a food report, counting a visit.",
-    serverCallsTrend: "Server calls, last 30 days", serverCallsChart: "Server calls per day over the last 30 days.", tooltipCalls: "{count} calls", tooltipCall: "1 call",
-    databaseReads: "Database reads", readsHint: "Entries our database looked through to answer the app, the website and this dashboard.",
-    databaseWrites: "Database writes", writesHint: "Entries saved or changed: food reports, visits and the AI’s daily counts.",
-    biggestDatabase: "Biggest database", biggestHint: "How full our bigger database is. Each one holds {limit} for free.",
-    allowanceDay: "of {limit} free a day", allowanceTotal: "of {limit} free", nearLimit: "{share}, close to the free limit",
-    cloudflareNote: "Cloudflare runs our server and our databases for free, up to the amounts above. If a daily amount runs out, that part stops working until {time}; a full database takes nothing new until old entries are cleared. Nothing is ever charged. Limits as of {date}.",
+    usageTitle: "AI usage", loadingUsage: "Loading AI usage…", noUsage: "Nothing in these days.", usageUnbound: "The photo worker’s usage database isn’t connected to this dashboard.",
+    usageMeals: "Meals logged", usagePhotos: "Photos read", usageCost: "Cost",
+    usageChart: "Meals logged and photos read per day over the last {days} days.", costChart: "AI cost per day over the last {days} days, {cost} in all.",
+    tooltipMeals: "{count} meals", tooltipMeal: "1 meal", tooltipPhotos: "{count} photos", tooltipPhoto: "1 photo", tableCost: "Cost",
+    cloudflareTitle: "Cloudflare", loadingCloudflare: "Loading Cloudflare usage…", noCloudflareData: "No numbers yet.", cloudflareTokenHint: "No numbers yet. Add the CF_ANALYTICS_TOKEN secret.",
+    serverCallsToday: "Server calls today", serverCallsOn: "Server calls on {day}", serverCallsTrend: "Last 30 days", serverCallsChart: "Server calls per day over the last 30 days.",
+    tooltipCalls: "{count} calls", tooltipCall: "1 call", tooltipFailures: "{count} didn’t work", tooltipFailure: "1 didn’t work",
+    databaseReads: "Database reads", databaseWrites: "Database writes", biggestDatabase: "Biggest database",
+    allowanceDay: "of {limit} a day", allowanceTotal: "of {limit}", nearLimit: "{share}, close to the limit",
     foodReviewTitle: "Food inbox", foodReviewLede: "Mix-ups, mystery portions and nutrition that looks a little suspicious, sent in by sharp-eyed testers.", foodReviewEmojiLabel: "Play with the food inbox sticker",
     feedbackSummaryLabel: "Feedback summary", open: "Open", resolved: "Resolved", loadingFeedback: "Loading feedback…",
     pageTitleDashboard: "Akari: Dashboard", pageTitleFeedback: "Akari: Food Inbox",
@@ -105,21 +97,15 @@ const translations = {
     statTesters: "Tester", statInstalled: "Installiert", statSessions: "Sitzungen, letzte 30 Tage", statCrashes: "Abstürze, letzte 30 Tage",
     refreshFailed: "Konnte nicht aktualisieren: {detail}",
     testersTrend: "Tester pro Tag in den letzten 30 Tagen.", tooltipTesters: "{count} Tester", tooltipTester: "1 Tester", tooltipInstalled: "{count} installiert", tooltipNoData: "Keine Daten",
-    usageTitle: "KI-Nutzung", loadingUsage: "KI-Nutzung wird geladen…", noUsage: "Die KI wurde in diesen Tagen nicht genutzt.", usageUnbound: "Die Nutzungsdatenbank des Foto-Workers ist mit dieser Übersicht nicht verbunden.",
-    statUsedToday: "Heute genutzt", statCostToday: "Kosten heute", statCostMonth: "Kosten diesen Monat",
-    usageCompose: "Mahlzeiten erfasst", usagePhoto: "Fotos ausgewertet", usageMeal: "Alte App (Build 133)", legendCost: "Kosten pro Tag",
-    usageDid: "Was die KI gemacht hat", usageCostBy: "Was es gekostet hat", usageTogether: "Zusammen", usageWrong: "Was nicht geklappt hat", usageNothingWrong: "Alles hat geklappt",
-    usageChart: "Wie oft die KI pro Tag in den letzten {days} Tagen genutzt wurde, insgesamt {total}-mal, für {cost}.",
-    tooltipTimes: "{count}-mal", tooltipTime: "1-mal", tooltipFailures: "{count} nicht geklappt", tooltipFailure: "1 nicht geklappt", tooltipTokens: "{input} Tokens gelesen · {output} geschrieben", tooltipCost: "Kosten {cost}",
-    tableFailures: "Nicht geklappt", tableCost: "Kosten",
-    cloudflareTitle: "Cloudflare-Gratistarif", loadingCloudflare: "Cloudflare-Nutzung wird geladen…", noCloudflareData: "Noch keine Zahlen.", cloudflareTokenHint: "Noch keine Zahlen. Das Secret CF_ANALYTICS_TOKEN hinterlegen.",
-    limitsToday: "Heute", serverCalls: "Serveraufrufe", serverCallsHint: "Jedes Mal, wenn die App, die Website oder diese Übersicht unseren Server etwas fragt: eine Mahlzeit erfassen, eine Meldung senden, einen Besuch zählen.",
-    serverCallsTrend: "Serveraufrufe, letzte 30 Tage", serverCallsChart: "Serveraufrufe pro Tag in den letzten 30 Tagen.", tooltipCalls: "{count} Aufrufe", tooltipCall: "1 Aufruf",
-    databaseReads: "Aus der Datenbank gelesen", readsHint: "Einträge, die unsere Datenbank durchgesehen hat, um App, Website und dieser Übersicht zu antworten.",
-    databaseWrites: "In die Datenbank geschrieben", writesHint: "Gespeicherte oder geänderte Einträge: Meldungen, Besuche und die täglichen Zählungen der KI.",
-    biggestDatabase: "Größte Datenbank", biggestHint: "Wie voll unsere größere Datenbank ist. Jede fasst gratis {limit}.",
-    allowanceDay: "von {limit} gratis pro Tag", allowanceTotal: "von {limit} gratis", nearLimit: "{share}, fast am Gratis-Limit",
-    cloudflareNote: "Cloudflare betreibt unseren Server und unsere Datenbanken gratis, bis zu den Mengen oben. Ist eine Tagesmenge aufgebraucht, funktioniert dieser Teil bis {time} Uhr nicht; eine volle Datenbank nimmt nichts Neues an, bis alte Einträge gelöscht sind. Es wird nie etwas berechnet. Limits Stand {date}.",
+    usageTitle: "KI-Nutzung", loadingUsage: "KI-Nutzung wird geladen…", noUsage: "Nichts in diesen Tagen.", usageUnbound: "Die Nutzungsdatenbank des Foto-Workers ist mit dieser Übersicht nicht verbunden.",
+    usageMeals: "Mahlzeiten erfasst", usagePhotos: "Fotos ausgewertet", usageCost: "Kosten",
+    usageChart: "Erfasste Mahlzeiten und ausgewertete Fotos pro Tag in den letzten {days} Tagen.", costChart: "KI-Kosten pro Tag in den letzten {days} Tagen, insgesamt {cost}.",
+    tooltipMeals: "{count} Mahlzeiten", tooltipMeal: "1 Mahlzeit", tooltipPhotos: "{count} Fotos", tooltipPhoto: "1 Foto", tableCost: "Kosten",
+    cloudflareTitle: "Cloudflare", loadingCloudflare: "Cloudflare-Nutzung wird geladen…", noCloudflareData: "Noch keine Zahlen.", cloudflareTokenHint: "Noch keine Zahlen. Das Secret CF_ANALYTICS_TOKEN hinterlegen.",
+    serverCallsToday: "Serveraufrufe heute", serverCallsOn: "Serveraufrufe am {day}", serverCallsTrend: "Letzte 30 Tage", serverCallsChart: "Serveraufrufe pro Tag in den letzten 30 Tagen.",
+    tooltipCalls: "{count} Aufrufe", tooltipCall: "1 Aufruf", tooltipFailures: "{count} nicht geklappt", tooltipFailure: "1 nicht geklappt",
+    databaseReads: "Aus der Datenbank gelesen", databaseWrites: "In die Datenbank geschrieben", biggestDatabase: "Größte Datenbank",
+    allowanceDay: "von {limit} pro Tag", allowanceTotal: "von {limit}", nearLimit: "{share}, fast am Limit",
     foodReviewTitle: "Meldungen", foodReviewLede: "Verwechslungen, rätselhafte Portionen und Nährwerte, die etwas verdächtig aussehen, eingeschickt von aufmerksamen Testern.", foodReviewEmojiLabel: "Mit dem Meldungen-Sticker spielen",
     feedbackSummaryLabel: "Zusammenfassung der Rückmeldungen", open: "Offen", resolved: "Erledigt", loadingFeedback: "Rückmeldungen werden geladen…",
     pageTitleDashboard: "Akari: Übersicht", pageTitleFeedback: "Akari: Meldungen",
@@ -413,13 +399,26 @@ function comparison(current, previous, days) {
 // One series, so no legend: the stat beside it names it. Hovering shows the
 // day's numbers.
 function visitsChart(data) {
+  return lineChart(data.daily, (point) => point.visitors, {
+    fill: "visits-fill",
+    summary: t("chartSummary", { days: data.days, total: formatNumber(data.totals.visitors) }),
+    scale: formatNumber,
+    linesFor: (point) => [
+      point.visitors === 1 ? t("tooltipVisitor") : t("tooltipVisitors", { count: formatNumber(point.visitors) }),
+      point.views === 1 ? t("tooltipView") : t("tooltipViews", { count: formatNumber(point.views) }),
+    ],
+  });
+}
+
+// A line over a fill that fades towards the baseline, one point a day, with the day's lines
+// (the first bold) under the pointer. `fill` names the chart's own gradient.
+function lineChart(points, valueOf, { fill, summary, scale: formatScale, linesFor }) {
   const svgNS = "http://www.w3.org/2000/svg";
   const width = 720;
   const height = 220;
   const pad = { top: 20, right: 14, bottom: 30, left: 14 };
-  const points = data.daily;
-  const max = Math.max(1, ...points.map((point) => point.visitors));
-  const top = niceCeiling(max);
+  const max = Math.max(...points.map(valueOf));
+  const top = max > 0 ? niceCeiling(max) : 1;
   const x = (index) => pad.left + (points.length === 1 ? 0 : (index / (points.length - 1)) * (width - pad.left - pad.right));
   const y = (value) => pad.top + (1 - value / top) * (height - pad.top - pad.bottom);
   const baseline = y(0);
@@ -429,7 +428,7 @@ function visitsChart(data) {
   svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
   svg.setAttribute("preserveAspectRatio", "none");
   svg.setAttribute("role", "img");
-  svg.setAttribute("aria-label", t("chartSummary", { days: data.days, total: formatNumber(data.totals.visitors) }));
+  svg.setAttribute("aria-label", summary);
   const shape = (name, attributes) => {
     const node = document.createElementNS(svgNS, name);
     for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
@@ -440,7 +439,7 @@ function visitsChart(data) {
   // A fill that fades out towards the baseline, so the line carries the chart.
   const defs = shape("defs", {});
   const gradient = document.createElementNS(svgNS, "linearGradient");
-  for (const [key, value] of Object.entries({ id: "visits-fill", x1: 0, y1: 0, x2: 0, y2: 1 })) gradient.setAttribute(key, value);
+  for (const [key, value] of Object.entries({ id: fill, x1: 0, y1: 0, x2: 0, y2: 1 })) gradient.setAttribute(key, value);
   for (const [offset, name] of [["0", "visits-fill-top"], ["1", "visits-fill-bottom"]]) {
     const stop = document.createElementNS(svgNS, "stop");
     stop.setAttribute("offset", offset);
@@ -453,12 +452,12 @@ function visitsChart(data) {
     shape("line", { class: "visits-grid", x1: pad.left, x2: width - pad.right, y1: y(top * fraction), y2: y(top * fraction) });
   }
   shape("line", { class: "visits-baseline", x1: pad.left, x2: width - pad.right, y1: baseline, y2: baseline });
-  const line = smoothPath(points.map((point, index) => [x(index), y(point.visitors)]));
-  shape("path", { class: "visits-area", fill: "url(#visits-fill)", d: `${line} L${x(points.length - 1).toFixed(1)} ${baseline} L${x(0).toFixed(1)} ${baseline} Z` });
+  const line = smoothPath(points.map((point, index) => [x(index), y(valueOf(point))]));
+  shape("path", { class: "visits-area", fill: `url(#${fill})`, d: `${line} L${x(points.length - 1).toFixed(1)} ${baseline} L${x(0).toFixed(1)} ${baseline} Z` });
   shape("path", { class: "visits-line", d: line });
   const crosshair = shape("line", { class: "visits-crosshair", y1: pad.top, y2: baseline, x1: 0, x2: 0 });
 
-  const scale = element("span", "visits-scale", formatNumber(top));
+  const scale = element("span", "visits-scale", formatScale(top));
   scale.style.top = `${(y(top) / height) * 100}%`;
   const axis = element("div", "visits-axis");
   for (const index of [0, Math.floor((points.length - 1) / 2), points.length - 1]) {
@@ -478,11 +477,12 @@ function visitsChart(data) {
     crosshair.setAttribute("x1", x(index));
     crosshair.setAttribute("x2", x(index));
     marker.style.left = `${left}%`;
-    marker.style.top = `${(y(point.visitors) / height) * 100}%`;
+    marker.style.top = `${(y(valueOf(point)) / height) * 100}%`;
+    const [first, ...rest] = linesFor(point);
     tooltip.replaceChildren(
       element("span", "visits-tooltip-day", formatDay(point.day, { weekday: "short", day: "numeric", month: "short" })),
-      element("strong", "", point.visitors === 1 ? t("tooltipVisitor") : t("tooltipVisitors", { count: formatNumber(point.visitors) })),
-      element("span", "", point.views === 1 ? t("tooltipView") : t("tooltipViews", { count: formatNumber(point.views) })),
+      element("strong", "", first),
+      ...rest.map((text) => element("span", "", text)),
     );
     tooltip.style.left = `${left}%`;
     tooltip.classList.toggle("is-flipped", left > 60);
@@ -715,14 +715,10 @@ function dayBars(points, valueOf, summary, linesFor) {
 
 // AI usage --------------------------------------------------------------------------------------
 
-// What the AI was asked to do, one per photo-worker endpoint: logging a meal (/compose), reading a
-// meal photo (/photo), and the matching only build 133 (16 October) still asks for (/meal). Fixed,
-// never by rank: the stack's order and colours (admin.css --series-*).
-const usageSeries = [
-  { key: "compose", labelKey: "usageCompose" },
-  { key: "photo", labelKey: "usagePhoto" },
-  { key: "meal", labelKey: "usageMeal" },
-];
+// The two things that matter: how many meals and photos the AI handled, and what it cost. Meals
+// are /compose, and /meal, which build 133 (16 October) still uses to log a meal; photos are /photo.
+const mealsOf = (point) => point.endpoints.compose.requests + point.endpoints.meal.requests;
+const photosOf = (point) => point.endpoints.photo.requests;
 
 for (const button of usageRangeButtons) {
   button.addEventListener("click", () => {
@@ -738,7 +734,7 @@ for (const button of usageRangeButtons) {
 
 async function loadUsage() {
   const request = ++usageRequest;
-  usagePlot.setAttribute("aria-busy", "true");
+  usageLogged.setAttribute("aria-busy", "true");
   try {
     const response = await fetch(`/admin-api/usage?days=${usageRange}`);
     if (!response.ok) throw new Error(`Request failed (${response.status})`);
@@ -749,130 +745,80 @@ async function loadUsage() {
     renderUsage(data);
   } catch (error) {
     if (request !== usageRequest) return;
-    usagePlot.replaceChildren(element("p", "visits-state", error.message));
+    usageLogged.replaceChildren(element("p", "visits-state", error.message));
+    usageCost.replaceChildren();
   } finally {
-    if (request === usageRequest) usagePlot.removeAttribute("aria-busy");
+    if (request === usageRequest) usageLogged.removeAttribute("aria-busy");
   }
 }
 
-// Like the visits: the day's and the month's numbers beside the chart, then a card each for
-// what the AI did, what it cost and what didn't work. Only the uses the range saw are named.
+// Two cards for the range: meals and photos with their totals over a bar a day, and the cost
+// with its total over a line, as the visits draw theirs.
 function renderUsage(data) {
-  usageStats.replaceChildren(
-    visitStat(t("statUsedToday"), data.today.requests),
-    visitStat(t("statCostToday"), formatCost(data.today.cost)),
-    visitStat(t("statCostMonth"), formatCost(data.month.cost)),
-  );
-  const total = (series, field) => data.daily.reduce((sum, point) => sum + point.endpoints[series.key][field], 0);
-  const used = usageSeries.filter((series) => total(series, "requests") > 0);
-  if (data.configured === false || !used.length) {
-    usagePlot.replaceChildren(element("p", "visits-state", t(data.configured === false ? "usageUnbound" : "noUsage")));
-    usageBreakdowns.replaceChildren();
+  if (data.configured === false) {
+    usageLogged.replaceChildren(element("p", "visits-state", t("usageUnbound")));
+    usageCost.replaceChildren();
     return;
   }
+  const sum = (valueOf) => data.daily.reduce((total, point) => total + valueOf(point), 0);
+  const meals = sum(mealsOf);
+  const photos = sum(photosOf);
+  const cost = sum((point) => point.cost);
+  const nothing = () => element("p", "visits-state usage-empty", t("noUsage"));
 
-  usagePlot.replaceChildren(usageLegend(used), usageChart(data, used), usageTable(data, used));
-  const row = (series, value) => ({ swatch: series.key, label: t(series.labelKey), value });
-  const failed = used.filter((series) => total(series, "failures") > 0);
-  usageBreakdowns.replaceChildren(
-    infoCard(t("usageDid"), used.map((series) => row(series, formatNumber(total(series, "requests"))))),
-    infoCard(t("usageCostBy"), [
-      ...used.map((series) => row(series, formatCost(total(series, "cost")))),
-      { label: t("usageTogether"), value: formatCost(data.daily.reduce((sum, point) => sum + point.cost, 0)), total: true },
-    ]),
-    infoCard(t("usageWrong"), failed.map((series) => row(series, formatNumber(total(series, "failures")))), t("usageNothingWrong")),
+  usageLogged.replaceChildren(
+    usageStats([[t("usageMeals"), formatNumber(meals), "is-meals"], [t("usagePhotos"), formatNumber(photos), "is-photos"]]),
+    ...(meals + photos ? [mealsChart(data), usageTable(data)] : [nothing()]),
+  );
+  usageCost.replaceChildren(
+    usageStats([[t("usageCost"), formatCost(cost)]]),
+    cost ? lineChart(data.daily, (point) => point.cost, {
+      fill: "usage-cost-fill",
+      summary: t("costChart", { days: data.days, cost: formatCost(cost) }),
+      scale: formatCost,
+      linesFor: (point) => [formatCost(point.cost)],
+    }) : nothing(),
   );
 }
 
-// A breakdown card like the visits' ones: a title, then a label and a value per row, with the
-// use's colour beside its label where it has one.
-function infoCard(title, rows, empty = t("breakdownEmpty")) {
-  const section = element("section", "breakdown");
-  section.append(element("h3", "", title));
-  if (!rows.length) {
-    section.append(element("p", "breakdown-empty", empty));
-    return section;
-  }
-  const list = element("ul", "breakdown-list");
-  for (const row of rows) {
-    const item = element("li", row.total ? "breakdown-row is-total" : "breakdown-row");
-    const label = element("span", "breakdown-label");
-    if (row.swatch) {
-      const swatch = element("span", `usage-swatch is-${row.swatch}`);
-      swatch.setAttribute("aria-hidden", "true");
-      label.append(swatch);
+// The totals above a card's chart; where the chart has two colours, each total wears its own.
+function usageStats(entries) {
+  const stats = element("dl", "visit-stats usage-stats");
+  for (const [label, value, swatch] of entries) {
+    const stat = visitStat(label, value);
+    if (swatch) {
+      const mark = element("span", `usage-swatch ${swatch}`);
+      mark.setAttribute("aria-hidden", "true");
+      stat.querySelector("dt").prepend(mark);
     }
-    label.append(row.label);
-    item.append(label, element("span", "breakdown-value", row.value));
-    list.append(item);
+    stats.append(stat);
   }
-  section.append(list);
-  return section;
+  return stats;
 }
 
-function usageLegend(used) {
-  const legend = element("ul", "usage-legend");
-  for (const [swatchClass, label] of [...used.map((series) => [`usage-swatch is-${series.key}`, t(series.labelKey)]), ["usage-swatch is-cost", t("legendCost")]]) {
-    const entry = element("li");
-    const swatch = element("span", swatchClass);
-    swatch.setAttribute("aria-hidden", "true");
-    entry.append(swatch, element("span", "", label));
-    legend.append(entry);
-  }
-  return legend;
-}
-
-// The times used per day as bars stacked by use, and below them, on their own scale and the
-// same days, the day's cost as a line: two measures, so two panels, never one plot with two
-// axes. One hover shows the day in both.
-function usageChart(data, used) {
-  const svgNS = "http://www.w3.org/2000/svg";
+// A bar a day: meals at the bottom, photos on top, a 2px gap of card between them.
+function mealsChart(data) {
   const points = data.daily;
   const count = points.length;
-  const requestsTop = niceCeiling(Math.max(1, ...points.map((point) => point.requests)));
-  const costTop = niceCeiling(Math.max(0.0001, ...points.map((point) => point.cost)));
+  const top = niceCeiling(Math.max(1, ...points.map((point) => mealsOf(point) + photosOf(point))));
   const wrap = element("div", "usage-chart");
-
-  const barsPanel = element("div", "usage-panel");
   const bars = element("div", "usage-bars");
   bars.setAttribute("role", "img");
-  bars.setAttribute("aria-label", t("usageChart", {
-    days: data.days,
-    total: formatNumber(points.reduce((sum, point) => sum + point.requests, 0)),
-    cost: formatCost(points.reduce((sum, point) => sum + point.cost, 0)),
-  }));
+  bars.setAttribute("aria-label", t("usageChart", { days: data.days }));
   const stacks = points.map((point) => {
     const day = element("div", "usage-day");
     const stack = element("div", "usage-stack");
-    stack.style.setProperty("--bar", `${(point.requests / requestsTop) * 100}%`);
-    for (const series of used) {
-      const requests = point.endpoints[series.key].requests;
-      if (!requests) continue;
-      const segment = element("span", `usage-segment is-${series.key}`);
-      segment.style.setProperty("--n", requests);
+    stack.style.setProperty("--bar", `${((mealsOf(point) + photosOf(point)) / top) * 100}%`);
+    for (const [value, swatch] of [[mealsOf(point), "is-meals"], [photosOf(point), "is-photos"]]) {
+      if (!value) continue;
+      const segment = element("span", `usage-segment ${swatch}`);
+      segment.style.setProperty("--n", value);
       stack.append(segment);
     }
     day.append(stack);
     bars.append(day);
     return stack;
   });
-  barsPanel.append(bars, element("span", "visits-scale", formatNumber(requestsTop)));
-
-  const width = 720;
-  const height = 56;
-  const x = (index) => ((index + 0.5) / count) * width;
-  const y = (value) => 4 + (1 - value / costTop) * (height - 8);
-  const costPanel = element("div", "usage-panel usage-cost");
-  const svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  svg.setAttribute("preserveAspectRatio", "none");
-  svg.setAttribute("aria-hidden", "true");
-  const path = document.createElementNS(svgNS, "path");
-  path.setAttribute("class", "usage-cost-line");
-  path.setAttribute("d", smoothPath(points.map((point, index) => [x(index), y(point.cost)])));
-  svg.append(path);
-  const marker = element("span", "visits-marker usage-marker");
-  costPanel.append(svg, element("span", "visits-scale", formatCost(costTop)), marker);
 
   const axis = element("div", "visits-axis");
   const middle = Math.floor((count - 1) / 2);
@@ -881,10 +827,9 @@ function usageChart(data, used) {
     tick.style.left = `${left}%`;
     axis.append(tick);
   }
-  const crosshair = element("span", "usage-crosshair");
   const tooltip = element("div", "visits-tooltip");
   tooltip.setAttribute("role", "status");
-  wrap.append(barsPanel, costPanel, axis, crosshair, tooltip);
+  wrap.append(bars, element("span", "visits-scale", formatNumber(top)), axis, tooltip);
 
   let active = null;
   const show = (index) => {
@@ -893,21 +838,12 @@ function usageChart(data, used) {
     active?.classList.remove("is-active");
     active = stacks[index];
     active.classList.add("is-active");
-    crosshair.style.left = `${left}%`;
-    marker.style.left = `${left}%`;
-    marker.style.top = `${(y(point.cost) / height) * 100}%`;
-    const split = used
-      .filter((series) => point.endpoints[series.key].requests)
-      .map((series) => `${t(series.labelKey)} ${formatNumber(point.endpoints[series.key].requests)}`)
-      .join(" · ");
-    const read = point.inputTokens + point.cacheReadTokens + point.cacheWriteTokens;
+    const meals = mealsOf(point);
+    const photos = photosOf(point);
     tooltip.replaceChildren(
       element("span", "visits-tooltip-day", formatDay(point.day, { weekday: "short", day: "numeric", month: "short" })),
-      element("strong", "", point.requests === 1 ? t("tooltipTime") : t("tooltipTimes", { count: formatNumber(point.requests) })),
-      ...(split ? [element("span", "", split)] : []),
-      ...(point.failures ? [element("span", "", point.failures === 1 ? t("tooltipFailure") : t("tooltipFailures", { count: formatNumber(point.failures) }))] : []),
-      ...(point.requests ? [element("span", "", t("tooltipTokens", { input: formatCompact(read), output: formatCompact(point.outputTokens) }))] : []),
-      element("span", "", t("tooltipCost", { cost: formatCost(point.cost) })),
+      element("strong", "", meals === 1 ? t("tooltipMeal") : t("tooltipMeals", { count: formatNumber(meals) })),
+      element("span", "", photos === 1 ? t("tooltipPhoto") : t("tooltipPhotos", { count: formatNumber(photos) })),
     );
     tooltip.style.left = `${left}%`;
     tooltip.classList.toggle("is-flipped", left > 60);
@@ -929,18 +865,18 @@ function usageChart(data, used) {
   return wrap;
 }
 
-// The same numbers as a table, for screen readers.
-function usageTable(data, used) {
+// Both charts' numbers as a table, for screen readers.
+function usageTable(data) {
   const table = element("table", "visually-hidden");
   const head = element("tr");
-  head.append(element("th", "", t("tableDay")), ...used.map((series) => element("th", "", t(series.labelKey))), element("th", "", t("tableFailures")), element("th", "", t("tableCost")));
+  head.append(element("th", "", t("tableDay")), element("th", "", t("usageMeals")), element("th", "", t("usagePhotos")), element("th", "", t("tableCost")));
   table.append(head);
   for (const point of data.daily) {
     const row = element("tr");
     row.append(
       element("td", "", formatDay(point.day, { dateStyle: "medium" })),
-      ...used.map((series) => element("td", "", formatNumber(point.endpoints[series.key].requests))),
-      element("td", "", formatNumber(point.failures)),
+      element("td", "", formatNumber(mealsOf(point))),
+      element("td", "", formatNumber(photosOf(point))),
       element("td", "", formatCost(point.cost)),
     );
     table.append(row);
@@ -979,8 +915,8 @@ async function updateCloudflare() {
   renderCloudflare(cloudflareData);
 }
 
-// Like the visits: the server calls, the free plan's tightest daily amount, beside their last
-// 30 days, then a card each for the database's reads, writes and size, and what happens at a limit.
+// The server calls, the tightest daily amount, beside their last 30 days, then a card each for
+// the database's reads, writes and size.
 function renderCloudflare(data) {
   cloudflareUpdated.textContent = cloudflareNotice;
 
@@ -988,17 +924,14 @@ function renderCloudflare(data) {
   if (!latest) {
     cloudflareCard.replaceChildren(element("p", "visits-state", data.configured === false ? t("cloudflareTokenHint") : t("noCloudflareData")));
     cloudflareBreakdowns.replaceChildren();
-    cloudflareNote.textContent = "";
     return;
   }
 
   const today = new Date().toISOString().slice(0, 10);
   const calls = element("div", "cloudflare-calls");
   calls.append(
-    element("p", "limit-day", latest.day === today ? t("limitsToday") : formatDay(latest.day, { weekday: "long", day: "numeric", month: "long" })),
-    element("h3", "limit-title", t("serverCalls")),
+    element("h3", "limit-title", latest.day === today ? t("serverCallsToday") : t("serverCallsOn", { day: formatDay(latest.day, { weekday: "short", day: "numeric", month: "short" }) })),
     limitFigure(latest.workerRequests, data.limits.workerRequests, formatNumber, "allowanceDay"),
-    element("p", "limit-hint", t("serverCallsHint")),
   );
   const trend = element("div", "cloudflare-trend");
   trend.append(
@@ -1011,21 +944,20 @@ function renderCloudflare(data) {
   cloudflareCard.replaceChildren(calls, trend);
 
   cloudflareBreakdowns.replaceChildren(
-    limitCard(t("databaseReads"), latest.d1RowsRead, data.limits.d1RowsRead, formatNumber, "allowanceDay", t("readsHint")),
-    limitCard(t("databaseWrites"), latest.d1RowsWritten, data.limits.d1RowsWritten, formatNumber, "allowanceDay", t("writesHint")),
-    limitCard(t("biggestDatabase"), latest.d1LargestBytes, data.limits.d1DatabaseBytes, formatBytes, "allowanceTotal", t("biggestHint", { limit: formatBytes(data.limits.d1DatabaseBytes) })),
+    limitCard(t("databaseReads"), latest.d1RowsRead, data.limits.d1RowsRead, formatNumber, "allowanceDay"),
+    limitCard(t("databaseWrites"), latest.d1RowsWritten, data.limits.d1RowsWritten, formatNumber, "allowanceDay"),
+    limitCard(t("biggestDatabase"), latest.d1LargestBytes, data.limits.d1DatabaseBytes, formatBytes, "allowanceTotal"),
   );
-  cloudflareNote.textContent = t("cloudflareNote", { time: resetTime(), date: formatDay(data.limitsAsOf, { dateStyle: "medium" }) });
 }
 
-function limitCard(title, value, limit, format, allowanceKey, hint) {
+function limitCard(title, value, limit, format, allowanceKey) {
   const card = element("section", "breakdown limit-card");
-  card.append(element("h3", "", title), limitFigure(value, limit, format, allowanceKey), element("p", "limit-hint", hint));
+  card.append(element("h3", "", title), limitFigure(value, limit, format, allowanceKey));
   return card;
 }
 
-// A number against its free amount: the number, a bar filled to the share, and the amount in
-// words. Past 80 % the bar turns the warning colour and says so.
+// A number against its free amount: the number, a bar filled to the share, and the amount.
+// Past 80 % the bar turns the warning colour and says so.
 function limitFigure(value, limit, format, allowanceKey) {
   const share = value === null ? 0 : value / limit;
   const warning = share > 0.8;
@@ -1045,14 +977,6 @@ function limitFigure(value, limit, format, allowanceKey) {
     element("span", "limit-share", [t(allowanceKey, { limit: format(limit) }), percent].filter(Boolean).join(" · ")),
   );
   return figure;
-}
-
-// The free plan's daily amounts start again at midnight UTC, shown in the viewer's own time.
-function resetTime() {
-  const now = new Date();
-  const midnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
-  const german = currentLanguage === "de";
-  return new Intl.DateTimeFormat(german ? "de-DE" : "en-US", { hour: german ? "2-digit" : "numeric", minute: "2-digit" }).format(midnight);
 }
 
 async function load() {
@@ -1679,10 +1603,6 @@ function formatDate(value) {
 
 function formatNumber(value) {
   return new Intl.NumberFormat(currentLanguage === "de" ? "de-DE" : "en-US", { maximumFractionDigits: 1 }).format(value);
-}
-
-function formatCompact(value) {
-  return new Intl.NumberFormat(currentLanguage === "de" ? "de-DE" : "en-US", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
 // US dollars: cents from ten cents up, two significant digits below, since a day's

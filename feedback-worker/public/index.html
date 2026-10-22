@@ -9,7 +9,7 @@
   <link rel="icon" href="https://joinakari.com/assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="https://joinakari.com/assets/fonts/NewYork.woff2" as="font" type="font/woff2" crossorigin>
   <script src="/assets/appearance.js?v=20261020-02"></script>
-  <link rel="stylesheet" href="/assets/admin.css?v=20261022-04">
+  <link rel="stylesheet" href="/assets/admin.css?v=20261022-05">
 </head>
 <body>
   <header class="site-header">
@@ -107,21 +107,15 @@
           </div>
         </div>
 
-        <div class="visits-card usage-card">
-          <dl class="visit-stats" id="usage-stats" aria-live="polite">
-            <div class="visit-stat"><dt data-i18n="statUsedToday">Times used today</dt><dd>–</dd></div>
-            <div class="visit-stat"><dt data-i18n="statCostToday">Cost today</dt><dd>–</dd></div>
-            <div class="visit-stat"><dt data-i18n="statCostMonth">Cost this month</dt><dd>–</dd></div>
-          </dl>
-          <div class="visits-plot usage-plot" id="usage-plot"><p class="visits-state" data-i18n="loadingUsage">Loading AI usage…</p></div>
+        <div class="usage-cards">
+          <div class="visits-card" id="usage-logged" aria-live="polite"><p class="visits-state" data-i18n="loadingUsage">Loading AI usage…</p></div>
+          <div class="visits-card" id="usage-cost" aria-live="polite"></div>
         </div>
-
-        <div class="visit-breakdowns" id="usage-breakdowns"></div>
       </section>
 
       <section class="visits cloudflare" aria-labelledby="cloudflare-title">
         <div class="visits-head">
-          <h2 id="cloudflare-title" data-i18n="cloudflareTitle">Cloudflare free plan</h2>
+          <h2 id="cloudflare-title" data-i18n="cloudflareTitle">Cloudflare</h2>
           <p class="testers-updated" id="cloudflare-updated" aria-live="polite"></p>
         </div>
 
@@ -130,7 +124,6 @@
         </div>
 
         <div class="visit-breakdowns" id="cloudflare-breakdowns"></div>
-        <p class="cloudflare-note" id="cloudflare-note"></p>
       </section>
     </section>
 
@@ -157,6 +150,6 @@
     </section>
   </main>
   <script type="module" src="/assets/mobile-menu.js?v=20261020-01"></script>
-  <script type="module" src="/assets/admin.js?v=20261022-06"></script>
+  <script type="module" src="/assets/admin.js?v=20261022-07"></script>
 </body>
 </html>

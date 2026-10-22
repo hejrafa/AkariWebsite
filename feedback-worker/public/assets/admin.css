@@ -40,11 +40,10 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   --paper: var(--page);
   /* Errors, and a free-plan limit past 80 %. */
   --danger: #ff8979;
-  /* AI usage by endpoint (compose, photo, meal): fixed hues, each stepped for its mode and checked for
-     colour-blind separation on every theme's card. */
+  /* AI usage: meals and photos, fixed hues, each stepped for its mode and checked for colour-blind
+     separation on every theme's card. */
   --series-1: #3987e5;
   --series-2: #d95926;
-  --series-3: #199e70;
   --serif: "Akari New York", "New York", Georgia, serif;
   --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -58,7 +57,6 @@ html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0
   --danger: color-mix(in srgb, #ff8979 52%, var(--ink));
   --series-1: #2a78d6;
   --series-2: #eb6834;
-  --series-3: #1baf7a;
 }
 
 * { box-sizing: border-box; }
@@ -388,7 +386,6 @@ h1 {
 .visits-chart-wrap line, .visits-chart-wrap path { vector-effect: non-scaling-stroke; }
 .visits-grid { stroke: var(--faint); stroke-width: 1; }
 .visits-baseline { stroke: var(--line); stroke-width: 1; }
-.visits-area { fill: url(#visits-fill); }
 .visits-fill-top { stop-color: var(--accent); stop-opacity: 0.18; }
 .visits-fill-bottom { stop-color: var(--accent); stop-opacity: 0; }
 .visits-line { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
@@ -461,50 +458,43 @@ h1 {
 
 /* Dashboard: AI usage ------------------------------------------------------------------------- */
 
-.usage-plot { display: grid; gap: 14px; align-content: start; }
-.usage-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding: 0; color: var(--muted); font-family: var(--sans); font-size: 0.82rem; list-style: none; }
-.usage-legend li { display: inline-flex; align-items: center; gap: 7px; }
+.usage-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.usage-cards .visits-card { margin-top: 0; grid-template-columns: minmax(0, 1fr); align-content: start; gap: 20px; }
+.usage-stats { grid-template-columns: repeat(auto-fit, minmax(120px, max-content)); column-gap: 40px; }
+.usage-stats dt { display: flex; align-items: center; gap: 8px; }
 .usage-swatch { display: inline-block; width: 10px; height: 10px; flex: 0 0 auto; border-radius: 3px; }
-.usage-swatch.is-cost { width: 14px; height: 2px; border-radius: 1px; background: var(--accent); }
-.is-compose { background: var(--series-1); }
-.is-photo { background: var(--series-2); }
-.is-meal { background: var(--series-3); }
-.breakdown-label .usage-swatch { margin-right: 9px; vertical-align: 0.05em; }
-.breakdown-row.is-total { font-weight: 650; }
+.is-meals { background: var(--series-1); }
+.is-photos { background: var(--series-2); }
+.usage-empty { min-height: 160px; }
 
-.usage-chart { position: relative; display: grid; gap: 22px; padding: 18px 0 22px; touch-action: pan-y; }
-.usage-panel { position: relative; }
-.usage-panel .visits-scale { top: 0; }
+/* The same height as the cost line beside it, the day labels inside. */
+.usage-chart { position: relative; display: flex; height: clamp(180px, 20vw, 230px); flex-direction: column; padding: 20px 0 24px; touch-action: pan-y; }
+.usage-chart .visits-scale { top: 20px; }
+.usage-chart .visits-tooltip { top: 24px; }
+.usage-chart.is-hovering .visits-tooltip { opacity: 1; }
 .usage-bars {
   display: flex;
-  height: clamp(130px, 14vw, 170px);
+  min-height: 0;
+  flex: 1;
   align-items: flex-end;
   gap: 2px;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(var(--faint), var(--faint)) top / 100% 1px no-repeat;
 }
 .usage-day { display: flex; height: 100%; min-width: 0; flex: 1; align-items: flex-end; justify-content: center; }
-/* Each day's uses, bottom up, a 2px gap of card between them; the top one has the rounded end. */
+/* Meals at the bottom, photos on top, a 2px gap of card between them; the top one has the rounded end. */
 .usage-stack { display: flex; width: min(100%, 24px); height: var(--bar); flex-direction: column-reverse; gap: 2px; transition: opacity 120ms var(--ease); }
 .usage-segment { min-height: 2px; flex: var(--n) 1 0; }
 .usage-segment:last-child { border-radius: 4px 4px 0 0; }
 .usage-chart.is-hovering .usage-stack:not(.is-active) { opacity: 0.4; }
-.usage-cost { height: 56px; border-bottom: 1px solid var(--line); background: linear-gradient(var(--faint), var(--faint)) top / 100% 1px no-repeat; }
-.usage-cost svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.usage-cost-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.usage-marker { width: 10px; height: 10px; border-width: 2px; }
-.usage-crosshair { position: absolute; top: 18px; bottom: 22px; width: 1px; background: var(--line); opacity: 0; pointer-events: none; }
-.usage-chart .visits-tooltip { top: 22px; }
-.usage-chart.is-hovering :is(.usage-crosshair, .visits-marker, .visits-tooltip) { opacity: 1; }
 
-/* Dashboard: Cloudflare free plan --------------------------------------------------------------- */
+/* Dashboard: Cloudflare ------------------------------------------------------------------------ */
 
 .cloudflare-card { grid-template-columns: minmax(0, 260px) minmax(0, 1fr); }
-.cloudflare-calls { display: grid; gap: 10px; align-content: start; }
+.cloudflare-calls { display: grid; gap: 12px; align-content: start; }
 .cloudflare-trend { display: grid; gap: 12px; align-content: end; min-width: 0; }
-.cloudflare-trend .testers-trend { height: clamp(130px, 14vw, 170px); }
-.limit-day { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 0.9rem; font-weight: 650; }
-.limit-title { margin: 0; font-size: 1.25rem; font-weight: 800; line-height: 1.2; }
+.cloudflare-trend .testers-trend { height: clamp(110px, 12vw, 150px); }
+.limit-day, .limit-title { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 0.9rem; font-weight: 650; }
 .limit-figure { display: grid; gap: 9px; }
 .limit-number { font-size: clamp(2.2rem, 3.6vw, 3rem); font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
 .limit-card { display: grid; gap: 12px; align-content: start; }
@@ -515,9 +505,10 @@ h1 {
 .limit-share { color: var(--muted); font-family: var(--sans); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
 .limit-figure.is-warning .limit-fill { background: var(--danger); }
 .limit-figure.is-warning .limit-share { color: var(--danger); font-weight: 650; }
-.limit-hint { margin: 0; color: var(--muted); font-family: var(--sans); font-size: 0.82rem; line-height: 1.45; }
-.cloudflare-note { max-width: 46em; margin: 16px 0 0; color: var(--muted); font-family: var(--sans); font-size: 0.82rem; line-height: 1.45; }
-.cloudflare-note:empty { display: none; }
+
+@media (max-width: 860px) {
+  .usage-cards { grid-template-columns: minmax(0, 1fr); }
+}
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 
