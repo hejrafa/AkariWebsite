@@ -9,6 +9,8 @@ admin dashboard keeps its own baked copies in `feedback-worker/public/assets/sti
 | --- | --- | --- |
 | `bar-chart.png` | `assets/Bar chart/3D/bar_chart_3d.png` | Dashboard headline |
 | `carrot.png` | `assets/Carrot/3D/carrot_3d.png` | Food inbox headline |
+| `doughnut.png` | `assets/Doughnut/3D/doughnut_3d.png` | The 404 page: in the falling food, and whole again once its zero is eaten |
+| `doughnut-bitten-1.png` … `-3.png` | `doughnut.png` with one, two and three bites, cut by `tools/bite_doughnut.py` | The 404 page's zero, a bite more each tap |
 | `handshake.png` | `assets/Handshake/3D/handshake_3d.png` | Terms headline |
 | `lock.png` | `assets/Locked/3D/locked_3d.png` | Privacy section, privacy headline |
 | `red-heart.png` | `assets/Red heart/3D/red_heart_3d.png` | Pricing, the card under the plans |
