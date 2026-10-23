@@ -99,6 +99,15 @@ for (const row of [...VOCABULARY, ...DRINKS]) {
   ROW_NAMES.set(row.id, { words: [...englishWords, ...[row.displayNameDE ?? "", ...aliases].flatMap(nameWords)], german });
 }
 
+// The name each verified food and whole drink is shown by, in each language: the
+// English name the vocabulary prints, and displayNameDE in German when the row has
+// one. A row's own name is what the app shows for it, never Haiku's wording.
+const ROW_DISPLAY = new Map<string, Record<Language, string>>();
+for (const row of [...VOCABULARY, ...DRINKS]) {
+  const english = "name" in row ? row.name : row.displayName ?? row.ingredient;
+  ROW_DISPLAY.set(row.id, { en: english, de: row.displayNameDE || english });
+}
+
 // The second look at a name the answer left without an id. Names are folded as
 // nameWords folds them, but every word and number stays ("sour cream 24 %" is not
 // sour cream), and match only whole: a name or alias equal to the folded name, or
@@ -431,13 +440,13 @@ async function compose(request: Request, env: Env, ctx: ExecutionContext, device
           role: "user",
           content: [
             ...(photo ? [{ type: "image" as const, source: { type: "base64" as const, media_type: photo.mediaType, data: photo.data } }] : []),
-            { type: "text", text: composeUserText(input.text, input.templates) },
+            { type: "text", text: composeUserText(input.text, input.templates, language) },
           ],
         },
       ],
       output_config: { format: { type: "json_schema", schema: COMPOSE_SCHEMA } },
     });
-    const { answer, dropped, resolved } = readCompose(message, input, language);
+    const { answer, dropped, resolved, renamed } = readCompose(message, input, language);
     // Counts only: never the meal text, the names, the ids or the device id.
     console.log(
       JSON.stringify({
@@ -451,6 +460,7 @@ async function compose(request: Request, env: Env, ctx: ExecutionContext, device
         missing: answer.missing.length,
         dropped,
         resolved,
+        renamed,
         photo: photo !== null,
         confidence: Math.round(answer.confidence * 10) / 10,
         ...scoreboardLog(env, device),
@@ -741,9 +751,14 @@ function readComposeRequest(body: unknown): ComposeRequest | null {
 // copied by mistake (Leek on fennel seed) becomes missing too; a German name is not
 // checked against a row with no German name. Before the missing list is built, a
 // food or part left without an id has a second look: when its name is exactly one
-// row's name or alias it takes that row's id and keeps its own name. Dropped and
-// corrected fields and the names the second look found are counted for the log.
-function readCompose(message: Anthropic.Message, input: ComposeRequest, language: Language): { answer: ComposeAnswer; dropped: number; resolved: number } {
+// row's name or alias it takes that row's id. Then every food or part that stands on
+// a verified food or a whole drink takes that row's name in the request's language,
+// so a German phone never sees Haiku's English "Tahini" for the row called Tahin. A
+// sent template used whole and a template's ingredient keep the names they came
+// with, and a composed dish keeps Haiku's name, as it has no row. Dropped and
+// corrected fields, the names the second look found and the names replaced by a
+// row's are counted for the log.
+function readCompose(message: Anthropic.Message, input: ComposeRequest, language: Language): { answer: ComposeAnswer; dropped: number; resolved: number; renamed: number } {
   const parsed = readJson(message);
   if (!Array.isArray(parsed.foods)) throw new UpstreamFailure("shape");
   let dropped = 0;
@@ -822,6 +837,19 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
     resolved++;
   }
 
+  // The row's own name in the request's language, for every food and part on a row.
+  let renamed = 0;
+  const rename = (item: ComposedPart, sent: Set<string>) => {
+    const names = item.reference && !sent.has(item.reference) ? ROW_DISPLAY.get(item.reference) : undefined;
+    if (!names || item.name === names[language]) return;
+    item.name = names[language];
+    renamed++;
+  };
+  for (const food of foods) {
+    rename(food, templateIds);
+    for (const ingredient of food.ingredients ?? []) rename(ingredient, templateParts);
+  }
+
   // A composed dish is there, not missing, even when a part or another food repeats its name.
   const dishes = new Set(foods.filter((food) => food.ingredients).map((food) => food.name.toLowerCase()));
   const missing: string[] = [];
@@ -833,7 +861,7 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
   let confidence = 0.5;
   if (typeof parsed.confidence === "number" && parsed.confidence >= 0 && parsed.confidence <= 1) confidence = Math.round(parsed.confidence * 100) / 100;
   else dropped++;
-  return { answer: { foods, missing, confidence }, dropped, resolved };
+  return { answer: { foods, missing, confidence }, dropped, resolved, renamed };
 }
 
 // A gram range with low <= estimate <= high, all positive, or null when the model
