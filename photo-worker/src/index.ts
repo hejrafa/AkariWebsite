@@ -101,11 +101,17 @@ for (const row of [...VOCABULARY, ...DRINKS]) {
 
 // The name each verified food and whole drink is shown by, in each language: the
 // English name the vocabulary prints, and displayNameDE in German when the row has
-// one. A row's own name is what the app shows for it, never Haiku's wording.
-const ROW_DISPLAY = new Map<string, Record<Language, string>>();
+// one. Beside each, the words only that language's name has (Vollmilch in Flat White
+// mit Vollmilch, not Flat or White), which tell a name in that language apart.
+const ROW_DISPLAY = new Map<string, { name: Record<Language, string>; own: Record<Language, string[]> }>();
 for (const row of [...VOCABULARY, ...DRINKS]) {
   const english = "name" in row ? row.name : row.displayName ?? row.ingredient;
-  ROW_DISPLAY.set(row.id, { en: english, de: row.displayNameDE || english });
+  const german = row.displayNameDE || english;
+  const [en, de] = [nameWords(english), nameWords(german)];
+  ROW_DISPLAY.set(row.id, {
+    name: { en: english, de: german },
+    own: { en: en.filter((word) => !de.includes(word)), de: de.filter((word) => !en.includes(word)) },
+  });
 }
 
 // The second look at a name the answer left without an id. Names are folded as
@@ -144,10 +150,10 @@ for (const row of [...VOCABULARY, ...DRINKS]) {
   }
 }
 
-// The one row a name is the name of, or null when none or several are. The name is
-// tried whole and without its leading fillers, so "mixed olives" finds Olives and a
-// row whose own alias starts with a filler ("plain bread roll") still finds itself.
-function lookUp(name: string): string | null {
+// The rows a name is the name of. The name is tried whole and without its leading
+// fillers, so "mixed olives" finds Olives and a row whose own alias starts with a
+// filler ("plain bread roll") still finds itself.
+function rowsNamed(name: string): Set<string> {
   const words = lookupWords(name);
   let first = 0;
   while (first < words.length && FILLERS.has(words[first])) first++;
@@ -157,6 +163,12 @@ function lookUp(name: string): string | null {
     for (const key of [folded, ...singulars(folded)]) ROWS_BY_NAME.get(key)?.forEach((id) => rows.add(id));
     ROWS_BY_SINGULAR.get(folded)?.forEach((id) => rows.add(id));
   }
+  return rows;
+}
+
+// The one row a name is the name of, or null when none or several are.
+function lookUp(name: string): string | null {
+  const rows = rowsNamed(name);
   return rows.size === 1 ? [...rows][0] : null;
 }
 
@@ -751,11 +763,15 @@ function readComposeRequest(body: unknown): ComposeRequest | null {
 // copied by mistake (Leek on fennel seed) becomes missing too; a German name is not
 // checked against a row with no German name. Before the missing list is built, a
 // food or part left without an id has a second look: when its name is exactly one
-// row's name or alias it takes that row's id. Then every food or part that stands on
-// a verified food or a whole drink takes that row's name in the request's language,
-// so a German phone never sees Haiku's English "Tahini" for the row called Tahin. A
-// sent template used whole and a template's ingredient keep the names they came
-// with, and a composed dish keeps Haiku's name, as it has no row. Dropped and
+// row's name or alias it takes that row's id. Then a food or part that stands on a
+// verified food or a whole drink takes that row's name in the request's language
+// when its own name is in the other language, agreeing with words only the row's
+// other-language name has, so a German phone never sees Haiku's English "Tahini" for
+// the row called Tahin; or when it is free wording, none of the row's names. A name
+// the row knows that is not in the other language, such as edamame, roti or Flat
+// white, is kept as given. A sent template used whole and a template's ingredient
+// keep the names they came with, and a composed dish keeps Haiku's name, as it has
+// no row. Dropped and
 // corrected fields, the names the second look found and the names replaced by a
 // row's are counted for the log.
 function readCompose(message: Anthropic.Message, input: ComposeRequest, language: Language): { answer: ComposeAnswer; dropped: number; resolved: number; renamed: number } {
@@ -837,12 +853,16 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
     resolved++;
   }
 
-  // The row's own name in the request's language, for every food and part on a row.
+  // The row's own name in the request's language, for a food or part on a row whose
+  // name is in the other language or is none of the row's names.
   let renamed = 0;
+  const other: Language = language === "de" ? "en" : "de";
   const rename = (item: ComposedPart, sent: Set<string>) => {
-    const names = item.reference && !sent.has(item.reference) ? ROW_DISPLAY.get(item.reference) : undefined;
-    if (!names || item.name === names[language]) return;
-    item.name = names[language];
+    const row = item.reference && !sent.has(item.reference) ? ROW_DISPLAY.get(item.reference) : undefined;
+    if (!row || item.name === row.name[language]) return;
+    const otherLanguage = namesAgree(nameWords(item.name), row.own[other]);
+    if (!otherLanguage && rowsNamed(item.name).has(item.reference!)) return;
+    item.name = row.name[language];
     renamed++;
   };
   for (const food of foods) {
