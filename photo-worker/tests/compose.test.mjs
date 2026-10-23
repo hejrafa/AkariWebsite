@@ -560,6 +560,18 @@ test("the rules say a glass is millilitres, not a count", () => {
   assert.match(composeRulesText(vocabulary.entries), /Grams are never the count of glasses, cups or pieces: a glass or a cup of a drink\n  is its millilitres, 250 when the person gives no size\./);
 });
 
+test("the rules carry the portion reference weights, which the person's amounts and a template's override", () => {
+  const rules = composeRulesText(vocabulary.entries);
+  assert.match(rules, /When the person gives no amount, lean on these reference weights/);
+  assert.match(rules, /The person's own\s+amounts and a template's always win over them\./);
+  // One line per household unit, the table between the typical amounts and the next rule.
+  const table = rules.slice(rules.indexOf("Typical amounts"), rules.indexOf("Never state calories"));
+  for (const line of ["slice of bread → 45 g", "chicken breast → 150 to 200 g", "bowl of soup → 350 ml", "cereal → 60 g with 150 ml milk", "whole pizza → 500 g", "ketchup → 20 g"]) {
+    assert.match(table, new RegExp(`\n {4}${line}\n`), line);
+  }
+  assert.equal(table.match(/\n {4}[^\n]+ → [^\n]+/g).length, 33);
+});
+
 test("a short name or a German compound keeps its reference", async () => {
   // "Ei" has no word of three letters to compare; "Sahne" ends "Schlagsahne" and
   // "Brot" ends "Weizenbrot", the way German compounds name a food.

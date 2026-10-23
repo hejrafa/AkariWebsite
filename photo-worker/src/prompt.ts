@@ -2,7 +2,7 @@
 // PROMPT_VERSION whenever a text or a schema changes; the worker returns it in the
 // X-Akari-Prompt header so the app can tell answers from different prompts apart.
 
-export const PROMPT_VERSION = "2026-10-23.1";
+export const PROMPT_VERSION = "2026-10-23.2";
 
 export type Language = "en" | "de";
 
@@ -372,6 +372,42 @@ Rules:
   250 g, a drink 150 to 500 ml. Keep the person's own amounts when they gave any.
   Grams are never the count of glasses, cups or pieces: a glass or a cup of a drink
   is its millilitres, 250 when the person gives no size.
+- When the person gives no amount, lean on these reference weights, starting
+  points for one person, one per line as household unit → grams. The person's own
+  amounts and a template's always win over them.
+    slice of bread → 45 g
+    bread roll → 60 g
+    pretzel → 80 g
+    egg → 55 g
+    banana → 120 g
+    apple → 180 g
+    orange → 150 g
+    chicken breast → 150 to 200 g
+    steak → 200 g
+    schnitzel → 180 g
+    sausage → 100 g
+    fish fillet → 150 g
+    cooked pasta on a plate → 250 g
+    cooked rice → 180 g
+    boiled potatoes → 200 g
+    fries → 150 g
+    mashed potatoes → 200 g
+    side salad → 80 g
+    cooked vegetables → 150 g
+    bowl of soup → 350 ml
+    cereal → 60 g with 150 ml milk
+    cup of yogurt → 150 g
+    slice of cheese → 25 g
+    butter on bread → 10 g
+    spoon of oil → 10 g
+    spoon of jam or honey → 15 g
+    handful of nuts → 30 g
+    slice of pizza → 120 g
+    whole pizza → 500 g
+    burger → 220 g
+    döner → 350 g
+    sauce or dressing → 30 g
+    ketchup → 20 g
 - Never state calories or nutrients. Never add a food, a side or a drink that is
   neither in the text nor visible in the photo.
 - Packaged products are not composed. When the text names only a branded product,
