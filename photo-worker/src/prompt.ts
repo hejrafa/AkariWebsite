@@ -2,7 +2,7 @@
 // PROMPT_VERSION whenever a text or a schema changes; the worker returns it in the
 // X-Akari-Prompt header so the app can tell answers from different prompts apart.
 
-export const PROMPT_VERSION = "2026-10-23.2";
+export const PROMPT_VERSION = "2026-10-23.3";
 
 export type Language = "en" | "de";
 
@@ -374,7 +374,10 @@ Rules:
   is its millilitres, 250 when the person gives no size.
 - When the person gives no amount, lean on these reference weights, starting
   points for one person, one per line as household unit → grams. The person's own
-  amounts and a template's always win over them.
+  amounts and a template's always win over them. The table never adds a food: a
+  meal named only by its occasion, such as "my breakfast" or "lunch at work",
+  has no foods to compose and is answered as that one food, reference null,
+  missing.
     slice of bread → 45 g
     bread roll → 60 g
     pretzel → 80 g
