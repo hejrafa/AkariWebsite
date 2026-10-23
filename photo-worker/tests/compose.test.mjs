@@ -699,10 +699,13 @@ test("a German request gets a verified row's German name for an English name, an
     // Misopaste is an alias of the Miso row since 2026-10-23, found by the second look and kept.
     { name: "Misopaste", reference: "ciqual:20916", grams: 15 },
   ]);
-  assert.deepEqual(body.missing, ["Sriracha-Soße"]);
+  // Sriracha-Soße is an alias of the chili sauce row since 2026-10-24: found and kept.
+  assert.deepEqual(body.missing, []);
+  assert.equal(body.foods[1].name, "Sriracha-Soße");
+  assert.equal(body.foods[1].reference, "usda:2709735");
   assert.equal(body.foods[2].name, "Edamame");
   const line = JSON.parse(lines.find((line) => line.includes('"compose":"ok"')));
-  assert.equal(line.resolved, 2);
+  assert.equal(line.resolved, 3);
   assert.equal(line.renamed, 4);
 });
 
