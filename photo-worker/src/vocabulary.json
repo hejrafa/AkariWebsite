@@ -2,7 +2,7 @@
  "source": {
   "repo": "hejrafa/AkariFoodIndex",
   "path": "verified-foods.json",
-  "commit": "808c9b3fe74249208300de281ab91fd0118be212",
+  "commit": "1776cc06b02e6c360216fc9e7d62cade424ba8bc",
   "policy": "curated-reference-foods-v7"
  },
  "entries": [
@@ -5390,6 +5390,69 @@
     "Rindfleisch, gekocht",
     "gekochtes Rindfleisch",
     "Suppenfleisch"
+   ]
+  },
+  {
+   "id": "ciqual:20916",
+   "ingredient": "Miso",
+   "displayName": "Miso",
+   "displayNameDE": "Miso",
+   "searchAliases": [
+    "miso paste",
+    "Misopaste",
+    "soybean paste",
+    "Sojabohnenpaste",
+    "white miso",
+    "red miso",
+    "heller Miso",
+    "dunkler Miso"
+   ]
+  },
+  {
+   "id": "cofid:13-519",
+   "ingredient": "Cherry tomatoes",
+   "displayName": "Cherry tomatoes",
+   "displayNameDE": "Kirschtomaten",
+   "searchAliases": [
+    "cherry tomato",
+    "cherry tomatoes",
+    "cocktail tomatoes",
+    "grape tomatoes",
+    "Kirschtomate",
+    "Kirschtomaten",
+    "Cherrytomaten",
+    "Cocktailtomaten",
+    "Datteltomaten"
+   ]
+  },
+  {
+   "id": "cofid:13-521",
+   "ingredient": "Baby spinach",
+   "displayName": "Baby spinach",
+   "displayNameDE": "Babyspinat",
+   "searchAliases": [
+    "baby spinach",
+    "baby spinach leaves",
+    "Babyspinat",
+    "junger Spinat",
+    "Baby-Spinat",
+    "Spinatsalat"
+   ]
+  },
+  {
+   "id": "usda:2709735",
+   "ingredient": "Chili sauce",
+   "displayName": "Chili sauce",
+   "displayNameDE": "Chilisauce",
+   "searchAliases": [
+    "chili sauce",
+    "hot sauce",
+    "sriracha",
+    "sriracha sauce",
+    "Chilisauce",
+    "Chilisoße",
+    "scharfe Sauce",
+    "Sriracha"
    ]
   }
  ],
