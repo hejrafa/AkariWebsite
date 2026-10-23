@@ -2,7 +2,7 @@
  "source": {
   "repo": "hejrafa/AkariFoodIndex",
   "path": "verified-foods.json",
-  "commit": "1776cc06b02e6c360216fc9e7d62cade424ba8bc",
+  "commit": "c0b8815b735001ce9e6ff7a61621d1b151ddf937",
   "policy": "curated-reference-foods-v7"
  },
  "entries": [
@@ -1051,7 +1051,13 @@
     "lasagne sheets",
     "lasagna sheets",
     "Lasagneplatten",
-    "Nudelplatten"
+    "Nudelplatten",
+    "pasta",
+    "Pasta",
+    "noodles",
+    "noodle",
+    "Nudeln",
+    "Pasta, gekocht"
    ]
   },
   {
@@ -4174,7 +4180,10 @@
     "turkey slices",
     "deli turkey",
     "Putenaufschnitt",
-    "Putenbrustaufschnitt"
+    "Putenbrustaufschnitt",
+    "turkey",
+    "sliced turkey",
+    "Pute"
    ]
   },
   {
@@ -5452,7 +5461,10 @@
     "Chilisauce",
     "Chilisoße",
     "scharfe Sauce",
-    "Sriracha"
+    "Sriracha",
+    "Sriracha-Soße",
+    "Sriracha-Sauce",
+    "Srirachasauce"
    ]
   }
  ],
