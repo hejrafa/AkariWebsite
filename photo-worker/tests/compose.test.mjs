@@ -230,7 +230,7 @@ test("a template id is accepted as a whole reference, and a dish with parts is c
   assert.deepEqual(body.missing, []);
 });
 
-test("grams are clamped to 1 to 2000", async () => {
+test("grams are clamped to 1 to 2000, and left-out grams fall back to a plain portion", async () => {
   const answer = structuredClone(goodSushi);
   answer.foods[0].grams = 4800;
   answer.foods[0].ingredients[3].grams = 0.2;
@@ -240,8 +240,18 @@ test("grams are clamped to 1 to 2000", async () => {
   const body = await response.json();
   assert.equal(body.foods[0].grams, 2000);
   assert.equal(body.foods[0].ingredients[3].grams, 1);
-  assert.equal(body.foods[1].grams, 1);
+  assert.equal(body.foods[1].grams, 100, "no usable amount means a plain 100 g portion, never 1 g");
   assert.equal(body.foods[3].grams, 2000);
+});
+
+test("a food with no grams gets 100 g and a whole drink its own serving", async () => {
+  const answer = structuredClone(goodSushi);
+  delete answer.foods[1].grams;
+  answer.foods.push({ name: "Coffee, black", role: "drink", reference: "cafe:generic:coffee-black", grams: null, ingredients: [] });
+  const { response } = await run(compose(), {}, message(answer));
+  const body = await response.json();
+  assert.equal(body.foods[1].grams, 100);
+  assert.equal(body.foods[body.foods.length - 1].grams, 250);
 });
 
 test("at most 12 foods and 15 ingredients each; a side or a drink has no parts", async () => {

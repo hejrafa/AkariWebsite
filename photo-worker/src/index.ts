@@ -58,6 +58,9 @@ const MAX_GRAMS = 2000;
 const VOCABULARY: VocabularyEntry[] = vocabulary.entries;
 // Whole drinks are optional: the file has them once the app publishes some.
 const DRINKS: DrinkEntry[] = (vocabulary as { drinks?: DrinkEntry[] }).drinks ?? [];
+// A portion for a food whose grams the answer left out, and a drink's own serving.
+const FALLBACK_GRAMS = 100;
+const DRINK_SERVINGS = new Map(DRINKS.filter((d) => d.servingMilliliters).map((d) => [d.id, d.servingMilliliters as number]));
 const VERIFIED = new Set([...VOCABULARY, ...DRINKS].map((entry) => entry.id));
 // Built once per isolate: the rules and the whole vocabulary, the cached prefix.
 const COMPOSE_RULES = composeRulesText(VOCABULARY, DRINKS);
@@ -804,9 +807,14 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
       reference = null;
       dropped++;
     }
-    const stated = typeof raw.grams === "number" && Number.isFinite(raw.grams) ? raw.grams : MIN_GRAMS;
+    // Grams Haiku left out, or gave as nothing, fall back to a plain portion
+    // instead of 1 g: a whole drink's serving, else 100 g. A stated amount is
+    // clamped to 1 to 2000.
+    const given = typeof raw.grams === "number" && Number.isFinite(raw.grams) && raw.grams > 0;
+    const fallback = (reference && DRINK_SERVINGS.get(reference)) || FALLBACK_GRAMS;
+    const stated = given ? (raw.grams as number) : fallback;
     const grams = Math.round(Math.min(MAX_GRAMS, Math.max(MIN_GRAMS, stated)) * 10) / 10;
-    if (stated !== raw.grams || stated < MIN_GRAMS || stated > MAX_GRAMS) dropped++;
+    if (!given || stated > MAX_GRAMS) dropped++;
     const out: ComposedPart = { name, reference, grams };
     if (reference === null) out.missing = true;
     return out;
