@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Takes bites out of the Fluent doughnut for the 404 page's zero.
 
-Reads assets/stickers/doughnut.png (Fluent Emoji's 3D doughnut, unchanged) and writes
+Reads site/assets/stickers/doughnut.png (Fluent Emoji's 3D doughnut, unchanged) and writes
 doughnut-bitten-1.png, -2 and -3 beside it, each with one more bite than the last. A bite is a round
 mouthful with tooth marks along its rim, and where it cuts in, the dough shows. tools/bake_die_cuts.py then
 bakes them like any other sticker, so the die-cut edge follows the bites.
 
-The page knows where each bite is, to throw its crumbs from there: doughnutBites in legal.js holds BITES
+The page knows where each bite is, to throw its crumbs from there: doughnutBites in not-found.js holds BITES
 below as fractions of the 256px picture. Change both together.
 
 Usage: python3 tools/bite_doughnut.py     Needs Pillow (pip install pillow).
@@ -17,7 +17,7 @@ from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
-STICKERS = Path(__file__).resolve().parent.parent / "assets" / "stickers"
+STICKERS = Path(__file__).resolve().parent.parent / "site" / "assets" / "stickers"
 SIZE = 256
 SUPER = 4  # the bites are drawn this many times larger, then scaled down, for smooth edges
 
@@ -82,7 +82,7 @@ def main():
     for count in range(1, len(BITES) + 1):
         target = STICKERS / f"doughnut-bitten-{count}.png"
         take_bites(doughnut, count).save(target, optimize=True)
-        print(target.relative_to(STICKERS.parent.parent))
+        print(target.relative_to(STICKERS.parents[2]))
 
 
 if __name__ == "__main__":

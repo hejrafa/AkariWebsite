@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Exports the plain app icon (the logo on black, the app's Plain theme in dark) for search and sharing.
 
-Writes into assets/icons/:
+Writes into site/assets/icons/:
 - icon-1024.png, icon-512.png, icon-192.png: the icon as iOS draws it, rounded, with transparent corners
   (the web app manifest's "any" icons; the 512 is also the logo in the page's structured data);
 - apple-touch-icon-180.png and icon-48.png: opaque squares, for iOS to round itself and for Google's
   result favicon, which it crops on its own;
 - icon-maskable-512.png: an opaque square whose mark stays inside the central 80 % circle.
-The sharing card, assets/social.png, is drawn by tools/export_logos.py from the logo.
+The sharing card, site/assets/social.png, is drawn by tools/export_logos.py from the logo.
 
 Each size is rendered by Icon Composer's ictool from the app's AppIcon.icon, Dark rendition, exactly
 as the app's Scripts/export_welcome_assets.sh renders icons, then matched to sRGB with sips.
@@ -91,7 +91,7 @@ def main() -> int:
     if not document.exists():
         print(f"No {document}", file=sys.stderr)
         return 1
-    icons = ROOT / "assets" / "icons"
+    icons = ROOT / "site" / "assets" / "icons"
     icons.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)

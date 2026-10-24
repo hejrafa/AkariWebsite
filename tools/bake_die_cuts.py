@@ -22,7 +22,7 @@ Each output is the input on a transparent margin of SIDE px left and right, TOP 
 (.cut__image) reads the same numbers to place the inner piece exactly where the unbaked one was.
 
 Usage: python3 tools/bake_die_cuts.py [--root DIR] [--jobs N] [--stickers NAME ... --out DIR]
-Reads and writes under DIR, the repository by default; the deploy workflow passes its staged site/.
+Reads and writes under DIR, the repository's site/ by default; the deploy workflow passes its staged copy.
 With --stickers, bakes only those Fluent stickers, into <out>/<theme>/: the admin dashboard is served
 by the feedback worker, which keeps its own committed copies (pnpm bake in feedback-worker/).
 An output newer than its input and than this script is left alone, so a second run does nothing.
@@ -166,7 +166,7 @@ def run(job) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=SCRIPT.parent.parent, help="folder holding assets/ (default: the repository)")
+    parser.add_argument("--root", type=Path, default=SCRIPT.parent.parent / "site", help="folder holding assets/ (default: the repository's site/)")
     parser.add_argument("--jobs", type=int, default=os.cpu_count() or 1, help="images baked in parallel")
     parser.add_argument("--stickers", nargs="+", metavar="NAME", help="bake only these assets/stickers/<name>.png")
     parser.add_argument("--out", type=Path, help="with --stickers: the folder their theme folders go in")

@@ -18,8 +18,8 @@ that can't be found stops the build rather than leaving an English card on a Ger
 
 Usage:
   python3 tools/language_pages.py build --root DIR   writes the German pages into DIR, a staged copy of the site
-                                                     (the deploy workflow passes its site/)
-  python3 tools/language_pages.py serve [PORT]       serves the repository on 127.0.0.1:PORT (8000 by default),
+                                                     (the deploy workflow passes its staged copy)
+  python3 tools/language_pages.py serve [PORT]       serves site/ on 127.0.0.1:PORT (8000 by default),
                                                      making each German page from its English one as it's asked for
 No dependencies.
 """
@@ -34,7 +34,7 @@ from functools import partial
 from pathlib import Path
 
 SITE = "https://joinakari.com"
-REPOSITORY = Path(__file__).resolve().parent.parent
+SITE_ROOT = Path(__file__).resolve().parent.parent / "site"
 
 # Each English address and its German one. script.js and legal.js keep the same table (languagePaths).
 PAGES = {
@@ -217,7 +217,7 @@ class PreviewHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             return True
         if kind == "page":
-            body = german_page(REPOSITORY, value).encode("utf-8")
+            body = german_page(SITE_ROOT, value).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -238,7 +238,7 @@ class PreviewHandler(http.server.SimpleHTTPRequestHandler):
 
     def send_error(self, code, message=None, explain=None):
         # A missing address gets the site's own 404.html with a 404, as on GitHub Pages.
-        not_found = REPOSITORY / "404.html"
+        not_found = SITE_ROOT / "404.html"
         if code != 404 or not not_found.is_file():
             super().send_error(code, message, explain)
             return
@@ -253,7 +253,7 @@ class PreviewHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def serve(port):
-    handler = partial(PreviewHandler, directory=str(REPOSITORY))
+    handler = partial(PreviewHandler, directory=str(SITE_ROOT))
     try:
         server = http.server.ThreadingHTTPServer(("127.0.0.1", port), handler)
     except OSError as error:

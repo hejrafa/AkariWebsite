@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en" data-theme="forest" data-mode="dark" data-language="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0c271c" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Akari privacy policy: how Akari handles Apple Health data, food reports and the meals you log." />
+    <meta property="og:title" content="Akari: Privacy Policy" />
+    <meta property="og:description" content="Akari privacy policy: how Akari handles Apple Health data, food reports and the meals you log." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://joinakari.com/privacy/" />
+    <meta property="og:site_name" content="Akari" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="de_DE" />
+    <meta property="og:image" content="https://joinakari.com/assets/social.png?v=4" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Akari logo on white" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Akari: Privacy Policy" />
+    <meta name="twitter:description" content="Akari privacy policy: how Akari handles Apple Health data, food reports and the meals you log." />
+    <meta name="twitter:image" content="https://joinakari.com/assets/social.png?v=4" />
+    <meta name="twitter:image:alt" content="The Akari logo on white" />
+    <link rel="canonical" href="https://joinakari.com/privacy/" />
+    <link rel="alternate" hreflang="en" href="https://joinakari.com/privacy/" />
+    <link rel="alternate" hreflang="de" href="https://joinakari.com/de/datenschutz/" />
+    <link rel="alternate" hreflang="x-default" href="https://joinakari.com/privacy/" />
+    <link rel="icon" href="/assets/favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="icon" href="/assets/icons/icon-48.png?v=2" sizes="48x48" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-180.png?v=2" />
+    <script>
+      (() => {
+        const themes = ["meadow", "forest", "coast", "canyon", "plain"];
+        const modes = ["light", "dark"];
+        const languages = ["en", "de"];
+        const params = new URLSearchParams(window.location.search);
+        // Each language has its own address (tools/language_pages.py), so the page's <html lang> is its
+        // language. An old ?lang= link, and a visitor who reads German (by choice, or by the browser's
+        // language) arriving at an English address, go on to the page's other address, its hreflang link.
+        const pageLanguage = document.documentElement.lang === "de" ? "de" : "en";
+        const requestedLanguage = params.get("lang");
+        let savedLanguage = null;
+        try {
+          savedLanguage = localStorage.getItem("akari-language");
+        } catch (error) {}
+        const systemLanguage = (navigator.languages?.[0] || navigator.language || "en").split("-")[0].toLowerCase();
+        const preferredLanguage = [savedLanguage, systemLanguage].find((language) => languages.includes(language)) || "en";
+        const language = languages.includes(requestedLanguage)
+          ? requestedLanguage
+          : pageLanguage === "en" ? preferredLanguage : pageLanguage;
+        const address = new URL(window.location.href);
+        address.searchParams.delete("lang");
+        const otherPage = document.querySelector(`link[rel="alternate"][hreflang="${language}"]`);
+        if (language !== pageLanguage && otherPage) {
+          address.pathname = new URL(otherPage.href).pathname;
+          window.location.replace(address);
+        } else if (requestedLanguage !== null) {
+          window.history.replaceState(null, "", address);
+        }
+        document.documentElement.dataset.language = pageLanguage;
+
+        try {
+          const savedTheme = localStorage.getItem("akari-theme");
+          const savedMode = localStorage.getItem("akari-mode");
+          const theme = params.get("theme") || savedTheme || "forest";
+          const mode = params.get("mode") || savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.dataset.theme = themes.includes(theme) ? theme : "forest";
+          document.documentElement.dataset.mode = modes.includes(mode) ? mode : "dark";
+        } catch (error) {
+          document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="/legal.css?v=20261024-01" />
+    <script src="/legal.js?v=20261022-03" defer></script>
+    <script src="/visit.js?v=20261010-01" defer></script>
+    <title>Akari: Privacy Policy</title>
+  </head>
+  <body data-legal-page="privacy">
+    <header class="legal-site-header" aria-label="Akari website header" data-i18n-aria-label="headerLabel">
+      <div class="legal-site-header__inner">
+        <div class="header-controls" id="header-controls-panel">
+          <div class="header-control-section">
+            <span class="mobile-control-label" data-i18n="mobileLanguageLabel">Language</span>
+            <div class="language-switch" role="group" aria-label="Choose a language" data-i18n-aria-label="languageGroupLabel">
+              <button class="language-button" type="button" data-language-target="en" lang="en" aria-label="View in English" data-i18n-aria-label="languageEnglishLabel" aria-pressed="true">EN</button>
+              <button class="language-button" type="button" data-language-target="de" lang="de" aria-label="View in German" data-i18n-aria-label="languageGermanLabel" aria-pressed="false">DE</button>
+            </div>
+          </div>
+
+          <div class="header-control-section">
+            <span class="mobile-control-label" data-i18n="mobileAppearanceLabel">Appearance</span>
+            <span class="mobile-theme-name" aria-hidden="true"></span>
+            <div class="appearance-controls" role="group" aria-label="Choose page appearance" data-i18n-aria-label="appearanceLabel">
+              <div class="theme-controls" role="group" aria-label="Choose a color theme" data-i18n-aria-label="themeGroupLabel">
+                <button class="theme-dot" type="button" data-theme-target="meadow" aria-label="Wasserkuppe" data-i18n-aria-label="themeMeadowLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Shiratani" data-i18n-aria-label="themeForestLabel" aria-pressed="true"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Loch Tay" data-i18n-aria-label="themeCoastLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="Green River Overlook" data-i18n-aria-label="themeCanyonLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="plain" aria-label="Plain" data-i18n-aria-label="themePlainLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+              </div>
+              <div class="mode-controls">
+                <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" data-i18n-aria-label="lightModeLabel" aria-pressed="false"><span class="mode-icon" aria-hidden="true"></span></button>
+                <button class="mode-button" type="button" data-mode-target="dark" aria-label="Use dark appearance" data-i18n-aria-label="darkModeLabel" aria-pressed="true"><span class="mode-icon" aria-hidden="true"></span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a class="legal-brand" href="/" aria-label="Akari home" data-i18n-aria-label="homeLabel">
+          <img src="/assets/logo/akari-logo-forest-dark.svg?v=3" alt="Akari" width="89" height="50" />
+        </a>
+        <button class="mobile-menu-toggle" type="button" aria-controls="header-controls-panel" aria-expanded="false" aria-label="Language and appearance settings" data-i18n-aria-label="mobileMenuLabel">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16" />
+            <path d="M4 12h16" />
+            <path d="M4 17h16" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="legal-main">
+      <div class="legal-hero">
+        <header class="legal-header">
+          <p class="legal-eyebrow" data-i18n="privacyLabel">Privacy Policy</p>
+          <h1><span data-i18n="title">Privacy, without the fine-print fog.</span> <button class="legal-headline-emoji" type="button" aria-label="Play with the lock sticker" data-i18n-aria-label="emojiLabel"><span class="cut"><img class="cut__image" data-sticker="stickers/lock" alt="" width="256" height="256" /></span></button></h1>
+          <p class="legal-intro" data-i18n="intro">Akari is built to help you understand your health without turning it into someone else’s business.</p>
+          <p class="legal-updated" data-i18n="updated">Effective October 21, 2026</p>
+        </header>
+        <svg class="torn-edge" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+          <path class="torn-edge__fringe" d="M0,80 L0,61.5 L13,65.9 L24,61.3 L37,57.7 L49,61.8 L65,56.0 L75,55.6 L90,61.2 L97,63.9 L114,60.0 L128,54.7 L134,58.2 L141,54.6 L150,52.7 L161,56.5 L177,56.8 L191,56.2 L205,55.3 L214,60.4 L232,58.3 L247,52.6 L255,52.1 L262,56.6 L273,57.1 L284,57.9 L300,47.8 L308,56.7 L320,57.0 L331,47.6 L344,54.3 L354,47.1 L364,55.5 L379,46.6 L388,46.2 L394,52.9 L403,50.3 L414,46.3 L429,45.2 L442,44.6 L453,45.3 L463,52.6 L478,45.4 L495,44.0 L506,50.1 L519,42.1 L537,42.7 L546,48.0 L556,43.0 L563,40.7 L576,41.8 L589,42.7 L601,48.2 L613,44.0 L629,39.6 L637,46.6 L653,39.6 L661,44.2 L678,38.2 L696,44.6 L709,39.6 L716,35.5 L734,37.0 L748,36.7 L764,39.6 L774,35.1 L788,33.6 L797,38.2 L813,38.3 L823,41.0 L831,31.8 L840,35.8 L847,32.9 L857,36.5 L865,34.2 L882,39.9 L896,36.5 L909,30.6 L915,29.2 L932,35.5 L949,28.2 L963,32.4 L978,30.3 L996,27.3 L1008,33.6 L1025,33.0 L1040,33.2 L1057,28.2 L1071,33.3 L1087,27.9 L1103,31.9 L1116,29.2 L1126,28.4 L1140,23.0 L1153,31.7 L1170,28.5 L1180,28.3 L1193,24.9 L1209,20.9 L1224,19.9 L1238,24.0 L1246,25.9 L1258,24.7 L1275,20.6 L1282,20.9 L1296,19.4 L1304,26.2 L1318,21.2 L1334,19.5 L1348,17.8 L1360,23.5 L1377,23.7 L1387,20.4 L1397,15.7 L1409,22.3 L1425,20.6 L1440,15.8 L1440,80 Z" />
+          <path class="torn-edge__paper" d="M0,90 L0,66.7 L11,67.1 L20,67.8 L33,67.9 L43,70.1 L61,66.8 L68,63.6 L84,63.2 L99,66.5 L109,67.7 L115,62.9 L126,61.8 L142,62.8 L150,61.2 L164,63.6 L177,64.7 L193,66.3 L207,60.6 L219,60.1 L225,61.9 L239,59.4 L249,60.3 L263,61.1 L276,62.3 L287,62.3 L304,56.8 L321,60.7 L329,58.6 L342,61.4 L353,58.7 L369,59.8 L387,56.9 L400,54.7 L415,58.5 L429,57.4 L437,58.4 L455,58.4 L468,56.7 L477,57.3 L494,52.9 L501,53.3 L513,55.2 L525,49.7 L541,49.4 L556,49.7 L566,53.7 L574,49.0 L586,52.6 L602,51.9 L620,50.0 L637,46.6 L646,49.5 L655,50.6 L669,48.7 L685,48.5 L695,46.9 L711,50.1 L720,49.5 L737,46.6 L750,44.0 L762,45.7 L776,42.0 L793,44.9 L804,46.5 L817,44.0 L831,40.6 L844,42.6 L861,45.7 L870,42.2 L878,41.7 L894,44.5 L905,40.1 L914,41.9 L931,38.0 L946,36.7 L954,37.9 L969,38.2 L979,39.9 L986,40.5 L994,38.7 L1003,36.2 L1015,37.5 L1026,37.1 L1038,34.9 L1046,37.9 L1060,36.8 L1076,36.9 L1093,33.7 L1107,37.3 L1124,33.4 L1134,37.3 L1143,37.6 L1159,31.0 L1168,34.9 L1177,30.2 L1193,32.0 L1209,29.4 L1220,33.0 L1226,29.5 L1240,34.0 L1258,27.9 L1270,32.0 L1282,31.1 L1290,26.6 L1297,26.1 L1310,29.1 L1323,26.1 L1331,26.3 L1347,31.3 L1364,24.5 L1371,30.3 L1382,28.6 L1392,26.2 L1405,25.6 L1418,22.3 L1432,27.6 L1440,24.7 L1440,90 Z" />
+        </svg>
+      </div>
+
+      <div class="legal-content">
+        <section class="legal-section legal-section--panel">
+          <h2 data-i18n="shortTitle">The short version</h2>
+          <ul>
+            <li data-i18n="shortAccount">Akari does not require an Akari account.</li>
+            <li data-i18n="shortDevice">Your health information is processed on your iPhone and is not used for advertising. Meals you log are the one exception, explained below.</li>
+            <li data-i18n="shortSale">Akari does not sell your personal or health information.</li>
+            <li data-i18n="shortChoice">You choose which health sources and permissions to connect, and you can disconnect them at any time.</li>
+            <li data-i18n="shortReports">If you choose to send a food report from the app, it reaches our server so we can correct the match. It carries no account and no Apple Health data.</li>
+            <li data-i18n="shortPhotos">A meal you type, say or photograph is sent to our server and read by an AI service to work out what you ate. We do not store it.</li>
+            <li data-i18n="shortWebsite">This website counts visits without cookies and without storing your IP address.</li>
+          </ul>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="accessTitle">Information Akari accesses</h2>
+          <p data-i18n-html="accessApple"><strong>Apple Health.</strong> With your permission, Akari reads the health, activity, sleep, nutrition, and body-measurement categories you select. When you log supported information in Akari, the app may write it to Apple Health only after you grant the corresponding permission.</p>
+          <p data-i18n-html="accessGoogle"><strong>Google Health.</strong> If you connect Google Health, Akari requests read-only access to activity and fitness, health metrics and measurements, and sleep. This can include data from Fitbit, Pixel Watch, and other sources available through Google Health. Akari does not request permission to change or delete your Google Health data.</p>
+          <p data-i18n-html="accessEntered"><strong>Information you enter.</strong> This includes food and water logs, goals, preferences, and other entries you choose to add.</p>
+          <p data-i18n-html="accessLocation"><strong>Location.</strong> If you allow location access, Akari uses your approximate location while the app is open to provide relevant weather context. Akari does not use location for advertising.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="googleTitle">Google user data</h2>
+          <p data-i18n-html="googleAccessed"><strong>Data accessed.</strong> Akari reads Google user data only if you connect Google Health, and only with read access to three categories: activity and fitness, health metrics and measurements, and sleep. Akari never requests permission to write, change, or delete anything in your Google Account.</p>
+          <p data-i18n-html="googleUse"><strong>How it is used.</strong> Google user data is shown to you in Akari and used on your iPhone to fill gaps Apple Health leaves and to calculate your readiness and Health Age. It is not used for any other purpose.</p>
+          <p data-i18n-html="googleSharing"><strong>Sharing.</strong> Google user data is not transferred to anyone: not to Akari’s operators, not to service providers, not to advertisers, and not to any AI or analytics service. It leaves your iPhone only if you yourself share something from the app.</p>
+          <p data-i18n-html="googleProtection"><strong>Protection.</strong> Google user data is kept in the app’s own storage on your iPhone, protected by the iPhone’s encryption. The sign-in credential is kept in the iOS Keychain. Akari has no server that stores health data.</p>
+          <p data-i18n-html="googleRetention"><strong>Retention and deletion.</strong> Google user data stays on your iPhone while Google Health is connected. Disconnecting Google Health in Akari removes the Google data from the app and revokes Akari’s access at Google; deleting the app removes everything. You can also revoke Akari’s access at any time at <a href="https://myaccount.google.com/permissions" rel="noreferrer">myaccount.google.com/permissions</a>.</p>
+          <p data-i18n-html="googleLimitedUse">Data received from Google APIs is used and transferred in accordance with the <a href="https://developers.google.com/terms/api-services-user-data-policy" rel="noreferrer">Google API Services User Data Policy</a>, including its Limited Use requirements.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="useTitle">How the information is used</h2>
+          <p data-i18n="useBody">Akari uses the information you authorize to display your daily health view, calculate trends and goals, create explanations, and help you connect activity, recovery, sleep, nutrition, and body measurements. Apple Health remains the primary source. Google Health is used to fill matching gaps and avoid double counting where possible.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="storageTitle">Storage and sharing</h2>
+          <p data-i18n="storageBody">Akari stores its health views and app data locally on your device. Google authorization credentials are kept in protected device storage. Akari does not operate an advertising profile or sell health information.</p>
+          <p data-i18n="sharingBody">Information may be disclosed if required by law or to protect users or the service from fraud or abuse. Akari uses two service providers. Cloudflare hosts this website, receives the food reports you choose to send, and runs the server that passes on the meals you log. Anthropic reads those meals. Neither receives Apple Health data or Google user data, and both may use what they receive only to provide their service to Akari, never for advertising.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="reportsTitle">Food reports</h2>
+          <p data-i18n="reportsSent">When a food match looks wrong, or right, you can send us a food report from the app. Nothing is sent unless you tap Send. Reports are the part of Akari that leaves your iPhone on purpose: they reach our server so we can improve how Akari recognises food.</p>
+          <p data-i18n="reportsContent">A report contains your rating and the reasons you picked, your comment if you write one, what you typed or said, the foods Akari matched with their amounts and nutrients, anything it could not match, a scanned barcode if there was one, and the app’s language, region and version. It does not include your name, an account, your Apple Health data or your location, unless you write something like that into your comment.</p>
+          <p data-i18n-html="reportsKeep">To prevent abuse, the app attaches a random identifier that exists only for food reports; our server keeps just a one-way hash of it and uses it to limit how many reports one installation can send in a day. Our server stores no IP address. Reports are stored with our hosting provider, Cloudflare, and are read only by the Akari team in our review tool. We keep them as long as they help us improve food recognition. To have a report removed, email <a href="mailto:support@joinakari.com">support@joinakari.com</a> with the date and what you reported.</p>
+        </section>
+
+        <section class="legal-section" id="meal-photos">
+          <h2 data-i18n="photosTitle">Meals and meal photos</h2>
+          <p data-i18n="photosSent">You can log a meal by typing or saying it, or by taking or choosing a photo of it. Nothing is sent unless you log a meal. Packages and nutrition labels are still read on your iPhone; only a meal you type, say or photograph leaves it, so Akari can work out what you ate.</p>
+          <p data-i18n="photosContent">What is sent is the words you typed or said, the photo if there is one, the foods from Akari’s catalogue the app found as possible matches, the app’s language and version, a few food words the iPhone’s own image recognition found in the photo, and a random identifier. It contains no Apple Health data, no account and no location. A photo shows whatever is in the frame, so keep people and documents out of it.</p>
+          <p data-i18n="photosWhere">Your meal goes to Akari’s server, which runs on Cloudflare. The server passes it to Anthropic’s Claude API, which reads it and returns what is in the meal to the app.</p>
+          <p data-i18n="photosKeep">Akari keeps nothing of what you send or of the answer. To limit how many meals can be sent in a day, our server keeps daily counters under a one-way hash of the random identifier and of your IP address, made with a random value that is deleted when the day ends. The IP address is not stored, the counters expire after two days, and nothing else from the request is kept.</p>
+          <p data-i18n-html="photosAnthropic">Anthropic handles your meal under its <a href="https://www.anthropic.com/legal/commercial-terms" rel="noreferrer">Commercial Terms</a>, which do not allow it to train models on it. By default, Anthropic deletes what you sent and its answer within 30 days. It keeps them longer, for up to two years, only if its safety systems flag a request as breaking its usage policy, or where the law requires it. <a href="https://privacy.claude.com/en/articles/7996866-how-long-do-you-store-my-organization-s-data" rel="noreferrer">Anthropic’s privacy pages</a> explain this in detail.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="websiteTitle">Visiting this website</h2>
+          <p data-i18n="websiteBody">When you open a page on joinakari.com, your browser tells our server which page it was and the site or campaign that sent you there, if there was one. Our hosting provider, Cloudflare, adds the country your connection comes from. We use this only to count visits.</p>
+          <p data-i18n="websiteCount">To tell visitors apart without cookies, our server combines your IP address and browser details with a random value that changes every day, and keeps only a short one-way hash of the result. The IP address is not stored, each day’s random value is deleted once the day is over, and the hash cannot be traced back to you or linked across days. Counting visits stores nothing on your device, and nothing is shared with advertisers or analytics companies.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="choicesTitle">Your choices and deletion</h2>
+          <p data-i18n="choicesBody">You can change Apple Health permissions in iOS Settings or the Health app. Disconnecting Google Health in Akari removes the Google data from the app and revokes Akari’s access at Google. You can also revoke Akari’s access from your Google Account permissions.</p>
+          <p data-i18n-html="deletionBody">You can remove Akari’s locally stored information by deleting entries in the app where available or by deleting the app. Information already written to Apple Health remains under your control in Apple Health. To request help with access or deletion, email <a href="mailto:support@joinakari.com">support@joinakari.com</a>.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="securityTitle">Security, children, and changes</h2>
+          <p data-i18n="securityBody">Akari uses platform security features and limits access to the information needed for its user-facing health features. No system is perfectly secure, but we work to protect data and minimize what leaves your device.</p>
+          <p data-i18n="childrenBody">Akari is not directed to children under 13, or a higher minimum age where local law requires it. We may update this policy when Akari changes. The effective date above will be updated, and significant changes will be communicated in the app or on this site.</p>
+        </section>
+
+        <section class="legal-section">
+          <h2 data-i18n="contactTitle">Contact</h2>
+          <p data-i18n-html="contactBody">Questions about privacy or Google Health access can be sent to <a href="mailto:support@joinakari.com">support@joinakari.com</a>.</p>
+        </section>
+      </div>
+
+    </main>
+
+    <footer class="site-footer" aria-label="Akari credits" data-i18n-aria-label="footerLabel">
+      <svg class="torn-edge torn-edge--top" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+        <path class="torn-edge__fringe" d="M0,80 L0,61.5 L13,65.9 L24,61.3 L37,57.7 L49,61.8 L65,56.0 L75,55.6 L90,61.2 L97,63.9 L114,60.0 L128,54.7 L134,58.2 L141,54.6 L150,52.7 L161,56.5 L177,56.8 L191,56.2 L205,55.3 L214,60.4 L232,58.3 L247,52.6 L255,52.1 L262,56.6 L273,57.1 L284,57.9 L300,47.8 L308,56.7 L320,57.0 L331,47.6 L344,54.3 L354,47.1 L364,55.5 L379,46.6 L388,46.2 L394,52.9 L403,50.3 L414,46.3 L429,45.2 L442,44.6 L453,45.3 L463,52.6 L478,45.4 L495,44.0 L506,50.1 L519,42.1 L537,42.7 L546,48.0 L556,43.0 L563,40.7 L576,41.8 L589,42.7 L601,48.2 L613,44.0 L629,39.6 L637,46.6 L653,39.6 L661,44.2 L678,38.2 L696,44.6 L709,39.6 L716,35.5 L734,37.0 L748,36.7 L764,39.6 L774,35.1 L788,33.6 L797,38.2 L813,38.3 L823,41.0 L831,31.8 L840,35.8 L847,32.9 L857,36.5 L865,34.2 L882,39.9 L896,36.5 L909,30.6 L915,29.2 L932,35.5 L949,28.2 L963,32.4 L978,30.3 L996,27.3 L1008,33.6 L1025,33.0 L1040,33.2 L1057,28.2 L1071,33.3 L1087,27.9 L1103,31.9 L1116,29.2 L1126,28.4 L1140,23.0 L1153,31.7 L1170,28.5 L1180,28.3 L1193,24.9 L1209,20.9 L1224,19.9 L1238,24.0 L1246,25.9 L1258,24.7 L1275,20.6 L1282,20.9 L1296,19.4 L1304,26.2 L1318,21.2 L1334,19.5 L1348,17.8 L1360,23.5 L1377,23.7 L1387,20.4 L1397,15.7 L1409,22.3 L1425,20.6 L1440,15.8 L1440,80 Z" />
+        <path class="torn-edge__paper" d="M0,90 L0,66.7 L11,67.1 L20,67.8 L33,67.9 L43,70.1 L61,66.8 L68,63.6 L84,63.2 L99,66.5 L109,67.7 L115,62.9 L126,61.8 L142,62.8 L150,61.2 L164,63.6 L177,64.7 L193,66.3 L207,60.6 L219,60.1 L225,61.9 L239,59.4 L249,60.3 L263,61.1 L276,62.3 L287,62.3 L304,56.8 L321,60.7 L329,58.6 L342,61.4 L353,58.7 L369,59.8 L387,56.9 L400,54.7 L415,58.5 L429,57.4 L437,58.4 L455,58.4 L468,56.7 L477,57.3 L494,52.9 L501,53.3 L513,55.2 L525,49.7 L541,49.4 L556,49.7 L566,53.7 L574,49.0 L586,52.6 L602,51.9 L620,50.0 L637,46.6 L646,49.5 L655,50.6 L669,48.7 L685,48.5 L695,46.9 L711,50.1 L720,49.5 L737,46.6 L750,44.0 L762,45.7 L776,42.0 L793,44.9 L804,46.5 L817,44.0 L831,40.6 L844,42.6 L861,45.7 L870,42.2 L878,41.7 L894,44.5 L905,40.1 L914,41.9 L931,38.0 L946,36.7 L954,37.9 L969,38.2 L979,39.9 L986,40.5 L994,38.7 L1003,36.2 L1015,37.5 L1026,37.1 L1038,34.9 L1046,37.9 L1060,36.8 L1076,36.9 L1093,33.7 L1107,37.3 L1124,33.4 L1134,37.3 L1143,37.6 L1159,31.0 L1168,34.9 L1177,30.2 L1193,32.0 L1209,29.4 L1220,33.0 L1226,29.5 L1240,34.0 L1258,27.9 L1270,32.0 L1282,31.1 L1290,26.6 L1297,26.1 L1310,29.1 L1323,26.1 L1331,26.3 L1347,31.3 L1364,24.5 L1371,30.3 L1382,28.6 L1392,26.2 L1405,25.6 L1418,22.3 L1432,27.6 L1440,24.7 L1440,90 Z" />
+      </svg>
+      <div class="site-footer__inner">
+        <div class="footer-brand">
+          <a class="footer-logo" href="/" aria-label="Akari home" data-i18n-aria-label="homeLabel">
+            <img src="/assets/logo/akari-logo-forest-dark.svg?v=3" alt="Akari" width="89" height="50" loading="lazy" />
+          </a>
+          <p class="footer-made"><span data-i18n="madePrefix">Made with </span><span class="credits-heart" role="img" aria-label="love" data-i18n-aria-label="heartLabel">♥</span><span data-i18n="madeSuffix"> in Germany</span></p>
+          <p class="footer-copyright">© 2026 Akari</p>
+        </div>
+        <nav class="footer-sitemap" aria-label="Sitemap" data-i18n-aria-label="footerSitemapLabel">
+          <div class="footer-column">
+            <h2 data-i18n="footerProductTitle">Product</h2>
+            <ul>
+              <li><a href="/#vitals" data-i18n="footerVitalsLabel">Vitals</a></li>
+              <li><a href="/#nutrition" data-i18n="footerNutritionLabel">Nutrition</a></li>
+              <li><a href="/#goals" data-i18n="footerGoalsLabel">Goals</a></li>
+              <li><a href="/#food" data-i18n="footerFoodLabel">Food logging</a></li>
+              <li><a href="/#your-data" data-i18n="footerDataLabel">Your data</a></li>
+              <li><a href="/#pricing" data-i18n="footerPricingLabel">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerCompanyTitle">Company</h2>
+            <ul>
+              <li><a href="/about-us/" data-i18n="aboutLabel">About us</a></li>
+              <li><a href="/brand/" data-i18n="brandLabel">Brand</a></li>
+              <li><a class="footer-admin-link" href="https://admin.joinakari.com/login" rel="nofollow" data-i18n="adminLoginLabel">Admin</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerSupportTitle">Support</h2>
+            <ul>
+              <li><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer" data-i18n="footerJoinLabel">Join the beta</a></li>
+              <li><a href="/#faq" data-i18n="footerFaqLabel">FAQ</a></li>
+              <li><a href="mailto:support@joinakari.com" data-i18n="contactLabel">Contact us</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerLegalTitle">Legal</h2>
+            <ul>
+              <li><a href="/privacy/" aria-current="page" data-i18n="privacyLabel">Privacy Policy</a></li>
+              <li><a href="/terms/" data-i18n="termsLabel">Terms of Service</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <p class="footer-disclaimer" data-i18n="disclaimer">Akari is not a substitute for professional medical advice. Always consult your physician first.</p>
+    </footer>
+  </body>
+</html>

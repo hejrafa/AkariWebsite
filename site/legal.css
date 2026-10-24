@@ -1,0 +1,1855 @@
+@font-face {
+  font-family: "Akari New York";
+  src:
+    url("/assets/fonts/NewYork.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* The About us letter's signature: Mrs Saint Delafield by Alejandro Paul, its Latin subset, self-hosted so
+   no visitor loads anything from Google (SIL Open Font License, assets/fonts/MrsSaintDelafield-OFL.txt). */
+@font-face {
+  font-family: "Akari Signature";
+  src: url("/assets/fonts/MrsSaintDelafield-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+/* Registered so a theme or mode switch fades the page colour, which the body paints as an image. */
+@property --page {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #161a12;
+}
+
+/* Every page shares the landing page's two widths (HANDOFF.md, "Layout"): the header spans the chrome width,
+   the content and the footer the content width, each with a 24px gutter, 16px on phones. styles.css,
+   legal.css and the admin's admin.css define the same two; keep them equal. */
+:root {
+  --chrome-width: 1280px;
+  --content-width: 1180px;
+}
+
+/* Colours come from the app's AppTheme.swift, as on the landing page (styles.css). Each
+   theme has a deep band and its cream ink, plus page, card, ink and accent per scheme. */
+:root {
+  color-scheme: dark;
+  --band: #0c271c;
+  --band-rgb: 12, 39, 28;
+  --band-ink: #f8ebbc;
+  --band-ink-rgb: 248, 235, 188;
+  --vivid: #a9eb4b;
+  --page: #161a12;
+  --page-rgb: 22, 26, 18;
+  --card: #262a21;
+  --ink: #e6f4d1;
+  --ink-rgb: 230, 244, 209;
+  --accent: #a9eb4b;
+  --focus-ring: var(--accent);
+  --serif: "Akari New York", "New York", Georgia, serif;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root[data-theme="forest"] { --band: #0c271c; --band-rgb: 12, 39, 28; --band-ink: #f8ebbc; --band-ink-rgb: 248, 235, 188; --vivid: #a9eb4b; }
+:root[data-theme="meadow"] { --band: #0a4252; --band-rgb: 10, 66, 82; --band-ink: #fff1c9; --band-ink-rgb: 255, 241, 201; --vivid: #ebcc4b; }
+:root[data-theme="coast"] { --band: #083756; --band-rgb: 8, 55, 86; --band-ink: #e3e6ff; --band-ink-rgb: 227, 230, 255; --vivid: #4baceb; }
+:root[data-theme="canyon"] { --band: #482219; --band-rgb: 72, 34, 25; --band-ink: #ffecd4; --band-ink-rgb: 255, 236, 212; --vivid: #eb804b; }
+:root[data-theme="plain"] { --band: #141414; --band-rgb: 20, 20, 20; --band-ink: #ffffff; --band-ink-rgb: 255, 255, 255; --vivid: #ffd60a; }
+
+:root[data-mode="light"] { color-scheme: light; }
+
+html:root[data-mode="light"][data-theme="forest"] { --page: #e1f1ca; --page-rgb: 225, 241, 202; --card: #f6feec; --ink: #1e2611; --ink-rgb: 30, 38, 17; --accent: #7dbd22; }
+html:root[data-mode="light"][data-theme="meadow"] { --page: #f1eaca; --page-rgb: 241, 234, 202; --card: #fefaec; --ink: #262211; --ink-rgb: 38, 34, 17; --accent: #bd9f22; }
+html:root[data-mode="light"][data-theme="coast"] { --page: #cae2f1; --page-rgb: 202, 226, 241; --card: #ecf7fe; --ink: #111e26; --ink-rgb: 17, 30, 38; --accent: #2280bd; }
+html:root[data-mode="light"][data-theme="canyon"] { --page: #f1d7ca; --page-rgb: 241, 215, 202; --card: #fef2ec; --ink: #261811; --ink-rgb: 38, 24, 17; --accent: #bd5522; }
+html:root[data-mode="light"][data-theme="plain"] { --page: #f5f5f5; --page-rgb: 245, 245, 245; --card: #ffffff; --ink: #000000; --ink-rgb: 0, 0, 0; --accent: #ff6c01; }
+html:root[data-mode="dark"][data-theme="forest"] { --page: #161a12; --page-rgb: 22, 26, 18; --card: #262a21; --ink: #e6f4d1; --ink-rgb: 230, 244, 209; --accent: #a9eb4b; }
+html:root[data-mode="dark"][data-theme="meadow"] { --page: #1a1812; --page-rgb: 26, 24, 18; --card: #2a2821; --ink: #f4edd1; --ink-rgb: 244, 237, 209; --accent: #ebcc4b; }
+html:root[data-mode="dark"][data-theme="coast"] { --page: #12171a; --page-rgb: 18, 23, 26; --card: #21262a; --ink: #d1e6f4; --ink-rgb: 209, 230, 244; --accent: #4baceb; }
+html:root[data-mode="dark"][data-theme="canyon"] { --page: #1a1412; --page-rgb: 26, 20, 18; --card: #2a2421; --ink: #f4ddd1; --ink-rgb: 244, 221, 209; --accent: #eb804b; }
+html:root[data-mode="dark"][data-theme="plain"] { --page: #000000; --page-rgb: 0, 0, 0; --card: #141414; --ink: #ffffff; --ink-rgb: 255, 255, 255; --accent: #ffd60a; }
+
+* { box-sizing: border-box; }
+
+/* The page starts and ends on the deep band, so overscroll at either end shows the band too. Stickers may
+   spill past the sides on a narrow phone, as on the landing page, and this hides them (hidden, never clip:
+   in Safari clip cuts the top off anything inside it while that animates). */
+html {
+  overflow-x: hidden;
+  background: var(--band);
+  transition: background-color 500ms var(--ease), --page 500ms var(--ease);
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--ink);
+  /* Safari paints overscroll in the body's background colour over the root's, not the root's alone.
+     The page colour is drawn as an image instead, so the body still shows it and overscroll shows the band. */
+  background: linear-gradient(var(--page), var(--page));
+  font-family: var(--serif);
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  transition: color 500ms var(--ease);
+}
+
+a { color: inherit; text-underline-offset: 0.18em; }
+a:hover { color: var(--accent); }
+/* Lime/yellow hover text is too faint on light pages; darken it toward the ink. */
+:root[data-mode="light"] a:hover { color: color-mix(in srgb, var(--accent) 45%, var(--ink)); }
+
+/* The header sits on the deep band; its controls take the band's cream, as on the landing page. */
+.legal-site-header {
+  --page: var(--band);
+  --page-rgb: var(--band-rgb);
+  --ink: var(--band-ink);
+  --ink-rgb: var(--band-ink-rgb);
+  --focus-ring: var(--band-ink);
+  position: relative;
+  z-index: 30;
+  height: 98px;
+  color: var(--band-ink);
+  background: var(--band);
+  transition: background-color 500ms var(--ease);
+}
+
+.legal-site-header__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: min(var(--chrome-width), calc(100% - 48px));
+  height: 100%;
+  margin: 0 auto;
+}
+
+.legal-brand {
+  display: block;
+  grid-column: 2;
+  grid-row: 1;
+  width: 112px;
+  height: 63px;
+  justify-self: center;
+}
+
+.legal-brand img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.language-switch {
+  --language-w: 44px;
+  --language-h: 36px;
+  position: relative;
+  display: flex;
+  grid-column: 1;
+  grid-row: 1;
+  align-items: center;
+  justify-self: start;
+  margin-left: 24px;
+  padding: 3px;
+  border: 1px solid rgba(var(--ink-rgb), 0.24);
+  border-radius: 999px;
+  isolation: isolate;
+  transition: border-color 500ms var(--ease);
+}
+
+.language-switch::before {
+  position: absolute;
+  z-index: 0;
+  top: 3px;
+  left: 3px;
+  width: var(--language-w);
+  height: var(--language-h);
+  background: var(--ink);
+  border-radius: 999px;
+  content: "";
+  transform: translateX(0);
+  transition: background 500ms var(--ease), transform 300ms cubic-bezier(0.22, 1.25, 0.36, 1);
+}
+
+:root[data-language="de"] .language-switch::before {
+  transform: translateX(var(--language-w));
+}
+
+.language-button {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: var(--language-w);
+  height: var(--language-h);
+  margin: 0;
+  padding: 0;
+  place-items: center;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  transition: color 180ms var(--ease), background 180ms var(--ease), transform 180ms var(--ease);
+}
+
+.language-button:hover {
+  transform: scale(1.04);
+}
+
+.language-button[aria-pressed="true"] {
+  color: var(--page);
+  background: transparent;
+}
+
+.header-controls,
+.header-control-section {
+  display: contents;
+}
+
+.mobile-control-label,
+.mobile-theme-name,
+.mobile-menu-toggle {
+  display: none;
+}
+
+.appearance-controls {
+  display: flex;
+  grid-column: 3;
+  grid-row: 1;
+  align-items: center;
+  justify-self: end;
+  gap: 8px;
+  margin-right: 24px;
+}
+
+/* Theme and light/dark pills match the language switch: a 44px pill whose
+   selection slides to the active item. The active index comes from the
+   root's data-theme / data-mode, so no measuring is needed. */
+.theme-controls,
+.mode-controls {
+  --control-size: 36px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border: 1px solid rgba(var(--ink-rgb), 0.24);
+  border-radius: 999px;
+  isolation: isolate;
+  transition: border-color 500ms var(--ease);
+}
+
+.theme-controls::before,
+.mode-controls::before {
+  position: absolute;
+  z-index: 0;
+  top: 3px;
+  left: 3px;
+  box-sizing: border-box;
+  width: var(--control-size);
+  height: var(--control-size);
+  border-radius: 999px;
+  content: "";
+  transform: translateX(calc(var(--control-index, 0) * var(--control-size)));
+  transition: background 500ms var(--ease), border-color 500ms var(--ease), transform 300ms cubic-bezier(0.22, 1.25, 0.36, 1);
+}
+
+.theme-controls::before {
+  border: 2px solid var(--ink);
+}
+
+.mode-controls::before {
+  background: var(--ink);
+}
+
+:root[data-theme="forest"] .theme-controls { --control-index: 1; }
+:root[data-theme="coast"] .theme-controls { --control-index: 2; }
+:root[data-theme="canyon"] .theme-controls { --control-index: 3; }
+:root[data-theme="plain"] .theme-controls { --control-index: 4; }
+:root[data-mode="dark"] .mode-controls { --control-index: 1; }
+
+.theme-dot,
+.mode-button {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: var(--control-size);
+  height: var(--control-size);
+  margin: 0;
+  padding: 0;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 180ms var(--ease), transform 180ms var(--ease);
+}
+
+.theme-dot[data-theme-target="meadow"] {
+  --theme-swatch: #ebcc4b;
+}
+
+.theme-dot[data-theme-target="forest"] {
+  --theme-swatch: #a9eb4b;
+}
+
+.theme-dot[data-theme-target="coast"] {
+  --theme-swatch: #4baceb;
+}
+
+.theme-dot[data-theme-target="canyon"] {
+  --theme-swatch: #eb804b;
+}
+
+/* Plain has no painting; its swatch is the app's yellow-to-orange launch gradient. */
+.theme-dot[data-theme-target="plain"] {
+  --theme-swatch: linear-gradient(#ffd600, #ff6b00);
+}
+
+.theme-ring {
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.theme-swatch {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: var(--theme-swatch);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: background-color 160ms var(--ease);
+}
+
+.theme-dot:hover .theme-swatch {
+  background-color: color-mix(in srgb, var(--theme-swatch) 88%, white);
+}
+
+/* With a mouse, the theme pill shows only the current theme and opens to the left into the full row on
+   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one. */
+@media (hover: hover) and (min-width: 761px) {
+  .theme-controls::before {
+    transition: border-color 500ms var(--ease), transform 300ms var(--ease);
+  }
+
+  .theme-dot {
+    transition: width 300ms var(--ease), visibility 0s, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-ring {
+    transition: opacity 220ms var(--ease) 80ms;
+  }
+
+  .theme-controls:not(:hover, :focus-within)::before {
+    transform: translateX(0);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) {
+    width: 0;
+    visibility: hidden;
+    transition: width 300ms var(--ease), visibility 0s 300ms, color 180ms var(--ease), transform 180ms var(--ease);
+  }
+
+  .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) .theme-ring {
+    opacity: 0;
+    transition-delay: 0s;
+  }
+
+  /* Hover labels, like the admin's log-out button: the control's own translated label in a pill under it. */
+  .theme-dot::after,
+  .mode-button::after,
+  .language-button::after {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 10px);
+    left: 50%;
+    padding: 7px 11px;
+    color: var(--page);
+    background: var(--ink);
+    border-radius: 999px;
+    content: attr(aria-label);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -4px);
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  .theme-dot:hover::after,
+  .theme-dot:focus-visible::after,
+  .mode-button:hover::after,
+  .mode-button:focus-visible::after,
+  .language-button:hover::after,
+  .language-button:focus-visible::after {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* The mode buttons sit near the page edge, so their labels line up with their right side instead: centred,
+     the German "Helles Erscheinungsbild verwenden" ran past the edge and the page scrolled sideways. */
+  .mode-button::after {
+    left: auto;
+    right: 0;
+    transform: translateY(-4px);
+  }
+
+  .mode-button:hover::after,
+  .mode-button:focus-visible::after {
+    transform: translateY(0);
+  }
+
+  /* The language buttons sit near the left edge, so their labels line up with their left side. */
+  .language-button::after {
+    left: 0;
+    letter-spacing: 0;
+    transform: translateY(-4px);
+  }
+
+  .language-button:hover::after,
+  .language-button:focus-visible::after {
+    transform: translateY(0);
+  }
+}
+
+.mode-button:hover {
+  transform: scale(1.04);
+}
+
+.mode-button[aria-pressed="true"] {
+  color: var(--page);
+}
+
+.mode-icon {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background: currentColor;
+  -webkit-mask: var(--mode-icon) center / contain no-repeat;
+  mask: var(--mode-icon) center / contain no-repeat;
+  pointer-events: none;
+}
+
+.mode-button[data-mode-target="light"] .mode-icon {
+  --mode-icon: url("assets/mode-light.svg");
+}
+
+.mode-button[data-mode-target="dark"] .mode-icon {
+  --mode-icon: url("assets/mode-dark.svg");
+}
+
+.theme-dot:focus-visible,
+.mode-button:focus-visible,
+.language-button:focus-visible,
+.mobile-menu-toggle:focus-visible,
+.legal-brand:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+
+/* Title: the band carries on under the header, with the page's name as a tilted pill, a big line,
+   and torn paper into the page. */
+.legal-hero {
+  position: relative;
+  padding: clamp(36px, 5vw, 72px) 20px calc(clamp(34px, 6vw, 90px) + clamp(40px, 5vw, 80px));
+  color: var(--band-ink);
+  background: var(--band);
+  text-align: center;
+  transition: background-color 500ms var(--ease);
+}
+
+.legal-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.legal-eyebrow {
+  display: inline-flex;
+  margin: 0 0 26px;
+  padding: 9px 16px;
+  color: var(--band);
+  background: var(--vivid);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  font-weight: 700;
+  line-height: 1.1;
+  rotate: -3deg;
+}
+
+h1 {
+  max-width: 10em;
+  margin: 0 auto;
+  font-size: clamp(3rem, 7.4vw, 7rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.92;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  hyphens: manual;
+}
+
+/* The headline's sticker, as tall as the headline's capitals. Its cream die-cut edge and shadow are baked
+   into the file (tools/bake_die_cuts.py), which is the sticker on a transparent margin of --cut-side px left
+   and right, --cut-top above and --cut-bottom below at 1x; the .cut box keeps the sticker's own size and the
+   image spills out by that margin, as on the landing page (styles.css). legal.js picks the file. */
+:root {
+  --cut-side: 20;
+  --cut-top: 10;
+  --cut-bottom: 30;
+}
+
+.cut {
+  --w: 72;
+  --h: 72;
+  display: flow-root;
+  aspect-ratio: var(--w) / var(--h);
+}
+
+.cut__image {
+  display: block;
+  width: calc(100% + 2 * var(--cut-side) / var(--w) * 100%);
+  max-width: none;
+  height: auto;
+  aspect-ratio: calc(var(--w) + 2 * var(--cut-side)) / calc(var(--h) + var(--cut-top) + var(--cut-bottom));
+  margin:
+    calc(var(--cut-top) / var(--w) * -100%) 0
+    calc(var(--cut-bottom) / var(--w) * -100%) calc(var(--cut-side) / var(--w) * -100%);
+  pointer-events: none;
+  user-select: none;
+}
+
+.legal-headline-emoji {
+  position: relative;
+  display: inline-block;
+  width: 0.7em;
+  width: 1cap;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: grab;
+  font: inherit;
+  touch-action: none;
+  transform: translate(var(--drag-x, 0px), var(--drag-y, 0px));
+  transition: transform 480ms cubic-bezier(0.22, 1.3, 0.36, 1), scale 180ms ease;
+}
+
+.legal-headline-emoji.is-dragging {
+  cursor: grabbing;
+  scale: 1.08;
+  transition: none;
+}
+
+.legal-headline-emoji:focus-visible {
+  outline: 3px solid var(--band-ink);
+  outline-offset: 0.13em;
+  border-radius: 50%;
+}
+
+.emoji-particle {
+  position: fixed;
+  z-index: 10;
+  margin: 0;
+  width: var(--particle-size);
+  pointer-events: none;
+  animation: emoji-pop 1180ms both cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.legal-intro {
+  max-width: 28em;
+  margin: 30px auto 0;
+  color: var(--band-ink);
+  font-family: var(--serif);
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.legal-updated {
+  margin: 28px auto 0;
+  padding: 10px 18px;
+  color: var(--band-ink);
+  border: 1.5px solid color-mix(in srgb, var(--band-ink) 40%, transparent);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.torn-edge {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: clamp(34px, 6vw, 90px);
+  pointer-events: none;
+}
+
+.torn-edge--top {
+  top: -1px;
+  bottom: auto;
+  transform: scaleY(-1);
+}
+
+.torn-edge__fringe {
+  fill: var(--band-ink);
+  transition: fill 500ms var(--ease);
+}
+
+.torn-edge__paper {
+  fill: var(--page);
+  transition: fill 500ms var(--ease);
+}
+
+/* Body: one card per section, as wide as the landing page's content. --------------------------- */
+
+.legal-content {
+  counter-reset: legal-section;
+  display: grid;
+  gap: 12px;
+  width: min(var(--content-width), calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(36px, 5vw, 64px) 0 0;
+}
+
+.legal-section {
+  counter-increment: legal-section;
+  min-width: 0;
+  padding: clamp(26px, 5vw, 48px);
+  background: var(--card);
+  border-radius: 24px;
+  overflow-wrap: break-word;
+  transition: background-color 500ms var(--ease);
+}
+
+/* On a wide screen a card reads like the landing page's FAQ: its heading on the left, its words on the
+   right at a comfortable measure, and anything wide (the brand page's tiles) across both. */
+@media (min-width: 1000px) {
+  .legal-section {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: clamp(40px, 5vw, 80px);
+    align-items: start;
+  }
+
+  .legal-section > * { grid-column: 2; }
+  .legal-section > h2 { grid-row: 1; grid-column: 1; margin-bottom: 0; }
+  .legal-section > .brand-grid,
+  .legal-section > .brand-type { grid-column: 1 / -1; }
+
+  /* Across the full width the logos go four to a row: both versions of two themes. */
+  .legal-section > .brand-grid--logos { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* English reads better unbroken; German compounds need hyphenation to fit narrow screens. */
+:root[data-language="de"] .legal-section { hyphens: auto; hyphenate-limit-chars: 10 4 4; }
+
+/* Each section heading starts with its number in a round band chip, like the FAQ's "+". */
+.legal-section h2 {
+  --chip: 34px;
+  position: relative;
+  max-width: 65ch;
+  min-height: var(--chip);
+  margin: 0 0 20px;
+  padding-left: calc(var(--chip) + 14px);
+  font-size: clamp(1.55rem, 3.2vw, 2.1rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.legal-section h2::before {
+  position: absolute;
+  top: calc((1lh - var(--chip)) / 2 + 0.12em);
+  left: 0;
+  display: grid;
+  width: var(--chip);
+  height: var(--chip);
+  place-items: center;
+  color: var(--band-ink);
+  background: var(--band);
+  border-radius: 50%;
+  content: counter(legal-section);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  rotate: -6deg;
+  transition: background-color 500ms var(--ease), color 500ms var(--ease);
+}
+
+p, li { font-family: var(--serif); }
+
+.legal-section p,
+.legal-section li {
+  max-width: 34em;
+  color: rgba(var(--ink-rgb), 0.72);
+  font-size: clamp(1.05rem, 1.35vw, 1.2rem);
+  line-height: 1.65;
+}
+
+.legal-section p { margin: 0 0 1em; }
+.legal-section p:last-child { margin-bottom: 0; }
+.legal-section ul { margin: 0; padding-left: 1.25rem; }
+.legal-section li + li { margin-top: 10px; }
+.legal-section strong { color: var(--ink); font-weight: 700; }
+
+.legal-section a {
+  color: var(--ink);
+  font-weight: 650;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 0.1em;
+}
+
+.legal-section a:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* One strong panel per page: the deep band with a faint glow of the theme's vivid colour. */
+.legal-section--panel {
+  --ink: var(--band-ink);
+  --ink-rgb: var(--band-ink-rgb);
+  --accent: var(--vivid);
+  color: var(--band-ink);
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--vivid) 22%, transparent), transparent 60%),
+    var(--band);
+  border-radius: clamp(26px, 3vw, 40px);
+}
+
+.legal-section--panel h2::before {
+  color: var(--band);
+  background: var(--vivid);
+}
+
+.legal-section--panel p,
+.legal-section--panel li {
+  color: rgba(var(--band-ink-rgb), 0.82);
+}
+
+.legal-section--panel ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.legal-section--panel li {
+  position: relative;
+  padding-left: 1.4em;
+}
+
+.legal-section--panel li::before {
+  position: absolute;
+  top: 0.62em;
+  left: 0.15em;
+  width: 0.5em;
+  height: 0.5em;
+  background: var(--vivid);
+  border-radius: 50%;
+  content: "";
+}
+
+.legal-section--panel a:hover,
+:root[data-mode="light"] .legal-section--panel a:hover {
+  color: var(--vivid);
+}
+
+/* Brand page: the same cards, holding tiles of downloads. Each tile shows its theme in that theme's own
+   colours (--tile and --tile-ink, set by legal.js), whatever theme the page is in. ------------------ */
+
+.brand-download {
+  display: inline-flex;
+  margin-top: clamp(26px, 3vw, 40px);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 1.05rem;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.brand-download > span {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px 10px;
+  min-height: 54px;
+  padding: 18px 30px;
+  color: var(--band);
+  background: var(--band-ink);
+  border-radius: 999px;
+  transition: transform 180ms var(--ease), background-color 500ms var(--ease), color 500ms var(--ease);
+}
+
+.brand-download small {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.62;
+}
+
+.brand-download:hover > span { transform: translateY(-2px) rotate(-1.5deg); }
+.brand-download:active > span { transform: scale(0.97); }
+
+.brand-download:focus-visible {
+  outline: 3px solid var(--band-ink);
+  outline-offset: 4px;
+}
+
+.brand-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.brand-grid--logos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.brand-grid--marks,
+.brand-grid--icons { grid-template-columns: repeat(auto-fill, minmax(min(100%, 176px), 1fr)); }
+.brand-grid--colours { grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); }
+
+.brand-tile {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 22px;
+  min-width: 0;
+  margin: 0;
+  padding: clamp(26px, 3.4vw, 40px) 16px 16px;
+  color: var(--tile-ink, var(--ink));
+  background: var(--tile, rgba(var(--ink-rgb), 0.05));
+  border-radius: 18px;
+  transition: background-color 500ms var(--ease);
+}
+
+.brand-tile__logo {
+  place-self: center;
+  width: min(100%, 176px);
+  height: auto;
+  aspect-ratio: 89.2823 / 50;
+}
+
+.brand-tile__mark {
+  place-self: center;
+  width: min(100%, 92px);
+  height: auto;
+}
+
+.brand-tile__icons {
+  display: flex;
+  place-self: center;
+  gap: 10px;
+}
+
+.brand-tile__icons img {
+  display: block;
+  width: 64px;
+  height: 64px;
+}
+
+.brand-tile figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 10px;
+}
+
+/* The narrow tiles keep their name above the buttons, so a long name never sets them out of line. */
+.brand-tile--mark figcaption,
+.brand-tile--icon figcaption {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.brand-tile__name {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.brand-tile__variant {
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.brand-tile__variant::before { content: "· "; }
+
+.brand-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.legal-section .brand-file {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 12px;
+  color: inherit;
+  border: 1.5px solid color-mix(in srgb, currentColor 38%, transparent);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  transition: background-color 180ms var(--ease), border-color 180ms var(--ease);
+}
+
+.legal-section .brand-file:hover {
+  color: inherit;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  border-color: currentColor;
+}
+
+.legal-section .brand-file:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+.brand-colours {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: rgba(var(--ink-rgb), 0.05);
+  border-radius: 18px;
+}
+
+/* The mark's own gradient: light at the top right, dark at the foot, as the app icon draws it. */
+.brand-colours__gradient {
+  height: 64px;
+  background: radial-gradient(circle at 78% 10%, var(--from), var(--to) 95%);
+  border-radius: 12px;
+}
+
+.brand-colours__swatches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.brand-swatch {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid rgba(var(--ink-rgb), 0.12);
+  border-radius: 12px;
+  cursor: copy;
+  font-family: var(--sans);
+  text-align: left;
+  transition: border-color 180ms var(--ease), background-color 500ms var(--ease);
+}
+
+.brand-swatch:hover { border-color: rgba(var(--ink-rgb), 0.35); }
+
+.brand-swatch:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.brand-swatch__chip {
+  grid-row: 1 / 3;
+  width: 28px;
+  height: 28px;
+  background: var(--swatch);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(var(--ink-rgb), 0.18);
+}
+
+.brand-swatch__label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.2;
+  opacity: 0.65;
+}
+
+.brand-swatch__value {
+  font-size: 0.84rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+
+.brand-swatch.is-copied .brand-swatch__value { color: var(--accent); }
+
+.brand-type {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 28px;
+  margin-top: 28px;
+  padding: clamp(24px, 4vw, 40px);
+  color: var(--ink);
+  background: rgba(var(--ink-rgb), 0.05);
+  border-radius: 18px;
+  font-family: var(--serif);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+}
+
+.brand-type__glyphs {
+  font-size: clamp(4.5rem, 10vw, 7.5rem);
+  line-height: 0.9;
+}
+
+.brand-type__line {
+  max-width: 11em;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.02;
+}
+
+@media (max-width: 600px) {
+  .brand-grid--logos { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* About us: a letter from the two of us, signed by hand, then what we hold to on the deep band, then the
+   landing page's closing call. The letter keeps a reading measure inside the content width. ---------- */
+
+/* Two lines, like the other pages' headlines: "Why Akari / exists". */
+body[data-legal-page="about-us"] h1 { max-width: 7em; }
+
+.about-content {
+  gap: 0;
+  padding-top: clamp(48px, 7vw, 96px);
+}
+
+.about-letter {
+  width: 100%;
+  max-width: 26em;
+  margin: 0 auto;
+  font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+}
+
+.about-letter > p {
+  margin: 0 0 1em;
+  color: var(--ink);
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.about-letter > .about-signature {
+  margin: 0.5em 0 0;
+  color: var(--ink);
+  font-family: "Akari Signature", cursive;
+  font-size: 2.4em;
+  font-weight: 400;
+  line-height: 1.1;
+  rotate: -3deg;
+  transform-origin: left center;
+}
+
+/* What we hold to: the page's one strong panel, the deep band with the vivid glow, as on the other pages. */
+.about-values {
+  --ink: var(--band-ink);
+  --ink-rgb: var(--band-ink-rgb);
+  margin-top: clamp(64px, 9vw, 120px);
+  padding: clamp(28px, 4vw, 52px);
+  color: var(--band-ink);
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in srgb, var(--vivid) 22%, transparent), transparent 60%),
+    var(--band);
+  border-radius: clamp(26px, 3vw, 40px);
+  transition: background-color 500ms var(--ease);
+}
+
+.about-values h2 {
+  display: inline-flex;
+  margin: 0 0 clamp(24px, 3vw, 36px);
+  padding: 8px 14px;
+  color: var(--band);
+  background: var(--vivid);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.1;
+  rotate: -3deg;
+}
+
+.about-values__row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(24px, 4vw, 48px);
+}
+
+.about-value h3 {
+  margin: 0 0 6px;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.about-value p {
+  margin: 0;
+  color: rgba(var(--ink-rgb), 0.78);
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.about-value__sticker {
+  width: 80px;
+  margin: 0 0 14px -4px;
+  rotate: -8deg;
+}
+
+.about-value:nth-child(2) .about-value__sticker { rotate: 6deg; }
+.about-value:nth-child(3) .about-value__sticker { rotate: -4deg; }
+
+/* The landing page's closing call (.shape in styles.css): the theme's app icon with a banana, the big
+   line, and the button to the beta. The pieces drift as they do there. */
+.shape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(1100px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: clamp(90px, 11vw, 160px) 0 clamp(80px, 10vw, 140px);
+  text-align: center;
+}
+
+.shape__stickers {
+  position: relative;
+  width: clamp(110px, 12vw, 160px);
+  margin-bottom: clamp(28px, 4vw, 44px);
+}
+
+.shape__icon {
+  display: flow-root;
+  width: 100%;
+  height: auto;
+  rotate: -6deg;
+}
+
+.shape__banana {
+  position: absolute;
+  right: -66%;
+  bottom: -22%;
+  width: 78%;
+  height: auto;
+  rotate: 14deg;
+}
+
+.shape h2 {
+  max-width: 7em;
+  margin: 0;
+  font-size: clamp(2.9rem, 6.6vw, 6.5rem);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.95;
+  text-wrap: balance;
+}
+
+.shape .muted-copy {
+  max-width: 28em;
+  margin: 26px auto 0;
+  color: rgba(var(--ink-rgb), 0.8);
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  line-height: 1.4;
+}
+
+.shape__icon,
+.shape__banana {
+  animation: drift 3.5s ease-in-out infinite alternate;
+}
+
+.shape__banana { animation-delay: -1.9s; }
+
+@keyframes drift {
+  from { transform: translateY(-4px) rotate(-0.6deg); }
+  to { transform: translateY(4px) rotate(0.6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shape__icon,
+  .shape__banana { animation: none; }
+}
+
+/* The landing page's call to join the beta (styles.css). */
+.band-cta {
+  display: inline-flex;
+  margin-top: clamp(28px, 3.5vw, 40px);
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.band-cta > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 17px 34px;
+  color: var(--band-ink);
+  background: var(--band);
+  border-radius: 999px;
+  transition: transform 180ms var(--ease), background-color 500ms var(--ease), color 500ms var(--ease);
+}
+
+.band-cta:hover > span { transform: translateY(-2px) rotate(-1.5deg); }
+.band-cta:active > span { transform: scale(0.97); }
+
+.band-cta:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@media (max-width: 760px) {
+  .about-values__row { grid-template-columns: minmax(0, 1fr); }
+  .shape { width: calc(100% - 32px); }
+}
+
+/* The page GitHub Pages shows for a missing address (404.html). The band fills the screen and is a
+   playground: a 404 whose zero is a bitten doughnut (each tap takes another bite), and the app's food
+   stickers, which not-found.js drops behind the words onto the bottom of the band, to be bounced around.
+   The band runs on into the footer with no torn paper between, so the food lies right above it. Its
+   bottom padding leaves them room under the button. The sizes follow the screen's height as well as its
+   width, so on a laptop the whole playground, pile included, fits above the fold. */
+.legal-hero.not-found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: max(560px, calc(100svh - 98px));
+  padding-top: clamp(20px, 4svh, 48px);
+  padding-bottom: clamp(110px, 22svh, 240px);
+  overflow: hidden;
+}
+
+body[data-legal-page="not-found"] .site-footer {
+  margin-top: 0;
+  padding-top: clamp(28px, 4vw, 56px);
+}
+
+.not-found__code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 clamp(14px, 2.6svh, 30px);
+  font-size: clamp(5.5rem, min(30vw, 19svh), 11rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 0.8;
+  animation: legal-rise 700ms var(--ease) both;
+}
+
+/* The zero: 0.8em is as tall as the digits, and at the largest size under the 160px the stickers are baked up to. */
+.not-found__doughnut {
+  width: 0.8em;
+  margin: 0 0.04em;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  rotate: 8deg;
+  translate: 0 0.03em;
+  -webkit-tap-highlight-color: transparent;
+  animation: drift 3.5s ease-in-out infinite alternate;
+}
+
+.not-found__doughnut:focus-visible {
+  outline: 3px solid var(--band-ink);
+  outline-offset: 0.06em;
+  border-radius: 50%;
+}
+
+.not-found__doughnut .cut { transition: scale 260ms var(--ease), opacity 260ms var(--ease); }
+.not-found__doughnut:hover .cut { scale: 1.04; }
+.not-found__doughnut.is-chomping .cut { animation: chomp 280ms var(--ease); }
+.not-found__doughnut.is-eaten .cut { opacity: 0; scale: 0.4; }
+.not-found__doughnut.is-fresh .cut { animation: legal-pop 700ms cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+@keyframes chomp {
+  0% { scale: 1; rotate: 0deg; }
+  35% { scale: 0.9 0.94; rotate: -5deg; }
+  100% { scale: 1; rotate: 0deg; }
+}
+
+body[data-legal-page="not-found"] h1 {
+  max-width: 11em;
+  font-size: clamp(2rem, min(4.4vw, 6.4svh), 3.9rem);
+  line-height: 0.98;
+}
+
+body[data-legal-page="not-found"] .legal-intro {
+  margin-top: clamp(18px, 2.2vw, 26px);
+  text-wrap: balance;
+}
+
+/* The way back: the beta button's pill, in cream on the band. */
+.not-found__home {
+  display: inline-flex;
+  margin-top: clamp(26px, 3.5vw, 38px);
+  border-radius: 999px;
+  font-size: 1.1rem;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+  animation: legal-rise 700ms var(--ease) 200ms both;
+}
+
+.not-found__home > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 17px 34px;
+  color: var(--band);
+  background: var(--band-ink);
+  border-radius: 999px;
+  transition: transform 180ms var(--ease), background-color 500ms var(--ease), color 500ms var(--ease);
+}
+
+.not-found__home:hover > span { transform: translateY(-2px) rotate(-1.5deg); }
+.not-found__home:active > span { transform: scale(0.97); }
+
+.not-found__home:focus-visible {
+  outline: 3px solid var(--vivid);
+  outline-offset: 4px;
+}
+
+/* The falling food: above the torn edge, under the words. not-found.js places each sticker. */
+.food-fall {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.food-fall__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+/* A bite's crumbs and sprinkles fly off and fall, as the headline stickers do when tapped. */
+.crumb {
+  position: fixed;
+  z-index: 10;
+  width: var(--size);
+  height: var(--size);
+  background: var(--colour);
+  border-radius: 45%;
+  pointer-events: none;
+  animation: crumb-fly 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.crumb--sprinkle {
+  width: 3px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+@keyframes crumb-fly {
+  0% { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
+  35% { opacity: 1; transform: translate(calc(-50% + var(--pop-x)), calc(-50% + var(--pop-y))) rotate(calc(var(--spin) / 3)); }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--pop-x) + var(--fall-x)), calc(-50% + var(--pop-y) + var(--fall-y))) rotate(var(--spin)); }
+}
+
+@media (max-width: 760px) {
+  .legal-hero.not-found { min-height: max(560px, calc(100svh - 74px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found__code,
+  .not-found__home,
+  .not-found__doughnut,
+  .not-found__doughnut .cut { animation: none; }
+}
+
+/* Footer: the page ends on the deep band it started with, torn at the top. ------------------ */
+
+.site-footer {
+  --ink: var(--band-ink);
+  --ink-rgb: var(--band-ink-rgb);
+  --focus-ring: var(--band-ink);
+  position: relative;
+  margin: clamp(56px, 8vw, 110px) 0 0;
+  padding: clamp(110px, 12vw, 170px) max(24px, calc((100% - var(--content-width)) / 2)) 40px;
+  color: var(--band-ink);
+  background: var(--band);
+  font-family: var(--serif);
+  letter-spacing: 0;
+  transition: background-color 500ms var(--ease);
+}
+
+.site-footer__inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.footer-logo {
+  display: block;
+  width: 104px;
+}
+
+.footer-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.footer-logo:focus-visible,
+.footer-sitemap a:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.footer-made,
+.footer-copyright {
+  margin: 0;
+  color: rgba(var(--ink-rgb), 0.65);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.footer-made {
+  margin-top: 18px;
+}
+
+/* Four columns, each at least as wide as its longest link ("Nutzungsbedingungen" alone is 186 px). They fit
+   beside the logo only on a wide screen; below that the logo sits above them, and on a phone they go two by
+   two, where the long German ones break at their soft hyphens (privacyLabel, termsLabel). */
+.footer-sitemap {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(max-content, 1fr));
+  gap: 32px;
+}
+
+@media (max-width: 1080px) {
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+}
+
+.footer-column h2 {
+  margin: 0 0 18px;
+  color: rgba(var(--ink-rgb), 0.65);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.footer-column ul {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-column li + li {
+  margin-top: 0;
+}
+
+.site-footer .footer-column a {
+  color: var(--band-ink);
+  font-size: 1.0625rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.site-footer .footer-column a:hover,
+.site-footer .footer-column a[aria-current="page"] {
+  color: var(--band-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--vivid);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
+}
+
+.site-footer .footer-disclaimer {
+  position: relative;
+  z-index: 2;
+  width: auto;
+  max-width: 640px;
+  margin: 56px auto 0;
+  color: rgba(var(--ink-rgb), 0.55);
+  font-family: var(--serif);
+  font-size: 0.8125rem;
+  font-weight: 450;
+  line-height: 1.45;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .legal-site-header {
+    height: 74px;
+  }
+
+  .legal-site-header__inner {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 74px;
+    width: min(100% - 32px, var(--chrome-width));
+  }
+
+  .header-controls {
+    position: absolute;
+    z-index: 40;
+    top: calc(100% - 2px);
+    right: 0;
+    display: flex;
+    visibility: hidden;
+    width: min(360px, 100%);
+    padding: 18px;
+    flex-direction: column;
+    gap: 20px;
+    color: var(--ink);
+    background: rgb(var(--page-rgb));
+    border: 1px solid rgba(var(--ink-rgb), 0.2);
+    border-radius: 18px;
+    box-shadow: 0 20px 54px rgba(0, 0, 0, 0.24);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(0, -8px, 0) scale(0.98);
+    transform-origin: top right;
+    transition:
+      visibility 0s linear 180ms,
+      opacity 150ms ease-out,
+      transform 220ms var(--ease),
+      color 500ms var(--ease),
+      background-color 500ms var(--ease),
+      border-color 500ms var(--ease);
+  }
+
+  .mobile-menu-is-open .header-controls {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0) scale(1);
+    transition-delay: 0s;
+  }
+
+  /* Each section is a label over full-width pills, so every control in the menu shares both of its
+     edges. The appearance label carries the current theme's name on the right, as the app names it. */
+  .header-control-section {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .mobile-control-label,
+  .mobile-theme-name {
+    display: block;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .mobile-control-label {
+    opacity: 0.66;
+  }
+
+  .language-switch,
+  .appearance-controls {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    justify-self: stretch;
+  }
+
+  /* The pills stretch, so their selections are a share of the pill instead of a fixed step. */
+  .language-switch {
+    --language-h: 44px;
+    margin-left: 0;
+  }
+
+  .language-switch::before {
+    width: calc(50% - 3px);
+  }
+
+  :root[data-language="de"] .language-switch::before {
+    transform: translateX(100%);
+  }
+
+  .language-button {
+    flex: 1 1 0;
+    width: auto;
+  }
+
+  .appearance-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-right: 0;
+  }
+
+  .theme-controls,
+  .mode-controls {
+    --control-size: 44px;
+  }
+
+  /* The five dots spread across the pill; the ring steps by the gap between their left edges. */
+  .theme-controls {
+    justify-content: space-between;
+  }
+
+  .theme-controls::before {
+    left: calc(3px + var(--control-index, 0) * (100% - 6px - var(--control-size)) / 4);
+    transform: none;
+    transition: border-color 500ms var(--ease), left 300ms cubic-bezier(0.22, 1.25, 0.36, 1);
+  }
+
+  .mode-controls::before {
+    width: calc(50% - 3px);
+    transform: translateX(calc(var(--control-index, 0) * 100%));
+  }
+
+  .mode-button {
+    flex: 1 1 0;
+    width: auto;
+    border-radius: 999px;
+  }
+
+  .legal-brand {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    width: 92px;
+    height: auto;
+  }
+
+  .mobile-menu-toggle {
+    display: grid;
+    grid-column: 3;
+    grid-row: 1;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    place-items: center;
+    justify-self: end;
+    color: var(--ink);
+    background: rgba(var(--ink-rgb), 0.055);
+    border: 1px solid rgba(var(--ink-rgb), 0.2);
+    border-radius: 50%;
+    transition:
+      color 500ms var(--ease),
+      background-color 180ms var(--ease),
+      border-color 500ms var(--ease),
+      transform 220ms var(--ease);
+  }
+
+  .mobile-menu-toggle:hover {
+    background: rgba(var(--ink-rgb), 0.1);
+  }
+
+  .mobile-menu-toggle:active {
+    transform: scale(0.94);
+  }
+
+  .mobile-menu-toggle svg {
+    width: 22px;
+    height: 22px;
+    overflow: visible;
+    fill: var(--page);
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 2;
+    transition: transform 300ms var(--ease);
+  }
+
+  .mobile-menu-toggle path {
+    transform-origin: 12px 12px;
+    transition: transform 300ms var(--ease), opacity 180ms var(--ease);
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(1) {
+    transform: rotate(45deg) translateY(5px);
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-is-open .mobile-menu-toggle path:nth-child(3) {
+    transform: rotate(-45deg) translateY(-5px);
+  }
+}
+
+@media (max-width: 760px) {
+  .legal-hero {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .legal-content {
+    width: calc(100% - 32px);
+  }
+
+  .legal-section {
+    padding: 26px 22px;
+    border-radius: 22px;
+  }
+
+  .legal-section h2 {
+    --chip: 30px;
+    padding-left: calc(var(--chip) + 12px);
+    font-size: 1.4rem;
+    line-height: 1.05;
+  }
+
+  .legal-section h2::before {
+    font-size: 0.85rem;
+  }
+
+  .site-footer {
+    padding: 100px 16px 36px;
+  }
+
+  .site-footer__inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .footer-sitemap {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px 24px;
+  }
+
+  .site-footer .footer-disclaimer {
+    margin-top: 40px;
+  }
+}
+
+.credits-heart {
+  color: var(--vivid);
+  transition: color 500ms var(--ease);
+}
+
+@keyframes emoji-pop {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.82) rotate(0deg);
+  }
+  36% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--pop-x)), calc(-50% + var(--pop-y))) scale(1) rotate(var(--spin));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--pop-x) + var(--fall-drift)), calc(-50% + var(--pop-y) + var(--fall-distance))) scale(0.72) rotate(var(--fall-spin));
+  }
+}
+
+/* A one-time rise for the title on load. */
+@keyframes legal-rise {
+  from { opacity: 0; translate: 0 18px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+@keyframes legal-pop {
+  from { opacity: 0; scale: 0.6; }
+  to { opacity: 1; scale: 1; }
+}
+
+.legal-eyebrow { animation: legal-pop 700ms cubic-bezier(0.2, 1.4, 0.4, 1) 120ms both; }
+.legal-header h1,
+.legal-intro,
+.legal-updated { animation: legal-rise 700ms var(--ease) both; }
+.legal-intro { animation-delay: 80ms; }
+.legal-updated { animation-delay: 140ms; }
+
+@media (max-width: 430px) {
+  h1 { font-size: clamp(2.6rem, 13.4vw, 3.4rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legal-headline-emoji { transition: none; }
+  .emoji-particle { display: none; }
+  .legal-eyebrow,
+  .legal-header h1,
+  .legal-intro,
+  .legal-updated { animation: none; }
+}
+
+/* A language switch crossfades only the words, as on the landing page (styles.css): legal.js names
+   each visible block of copy for the view transition and takes the name off the page itself. */
+@media (prefers-reduced-motion: no-preference) {
+  :root.language-view-transition {
+    view-transition-name: none;
+  }
+
+  ::view-transition-group(*) {
+    animation-duration: 240ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  ::view-transition-image-pair(*) {
+    isolation: auto;
+  }
+
+  ::view-transition-old(*) {
+    animation: language-copy-out 150ms ease-out both;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(*) {
+    animation: language-copy-in 210ms 30ms ease-out both;
+    mix-blend-mode: normal;
+  }
+}
+
+@keyframes language-copy-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes language-copy-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.language-copy-fallback {
+  transition: opacity 90ms ease-out !important;
+}
+
+.language-copy-fallback.language-copy-fallback--enter {
+  transition-duration: 150ms !important;
+}
+
+.language-copy-fallback.is-language-hidden {
+  opacity: 0 !important;
+}

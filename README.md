@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/icons/icon-512.png" width="120" alt="The Akari app icon">
+  <img src="site/assets/icons/icon-512.png" width="120" alt="The Akari app icon">
 </p>
 
 <h1 align="center">Akari</h1>

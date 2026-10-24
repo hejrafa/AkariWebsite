@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" data-theme="forest" data-mode="dark" data-language="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0c271c" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/assets/favicon.svg?v=2" type="image/svg+xml" />
+    <link rel="icon" href="/assets/icons/icon-48.png?v=2" sizes="48x48" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon-180.png?v=2" />
+    <script>
+      (() => {
+        const themes = ["meadow", "forest", "coast", "canyon", "plain"];
+        const modes = ["light", "dark"];
+        const params = new URLSearchParams(window.location.search);
+        // GitHub Pages serves this one file for every missing address, English and German alike, so the
+        // address decides the language: anything under /de/ is German, everything else English. Every
+        // path on this page is absolute, since it can be served from any depth.
+        const language = /^\/de(\/|$)/.test(window.location.pathname) ? "de" : "en";
+        document.documentElement.lang = language;
+        document.documentElement.dataset.language = language;
+
+        try {
+          const savedTheme = localStorage.getItem("akari-theme");
+          const savedMode = localStorage.getItem("akari-mode");
+          const theme = params.get("theme") || savedTheme || "forest";
+          const mode = params.get("mode") || savedMode || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.dataset.theme = themes.includes(theme) ? theme : "forest";
+          document.documentElement.dataset.mode = modes.includes(mode) ? mode : "dark";
+        } catch (error) {
+          document.documentElement.dataset.mode = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+      })();
+    </script>
+    <link rel="stylesheet" href="/legal.css?v=20261024-01" />
+    <script src="/legal.js?v=20261022-03" defer></script>
+    <script src="/not-found.js?v=20261022-02" defer></script>
+    <script src="/visit.js?v=20261010-01" defer></script>
+    <title>Akari: Page not found</title>
+  </head>
+  <body data-legal-page="not-found">
+    <header class="legal-site-header" aria-label="Akari website header" data-i18n-aria-label="headerLabel">
+      <div class="legal-site-header__inner">
+        <div class="header-controls" id="header-controls-panel">
+          <div class="header-control-section">
+            <span class="mobile-control-label" data-i18n="mobileLanguageLabel">Language</span>
+            <div class="language-switch" role="group" aria-label="Choose a language" data-i18n-aria-label="languageGroupLabel">
+              <button class="language-button" type="button" data-language-target="en" lang="en" aria-label="View in English" data-i18n-aria-label="languageEnglishLabel" aria-pressed="true">EN</button>
+              <button class="language-button" type="button" data-language-target="de" lang="de" aria-label="View in German" data-i18n-aria-label="languageGermanLabel" aria-pressed="false">DE</button>
+            </div>
+          </div>
+
+          <div class="header-control-section">
+            <span class="mobile-control-label" data-i18n="mobileAppearanceLabel">Appearance</span>
+            <span class="mobile-theme-name" aria-hidden="true"></span>
+            <div class="appearance-controls" role="group" aria-label="Choose page appearance" data-i18n-aria-label="appearanceLabel">
+              <div class="theme-controls" role="group" aria-label="Choose a color theme" data-i18n-aria-label="themeGroupLabel">
+                <button class="theme-dot" type="button" data-theme-target="meadow" aria-label="Wasserkuppe" data-i18n-aria-label="themeMeadowLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="forest" aria-label="Shiratani" data-i18n-aria-label="themeForestLabel" aria-pressed="true"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="coast" aria-label="Loch Tay" data-i18n-aria-label="themeCoastLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="canyon" aria-label="Green River Overlook" data-i18n-aria-label="themeCanyonLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+                <button class="theme-dot" type="button" data-theme-target="plain" aria-label="Plain" data-i18n-aria-label="themePlainLabel" aria-pressed="false"><span class="theme-ring" aria-hidden="true"><span class="theme-swatch"></span></span></button>
+              </div>
+              <div class="mode-controls">
+                <button class="mode-button" type="button" data-mode-target="light" aria-label="Use light appearance" data-i18n-aria-label="lightModeLabel" aria-pressed="false"><span class="mode-icon" aria-hidden="true"></span></button>
+                <button class="mode-button" type="button" data-mode-target="dark" aria-label="Use dark appearance" data-i18n-aria-label="darkModeLabel" aria-pressed="true"><span class="mode-icon" aria-hidden="true"></span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a class="legal-brand" href="/" aria-label="Akari home" data-i18n-aria-label="homeLabel">
+          <img src="/assets/logo/akari-logo-forest-dark.svg?v=3" alt="Akari" width="89" height="50" />
+        </a>
+        <button class="mobile-menu-toggle" type="button" aria-controls="header-controls-panel" aria-expanded="false" aria-label="Language and appearance settings" data-i18n-aria-label="mobileMenuLabel">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16" />
+            <path d="M4 12h16" />
+            <path d="M4 17h16" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="legal-main">
+      <div class="legal-hero not-found">
+        <header class="legal-header">
+          <p class="legal-eyebrow" data-i18n="notFoundLabel">Page not found</p>
+          <p class="not-found__code"><span aria-hidden="true">4</span><button class="not-found__doughnut" type="button" aria-label="Take a bite of the doughnut" data-i18n-aria-label="biteLabel"><span class="cut"><img class="cut__image" data-sticker="stickers/doughnut-bitten-1" alt="" width="256" height="256" /></span></button><span aria-hidden="true">4</span></p>
+          <h1 data-i18n="title">Someone took a bite out of this page</h1>
+          <p class="legal-intro" data-i18n="intro">Luckily, the rest of the site is still in one piece.</p>
+          <a class="not-found__home" href="/"><span data-i18n="backHome">Back to the start</span></a>
+        </header>
+      </div>
+    </main>
+
+    <footer class="site-footer" aria-label="Akari credits" data-i18n-aria-label="footerLabel">
+      <div class="site-footer__inner">
+        <div class="footer-brand">
+          <a class="footer-logo" href="/" aria-label="Akari home" data-i18n-aria-label="homeLabel">
+            <img src="/assets/logo/akari-logo-forest-dark.svg?v=3" alt="Akari" width="89" height="50" loading="lazy" />
+          </a>
+          <p class="footer-made"><span data-i18n="madePrefix">Made with </span><span class="credits-heart" role="img" aria-label="love" data-i18n-aria-label="heartLabel">♥</span><span data-i18n="madeSuffix"> in Germany</span></p>
+          <p class="footer-copyright">© 2026 Akari</p>
+        </div>
+        <nav class="footer-sitemap" aria-label="Sitemap" data-i18n-aria-label="footerSitemapLabel">
+          <div class="footer-column">
+            <h2 data-i18n="footerProductTitle">Product</h2>
+            <ul>
+              <li><a href="/#vitals" data-i18n="footerVitalsLabel">Vitals</a></li>
+              <li><a href="/#nutrition" data-i18n="footerNutritionLabel">Nutrition</a></li>
+              <li><a href="/#goals" data-i18n="footerGoalsLabel">Goals</a></li>
+              <li><a href="/#food" data-i18n="footerFoodLabel">Food logging</a></li>
+              <li><a href="/#your-data" data-i18n="footerDataLabel">Your data</a></li>
+              <li><a href="/#pricing" data-i18n="footerPricingLabel">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerCompanyTitle">Company</h2>
+            <ul>
+              <li><a href="/about-us/" data-i18n="aboutLabel">About us</a></li>
+              <li><a href="/brand/" data-i18n="brandLabel">Brand</a></li>
+              <li><a class="footer-admin-link" href="https://admin.joinakari.com/login" rel="nofollow" data-i18n="adminLoginLabel">Admin</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerSupportTitle">Support</h2>
+            <ul>
+              <li><a href="https://testflight.apple.com/join/wrv4aFVQ" target="_blank" rel="noreferrer" data-i18n="footerJoinLabel">Join the beta</a></li>
+              <li><a href="/#faq" data-i18n="footerFaqLabel">FAQ</a></li>
+              <li><a href="mailto:support@joinakari.com" data-i18n="contactLabel">Contact us</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h2 data-i18n="footerLegalTitle">Legal</h2>
+            <ul>
+              <li><a href="/privacy/" data-i18n="privacyLabel">Privacy Policy</a></li>
+              <li><a href="/terms/" data-i18n="termsLabel">Terms of Service</a></li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+      <p class="footer-disclaimer" data-i18n="disclaimer">Akari is not a substitute for professional medical advice. Always consult your physician first.</p>
+    </footer>
+  </body>
+</html>

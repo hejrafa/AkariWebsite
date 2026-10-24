@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 """Writes the logos and the brand kit from the app's icons.
 
-The header and footer logos, assets/logo/akari-logo-<theme>-<dark|light>.svg, are the mark from the theme's
+The header and footer logos, site/assets/logo/akari-logo-<theme>-<dark|light>.svg, are the mark from the theme's
 app icon above the Akari wordmark. The mark is the icon's own layers from the app's AppIcon<Theme>.icon
 (AppIcon.icon for Plain): the outline and inside arcs in the theme's gradient,
 and the theme's touches (bolts, leaves, bubbles or drops). Each layer also carries a lavender copy of every
 shape underneath the gradient one, for Icon Composer's other renditions; the logo keeps only the gradient
-shapes. The wordmark comes from assets/akari-logo.svg, in the theme's cream on dark and its ink on light.
+shapes. The wordmark comes from tools/akari-logo.svg, in the theme's cream on dark and its ink on light.
 
 All logos keep the 89.2823 x 50 box the site, the admin dashboard and its login load them in, and share
 one layout, so the arcs and the wordmark stay put when the theme changes. The touches reach above and
 beside the arcs, so the mark is scaled until the widest reach of any theme's touches fits above the
 wordmark.
 
-The brand page's downloads go to assets/brand/, named after the themes as the site shows them:
+The brand page's downloads go to site/assets/brand/, named after the themes as the site shows them:
 - akari-logo-<theme>-on-<dark|light>.svg and .png (2000 px wide), the logos above;
 - akari-mark-<theme>.svg and .png (1024 px wide), the mark alone;
 - akari-app-icon-<theme>-<light|dark>.png, the app icon at 1024 px as iOS draws it, white or black tile,
   rendered by Icon Composer's ictool exactly as the app's Scripts/export_welcome_assets.sh does.
-It also draws assets/social.png, the 1200 x 630 card that links show when shared, in messages and on
-social sites: the Plain logo for light backgrounds, centred on white. Last, it zips assets/brand/ into
-brand/akari-brand.zip for a local preview; the deploy makes its own.
+It also draws site/assets/social.png, the 1200 x 630 card that links show when shared, in messages and on
+social sites: the Plain logo for light backgrounds, centred on white. Last, it zips site/assets/brand/ into
+site/brand/akari-brand.zip for a local preview; the deploy makes its own.
 
 Usage: python3 tools/export_logos.py [--app ../App] [--svg-only]
 The PNGs need macOS with Xcode and Google Chrome; --svg-only writes just the SVGs.
@@ -39,6 +39,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+SITE = ROOT / "site"
 SVG = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG)
 ICTOOL = "/Applications/Xcode.app/Contents/Applications/Icon Composer.app/Contents/Executables/ictool"
@@ -166,8 +167,8 @@ def mark_layers(document: Path) -> tuple[list[ET.Element], list[ET.Element]]:
 
 
 def wordmark() -> ET.Element:
-    """The wordmark, which assets/akari-logo.svg keeps hidden (it shows only the mark)."""
-    root = ET.parse(ROOT / "assets/akari-logo.svg").getroot()
+    """The wordmark, which tools/akari-logo.svg keeps hidden (it shows only the mark)."""
+    root = ET.parse(ROOT / "tools/akari-logo.svg").getroot()
     word = next(element for element in root.iter() if element.get("id") == "akari-wordmark")
     word.attrib.pop("display", None)
     return word
@@ -265,7 +266,7 @@ def main() -> int:
             print(f"{documents[theme].name}: the touches reach past the logo's sides", file=sys.stderr)
             return 1
 
-    brand = ROOT / "assets/brand"
+    brand = SITE / "assets/brand"
     brand.mkdir(exist_ok=True)
     word = wordmark()
     with tempfile.TemporaryDirectory() as temporary:
@@ -284,14 +285,14 @@ def main() -> int:
                 for path in letters.iter(f"{{{SVG}}}path"):
                     path.set("fill", colour)
                 logo.append(letters)
-                text = write_svg(svg, ROOT / f"assets/logo/akari-logo-{theme}-{mode}.svg")
+                text = write_svg(svg, SITE / f"assets/logo/akari-logo-{theme}-{mode}.svg")
                 download = brand / f"akari-logo-{name}-on-{mode}"
                 download.with_suffix(".svg").write_text(text)
                 print(f"Wrote {download.with_suffix('.svg').relative_to(ROOT)}")
                 if not arguments.svg_only:
                     render_svg(text, LOGO_PNG_WIDTH, round(LOGO_PNG_WIDTH * HEIGHT / WIDTH), download.with_suffix(".png"), work)
                     if theme == "plain" and mode == "light":
-                        social_card(text, ROOT / "assets/social.png", work)
+                        social_card(text, SITE / "assets/social.png", work)
 
             left, right, top = reaches[theme]
             left, right, top = min(left, arcs_left), max(right, arcs_right), min(top, arcs_top)
@@ -304,7 +305,7 @@ def main() -> int:
                 for mode, rendition in (("light", "Default"), ("dark", "Dark")):
                     render_icon(document, rendition, brand / f"akari-app-icon-{name}-{mode}.png")
 
-    archive = ROOT / "brand/akari-brand.zip"
+    archive = SITE / "brand/akari-brand.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as kit:
         for file in sorted(brand.iterdir()):
             if file.suffix in (".svg", ".png"):

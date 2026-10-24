@@ -1,11 +1,13 @@
 .DS_Store
 node_modules/
 .wrangler/
+# The deploy's staged copy of site/, if its steps are run locally.
+/_site/
 # Written by tools/bake_die_cuts.py for local preview; the deploy bakes its own.
-assets/welcome/**/*-cut@*.webp
-assets/welcome/stickers/*/
-assets/stickers/*/
+site/assets/welcome/**/*-cut@*.webp
+site/assets/welcome/stickers/*/
+site/assets/stickers/*/
 # Written by tools/export_logos.py for local preview; the deploy zips its own.
-brand/akari-brand.zip
+site/brand/akari-brand.zip
 # Written by tools/language_pages.py build; the deploy makes its own, and the local server makes them as asked.
-/de/
+/site/de/
