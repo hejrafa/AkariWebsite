@@ -153,6 +153,23 @@ for (const row of [...VOCABULARY, ...DRINKS]) {
   }
 }
 
+// Each row's own display names (never its aliases), folded, with the one row that
+// carries it. A display name is specific ("Wirsing, gekocht"); an alias may be a
+// generic word ("Brot") that Haiku's more specific id should keep.
+const ROW_BY_DISPLAY_NAME = new Map<string, string | null>();
+for (const row of [...VOCABULARY, ...DRINKS]) {
+  const names = "name" in row ? [row.name] : [row.ingredient, row.displayName ?? ""];
+  for (const name of [...names, row.displayNameDE ?? ""]) {
+    const folded = lookupWords(name).join(" ");
+    if (!folded) continue;
+    const owner = ROW_BY_DISPLAY_NAME.get(folded);
+    ROW_BY_DISPLAY_NAME.set(folded, owner === undefined || owner === row.id ? row.id : null);
+  }
+}
+function rowDisplayNamed(name: string): string | null {
+  return ROW_BY_DISPLAY_NAME.get(lookupWords(name).join(" ")) ?? null;
+}
+
 // The rows a name is the name of. The name is tried whole and without its leading
 // fillers, so "mixed olives" finds Olives and a row whose own alias starts with a
 // filler ("plain bread roll") still finds itself.
@@ -461,7 +478,7 @@ async function compose(request: Request, env: Env, ctx: ExecutionContext, device
       ],
       output_config: { format: { type: "json_schema", schema: COMPOSE_SCHEMA } },
     });
-    const { answer, dropped, resolved, renamed } = readCompose(message, input, language);
+    const { answer, dropped, resolved, renamed, repointed } = readCompose(message, input, language);
     // Counts only: never the meal text, the names, the ids or the device id.
     console.log(
       JSON.stringify({
@@ -476,6 +493,7 @@ async function compose(request: Request, env: Env, ctx: ExecutionContext, device
         dropped,
         resolved,
         renamed,
+        repointed,
         photo: photo !== null,
         confidence: Math.round(answer.confidence * 10) / 10,
         ...scoreboardLog(env, device),
@@ -777,10 +795,11 @@ function readComposeRequest(body: unknown): ComposeRequest | null {
 // no row. Dropped and
 // corrected fields, the names the second look found and the names replaced by a
 // row's are counted for the log.
-function readCompose(message: Anthropic.Message, input: ComposeRequest, language: Language): { answer: ComposeAnswer; dropped: number; resolved: number; renamed: number } {
+function readCompose(message: Anthropic.Message, input: ComposeRequest, language: Language): { answer: ComposeAnswer; dropped: number; resolved: number; renamed: number; repointed: number } {
   const parsed = readJson(message);
   if (!Array.isArray(parsed.foods)) throw new UpstreamFailure("shape");
   let dropped = 0;
+  let repointed = 0;
 
   const templateIds = new Set(input.templates.map((t) => t.id));
   const templateParts = new Set(input.templates.flatMap((t) => t.ingredients.map((part) => part.reference)));
@@ -806,6 +825,17 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
     if (reference !== null && (!known(reference) || namedWrongly(name, reference))) {
       reference = null;
       dropped++;
+    }
+    // A name that is one verified row's own display name outranks the id Haiku
+    // chose for it: with 1,500 rows a neighbouring id ("Wirsing, gekocht" on the
+    // pointed cabbage) is the likelier slip, and the name is reviewed vocabulary.
+    // An alias does not: "Brot" on a white bread row is Haiku being specific.
+    if (reference !== null && ROW_DISPLAY.has(reference)) {
+      const named = rowDisplayNamed(name);
+      if (named && named !== reference) {
+        reference = named;
+        repointed++;
+      }
     }
     // Grams Haiku left out, or gave as nothing, fall back to a plain portion
     // instead of 1 g: a whole drink's serving, else 100 g. A stated amount is
@@ -889,7 +919,7 @@ function readCompose(message: Anthropic.Message, input: ComposeRequest, language
   let confidence = 0.5;
   if (typeof parsed.confidence === "number" && parsed.confidence >= 0 && parsed.confidence <= 1) confidence = Math.round(parsed.confidence * 100) / 100;
   else dropped++;
-  return { answer: { foods, missing, confidence }, dropped, resolved, renamed };
+  return { answer: { foods, missing, confidence }, dropped, resolved, renamed, repointed };
 }
 
 // A gram range with low <= estimate <= high, all positive, or null when the model

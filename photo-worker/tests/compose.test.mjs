@@ -741,3 +741,21 @@ test("a sent template and its ingredients keep the names they came with", async 
   assert.equal(body.foods[0].name, "Hummus bowl");
   assert.deepEqual(body.foods[1].ingredients, [{ name: "Tahini", reference: "usda:2707587", grams: 15 }]);
 });
+
+test("a reviewed name outranks the id Haiku chose for it", async () => {
+  // "Wirsing, gekocht" is savoy cabbage's own German name; Haiku answered with the
+  // pointed cabbage's id next to it in the vocabulary.
+  const answer = {
+    foods: [
+      { name: "Wirsing, gekocht", role: "side", reference: "bls:G344132", grams: 150, ingredients: [] },
+      { name: "Spitzkohl, gekocht", role: "side", reference: "bls:G344132", grams: 150, ingredients: [] },
+    ],
+    confidence: 0.9,
+  };
+  const { result: response, lines } = await logged(async () => (await run(compose({ text: "Wirsing gekocht, Spitzkohl gekocht", language: "de" }), {}, message(answer))).response);
+  const body = await response.json();
+  assert.deepEqual(body.foods[0], { name: "Wirsing, gekocht", role: "side", reference: "bls:G343132", grams: 150 });
+  assert.deepEqual(body.foods[1], { name: "Spitzkohl, gekocht", role: "side", reference: "bls:G344132", grams: 150 });
+  const line = JSON.parse(lines.find((line) => line.includes('"compose":"ok"')));
+  assert.equal(line.repointed, 1);
+});
