@@ -157,6 +157,8 @@ const translations = {
     faqPriceAnswer: "Most of Akari is free. Food logging, readiness and Health Age need a subscription: €4.99 a month or €39.99 a year, with 14 days free to try and no commitment. During the beta everything is free.",
     faqNeedQuestion: "What do I need?",
     faqNeedAnswer: "An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German. You don’t need a fitness tracker, but one that writes to Apple Health, like an Apple Watch or a Fitbit Air, adds sleep, heart rate and more. Without one, switch off what needs it and use Akari for the steps your iPhone counts and the food you log.",
+    faqTrackersQuestion: "Does Akari work with my Apple Watch, Oura, Garmin or Fitbit?",
+    faqTrackersAnswer: "Yes. Akari reads sleep, heart rate and activity from Apple Health, so it works with any tracker that writes there, like an Apple Watch, an Oura Ring, a Garmin watch or a Fitbit. Turn on Apple Health in your tracker’s own app, and keep the tracker you already have.",
     faqMedicalQuestion: "Is Akari medical advice?",
     faqMedicalAnswer: "No. Akari explains your own data and patterns. It does not diagnose or treat anything, so talk to your doctor about health concerns.",
     faqPrivacyQuestion: "Does my health data leave my iPhone?",
@@ -302,6 +304,8 @@ const translations = {
     faqPriceAnswer: "Das meiste an Akari ist kostenlos. Für Mahlzeiten erfassen, Tagesform und Gesundheitsalter brauchst du ein Abo: 4,99 € im Monat oder 39,99 € im Jahr, 14 Tage kostenlos testen und ohne Bindung. Während der Beta ist alles kostenlos.",
     faqNeedQuestion: "Was brauche ich dafür?",
     faqNeedAnswer: "Ein iPhone mit iOS 26 oder neuer und Apple Health. Akari gibt es auf Deutsch und Englisch. Einen Fitness-Tracker brauchst du nicht, aber einer, der in Apple Health schreibt, etwa eine Apple Watch oder ein Fitbit Air, bringt Schlaf, Herzfrequenz und mehr dazu. Ohne Tracker schaltest du ab, was ihn braucht, und nutzt Akari für die Schritte, die dein iPhone zählt, und das Essen, das du einträgst.",
+    faqTrackersQuestion: "Funktioniert Akari mit meiner Apple Watch, Oura, Garmin oder Fitbit?",
+    faqTrackersAnswer: "Ja. Akari liest Schlaf, Herzfrequenz und Aktivität aus Apple Health und funktioniert so mit jedem Tracker, der dorthin schreibt, etwa einer Apple Watch, einem Oura Ring, einer Garmin-Uhr oder einem Fitbit. Schalte Apple Health in der App deines Trackers ein und behalte den Tracker, den du schon hast.",
     faqMedicalQuestion: "Ist Akari eine medizinische Beratung?",
     faqMedicalAnswer: "Nein. Akari erklärt deine eigenen Daten und Muster. Akari stellt keine Diagnosen und behandelt nichts. Bei gesundheitlichen Fragen sprich mit deiner Ärztin oder deinem Arzt.",
     faqPrivacyQuestion: "Bleiben meine Gesundheitsdaten auf dem iPhone?",
@@ -366,6 +370,7 @@ const pageMetadata = {
     socialDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
     twitterDescription: "Akari brings your sleep, movement and food together on your iPhone and explains in plain words what they mean for your day.",
     imageAlt: "The Akari logo on white",
+    keywords: "Akari, health app, iPhone health app, health tracking, fitness tracking, fitness app, sleep tracker, sleep tracking, readiness, recovery, heart rate, HRV, calorie counter, food tracker, nutrition tracker, meal logging, weight loss, Health Age, biological age, Apple Health, Apple Watch, Oura, Garmin, Fitbit, Bevel, Yazio, MyFitnessPal, Whoop, Google Fit",
   },
   de: {
     title: "Akari: Verstehe deine Gesundheitsdaten",
@@ -374,6 +379,7 @@ const pageMetadata = {
     socialDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
     twitterDescription: "Akari bringt Schlaf, Bewegung und Essen auf deinem iPhone zusammen und erklärt in einfachen Worten, was sie für deinen Tag bedeuten.",
     imageAlt: "Das Akari-Logo auf Weiß",
+    keywords: "Akari, Gesundheits-App, iPhone Gesundheits-App, Gesundheitstracking, Fitness-Tracking, Fitness-App, Schlaftracker, Schlaf-Tracking, Tagesform, Erholung, Herzfrequenz, HRV, Kalorienzähler, Ernährungstagebuch, Nährstoffe, Mahlzeiten erfassen, Abnehmen, Gesundheitsalter, biologisches Alter, Apple Health, Apple Watch, Oura, Garmin, Fitbit, Bevel, Yazio, MyFitnessPal, Whoop, Google Fit",
   },
 };
 
@@ -388,6 +394,7 @@ function structuredDataFor(language) {
     ["faqWhatQuestion", copy.faqWhatAnswer],
     ["faqPriceQuestion", copy.faqPriceAnswer],
     ["faqNeedQuestion", copy.faqNeedAnswer],
+    ["faqTrackersQuestion", copy.faqTrackersAnswer],
     ["faqMedicalQuestion", copy.faqMedicalAnswer],
     ["faqPrivacyQuestion", `${copy.faqPrivacyAnswer}${copy.faqPrivacyPhotoPrefix}${copy.faqPrivacyPhotoLink}${copy.faqPrivacyPhotoSuffix}`],
     ["faqTryQuestion", `${copy.faqTryPrefix}Apple TestFlight${copy.faqTrySuffix}`],
@@ -405,8 +412,11 @@ function structuredDataFor(language) {
       {
         "@type": "WebSite",
         "@id": "https://joinakari.com/#website",
-        url,
+        // The site's name, which search shows above each result, belongs to the whole site, so its address is
+        // the root in both languages. The other names are the brand page's own ("the Akari app").
+        url: "https://joinakari.com/",
         name: "Akari",
+        alternateName: ["Akari app", "Akari for iPhone"],
         description: isGerman
           ? "Akari bringt Schlaf, Bewegung und Essen auf dem iPhone zusammen und erklärt sie in einfachen Worten."
           : "Akari brings sleep, movement and food together on iPhone and explains them in plain words.",
@@ -494,6 +504,7 @@ function updatePageMetadata(language) {
   const canonicalUrl = `https://joinakari.com${pathFor("/", language)}`;
   document.title = metadata.title;
   setMetaContent('meta[name="description"]', metadata.description);
+  setMetaContent('meta[name="keywords"]', metadata.keywords);
   setMetaContent('meta[property="og:title"]', metadata.socialTitle);
   setMetaContent('meta[property="og:description"]', metadata.socialDescription);
   setMetaContent('meta[property="og:url"]', canonicalUrl);

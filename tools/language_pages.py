@@ -174,6 +174,7 @@ def german_metadata(root, path):
             "socialDescription": string_value(copy, "socialDescription", where),
             "twitterDescription": string_value(copy, "twitterDescription", where),
             "imageAlt": string_value(copy, "imageAlt", where),
+            "keywords": string_value(copy, "keywords", where),
         }
     source = (root / "legal.js").read_text(encoding="utf-8")
     page = path.strip("/")
@@ -316,6 +317,8 @@ def german_page(root, path):
         r'(<link rel="canonical" href=")[^"]*(")', lambda match: match.group(1) + SITE + german + match.group(2), text, "the canonical link"
     )
     text = set_meta(text, "name", "description", copy["description"])
+    if "keywords" in copy:
+        text = set_meta(text, "name", "keywords", copy["keywords"])
     text = set_meta(text, "property", "og:title", copy["socialTitle"])
     text = set_meta(text, "property", "og:description", copy["socialDescription"])
     text = set_meta(text, "property", "og:url", SITE + german)

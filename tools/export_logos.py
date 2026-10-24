@@ -19,7 +19,8 @@ The brand page's downloads go to site/assets/brand/, named after the themes as t
 - akari-app-icon-<theme>-<light|dark>.png, the app icon at 1024 px as iOS draws it, white or black tile,
   rendered by Icon Composer's ictool exactly as the app's Scripts/export_welcome_assets.sh does.
 It also draws site/assets/social.png, the 1200 x 630 card that links show when shared, in messages and on
-social sites: the Plain logo for light backgrounds, centred on white. Last, it zips site/assets/brand/ into
+social sites: the Plain logo for light backgrounds, centred on white; and site/assets/favicon.svg, the Plain
+mark centred on a square, which browsers and search results show for the site. Last, it zips site/assets/brand/ into
 site/brand/akari-brand.zip for a local preview; the deploy makes its own.
 
 Usage: python3 tools/export_logos.py [--app ../App] [--svg-only]
@@ -300,6 +301,14 @@ def main() -> int:
             ET.SubElement(svg, "defs").extend(defs)
             ET.SubElement(svg, "g", {"id": "akari-mark"}).extend(groups)
             text = write_svg(svg, brand / f"akari-mark-{name}.svg")
+            if theme == "plain":
+                # The favicon is the same mark on a square, as icons are drawn.
+                side = max(right - left, arcs_bottom - top)
+                x, y = left - (side - (right - left)) / 2, top - (side - (arcs_bottom - top)) / 2
+                favicon = svg_root(side, side, f"{x:g} {y:g} {side:g} {side:g}", logo=False)
+                ET.SubElement(favicon, "defs").extend(defs)
+                ET.SubElement(favicon, "g", {"id": "akari-mark"}).extend(groups)
+                write_svg(favicon, SITE / "assets/favicon.svg")
             if not arguments.svg_only:
                 render_svg(text, MARK_PNG_WIDTH, round(MARK_PNG_WIDTH * (arcs_bottom - top) / (right - left)), brand / f"akari-mark-{name}.png", work)
                 for mode, rendition in (("light", "Default"), ("dark", "Dark")):

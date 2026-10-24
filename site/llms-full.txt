@@ -59,7 +59,7 @@ The subscription can be tried free for 14 days, with no commitment. What is free
 
 ## Requirements
 
-An iPhone with iOS 26 or later and Apple Health. Akari is available in English and German. A fitness tracker that writes to Apple Health, like an Apple Watch or a Fitbit Air, is optional and adds sleep, heart rate and more.
+An iPhone with iOS 26 or later and Apple Health. Akari is available in English and German. A fitness tracker is optional: Akari reads any tracker that writes to Apple Health, like an Apple Watch, an Oura Ring, a Garmin watch or a Fitbit, and adds its sleep, heart rate and more.
 
 ## Availability
 
@@ -68,6 +68,15 @@ Akari is in a free public beta through Apple TestFlight: https://testflight.appl
 ## Medical scope
 
 Akari explains a person's own health data and patterns. It does not diagnose or treat anything and is not a substitute for professional medical advice. People should talk to their doctor about health concerns.
+
+## How Akari compares
+
+People looking at Akari often look at these apps too. Akari works alongside most of them rather than replacing them.
+
+- Apple Health: Apple's own app keeps and charts health data on the iPhone. Akari reads that same data, with the user's permission, and explains in plain words what it means for the day: readiness each morning, with sleep, movement and food in one place.
+- Oura, Garmin, Fitbit and Apple Watch: trackers with their own apps. Akari is not a tracker. It reads what they write to Apple Health, so people keep the tracker they have and see its sleep, heart rate and activity next to the food they eat.
+- Bevel: another iPhone app built on Apple Health data. Akari's own focus is no account, health data kept on the iPhone, each reading explained against the user's own usual days, and English and German.
+- Yazio and MyFitnessPal: calorie counters and food diaries. Akari logs food by writing, saying or photographing it, gives every nutrient its own row, and shows food next to sleep and movement rather than on its own.
 
 ## Frequently asked questions
 
@@ -82,6 +91,10 @@ Most of Akari is free. Food logging, readiness and Health Age need a subscriptio
 ### What do I need?
 
 An iPhone with iOS 26 or later and Apple Health. Akari speaks English and German. A fitness tracker is optional: one that writes to Apple Health, like an Apple Watch or a Fitbit Air, adds sleep, heart rate and more. Without one, you can switch off what needs it and use Akari for the steps your iPhone counts and the food you log.
+
+### Does Akari work with my Apple Watch, Oura, Garmin or Fitbit?
+
+Yes. Akari reads sleep, heart rate and activity from Apple Health, so it works with any tracker that writes there, like an Apple Watch, an Oura Ring, a Garmin watch or a Fitbit. Turn on Apple Health in your tracker's own app, and keep the tracker you already have.
 
 ### Is Akari medical advice?
 

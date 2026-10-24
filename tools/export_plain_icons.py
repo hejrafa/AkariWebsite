@@ -7,6 +7,7 @@ Writes into site/assets/icons/:
 - apple-touch-icon-180.png and icon-48.png: opaque squares, for iOS to round itself and for Google's
   result favicon, which it crops on its own;
 - icon-maskable-512.png: an opaque square whose mark stays inside the central 80 % circle.
+And site/favicon.ico, the 48 px square at 16, 32 and 48 px, for anything that asks for /favicon.ico.
 The sharing card, site/assets/social.png, is drawn by tools/export_logos.py from the logo.
 
 Each size is rendered by Icon Composer's ictool from the app's AppIcon.icon, Dark rendition, exactly
@@ -98,14 +99,16 @@ def main() -> int:
         for size in (1024, 512, 192):
             render(document, size, work).save(icons / f"icon-{size}.png", optimize=True)
         square(render(document, 180, work)).save(icons / "apple-touch-icon-180.png", optimize=True)
-        square(render(document, 48, work)).save(icons / "icon-48.png", optimize=True)
+        favicon = square(render(document, 48, work))
+        favicon.save(icons / "icon-48.png", optimize=True)
+        favicon.save(ROOT / "site" / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
         maskable = render(document, 512, work)
         radius = mark_radius(maskable)
         if radius > 0.4:
             print(f"The mark reaches {radius:.0%} from the centre, outside the maskable safe zone (40 %).", file=sys.stderr)
             return 1
         square(maskable).save(icons / "icon-maskable-512.png", optimize=True)
-    print(f"Wrote 6 icons to {icons} (mark within {radius:.0%} of the centre)")
+    print(f"Wrote 6 icons to {icons} and site/favicon.ico (mark within {radius:.0%} of the centre)")
     return 0
 
 
