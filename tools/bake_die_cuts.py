@@ -21,7 +21,12 @@ Each output is the input on a transparent margin of SIDE px left and right, TOP 
 (at 1x; twice that in a 2x file, three times in a 3x), so the shadow is never clipped. styles.css
 (.cut__image) reads the same numbers to place the inner piece exactly where the unbaked one was.
 
-Usage: python3 tools/bake_die_cuts.py [--root DIR] [--jobs N] [--stickers NAME ... --out DIR]
+The app exports lossless WebP, but the page's images are pictures of the app's UI, so each output is lossy
+WebP at quality 90 with its alpha (the edge and the shadow) kept lossless: it looks the same at about a
+fifth of the size. --recompress does the same, in place, to the pieces the page shows as exported (the
+readiness bar), so only the deploy passes it, for its staged copy; the repository keeps the app's files.
+
+Usage: python3 tools/bake_die_cuts.py [--root DIR] [--jobs N] [--recompress] [--stickers NAME ... --out DIR]
 Reads and writes under DIR, the repository's site/ by default; the deploy workflow passes its staged copy.
 With --stickers, bakes only those Fluent stickers, into <out>/<theme>/: the admin dashboard is served
 by the feedback worker, which keeps its own committed copies (pnpm bake in feedback-worker/).
@@ -60,6 +65,7 @@ SIDE, TOP, BOTTOM = 20, 10, 30  # room for ring and shadow: the blur fades out w
 STICKER_SIZES = (34, 43, 56, 72, 92, 120, 160)  # each about 1.29 times the last; keep in step with script.js
 ICON_SIZES = tuple(size for size in STICKER_SIZES if size < 104)  # the app icon below its own 104px piece (legal.js)
 NO_EDGE = {"readiness-bar"}
+WEBP = {"quality": 90, "method": 4, "alpha_quality": 100, "exact": False}
 SCRIPT = Path(__file__).resolve()
 
 
@@ -159,15 +165,32 @@ def run(job) -> str:
     baked = bake(image, CREAM[theme], scale)
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = output.with_name(f".{output.name}.tmp")
-    baked.save(temporary, "WEBP", lossless=True, quality=100, method=4, exact=False)
+    baked.save(temporary, "WEBP", **WEBP)
     os.replace(temporary, output)
     return str(output)
+
+
+def recompress(root: Path) -> int:
+    """Re-encodes in place, as the baked files are, each piece the page shows as exported. A file already
+    lossy is left alone, so a second run changes nothing."""
+    count = 0
+    for source in sorted((root / "assets" / "welcome").glob("*/*/*/*.webp")):
+        if source.name.split("@")[0] not in NO_EDGE or b"VP8L" not in source.read_bytes()[:64]:
+            continue
+        image = Image.open(source)
+        image.load()
+        temporary = source.with_name(f".{source.name}.tmp")
+        image.save(temporary, "WEBP", **WEBP)
+        os.replace(temporary, source)
+        count += 1
+    return count
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--root", type=Path, default=SCRIPT.parent.parent / "site", help="folder holding assets/ (default: the repository's site/)")
     parser.add_argument("--jobs", type=int, default=os.cpu_count() or 1, help="images baked in parallel")
+    parser.add_argument("--recompress", action="store_true", help="also re-encode, in place, the pieces shown as exported (deploy only)")
     parser.add_argument("--stickers", nargs="+", metavar="NAME", help="bake only these assets/stickers/<name>.png")
     parser.add_argument("--out", type=Path, help="with --stickers: the folder their theme folders go in")
     args = parser.parse_args()
@@ -188,6 +211,8 @@ def main() -> int:
         print(f"No assets/welcome under {root}", file=sys.stderr)
         return 1
 
+    if args.recompress and not args.stickers:
+        print(f"Re-encoded {recompress(root)} pieces shown as exported.")
     pending = [job for job in every if not is_current(job[0], job[1])]
     total = len(every)
     if not pending:
