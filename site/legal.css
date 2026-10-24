@@ -333,10 +333,14 @@ a:hover { color: var(--accent); }
 }
 
 /* With a mouse, the theme pill shows only the current theme and opens to the left into the full row on
-   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one. */
+   hover or keyboard focus. The other dots grow from nothing while the ring slides to the current one.
+   The ring moves by left, not transform: the dots grow on the main thread, and a transform would run on
+   the compositor at its own pace and drift off the dot it circles (as on the landing page, styles.css). */
 @media (hover: hover) and (min-width: 761px) {
   .theme-controls::before {
-    transition: border-color 500ms var(--ease), transform 300ms var(--ease);
+    left: calc(3px + var(--control-index, 0) * var(--control-size));
+    transform: none;
+    transition: border-color 500ms var(--ease), left 300ms var(--ease);
   }
 
   .theme-dot {
@@ -348,7 +352,7 @@ a:hover { color: var(--accent); }
   }
 
   .theme-controls:not(:hover, :focus-within)::before {
-    transform: translateX(0);
+    left: 3px;
   }
 
   .theme-controls:not(:hover, :focus-within) .theme-dot:not([aria-pressed="true"]) {
@@ -394,6 +398,13 @@ a:hover { color: var(--accent); }
   .language-button:focus-visible::after {
     opacity: 1;
     transform: translate(-50%, 0);
+  }
+
+  /* As the pill opens, its dots slide under a resting pointer one after another. A short wait before a
+     dot answers the hover keeps each one's label and tint from flashing on the way past. */
+  .theme-dot:hover::after,
+  .theme-dot:hover .theme-swatch {
+    transition-delay: 250ms;
   }
 
   /* The mode buttons sit near the page edge, so their labels line up with their right side instead: centred,
