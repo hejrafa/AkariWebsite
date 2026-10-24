@@ -5,8 +5,6 @@
   </picture>
 </p>
 
-<h1 align="center">Akari</h1>
-
 <p align="center">
   <strong>Your whole day in one place.</strong><br>
   Sleep, movement and food on your iPhone, explained in plain words.
