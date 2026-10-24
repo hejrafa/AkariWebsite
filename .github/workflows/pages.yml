@@ -67,3 +67,19 @@ jobs:
         with:
           timeout: 1200000
           error_count: 20
+
+      # Bing (and ChatGPT search, which uses its index) and the other IndexNow engines fetch the pages this
+      # push changed now, instead of at their next crawl (tools/indexnow.py). A manual run, or a push whose
+      # previous commit can't be fetched, sends every address. A failure here never fails the deploy.
+      - name: Tell IndexNow what changed
+        continue-on-error: true
+        env:
+          BEFORE: ${{ github.event.before }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = "push" ] && git fetch --quiet --depth=1 origin "$BEFORE" 2>/dev/null; then
+            git diff --name-only "$BEFORE" "$GITHUB_SHA" > "$RUNNER_TEMP/changed.txt"
+            xargs python3 tools/indexnow.py < "$RUNNER_TEMP/changed.txt"
+          else
+            python3 tools/indexnow.py --all
+          fi
