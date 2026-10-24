@@ -639,7 +639,7 @@ test("a name left missing that is one row's name or alias takes that row, and ke
       { name: "protein shake", role: "drink", reference: null, grams: 300, ingredients: [] },
       { name: "Gemüse", role: "side", reference: null, grams: 150, ingredients: [] },
       { name: "Obst", role: "side", reference: null, grams: 120, ingredients: [] },
-      { name: "Schokolade", role: "side", reference: null, grams: 20, ingredients: [] },
+      { name: "Nachtisch", role: "side", reference: null, grams: 20, ingredients: [] },
     ],
     confidence: 0.7,
   };
@@ -656,7 +656,7 @@ test("a name left missing that is one row's name or alias takes that row, and ke
   assert.deepEqual(body.foods[2], { name: "cereal bar", role: "side", reference: "cofid:11-819", grams: 25 });
   assert.deepEqual(body.foods[3], { name: "Cereal bar", role: "side", reference: "cofid:11-819", grams: 25 });
   for (const food of body.foods.slice(4)) assert.equal(food.reference, null, food.name);
-  assert.deepEqual(body.missing, ["protein shake", "Gemüse", "Obst", "Schokolade"]);
+  assert.deepEqual(body.missing, ["protein shake", "Gemüse", "Obst", "Nachtisch"]);
   const line = JSON.parse(lines.find((line) => line.includes('"compose":"ok"')));
   assert.equal(line.resolved, 6);
   assert.equal(line.missing, 4);
