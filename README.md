@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="site/assets/icons/icon-512.png" width="120" alt="The Akari app icon">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="site/assets/brand/akari-logo-plain-on-dark.svg">
+    <img src="site/assets/brand/akari-logo-plain-on-light.svg" width="200" alt="The Akari logo">
+  </picture>
 </p>
 
 <h1 align="center">Akari</h1>
