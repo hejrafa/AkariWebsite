@@ -69,7 +69,7 @@ const expectedSushi = {
     },
     { name: "Edamame", role: "side", reference: "bls:G750432", grams: 80 },
     { name: "Miso soup", role: "side", reference: "akari:recipe:miso-soup:v1", grams: 250 },
-    { name: "Green tea, brewed", role: "drink", reference: "usda:2710490", grams: 250 },
+    { name: "Green tea", role: "drink", reference: "usda:2710490", grams: 250 },
   ],
   missing: ["Tamago", "Tobiko"],
   confidence: 0.8,
@@ -182,16 +182,17 @@ test("an unknown reference becomes null, and missing unless its name is a row's 
   // A template id is not an ingredient's reference, and a template's ingredient is
   // not a food's.
   answer.foods[0].ingredients[1].reference = "akari:recipe:california-roll:v1";
+  answer.foods[3].name = "Yerba mate";
   answer.foods[3].reference = "bls:C110100";
   const { response } = await run(compose(), {}, message(answer));
   const body = await response.json();
   // Salmon, raw, Tuna, raw and Edamame are rows' names, so the second look finds them;
-  // no row is called Green tea.
+  // no row is called Yerba mate.
   assert.deepEqual(body.foods[0].ingredients[0], { name: "Salmon, raw", reference: "bls:T410100", grams: 60 });
   assert.deepEqual(body.foods[0].ingredients[1], { name: "Tuna, raw", reference: "bls:T121100", grams: 60 });
   assert.deepEqual(body.foods[1], { name: "Edamame", role: "side", reference: "bls:G750432", grams: 80 });
-  assert.deepEqual(body.foods[3], { name: "Green tea", role: "drink", reference: null, grams: 250, missing: true });
-  assert.deepEqual(body.missing, ["Tamago", "Tobiko", "Green tea"]);
+  assert.deepEqual(body.foods[3], { name: "Yerba mate", role: "drink", reference: null, grams: 250, missing: true });
+  assert.deepEqual(body.missing, ["Tamago", "Tobiko", "Yerba mate"]);
 });
 
 test("a reference from a template that was not sent is unknown", async () => {
@@ -598,7 +599,8 @@ test("a short name or a German compound keeps its reference", async () => {
   assert.equal(body.foods[0].reference, "usda:2707152");
   assert.equal(body.foods[1].reference, "bls:M173800");
   assert.equal(body.foods[2].reference, "bls:B311000");
-  assert.equal(body.foods[3].reference, null, "flour is not fennel seed");
+  // Mehl is wheat flour's own alias since the database audit: the name wins over the id.
+  assert.equal(body.foods[3].reference, "bls:C214100", "Mehl is wheat flour, never fennel seed");
 });
 
 test("a plural keeps its reference, a different food with the same first letters does not", async () => {
