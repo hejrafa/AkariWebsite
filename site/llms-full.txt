@@ -1,6 +1,6 @@
 # Akari product information
 
-Last updated: 2026-10-16
+Last updated: 2026-10-24
 
 ## Summary
 
@@ -95,10 +95,25 @@ Your data stays private. Akari needs no account and keeps your health data on yo
 
 Join the free beta through Apple TestFlight. The App Store version is coming soon.
 
+## Brand assets
+
+The brand page has every logo, the mark alone, the app icons and the colours, for each of the website's five themes: Shiratani (the default), Wasserkuppe, Loch Tay, Green River Overlook and Plain. All of them are in one ZIP: https://joinakari.com/brand/akari-brand.zip
+
+Each file is also at https://joinakari.com/assets/brand/, named after its theme (shiratani, wasserkuppe, loch-tay, green-river-overlook or plain):
+
+- akari-logo-<theme>-on-<dark|light>.svg and .png (2000 px wide): the mark above the wordmark, for a dark or a light background
+- akari-mark-<theme>.svg and .png (1024 px wide): the mark alone
+- akari-app-icon-<theme>-<light|dark>.png (1024 px): the app icon on its white or its black tile
+
+For example, the plain logo for a light background is https://joinakari.com/assets/brand/akari-logo-plain-on-light.svg.
+
 ## Canonical sources
 
+Every page of the website is in English and German.
+
 - Official website: https://joinakari.com/ (German: https://joinakari.com/de/)
+- Privacy policy: https://joinakari.com/privacy/ (German: https://joinakari.com/de/datenschutz/)
+- Terms of use: https://joinakari.com/terms/ (German: https://joinakari.com/de/nutzungsbedingungen/)
+- Brand assets (logos, mark, app icons, colours): https://joinakari.com/brand/ (German: https://joinakari.com/de/marke/)
+- About us: https://joinakari.com/about-us/ (German: https://joinakari.com/de/ueber-uns/)
 - Public beta: https://testflight.apple.com/join/wrv4aFVQ
-- Privacy policy: https://joinakari.com/privacy/
-- Terms of use: https://joinakari.com/terms/
-- Brand assets (logos, mark, app icons, colours): https://joinakari.com/brand/

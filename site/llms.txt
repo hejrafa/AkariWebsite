@@ -9,7 +9,7 @@ Akari reads Apple Health on the iPhone and keeps what it works out there. Each m
 - Platform: iPhone with iOS 26 or later
 - Fitness tracker: optional; one that writes to Apple Health, such as an Apple Watch or a Fitbit Air, adds sleep, heart rate and more, and without one the user can switch off what needs it and use Akari for the iPhone's own step count and food logging
 - Data source: Apple Health
-- Languages: English and German
+- Languages: English and German; every page of this website is in both, the German ones under /de/
 - Privacy: the user's data stays private. No account is required, and health data stays on the user's iPhone; only a food report the user chooses to send reaches Akari's server, and a meal the user types, says or photographs is read by an AI service through Akari's server and not stored by Akari
 - Pricing: most of Akari is free; food logging, readiness and Health Age need a subscription (€4.99 a month or €39.99 a year, 14 days free). This may still change before launch.
 - Availability: free public beta through Apple TestFlight, with everything free during the beta; the App Store version is coming soon
@@ -22,5 +22,14 @@ Akari reads Apple Health on the iPhone and keeps what it works out there. Each m
 - [Privacy policy](https://joinakari.com/privacy/)
 - [Terms of use](https://joinakari.com/terms/)
 - [Brand assets: logos, mark, app icons and colours](https://joinakari.com/brand/)
+- [Brand kit: every logo, mark and app icon in one ZIP](https://joinakari.com/brand/akari-brand.zip)
 - [About: why Akari exists and the young German company behind it](https://joinakari.com/about-us/)
 - [Full product information](https://joinakari.com/llms-full.txt)
+
+## Auf Deutsch
+
+- [Akari-Website](https://joinakari.com/de/)
+- [Datenschutzerklärung](https://joinakari.com/de/datenschutz/)
+- [Nutzungsbedingungen](https://joinakari.com/de/nutzungsbedingungen/)
+- [Marke: Logos, Bildmarke, App-Icons und Farben](https://joinakari.com/de/marke/)
+- [Über uns: warum es Akari gibt und das junge deutsche Unternehmen dahinter](https://joinakari.com/de/ueber-uns/)
